@@ -1,26 +1,27 @@
 import { createStackNavigator } from "@react-navigation/stack";
+import LogBookTab from "../components/LogBookTab";
 import HomeScreen from "./screens/home/HomeScreen";
-import NewLog from "./screens/home/NewLogScreen";
+import NewLogScreen from "./screens/home/NewLogScreen";
 import RecordDetailsScreen from "./screens/home/RecordDetailsScreen";
 
 const Stack = createStackNavigator();
 
 const screens = {
-    homeScreen: 'Home Screen',
+    logBookScreen: 'Log Book Screen',
     newLogScreen: 'New Log Screen',
     recordScreen: 'Record Details Screen'
 }
 
-const HomeStack = () => {
+const LogBooksStack = () => {
 
     return (
-        <Stack.Navigator initialRouteName={screens.homeScreen}>
-            <Stack.Screen name={screens.homeScreen} component={HomeScreen} />
-            <Stack.Screen name={screens.newLogScreen} component={NewLog} />
+        <Stack.Navigator initialRouteName={screens.logBookScreen}>
+            <Stack.Screen options={{title:'Log Books'}} name={screens.logBookScreen} component={LogBookTab} />
+            <Stack.Screen name={screens.newLogScreen} component={NewLogScreen} />
             <Stack.Screen name={screens.recordScreen} component={RecordDetailsScreen} />
         </Stack.Navigator>
     )
 }
 
 
-export default HomeStack;
+export default LogBooksStack;

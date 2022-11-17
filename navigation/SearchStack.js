@@ -11,7 +11,7 @@ const screens = {
 const SearchStack = () => {
     return (
         <Stack.Navigator initialRouteName={screens.searchScreen}>
-            <Stack.Screen name={screens.searchScreen} component={SearchScreen} />
+            <Stack.Screen options={{title:'Search'}} name={screens.searchScreen} component={SearchScreen} />
             <Stack.Screen name={screens.recordDetailsScreen} component={RecordDetailsScreen} />
         </Stack.Navigator>
     )

@@ -4,6 +4,7 @@ import AboutScreen from "./screens/user/AboutScreen";
 import DataScreen from "./screens/user/DataScreen";
 import AccountScreen from "./screens/user/AccountScreen";
 import PersonalizationScreen from "./screens/user/PersonalizationScreen";
+import UserHeaderComponent from "../components/UserHeader";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View } from "react-native";
@@ -21,13 +22,13 @@ const screens = {
 
 const UserStack = () => {
     return (
-            <Stack.Navigator initialRouteName={screens.userScreen}>
-                <Stack.Screen name={screens.userScreen} component={UserScreen} />
-                <Stack.Screen name={screens.profileScreen} component={ProfileScreen} />
-                <Stack.Screen name={screens.accountScreen} component={AccountScreen} />
-                <Stack.Screen name={screens.dataScreen} component={DataScreen} />
-                <Stack.Screen name={screens.personalizationScreen} component={PersonalizationScreen} />
-                <Stack.Screen name={screens.aboutScreen} component={AboutScreen} />
+            <Stack.Navigator initialRouteName={screens.userScreen} >
+                <Stack.Screen options={{title:'',headerShadowVisible:false}}  name={screens.userScreen} component={UserScreen} />
+                <Stack.Screen options={{title:'',headerShadowVisible:false }} name={screens.profileScreen} component={ProfileScreen} />
+                <Stack.Screen options={{title:'',headerShadowVisible:false}} name={screens.accountScreen} component={AccountScreen} />
+                <Stack.Screen options={{title:'',headerShadowVisible:false}} name={screens.dataScreen} component={DataScreen} />
+                <Stack.Screen options={{title:'',headerShadowVisible:false}} name={screens.personalizationScreen} component={PersonalizationScreen} />
+                <Stack.Screen options={{title:'',headerShadowVisible:false}} name={screens.aboutScreen} component={AboutScreen} />
             </Stack.Navigator>
     )
 }

@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 
-const NewLog = () => {
+const NewLogScreen = () => {
     return (
         <>
         <Text>New Log</Text>
@@ -8,4 +8,4 @@ const NewLog = () => {
     )
 }
 
-export default NewLog;
+export default NewLogScreen;
