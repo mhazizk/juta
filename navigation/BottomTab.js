@@ -48,8 +48,8 @@ const BottomTab = () => {
                         } else if (rn === stacks.actionStack) {
                             iconName = focused ? 'plus' : 'plus'
                             return (
-                                <View style={{ backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: 64 / 2 }}>
-                                    <FontAwesome5 name={iconName} color={color} size={24} />
+                                <View style={{ backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: 64 / 2 }}>
+                                    <FontAwesome5 name={iconName} color={color} size={18} />
                                 </View>)
                         } else if (rn === stacks.searchStack) {
                             iconName = focused ? 'search' : 'search-outline'

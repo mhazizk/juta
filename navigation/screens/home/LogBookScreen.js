@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableNativeFeedback, View, Image } from "react-native";
+import globalStyles from "../../../assets/globalStyles";
 
 const LogBookScreen = ({ route, navigation }) => {
 
@@ -42,28 +43,28 @@ const LogBookScreen = ({ route, navigation }) => {
         <>
             {/* // ! Records Section */}
             <FlatList
-                style={{ backgroundColor: '#fff' }}
+                style={globalStyles.lightTheme.view}
                 data={records}
                 keyExtractor={(item) => item.record_id}
                 ListHeaderComponent={
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop:16,paddingHorizontal: 16, backgroundColor: '#fff' }}>
-                        <Text style={{ fontSize: 28, opacity: 0.3 }}>Today</Text>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 28 }}>Today</Text>
                         <View style={{ flexDirection: 'row', backgroundColor: '#d1d1d1', height: 28, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 8, borderRadius: 8 }}>
-                            <Text style={{ fontSize: 14, color: '#fff', marginRight: 4 }}>Rp</Text>
-                            <Text style={{ fontSize: 22, color: '#fff' }}>6000</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, color: '#000', marginRight: 4 }}>Rp</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#000', fontSize: 22 }}>6000</Text>
                         </View>
                     </View>
                 }
                 renderItem={({ item }) => (
                     <>
                         <TouchableNativeFeedback onPress={() => { navigation.navigate('Record Details Screen', item) }}>
-                            <View style={styles.flatListView}>
+                            <View style={globalStyles.lightTheme.listContainer}>
                                 <Image source={checkmark} style={{ width: 18, height: 18 }} />
-                                <View style={styles.flatListViewUnderscore}>
-                                    <Text style={styles.flatListViewText}>{item.name}</Text>
-                                    <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
-                                        <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
-                                        <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>{item.amount}</Text>
+                                <View style={globalStyles.lightTheme.listItem}>
+                                    <Text style={globalStyles.lightTheme.textPrimary}>{item.name}</Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
+                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{item.amount}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -76,37 +77,5 @@ const LogBookScreen = ({ route, navigation }) => {
     )
 }
 
-const styles = new StyleSheet.create({
-    flatListView: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        paddingHorizontal: 16,
-        height: 48
-    },
-    flatListViewUnderscore: {
-        display: 'flex',
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        // backgroundColor: 'green',
-        paddingVertical: 0,
-        paddingLeft: 16,
-        borderColor: '#d9d9d9',
-        borderBottomWidth: 0.5,
-        minHeight: 46,
-        textAlignVertical: 'center'
-    },
-    flatListViewText: {
-        display: 'flex',
-        color: '#000',
-        textAlignVertical: 'center',
-        fontSize: 18,
-        textAlignVertical: 'center'
-    }
-
-})
 
 export default LogBookScreen;

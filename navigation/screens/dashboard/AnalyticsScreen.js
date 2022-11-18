@@ -1,10 +1,16 @@
-import { Text, View } from "react-native"
+import { useEffect, useState } from "react";
+import { Dimensions, Text, TouchableNativeFeedback, TouchableHighlight, View, TouchableOpacity } from "react-native";
+import IonIcons from 'react-native-vector-icons/Ionicons';
+import ChartComponent from "../../../components/Chart";
 
-const AnalyticsScreen = ({ item, navigation }) => {
+const AnalyticsScreen = () => {
+
     return (
-        <View>
-            <Text>Analytics</Text>
-        </View>
+        <>
+            <View style={{ paddingHorizontal: 16, backgroundColor:'#fff', height:'100%', paddingTop: 16 }}>
+                <ChartComponent />
+            </View>
+        </>
     )
 }
 

@@ -1,69 +1,63 @@
+import { useEffect, useState } from "react";
 import { Text, TouchableNativeFeedback, View, StyleSheet, Image } from "react-native"
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../../../assets/globalStyles";
+import Chart from "../../../components/Chart";
+import ChartTab from "../../../components/ChartTab";
+import TopExpenses from "../../../components/TopExpenses";
 
-const DashboardScreen = ({navigation}) => {
+const DashboardScreen = ({ navigation }) => {
+
+    const [date, setDate] = useState()
 
     const checkmark = require('../../../assets/checkmark.png');
+
+    useEffect(() => {
+        setDate(new Date())
+    }, [])
+
 
     return (
         <>
             <View style={{ height: '100%', backgroundColor: '#fff' }}>
                 {/* //! Header Section */}
-                <View style={{ ...styles.container, flexDirection: 'column' }}>
-                    <Text style={{ fontSize: 24 }}>
-                        Good Morning,
+                <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'column', paddingHorizontal: 16, }}>
+                    <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>
+                        {0 < date?.getHours() <= 4 ? 'Good Night' :
+                            4 < date?.getHours() <= 10 ? 'Good Morning'
+                                : 10 < date.getHours() <= 15 ? 'Good Afternoon'
+                                    : 15 < date.getHours() <= 21 ? 'Good Evening'
+                                        : 21 < date.getHours() <= 24 ? 'Good Night' : 'Good Day'
+                        },
                     </Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                        <Text style={{ fontSize: 36, fontWeight: 'bold' }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 36, fontWeight: 'bold' }}>
                             Haziz
                         </Text>
                         <Image source={checkmark} style={{ width: 22, height: 22, marginLeft: 4 }} />
                     </View>
                 </View>
 
-                {/* //! Summary Section */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('Analytics Screen')}>
-                    <View style={{ flexDirection: 'column', alignItems: 'center', height: 300, justifyContent: 'center', backgroundColor: '#fff' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                            <Text style={{ fontSize: 18, opacity: 0.3 }}>
-                                Rp
-                            </Text>
-                            <Text style={{ fontSize: 32, fontWeight: 'bold' }}>
-                                1.500.000
-                            </Text>
-                        </View>
-                        <Text style={{ fontSize: 18, opacity: 0.3 }}>
-                            Total Expense this week
-                        </Text>
-                        <IonIcons name='analytics' color='black' size={36} />
+                {/* //! Chart Section */}
+                <TouchableNativeFeedback onPress={() => { alert('test') }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flex: 1, flexDirection: 'column' }}>
+                        <ChartTab />
                     </View>
                 </TouchableNativeFeedback>
+                {/* <Chart /> */}
+
+
+                {/* //! Top Expenses Section */}
+                <View style={{ ...globalStyles.lightTheme.view, flex: 1, flexDirection: 'column' }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flex: 0, flexDirection: 'column', paddingHorizontal: 16, }}>
+                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 24 }}>Top Expenses Category</Text>
+                    </View>
+                    <TopExpenses />
+                </View>
             </View>
         </>
     )
 }
-
-const styles = new StyleSheet.create({
-    container: {
-        // flex: 1,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        height: '30%',
-        paddingHorizontal: 16,
-        backgroundColor: '#fff'
-    },
-    HeadContainer: {
-        display: 'flex',
-        flex: 1,
-        height: 'auto',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff'
-    },
-    scrollView: {
-        backgroundColor: 'aqua'
-    }
-})
 
 
 export default DashboardScreen;
