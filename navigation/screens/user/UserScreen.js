@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableNativeFeedback, View, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader"
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../../../assets/globalStyles";
 
 const UserScreen = ({ navigation }) => {
 
@@ -18,8 +19,8 @@ const UserScreen = ({ navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='person' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Profile</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Profile</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -29,8 +30,8 @@ const UserScreen = ({ navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='key' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Account</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Account</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -40,8 +41,8 @@ const UserScreen = ({ navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='brush' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Personalization</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Personalization</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -51,8 +52,8 @@ const UserScreen = ({ navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='information-circle' size={20} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>About</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>About</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>

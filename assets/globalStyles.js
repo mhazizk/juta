@@ -37,6 +37,17 @@ const globalStyles = {
                 borderBottomWidth: 0.5,
                 minHeight: 46,
                 textAlignVertical: 'center'
+            },
+            buttonPrimary: {
+                backgroundColor: '#000',
+            },
+            textButtonPrimary: {
+                color: '#fff',
+                fontSize: 16
+            },
+            textButtonSecondary: {
+                color: '#000',
+                fontSize: 16
             }
         }),
     darkTheme:
@@ -76,6 +87,18 @@ const globalStyles = {
                 minHeight: 46,
                 textAlignVertical: 'center'
             },
+            buttonPrimary: {
+                backgroundColor: '#fff'
+            },
+            textButtonPrimary: {
+                color: '#000',
+                fontSize: 16
+            },
+            textButtonSecondary: {
+                color: '#fff',
+                fontSize: 16
+            }
+
 
         })
 }

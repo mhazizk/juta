@@ -31,7 +31,7 @@ const BottomTab = () => {
     const [activeTab, setActiveTab] = useState();
 
     return (
-        <NavigationContainer>
+        <>
             <Tab.Navigator
                 initialRouteName={stacks.dashboardStack}
                 screenOptions={({ route }) => ({
@@ -71,16 +71,16 @@ const BottomTab = () => {
                     headerShown: false,
                     // tabBarBadge: '!',
                     tabBarBadgeStyle: { textAlign: 'center', textAlignVertical: 'center' },
-                    tabBarHideOnKeyboard:true
+                    tabBarHideOnKeyboard: true
                 }
                 )
                 }
             >
-                <Tab.Screen options={{ title: 'Dashboard'}} name={stacks.dashboardStack} component={DashboardStack} />
+                <Tab.Screen options={{ title: 'Dashboard' }} name={stacks.dashboardStack} component={DashboardStack} />
                 <Tab.Screen options={{ title: 'Log Book' }} name={stacks.logBookStack} component={LogBooksStack} />
                 <Tab.Screen options={{
                     tabBarItemStyle: { alignSelf: 'center', marginBottom: 28, height: 64 },
-                    tabBarActiveTintColor:'#fff'
+                    tabBarActiveTintColor: '#fff'
                 }}
                     name={stacks.actionStack}
                     component={ActionScreen} />
@@ -88,7 +88,7 @@ const BottomTab = () => {
                 <Tab.Screen options={{ title: 'Settings' }} name={stacks.userStack} component={UserStack} />
 
             </Tab.Navigator>
-        </NavigationContainer >
+        </>
     )
 }
 

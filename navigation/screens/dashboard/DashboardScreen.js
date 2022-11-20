@@ -13,9 +13,13 @@ const DashboardScreen = ({ navigation }) => {
     const checkmark = require('../../../assets/checkmark.png');
 
     useEffect(() => {
-        setDate(new Date())
+        // in epoch time
+        setDate(Date.now()) 
     }, [])
 
+    // convert epoch number in date
+    const getHours = new Date(date).getHours();
+    // console.log(getHours)
 
     return (
         <>
@@ -23,11 +27,11 @@ const DashboardScreen = ({ navigation }) => {
                 {/* //! Header Section */}
                 <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'column', paddingHorizontal: 16, }}>
                     <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>
-                        {0 < date?.getHours() <= 4 ? 'Good Night' :
-                            4 < date?.getHours() <= 10 ? 'Good Morning'
-                                : 10 < date.getHours() <= 15 ? 'Good Afternoon'
-                                    : 15 < date.getHours() <= 21 ? 'Good Evening'
-                                        : 21 < date.getHours() <= 24 ? 'Good Night' : 'Good Day'
+                        {getHours <= 4 ? 'Good Night' :
+                            4 < getHours && getHours <= 10 ? 'Good Morning'
+                                : 10 < getHours && getHours <= 15 ? 'Good Afternoon'
+                                    : 15 < getHours && getHours <= 21 ? 'Good Evening'
+                                        : 21 < getHours && getHours <= 24 ? 'Good Night' : 'Good Day'
                         },
                     </Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>

@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableNativeFeedback, ScrollView } from "react-native";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../assets/globalStyles";
 
 const TopExpenses = () => {
     return (
@@ -9,7 +10,7 @@ const TopExpenses = () => {
                     <View style={styles.flatListView}>
                         <IonIcons name='car' size={18} color='black' />
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Transport</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Transport</Text>
                             <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>100.000.000</Text>
@@ -21,7 +22,7 @@ const TopExpenses = () => {
                     <View style={styles.flatListView}>
                         <IonIcons name='pizza' size={18} color='black' />
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Food</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Food</Text>
                             <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>900.000</Text>
@@ -33,7 +34,7 @@ const TopExpenses = () => {
                     <View style={styles.flatListView}>
                         <IonIcons name='shirt' size={18} color='black' />
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Cloth</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Cloth</Text>
                             <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>770.000</Text>
@@ -45,7 +46,7 @@ const TopExpenses = () => {
                     <View style={styles.flatListView}>
                         <IonIcons name='laptop-outline' size={18} color='black' />
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Laptop Accessories</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Laptop Accessories</Text>
                             <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>660.000</Text>
@@ -57,7 +58,7 @@ const TopExpenses = () => {
                     <View style={styles.flatListView}>
                         <IonIcons name='play' size={18} color='black' />
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Movies</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Movies</Text>
                             <View style={{ ...styles.flatListViewText, flexDirection: 'row' }}>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 14, color: '#bbbbbb', marginRight: 4 }}>Rp</Text>
                                 <Text style={{ ...styles.flatListViewText, fontSize: 18 }}>450.000</Text>

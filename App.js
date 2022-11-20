@@ -1,10 +1,14 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, StatusBar } from 'react-native';
 import BottomTab from './navigation/BottomTab';
 import 'react-native-gesture-handler';
+import RootStack from './navigation/RootStack';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   return (
-      <BottomTab />
+    <NavigationContainer>
+      < RootStack />
+    </NavigationContainer>
   );
 }
 

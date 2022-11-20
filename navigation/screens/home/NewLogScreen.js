@@ -1,9 +1,9 @@
-import { Text } from "react-native";
+import { View, Text } from "react-native";
 
-const NewLogScreen = () => {
+const NewLogScreen = ({ navigation }) => {
     return (
         <>
-        <Text>New Log</Text>
+            <Text>New Log</Text>
         </>
     )
 }

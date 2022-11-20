@@ -1,6 +1,7 @@
 import { View, Text, TouchableNativeFeedback,StyleSheet } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../../../assets/globalStyles";
 
 
 const ProfileScreen = ({ item, navigation }) => {
@@ -17,8 +18,8 @@ const ProfileScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='person' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Change Avatar</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Change Avatar</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -28,9 +29,9 @@ const ProfileScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='create' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Change Nick Name</Text>
-                            <Text style={{...styles.flatListViewText, color:'#bbb'}}>Haziz</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Change Nick Name</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>

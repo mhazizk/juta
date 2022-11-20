@@ -1,9 +1,24 @@
 import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import APP_SETTINGS from "../../../config/appSettings";
+import { useEffect, useState } from "react";
+import ModalScreen from "../ModalScreen";
+import globalStyles from "../../../assets/globalStyles";
 
 
 const PersonalizationScreen = ({ item, navigation }) => {
+
+    const [modalVisible, setModalVisible] = useState({
+        appTheme: false,
+        fontSize: false,
+        language: false
+    })
+
+    useEffect(() => {
+        // refresh
+        console.log(modalVisible)
+    }, [modalVisible.appTheme])
 
     const checkmark = require('../../../assets/checkmark.png');
 
@@ -16,36 +31,54 @@ const PersonalizationScreen = ({ item, navigation }) => {
                 </View>
 
                 {/* // ! App Theme */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
+                <TouchableNativeFeedback
+                    onPress={() => navigation.navigate(
+                        'Modal Screen', {
+                        title: 'Theme',
+                        props: APP_SETTINGS.THEME.OPTIONS
+                    }
+                    )}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='contrast' size={18}/>
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>App Theme</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>Light Theme</Text>
+                        <IonIcons name='contrast' size={18} />
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Theme</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.THEME.USER[0].toUpperCase() + APP_SETTINGS.THEME.USER.substring(1)} Theme</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
 
                 {/* // ! Font Size */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
+                <TouchableNativeFeedback
+                    onPress={() => navigation.navigate(
+                        'Modal Screen', {
+                        title: 'Font Size',
+                        props: APP_SETTINGS.FONT_SIZE.OPTIONS
+                    })}
+                >
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='text' size={18}/>
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Font Size</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>Medium</Text>
+                        <IonIcons name='text' size={18} />
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Font Size</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.FONT_SIZE.USER[0].toUpperCase() + APP_SETTINGS.FONT_SIZE.USER.substring(1)}</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
 
                 {/* // ! Language */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
+                <TouchableNativeFeedback
+                    onPress={() => navigation.navigate(
+                        'Modal Screen', {
+                        title: 'Language',
+                        props: APP_SETTINGS.LANGUAGE.OPTIONS
+                    })}
+                >
                     <View style={styles.flatListView}>
                         <IonIcons name='language' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Language</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>English</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Language</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.LANGUAGE.USER[0].toUpperCase() + APP_SETTINGS.LANGUAGE.USER.substring(1)}</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>

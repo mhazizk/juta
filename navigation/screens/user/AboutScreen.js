@@ -1,6 +1,7 @@
 import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../../../assets/globalStyles";
 
 
 const AboutScreen = ({ item, navigation }) => {
@@ -20,9 +21,9 @@ const AboutScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='information-circle' size={20} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Made by</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>Haziz</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Made by</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -31,8 +32,8 @@ const AboutScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         <IonIcons name='mail' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Contact Me</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Contact Me</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -41,8 +42,8 @@ const AboutScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         <IonIcons name='pizza' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Buy Me a Pizza</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Buy Me a Pizza</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -51,9 +52,9 @@ const AboutScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}>
                     <View style={styles.flatListView}>
                         <IonIcons name='phone-portrait' size={18} />
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>App Version</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>v.1.0.0</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>App Version</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>v.1.0.0</Text>
 
                         </View>
                     </View>

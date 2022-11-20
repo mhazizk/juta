@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dimensions, Text, TouchableNativeFeedback, TouchableHighlight, View, TouchableOpacity } from "react-native";
 import { VictoryBar, VictoryChart, VictoryLine, VictoryTheme, VictoryZoomContainer } from "victory-native"
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../assets/globalStyles";
 
 const ChartComponent = () => {
 
@@ -34,7 +35,7 @@ const ChartComponent = () => {
     }, [])
 
     const dataA = [
-        { date: 1, amount: 13000 },
+        { date: 1668690952000, amount: 13000 },
         { date: 2, amount: 16500 },
         { date: 3, amount: 14250 },
         { date: 4, amount: 19000 }
@@ -70,24 +71,34 @@ const ChartComponent = () => {
         { date: 4, amount: 1264000 }
     ]
 
+    console.log(new Date(1668690952000).getDate())
+    console.log(Date.now())
 
+    const getDate = (epoch) => {
+        return new Date(epoch).getDate();
+    }
+    
     return (
         <>
-            <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
-                
+            <View style={{ paddingHorizontal: 0 }}>
+
                 {/* //! Title Section */}
-                <View style={{flexDirection:'row', alignItems:'baseline'}}>
-                    <Text style={{ fontSize: 16, color: '#bbb', paddingRight:4 }}>Rp</Text>
-                    <Text style={{ fontSize: 24, color: '#000', fontWeight:'bold' }}>6000</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                    <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 16, paddingRight: 4 }}>Rp</Text>
+                    <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24, fontWeight: 'bold' }}>6000</Text>
                 </View>
 
                 {/* //! Chart Section */}
-                    <Text style={{ fontSize: 16, color: '#bbb' }}>Expenses this week</Text>
+                <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 16, paddingBottom: 16 }}>Total expenses this {chartFilter.expenseFilter}</Text>
                 <View style={{ alignItems: 'center' }}>
-                    <VictoryChart width={350} padding={{ top: 16, bottom: 50, left: 55, right: 16 }} theme={VictoryTheme.grayscale} animate={{ duration: 1000 }}>
+                    <VictoryChart
+                        width={350}
+                        padding={{ top: 16, bottom: 50, left: 55, right: 16 }}
+                        // animate={{ duration: 1000 }}
+                        theme={VictoryTheme.grayscale} >
                         {/* <VictoryBar data={chartData.data1} interpolation='natural' x='date' y='amount' style={{ data: { fill: '#ddd' } }} /> */}
                         <VictoryLine data={chartData.data1} interpolation='natural' x='date' y='amount' />
-                        <VictoryLine data={chartData.data2} interpolation='natural' x='date' y='amount' style={{ data: { stroke: '#999' } }} />
+                        {/* <VictoryLine data={chartData.data2} interpolation='natural' x='date' y='amount' style={{ data: { stroke: '#999' } }} /> */}
                     </VictoryChart>
                 </View>
 

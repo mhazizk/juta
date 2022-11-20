@@ -18,7 +18,7 @@ const LogBooksStack = () => {
         <Stack.Navigator initialRouteName={screens.logBookScreen}>
             <Stack.Screen options={{title:'Log Books'}} name={screens.logBookScreen} component={LogBookTab} />
             <Stack.Screen name={screens.newLogScreen} component={NewLogScreen} />
-            <Stack.Screen name={screens.recordScreen} component={RecordDetailsScreen} />
+            <Stack.Screen options={{title:'Edit Record'}}name={screens.recordScreen} component={RecordDetailsScreen} />
         </Stack.Navigator>
     )
 }

@@ -1,6 +1,7 @@
 import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import globalStyles from "../../../assets/globalStyles";
 
 
 const AccountScreen = ({ item, navigation }) => {
@@ -20,9 +21,9 @@ const AccountScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='mail' size={18}/>
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Change Email</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>mhazizk@email.com</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Change Email</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>mhazizk@email.com</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -32,8 +33,8 @@ const AccountScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='key' size={18}/>
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Change Password</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Change Password</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -43,8 +44,8 @@ const AccountScreen = ({ item, navigation }) => {
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='cube' size={18}/>
-                        <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Data</Text>
+                        <View style={globalStyles.lightTheme.listItem}>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Data</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -55,8 +56,8 @@ const AccountScreen = ({ item, navigation }) => {
                         <Image source={checkmark} style={{ width: 18, height: 18 }} />
                         {/* <IonIcons name='key-outline' size={18} /> */}
                         <View style={styles.flatListViewUnderscore}>
-                            <Text style={styles.flatListViewText}>Verification</Text>
-                            <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>Verified</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>Verification</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>Verified</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
