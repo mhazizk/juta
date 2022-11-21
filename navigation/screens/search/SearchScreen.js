@@ -3,6 +3,7 @@ import UserHeaderComponent from "../../../components/UserHeader"
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useEffect, useState } from "react";
 import SearchResultTab from "../../../components/SearchResultTab";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 const SearchScreen = ({ navigation }) => {
 

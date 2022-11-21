@@ -4,7 +4,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import APP_SETTINGS from "../../../config/appSettings";
 import { useEffect, useState } from "react";
 import ModalScreen from "../ModalScreen";
-import globalStyles from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 
 const PersonalizationScreen = ({ item, navigation }) => {
@@ -20,7 +20,6 @@ const PersonalizationScreen = ({ item, navigation }) => {
         console.log(modalVisible)
     }, [modalVisible.appTheme])
 
-    const checkmark = require('../../../assets/checkmark.png');
 
     return (
         <>

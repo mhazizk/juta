@@ -1,23 +1,23 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View } from "react-native"
 import BottomTab from "./BottomTab";
+import RecordDetailsScreen from "./screens/home/RecordDetailsScreen";
 import ModalScreen from "./screens/ModalScreen";
 
 
 const Stack = createStackNavigator();
 const screens = {
     bottomTab: 'Bottom Tab',
-    modalScreen: 'Modal Screen'
+    modalScreen: 'Modal Screen',
+    recordDetailsScreen: 'Record Details Screen'
 }
 const RootStack = () => {
     return (
         <Stack.Navigator
             initialRouteName={screens.bottomTab}
-            
+
             screenOptions={{
-                presentation:'transparentModal',
-                headerShown:false,
-                cardOverlayEnabled: true,
+                headerShown:false
                 // cardStyle: { backgroundColor: 'transparent' },
                 // cardStyleInterpolator: ({ current: { progress } }) => ({
                 //     cardStyle: {
@@ -35,10 +35,22 @@ const RootStack = () => {
                 //     },
                 // }),
             }}
-            
+
         >
             <Stack.Screen name={screens.bottomTab} component={BottomTab} />
-            <Stack.Screen name={screens.modalScreen} component={ModalScreen} />
+            <Stack.Screen
+                options={{
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                    cardOverlayEnabled: true,
+                }}
+                name={screens.modalScreen}
+                component={ModalScreen} />
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                }}
+                name={screens.recordDetailsScreen} component={RecordDetailsScreen} />
         </Stack.Navigator>
     )
 }

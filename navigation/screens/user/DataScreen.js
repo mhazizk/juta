@@ -1,6 +1,7 @@
 import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 
 const DataScreen = ({ item, navigation }) => {

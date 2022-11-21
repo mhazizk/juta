@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableNativeFeedback, ScrollView } from "react-native";
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import globalStyles from "../assets/globalStyles";
+import { globalStyles, globalTheme } from "../assets/globalStyles";
 
 const TopExpenses = () => {
     return (

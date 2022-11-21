@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableNativeFeedback, View, Image } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader"
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import globalStyles from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 const UserScreen = ({ navigation }) => {
 
@@ -16,11 +16,11 @@ const UserScreen = ({ navigation }) => {
 
                 {/* // ! Profile */}
                 <TouchableNativeFeedback onPress={() => navigation.navigate('Profile Screen')}>
-                    <View style={styles.flatListView}>
+                    <View style={[globalStyles.lightTheme.listContainer, globalTheme.lightTheme.listContainer]}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
                         <IonIcons name='person' size={18} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Profile</Text>
+                        <View style={[globalStyles.lightTheme.listItem, globalTheme.lightTheme.listItem]}>
+                            <Text style={[globalStyles.lightTheme.textPrimary, globalTheme.lightTheme.textPrimary]}>Profile</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>

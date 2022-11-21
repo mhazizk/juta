@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dimensions, Text, TouchableNativeFeedback, TouchableHighlight, View, TouchableOpacity } from "react-native";
 import { VictoryBar, VictoryChart, VictoryLine, VictoryTheme, VictoryZoomContainer } from "victory-native"
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import globalStyles from "../assets/globalStyles";
+import { globalStyles, globalTheme } from "../assets/globalStyles";
 
 const ChartComponent = () => {
 

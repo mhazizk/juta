@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const globalStyles = {
+export const globalStyles = {
     lightTheme:
         new StyleSheet.create({
             view: {
@@ -40,6 +40,11 @@ const globalStyles = {
             },
             buttonPrimary: {
                 backgroundColor: '#000',
+                borderRadius:8
+            },
+            buttonSecondary :{
+                borderRadius:8,
+                borderWidth:1,
             },
             textButtonPrimary: {
                 color: '#fff',
@@ -102,5 +107,71 @@ const globalStyles = {
 
         })
 }
+export const globalTheme = {
+    lightTheme:
+        new StyleSheet.create({
+            view: {
+                backgroundColor: '#fff'
+            },
+            textPrimary: {
+                color: '#000',
+            },
+            textSecondary: {
+                color: '#bbb',
+            },
+            listContainer: {
+                backgroundColor: '#fff',
+            },
+            listItem: {
+                borderColor: '#ddd',
+            },
+            buttonPrimary: {
+                backgroundColor: '#000',
+            },
+            buttonSecondary: {
+                backgroundColor: '#fff',
+                borderColor:'#000'
+            },
+            textButtonPrimary: {
+                color: '#fff',
+            },
+            textButtonSecondary: {
+                color: '#000',
+            }
+        }),
+    darkTheme:
+        new StyleSheet.create({
+            view: {
+                backgroundColor: '#111'
+            },
+            textPrimary: {
+                color: '#fff',
+            },
+            textSecondary: {
+                color: '#666',
+            },
+            listContainer: {
+                backgroundColor: '#111',
+            },
+            listItem: {
+                borderColor: '#444',
+            },
+            buttonPrimary: {
+                backgroundColor: '#fff'
+            },
+            buttonSecondary: {
+                backgroundColor: '#111',
+            },
+            textButtonPrimary: {
+                color: '#000',
+            },
+            textButtonSecondary: {
+                color: '#fff',
+            }
 
-export default globalStyles;
+
+        })
+}
+
+
+// export default globalStyles;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Text, TouchableNativeFeedback, View, StyleSheet, Image } from "react-native"
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import globalStyles from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 import Chart from "../../../components/Chart";
 import ChartTab from "../../../components/ChartTab";
 import TopExpenses from "../../../components/TopExpenses";

@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 const CategorySearchScreen = () => {
     return (

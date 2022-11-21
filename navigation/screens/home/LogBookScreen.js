@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableNativeFeedback, View, Image } from "react-native";
-import globalStyles from "../../../assets/globalStyles";
+import formatCurrency from "../../../assets/formatCurrency";
+import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 
 const LogBookScreen = ({ route, navigation }) => {
 
@@ -12,13 +13,13 @@ const LogBookScreen = ({ route, navigation }) => {
 
     const [records, setRecords] = useState([
         { record_id: 1, name: 'haziz', amount: 1000 },
-        { record_id: 2, name: 'fariz', amount: 5000 },
+        { record_id: 2, name: 'fariz', amount: 5000.42 },
         { record_id: 3, name: 'joko', amount: 4232 },
-        { record_id: 5, name: 'toms', amount: 484 },
-        { record_id: 6, name: 'toms', amount: 484 },
-        { record_id: 7, name: 'toms', amount: 484 },
-        { record_id: 8, name: 'toms', amount: 484 },
-        { record_id: 9, name: 'toms', amount: 484 },
+        { record_id: 5, name: 'toms', amount: 48459824 },
+        { record_id: 6, name: 'toms', amount: 44285984 },
+        { record_id: 7, name: 'toms', amount: 481414 },
+        { record_id: 8, name: 'toms', amount: 4842155 },
+        { record_id: 9, name: 'toms', amount: 4009231584 },
         { record_id: 10, name: 'toms', amount: 484 },
         { record_id: 11, name: 'toms', amount: 484 },
         { record_id: 12, name: 'toms', amount: 484 },
@@ -64,7 +65,7 @@ const LogBookScreen = ({ route, navigation }) => {
                                     <Text style={globalStyles.lightTheme.textPrimary}>{item.name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
-                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{item.amount}</Text>
+                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.amount, locale:'IDR' })}</Text>
                                     </View>
                                 </View>
                             </View>

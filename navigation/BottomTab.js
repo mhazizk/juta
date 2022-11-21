@@ -71,7 +71,7 @@ const BottomTab = () => {
                     headerShown: false,
                     // tabBarBadge: '!',
                     tabBarBadgeStyle: { textAlign: 'center', textAlignVertical: 'center' },
-                    tabBarHideOnKeyboard: true
+                    tabBarHideOnKeyboard: true,
                 }
                 )
                 }
