@@ -20,7 +20,7 @@ const DataScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='sync' size={18}/>
+                        <IonIcons name='sync' size={18} style={{ paddingRight: 16 }} />
                         <View style={styles.flatListViewUnderscore}>
                             <Text style={styles.flatListViewText}>Sync Data</Text>
                             <Text style={{ ...styles.flatListViewText, color: '#bbb' }}>Last sync : 17 Nov 2022</Text>
@@ -31,7 +31,7 @@ const DataScreen = ({ item, navigation }) => {
                 {/* // ! Export */}
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
-                        <IonIcons name='download-outline' size={18} />
+                        <IonIcons name='download-outline' size={18} style={{ paddingRight: 16 }} />
                         <View style={styles.flatListViewUnderscore}>
                             <Text style={styles.flatListViewText}>Export All Log Books and Records</Text>
                         </View>

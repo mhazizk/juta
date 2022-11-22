@@ -20,7 +20,7 @@ const AboutScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='information-circle' size={20} />
+                        <IonIcons name='information-circle' size={20} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Made by</Text>
                             <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
@@ -31,7 +31,7 @@ const AboutScreen = ({ item, navigation }) => {
                 {/* // ! Contact */}
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
-                        <IonIcons name='mail' size={18} />
+                        <IonIcons name='mail' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Contact Me</Text>
                         </View>
@@ -41,7 +41,7 @@ const AboutScreen = ({ item, navigation }) => {
                 {/* // ! Donate */}
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
-                        <IonIcons name='pizza' size={18} />
+                        <IonIcons name='pizza' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Buy Me a Pizza</Text>
                         </View>
@@ -51,7 +51,7 @@ const AboutScreen = ({ item, navigation }) => {
                 {/* // ! App Version */}
                 <TouchableNativeFeedback onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}>
                     <View style={styles.flatListView}>
-                        <IonIcons name='phone-portrait' size={18} />
+                        <IonIcons name='phone-portrait' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>App Version</Text>
                             <Text style={globalStyles.lightTheme.textSecondary}>v.1.0.0</Text>

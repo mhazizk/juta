@@ -27,7 +27,7 @@ const stacks = {
 
 const Tab = createBottomTabNavigator();
 
-const BottomTab = () => {
+const BottomTab = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState();
 
     return (
@@ -48,8 +48,8 @@ const BottomTab = () => {
                         } else if (rn === stacks.actionStack) {
                             iconName = focused ? 'plus' : 'plus'
                             return (
-                                <View style={{ backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: 64 / 2 }}>
-                                    <FontAwesome5 name={iconName} color={color} size={18} />
+                                <View style={{ backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', width: 54, height: 54, borderRadius: 54 / 2 }}>
+                                    <FontAwesome5 name={iconName} color='#fff' size={18} />
                                 </View>)
                         } else if (rn === stacks.searchStack) {
                             iconName = focused ? 'search' : 'search-outline'
@@ -83,7 +83,11 @@ const BottomTab = () => {
                     tabBarActiveTintColor: '#fff'
                 }}
                     name={stacks.actionStack}
-                    component={ActionScreen} />
+                    component={ActionScreen}
+                    listeners={() => ({
+                        tabPress: (e) => { e.preventDefault(); navigation.navigate('Action Screen') }
+                    })}
+                />
                 <Tab.Screen options={{ title: 'Search' }} name={stacks.searchStack} component={SearchStack} />
                 <Tab.Screen options={{ title: 'Settings' }} name={stacks.userStack} component={UserStack} />
 

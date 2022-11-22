@@ -13,6 +13,16 @@ const APP_SETTINGS = {
         DEFAULT: 'english',
         USER: 'english',
         OPTIONS: ['english']
+    },
+    CURRENCY: {
+        DEFAULT: 'IDR',
+        USER: 'IDR',
+        OPTIONS: ['IDR', 'USD']
+    },
+    DECIMALS: {
+        DEFAULT: true,
+        USER: true,
+        OPTIONS: [false, true]
     }
 }
 

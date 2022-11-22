@@ -18,7 +18,7 @@ const UserScreen = ({ navigation }) => {
                 <TouchableNativeFeedback onPress={() => navigation.navigate('Profile Screen')}>
                     <View style={[globalStyles.lightTheme.listContainer, globalTheme.lightTheme.listContainer]}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='person' size={18} />
+                        <IonIcons name='person' size={18} style={{ paddingRight: 16 }} />
                         <View style={[globalStyles.lightTheme.listItem, globalTheme.lightTheme.listItem]}>
                             <Text style={[globalStyles.lightTheme.textPrimary, globalTheme.lightTheme.textPrimary]}>Profile</Text>
                         </View>
@@ -29,7 +29,7 @@ const UserScreen = ({ navigation }) => {
                 <TouchableNativeFeedback onPress={() => navigation.navigate('Account Screen')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='key' size={18} />
+                        <IonIcons name='key' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Account</Text>
                         </View>
@@ -40,7 +40,7 @@ const UserScreen = ({ navigation }) => {
                 <TouchableNativeFeedback onPress={() => navigation.navigate('Personalization Screen')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='brush' size={18} />
+                        <IonIcons name='brush' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Personalization</Text>
                         </View>
@@ -51,7 +51,7 @@ const UserScreen = ({ navigation }) => {
                 <TouchableNativeFeedback onPress={() => navigation.navigate('About Screen')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='information-circle' size={20} />
+                        <IonIcons name='information-circle' size={20} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>About</Text>
                         </View>

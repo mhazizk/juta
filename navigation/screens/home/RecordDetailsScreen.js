@@ -1,23 +1,21 @@
-import * as Localization from 'expo-localization';
 import { useEffect, useState } from "react";
-import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
-import formatCurrency from "../../../assets/formatCurrency";
+import { Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+// import formatCurrency from "../../../assets/formatCurrency";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
-import { IntlProvider, FormattedRelative, useIntl } from 'react-intl';
 import Intl from 'intl';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { ButtonPrimary, ButtonSecondary, ButtonSwitch } from '../../../components/Button';
 import 'intl/locale-data/jsonp/en';
 
 const RecordDetailsScreen = ({ route, navigation }) => {
 
+    const [theme, setTheme] = useState({
+        theme: 'lightTheme',
+        fontSize: 'medium'
+    })
+
 
     const [date, setDate] = useState(new Date())
-    const [picker, setPicker] = useState({
-        open: false,
-        value: null,
-
-    })
 
     const [logbookData, setLogBookData] = useState(
         {
@@ -30,10 +28,10 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
     const [category, setCategory] = useState(
         {
-            category_list: ['food', '🎨 transportation', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget', 'gadget'],
+            category_list: ['food and drink', 'transportation', 'gadget', 'property', 'laptop', 'house bill', 'electric bill', 'water bill', 'internet', 'school'],
             category_selected: {
                 "category_id": "",
-                "category_name": "🎨  Food"
+                "category_name": "food and drink"
             }
         })
 
@@ -55,17 +53,14 @@ const RecordDetailsScreen = ({ route, navigation }) => {
         showMode('date');
     };
 
-    const showTimepicker = () => {
-        showMode('time');
-    };
-
 
     const [record, setRecord] = useState({
         "details": {
             "in_out": true,
             "amount": 10000,
             "type": 'cash',
-            "date": 1668417842643
+            "date": 1668417842643,
+            "notes": ''
         },
         "_timestamps": {
             "created_at": 1668417842641,
@@ -89,293 +84,217 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         // refresh
-        console.log(record.details.date)
+        console.log(record.details)
     }, [record])
 
 
     return (
         <>
             <View style={{ ...globalStyles.lightTheme.view, height: '100%' }}>
-                <View>
-                    <Button onPress={showDatepicker} title="Show date picker!" />
-                    <Button onPress={showTimepicker} title="Show time picker!" />
-                    <Text>selected: {date.toLocaleString()}</Text>
-                </View>
-                <View style={{ ...globalStyles.lightTheme.view, flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>Rp</Text>
-                    <TextInput
-                        maxLength={20}
-                        returnKeyType='done'
-                        keyboardType='number-pad'
-                        placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
-                        style={{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }}
-                        onChangeText={(string) => {
-                            const float =
-                                string ?
-                                    parseFloat(parseFloat(string.replace(/,/g, '')).toFixed(2)) : 0
-                            setRecord({
-                                ...record,
-                                details: {
-                                    ...record.details,
-                                    amount: float
-                                }
-                            })
-                        }}
-                        clearButtonMode='while-editing'
-                        defaultValue={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
-                        value={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
-                    />
-                </View>
-                <View style={{ ...globalStyles.lightTheme.view, paddingHorizontal: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary }}>Details</Text>
-                </View>
+                <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
-                {/* // ! Type Section */}
-                <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary, flex: 1 }}>Type</Text>
+                    {/* // ! Amount Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                        <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>Rp</Text>
+                        <TextInput
+                            maxLength={20}
+                            textAlign='center'
+                            returnKeyType='done'
+                            keyboardType='number-pad'
+                            placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
+                            style={{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }}
+                            onChangeText={(string) => {
+                                const float =
+                                    string ?
+                                        parseFloat(parseFloat(string.replace(/,/g, '')).toFixed(2)) : 0
+                                setRecord({
+                                    ...record,
+                                    details: {
+                                        ...record.details,
+                                        amount: float
+                                    }
+                                })
+                            }}
+                            clearButtonMode='while-editing'
+                            defaultValue={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
+                            value={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
+                        />
+                    </View>
+                    {/* </ScrollView> */}
 
-                    {/* // ! Buttons */}
-                    <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
+                    {/* // ! Details */}
+                    <View style={{ ...globalStyles.lightTheme.view, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>Details</Text>
+                    </View>
 
-                        {/* // ! Cash Button */}
-                        <View style={[record.details.type === 'cash' ?
-                            {
-                                ...globalStyles.lightTheme.buttonPrimary,
-                                height: 48,
-                                width: 80,
-                                margin: 4,
-                                // borderColor: '#000',
-                            } :
-                            {
-                                ...globalStyles.lightTheme.buttonSecondary,
-                                height: 48,
-                                width: 80,
-                                margin: 4,
-                                // borderColor: '#000',
-                            },
-                        [record.details.type === 'cash' ?
-                            globalTheme.lightTheme.buttonPrimary :
-                            globalTheme.lightTheme.buttonSecondary
-                        ]]}>
-                            <TouchableOpacity onPress={() => setRecord({ ...record, details: { ...record.details, type: 'cash' } })}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={[
-                                        globalStyles.lightTheme.textButtonPrimary,
-                                        record.details.type === 'cash' ? globalTheme.lightTheme.textButtonPrimary : globalTheme.lightTheme.textButtonSecondary]}>Cash</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                    {/* // ! Type Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Type</Text>
 
-                        {/* //! OR */}
-                        <View>
-                            <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1, padding: 8 }}>or</Text>
-                        </View>
+                        {/* // ! Container */}
+                        <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
-                        {/* // ! Loan Button */}
-                        <View style={[record.details.type === 'loan' ?
-                            {
-                                ...globalStyles.lightTheme.buttonPrimary,
-                                height: 48,
-                                width: 80,
-                                margin: 4,
-                                // borderColor: '#000',
-                            } :
-                            {
-                                ...globalStyles.lightTheme.buttonSecondary,
-                                height: 48,
-                                width: 80,
-                                margin: 4,
-                                // borderColor: '#000',
-                            },
-                        [record.details.type === 'loan' ?
-                            globalTheme.lightTheme.buttonPrimary :
-                            globalTheme.lightTheme.buttonSecondary
-                        ]]}>
-                            <TouchableOpacity onPress={() => setRecord({ ...record, details: { ...record.details, type: 'loan' } })}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={[
-                                        globalStyles.lightTheme.textButtonPrimary,
-                                        record.details.type === 'loan' ? globalTheme.lightTheme.textButtonPrimary : globalTheme.lightTheme.textButtonSecondary]}>Loan</Text>
-                                </View>
-                            </TouchableOpacity>
+                            {/* // ! Cash Button */}
+                            <ButtonSwitch
+                                label='Cash'
+                                theme={theme.theme}
+                                condition={record.details.type === 'cash'}
+                                onPress={() => setRecord({ ...record, details: { ...record.details, type: 'cash' } })}
+                                theme={theme.theme} />
+
+                            {/* //! OR */}
+                            <View>
+                                <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1, padding: 8 }}>or</Text>
+                            </View>
+
+                            {/* // ! Loan Button */}
+                            <ButtonSwitch
+                                label='Loan'
+                                theme={theme.theme}
+                                condition={record.details.type === 'loan'}
+                                onPress={() => setRecord({ ...record, details: { ...record.details, type: 'loan' } })}
+                                theme={theme.theme} />
                         </View>
                     </View>
-                </View>
 
 
-                {/* // ! Date Section */}
-                <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary, flex: 1 }}>Date</Text>
+                    {/* // ! Date Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Date</Text>
 
-                    {/* // ! Buttons */}
-                    <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
+                        {/* // ! Container */}
+                        <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
-                        {/* // ! Cash Button */}
-                        <View style={[{
-                            ...globalStyles.lightTheme.buttonSecondary
-                        },
-                        {
-                            height: 48,
-                            width: 80,
-                            borderColor: '#000',
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            margin: 4,
-                        }]}>
-                            <TouchableOpacity onPress={() => setRecord({ ...record, details: { ...record.details, date: Date.now() } })}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...globalStyles.lightTheme.textButtonSecondary }}>Today</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                            {/* // ! Today Button */}
+                            <ButtonSwitch
+                                label='Today'
+                                theme={theme.theme}
+                                condition={new Date(record.details.date).getDate() === new Date().getDate()}
+                                onPress={() => setRecord({ ...record, details: { ...record.details, date: Date.now() } })}
+                            />
 
 
-                        {/* //! OR */}
-                        <View>
-                            <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 0, padding: 8 }}>or</Text>
-                        </View>
 
-                        {/* // ! Loan Button */}
-                        <View style={[{
-                            ...globalStyles.lightTheme.buttonPrimary
-                        },
-                        {
-                            height: 48,
-                            // width: 80,
-                            borderColor: '#000',
-                            borderWidth: 0,
-                            borderRadius: 8,
-                            paddingHorizontal: 14,
-                            margin: 4,
-                        }]}>
-                            <TouchableOpacity onPress={showDatepicker}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...globalStyles.lightTheme.textButtonPrimary }}>
-                                        {record.details.date ? new Date(record.details.date).toLocaleDateString() : 'Pick Date'}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
+                            {/* //! OR */}
+                            <View>
+                                <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 0, padding: 8 }}>or</Text>
+                            </View>
+
+                            {/* // ! Pick Date Button */}
+                            <ButtonSwitch
+                                label={record.details.date ? new Date(record.details.date).toLocaleDateString() : 'Pick Date'}
+                                theme={theme.theme}
+                                onPress={showDatepicker}
+                                condition={new Date(record.details.date).getDate() !== new Date().getDate()}
+                            />
                         </View>
                     </View>
-                </View>
 
 
-                {/* // ! Log Book Section */}
-                <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary, flex: 1 }}>From Book</Text>
+                    {/* // ! Log Book Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>From Book</Text>
 
-                    {/* // ! Buttons */}
-                    <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
+                        {/* // ! Container */}
+                        <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
 
-                        {/* // ! Book Picker */}
-                        <View style={[{
-                            ...globalStyles.lightTheme.buttonPrimary
-                        },
-                        {
-                            height: 48,
-                            // width: 80,
-                            borderColor: '#000',
-                            borderWidth: 0,
-                            borderRadius: 8,
-                            margin: 4,
-                            paddingHorizontal: 16
-                        }]}>
-                            <TouchableOpacity
+                            {/* // ! Book Picker */}
+                            <ButtonPrimary
+                                label={logbookData.logbook_selected.logbook_name ? logbookData.logbook_selected.logbook_name[0].toUpperCase() + logbookData.logbook_selected.logbook_name.substring(1) : 'Select Log Book'}
+                                width={150}
+                                theme={theme.theme}
                                 onPress={() => navigation.navigate(
-                                    'Modal Screen', {
-                                    title: 'Log Books',
-                                    props: logbookData.logbook_list
-                                }
-                                )}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...globalStyles.lightTheme.textButtonPrimary }}>{logbookData.logbook_selected.logbook_name ? logbookData.logbook_selected.logbook_name[0].toUpperCase() + logbookData.logbook_selected.logbook_name.substring(1) : 'Select Log Book'}</Text>
-                                </View>
-                            </TouchableOpacity>
+                                    'Modal Screen',
+                                    {
+                                        title: 'Log Books',
+                                        props: logbookData.logbook_list,
+                                        selectedList: (item) => { setLogBookData({ ...logbookData, logbook_selected: { ...logbookData.logbook_selected, logbook_name: item } }) },
+                                        default: logbookData.logbook_selected.logbook_name
+                                    })}
+                            />
                         </View>
                     </View>
-                </View>
 
 
-                {/* // ! Category Section */}
-                <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary, flex: 1 }}>Category</Text>
+                    {/* // ! Category Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Category</Text>
 
-                    {/* // ! Buttons */}
-                    <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
+                        {/* // ! Container */}
+                        <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
 
-                        {/* // ! Book Picker */}
-                        <View style={[{
-                            ...globalStyles.lightTheme.buttonPrimary
-                        },
-                        {
-                            height: 48,
-                            // width: 80,
-                            borderColor: '#000',
-                            borderWidth: 0,
-                            borderRadius: 8,
-                            margin: 4,
-                            paddingHorizontal: 16
-                        }]}>
-                            <TouchableOpacity
+                            {/* // ! Category Picker */}
+                            <ButtonPrimary
+                                label={category.category_selected.category_name ? category.category_selected.category_name[0].toUpperCase() + category.category_selected.category_name.substring(1) : 'Select Category'}
+                                width={150}
+                                theme={theme.theme}
                                 onPress={() => navigation.navigate(
                                     'Modal Screen', {
                                     title: 'Category',
-                                    props: category.category_list
-                                }
-                                )}>
-                                <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...globalStyles.lightTheme.textButtonPrimary }}>{category.category_selected.category_name ? category.category_selected.category_name[0].toUpperCase() + category.category_selected.category_name.substring(1) : 'Select Category'}</Text>
-                                </View>
-                            </TouchableOpacity>
+                                    props: category.category_list,
+                                    selectedList: (item) => { setCategory({ ...category, category_selected: { ...category.category_selected, category_name: item } }) },
+                                    default: category.category_selected.category_name
+                                })}
+                            />
                         </View>
                     </View>
-                </View>
 
+                    {/* // ! Notes Section */}
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Notes</Text>
 
+                        {/* // ! Container */}
+                        {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
 
+                        {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
+                        {/* // ! Notes Input */}
+                        <View style={{ flexDirection: 'row', flex: 1, backgroundColor: '#eee', borderWidth: 0, borderRadius: 8, height: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16 }}>
+                            <TextInput
+                                textAlign='left'
+                                returnKeyType='done'
+                                keyboardType='default'
+                                placeholder='Type additional notes ...'
+                                style={{ ...globalStyles.lightTheme.textPrimary, flex: 5, height: 48, borderRadius: 8, fontSize: 16 }}
+                                onChangeText={(string) => {
+                                    setRecord({
+                                        ...record,
+                                        details: {
+                                            ...record.details,
+                                            notes: string
+                                        }
+                                    })
+                                }}
+                                clearButtonMode='while-editing'
+                                defaultValue={record.details.notes}
+                                value={record.details.notes}
+                            />
 
-                {/* // ! Action Button */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-
-
-                    {/* // ! Cancel Button */}
-                    <View style={{
-                        height: 48,
-                        width: 150,
-                        borderColor: '#000',
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        margin: 4
-                    }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Log Book Screen')}>
-                            <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ ...globalStyles.lightTheme.textButtonSecondary }}>Cancel</Text>
-                            </View>
-                        </TouchableOpacity>
+                        </View>
+                        {/* </View> */}
                     </View>
 
-                    {/* // ! Save Button */}
-                    <View style={{
-                        ...globalStyles.lightTheme.buttonPrimary,
-                        height: 48,
-                        width: 150,
-                        borderColor: '#000',
-                        borderWidth: 0,
-                        borderRadius: 8,
-                        margin: 4,
-                    }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Log Book Screen')}>
-                            <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ ...globalStyles.lightTheme.textButtonPrimary }}>Save</Text>
-                            </View>
-                        </TouchableOpacity>
+
+                    {/* // ! Line Separator */}
+                    <View style={{ borderColor: '#bbb', borderBottomWidth: 1, height: 0, width: '80%', alignSelf: 'center', paddingTop: 16 }}></View>
+
+                    {/* // ! Action Button */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+
+                        {/* // ! Cancel Button */}
+                        <View style={{ paddingRight: 8 }}>
+                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.goBack()} theme={theme.theme} />
+                        </View>
+
+                        {/* // ! Save Button */}
+                        <View style={{ paddingLeft: 8 }}>
+                            <ButtonPrimary label='Save' width={150} onPress={() => navigation.goBack()} theme={theme.theme} />
+                        </View>
                     </View>
-                </View>
 
 
-
+                </ScrollView>
             </View>
         </>
     )

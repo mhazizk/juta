@@ -39,7 +39,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
                     )}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='contrast' size={18} />
+                        <IonIcons name='contrast' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Theme</Text>
                             <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.THEME.USER[0].toUpperCase() + APP_SETTINGS.THEME.USER.substring(1)} Theme</Text>
@@ -57,7 +57,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
                 >
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='text' size={18} />
+                        <IonIcons name='text' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Font Size</Text>
                             <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.FONT_SIZE.USER[0].toUpperCase() + APP_SETTINGS.FONT_SIZE.USER.substring(1)}</Text>
@@ -74,7 +74,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
                     })}
                 >
                     <View style={styles.flatListView}>
-                        <IonIcons name='language' size={18} />
+                        <IonIcons name='language' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Language</Text>
                             <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{APP_SETTINGS.LANGUAGE.USER[0].toUpperCase() + APP_SETTINGS.LANGUAGE.USER.substring(1)}</Text>

@@ -60,12 +60,14 @@ const LogBookScreen = ({ route, navigation }) => {
                     <>
                         <TouchableNativeFeedback onPress={() => { navigation.navigate('Record Details Screen', item) }}>
                             <View style={globalStyles.lightTheme.listContainer}>
-                                <Image source={checkmark} style={{ width: 18, height: 18 }} />
+                                <View style={{ paddingRight: 16 }}>
+                                    <Image source={checkmark} style={{ width: 18, height: 18 }} />
+                                </View>
                                 <View style={globalStyles.lightTheme.listItem}>
                                     <Text style={globalStyles.lightTheme.textPrimary}>{item.name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
-                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.amount, locale:'IDR' })}</Text>
+                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.amount, locale: 'IDR' })}</Text>
                                     </View>
                                 </View>
                             </View>

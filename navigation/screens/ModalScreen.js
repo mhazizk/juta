@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { FlatList, Text, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/globalStyles";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
+import IonIcons from 'react-native-vector-icons/Ionicons';
 
 const ModalScreen = ({ route, navigation }) => {
 
-    const [modal, setModal] = useState();
+    const [selected, setSelected] = useState();
 
 
     const styleSelection =
@@ -14,6 +16,12 @@ const ModalScreen = ({ route, navigation }) => {
             globalStyles.darkTheme
 
     useEffect(() => {
+        // refresh
+        // console.log(selected)
+    }, [selected])
+
+    useEffect(() => {
+        setSelected(route?.params?.default);
     }, [])
 
     return (
@@ -44,10 +52,11 @@ const ModalScreen = ({ route, navigation }) => {
                     keyExtractor={(item) => item}
                     renderItem={({ item }) => (
                         <>
-                            <TouchableNativeFeedback onPress={() => { }}>
+                            <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
                                 <View style={{ ...globalStyles.lightTheme.listContainer }}>
                                     <View style={globalStyles.lightTheme.listItem}>
                                         <Text style={globalStyles.lightTheme.textPrimary}>{item[0].toUpperCase() + item.substring(1)}</Text>
+                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected == item ? 'flex' : 'none' }} />
                                     </View>
                                 </View>
                             </TouchableNativeFeedback>
@@ -58,38 +67,13 @@ const ModalScreen = ({ route, navigation }) => {
                 {/* // ! Action Button */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
 
-
                     {/* // ! Cancel Button */}
-                    <View style={{
-                        height: 48,
-                        width: 150,
-                        borderColor: '#000',
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        margin: 4
-                    }}>
-                        <TouchableOpacity onPress={() => navigation.pop(1)}>
-                            <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ ...globalStyles.lightTheme.textButtonSecondary }}>Cancel</Text>
-                            </View>
-                        </TouchableOpacity>
+                    <View style={{ paddingRight: 8 }}>
+                        <ButtonSecondary label='Cancel' onPress={() => navigation.goBack()} theme='lightTheme' />
                     </View>
-
                     {/* // ! Save Button */}
-                    <View style={{
-                        ...globalStyles.lightTheme.buttonPrimary,
-                        height: 48,
-                        width: 150,
-                        borderColor: '#000',
-                        borderWidth: 0,
-                        borderRadius: 8,
-                        margin: 4,
-                    }}>
-                        <TouchableOpacity onPress={() => navigation.pop(1)}>
-                            <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                <Text style={{ ...globalStyles.lightTheme.textButtonPrimary }}>Save</Text>
-                            </View>
-                        </TouchableOpacity>
+                    <View style={{ paddingLeft: 8 }}>
+                        <ButtonPrimary label='Save' onPress={() => { route.params.selectedList(selected); navigation.goBack() }} theme='lightTheme' />
                     </View>
                 </View>
             </View>

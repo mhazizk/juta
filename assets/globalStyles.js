@@ -28,11 +28,12 @@ export const globalStyles = {
             listItem: {
                 display: 'flex',
                 flex: 1,
+                alignItems:'center',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 // backgroundColor: '#fff',
                 paddingVertical: 0,
-                paddingLeft: 16,
+                // paddingLeft: 16,
                 borderColor: '#ddd',
                 borderBottomWidth: 0.5,
                 minHeight: 46,
@@ -40,11 +41,13 @@ export const globalStyles = {
             },
             buttonPrimary: {
                 backgroundColor: '#000',
-                borderRadius:8
+                borderRadius:8,
+                height:48
             },
             buttonSecondary :{
                 borderRadius:8,
                 borderWidth:1,
+                height:48
             },
             textButtonPrimary: {
                 color: '#fff',
@@ -93,7 +96,13 @@ export const globalStyles = {
                 textAlignVertical: 'center'
             },
             buttonPrimary: {
-                backgroundColor: '#fff'
+                borderRadius:8,
+                height:48
+            },
+            buttonSecondary :{
+                borderRadius:8,
+                borderWidth:1,
+                height:48
             },
             textButtonPrimary: {
                 color: '#000',
@@ -161,6 +170,7 @@ export const globalTheme = {
             },
             buttonSecondary: {
                 backgroundColor: '#111',
+                borderColor:'#fff'
             },
             textButtonPrimary: {
                 color: '#000',

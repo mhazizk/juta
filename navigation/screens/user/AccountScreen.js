@@ -20,7 +20,7 @@ const AccountScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='mail' size={18}/>
+                        <IonIcons name='mail' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Email</Text>
                             <Text style={globalStyles.lightTheme.textSecondary}>mhazizk@email.com</Text>
@@ -32,7 +32,7 @@ const AccountScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='key' size={18}/>
+                        <IonIcons name='key' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Password</Text>
                         </View>
@@ -43,7 +43,7 @@ const AccountScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => navigation.push('Data Screen')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='cube' size={18}/>
+                        <IonIcons name='cube' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Data</Text>
                         </View>
@@ -53,9 +53,11 @@ const AccountScreen = ({ item, navigation }) => {
                 {/* // ! Verification */}
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
-                        <Image source={checkmark} style={{ width: 18, height: 18 }} />
+                        <View style={{paddingRight:16}}>
+                            <Image source={checkmark} style={{ width: 18, height: 18}} />
+                        </View>
                         {/* <IonIcons name='key-outline' size={18} /> */}
-                        <View style={styles.flatListViewUnderscore}>
+                        <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Verification</Text>
                             <Text style={globalStyles.lightTheme.textSecondary}>Verified</Text>
                         </View>

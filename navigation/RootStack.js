@@ -1,6 +1,7 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { Text, View } from "react-native"
 import BottomTab from "./BottomTab";
+import ActionScreen from "./screens/ActionScreen";
 import RecordDetailsScreen from "./screens/home/RecordDetailsScreen";
 import ModalScreen from "./screens/ModalScreen";
 
@@ -9,7 +10,8 @@ const Stack = createStackNavigator();
 const screens = {
     bottomTab: 'Bottom Tab',
     modalScreen: 'Modal Screen',
-    recordDetailsScreen: 'Record Details Screen'
+    recordDetailsScreen: 'Record Details Screen',
+    actionScreen: 'Action Screen'
 }
 const RootStack = () => {
     return (
@@ -17,23 +19,7 @@ const RootStack = () => {
             initialRouteName={screens.bottomTab}
 
             screenOptions={{
-                headerShown:false
-                // cardStyle: { backgroundColor: 'transparent' },
-                // cardStyleInterpolator: ({ current: { progress } }) => ({
-                //     cardStyle: {
-                //         opacity: progress.interpolate({
-                //             inputRange: [0, 0.5, 0.9, 1],
-                //             outputRange: [0, 0.25, 0.7, 1],
-                //         }),
-                //     },
-                //     overlayStyle: {
-                //         opacity: progress.interpolate({
-                //             inputRange: [0, 1],
-                //             outputRange: [0, 0.5],
-                //             extrapolate: 'clamp',
-                //         }),
-                //     },
-                // }),
+                headerShown: false
             }}
 
         >
@@ -43,9 +29,19 @@ const RootStack = () => {
                     presentation: 'transparentModal',
                     headerShown: false,
                     cardOverlayEnabled: true,
+                    cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid
                 }}
                 name={screens.modalScreen}
                 component={ModalScreen} />
+            <Stack.Screen
+                options={{
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                    cardOverlayEnabled: true,
+                    cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid
+                }}
+                name={screens.actionScreen}
+                component={ActionScreen} />
             <Stack.Screen
                 options={{
                     headerShown: true,

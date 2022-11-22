@@ -17,7 +17,7 @@ const ProfileScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='person' size={18} />
+                        <IonIcons name='person' size={18} style={{ paddingRight: 16 }}/>
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Avatar</Text>
                         </View>
@@ -28,7 +28,7 @@ const ProfileScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='create' size={18} />
+                        <IonIcons name='create' size={18} style={{ paddingRight: 16 }}/>
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Nick Name</Text>
                             <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
