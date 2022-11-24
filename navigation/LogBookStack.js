@@ -2,7 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LogBookTab from "../components/LogBookTab";
 import HomeScreen from "./screens/home/HomeScreen";
 import NewLogScreen from "./screens/home/NewLogScreen";
-import RecordDetailsScreen from "./screens/home/RecordDetailsScreen";
+import TransactionDetailsScreen from "./screens/home/oldTransactionDetailsScreen";
 
 const Stack = createStackNavigator();
 

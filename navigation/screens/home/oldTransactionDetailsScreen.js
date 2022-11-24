@@ -6,8 +6,10 @@ import Intl from 'intl';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { ButtonPrimary, ButtonSecondary, ButtonSwitch } from '../../../components/Button';
 import 'intl/locale-data/jsonp/en';
+import IonIcons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const RecordDetailsScreen = ({ route, navigation }) => {
+const oldTransactionDetailsScreen = ({ route, navigation }) => {
 
     const [theme, setTheme] = useState({
         theme: 'lightTheme',
@@ -37,7 +39,7 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate;
-        setRecord({ ...record.details.date, details: { ...record.details, date: new Date(currentDate).getTime() } });
+        setTransaction({ ...transaction.details.date, details: { ...transaction.details, date: new Date(currentDate).getTime() } });
     };
 
     const showMode = (currentMode) => {
@@ -54,10 +56,10 @@ const RecordDetailsScreen = ({ route, navigation }) => {
     };
 
 
-    const [record, setRecord] = useState({
+    const [transaction, setTransaction] = useState({
         "details": {
             "in_out": true,
-            "amount": 10000,
+            "amount": 0,
             "type": 'cash',
             "date": 1668417842643,
             "notes": ''
@@ -73,19 +75,20 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
 
     useEffect(() => {
-        setRecord({
-            ...record,
-            details: {
-                ...record.details,
-                amount: route?.params.amount,
-            }
-        })
+        route?.params?.amount ?
+            setTransaction({
+                ...transaction,
+                details: {
+                    ...transaction.details,
+                    amount: route?.params?.amount,
+                }
+            }) : null
     }, [])
 
     useEffect(() => {
         // refresh
-        console.log(record.details)
-    }, [record])
+        console.log(transaction.details)
+    }, [transaction])
 
 
     return (
@@ -101,23 +104,23 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                             textAlign='center'
                             returnKeyType='done'
                             keyboardType='number-pad'
-                            placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
+                            placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
                             style={{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }}
                             onChangeText={(string) => {
                                 const float =
                                     string ?
                                         parseFloat(parseFloat(string.replace(/,/g, '')).toFixed(2)) : 0
-                                setRecord({
-                                    ...record,
+                                setTransaction({
+                                    ...transaction,
                                     details: {
-                                        ...record.details,
+                                        ...transaction.details,
                                         amount: float
                                     }
                                 })
                             }}
                             clearButtonMode='while-editing'
-                            defaultValue={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
-                            value={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(record.details.amount)}
+                            defaultValue={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
+                            value={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
                         />
                     </View>
                     {/* </ScrollView> */}
@@ -128,7 +131,8 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                     </View>
 
                     {/* // ! Type Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <FontAwesome5 name='coins' size={18} style={{ paddingRight: 16 }} />
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Type</Text>
 
                         {/* // ! Container */}
@@ -138,9 +142,9 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                             <ButtonSwitch
                                 label='Cash'
                                 theme={theme.theme}
-                                condition={record.details.type === 'cash'}
-                                onPress={() => setRecord({ ...record, details: { ...record.details, type: 'cash' } })}
-                                theme={theme.theme} />
+                                condition={transaction.details.type === 'cash'}
+                                onPress={() => setTransaction({ ...transaction, details: { ...transaction.details, type: 'cash' } })}
+                            />
 
                             {/* //! OR */}
                             <View>
@@ -151,15 +155,17 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                             <ButtonSwitch
                                 label='Loan'
                                 theme={theme.theme}
-                                condition={record.details.type === 'loan'}
-                                onPress={() => setRecord({ ...record, details: { ...record.details, type: 'loan' } })}
-                                theme={theme.theme} />
+                                condition={transaction.details.type === 'loan'}
+                                onPress={() => setTransaction({ ...transaction, details: { ...transaction.details, type: 'loan' } })}
+                            />
                         </View>
                     </View>
 
 
                     {/* // ! Date Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <IonIcons name='calendar' size={18} style={{ paddingRight: 16 }} />
+
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Date</Text>
 
                         {/* // ! Container */}
@@ -169,8 +175,8 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                             <ButtonSwitch
                                 label='Today'
                                 theme={theme.theme}
-                                condition={new Date(record.details.date).getDate() === new Date().getDate()}
-                                onPress={() => setRecord({ ...record, details: { ...record.details, date: Date.now() } })}
+                                condition={new Date(transaction.details.date).getDate() === new Date().getDate()}
+                                onPress={() => setTransaction({ ...transaction, details: { ...transaction.details, date: Date.now() } })}
                             />
 
 
@@ -182,17 +188,19 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
                             {/* // ! Pick Date Button */}
                             <ButtonSwitch
-                                label={record.details.date ? new Date(record.details.date).toLocaleDateString() : 'Pick Date'}
+                                label={transaction.details.date ? new Date(transaction.details.date).toLocaleDateString() : 'Pick Date'}
                                 theme={theme.theme}
                                 onPress={showDatepicker}
-                                condition={new Date(record.details.date).getDate() !== new Date().getDate()}
+                                condition={new Date(transaction.details.date).getDate() !== new Date().getDate()}
                             />
                         </View>
                     </View>
 
 
                     {/* // ! Log Book Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <IonIcons name='book' size={18} style={{ paddingRight: 16 }} />
+
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>From Book</Text>
 
                         {/* // ! Container */}
@@ -218,7 +226,8 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
 
                     {/* // ! Category Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} />
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Category</Text>
 
                         {/* // ! Container */}
@@ -242,7 +251,9 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                     </View>
 
                     {/* // ! Notes Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, paddingHorizontal: 16 }}>
+                        <IonIcons name='document-text' size={18} style={{ paddingRight: 16 }} />
+
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Notes</Text>
 
                         {/* // ! Container */}
@@ -255,20 +266,20 @@ const RecordDetailsScreen = ({ route, navigation }) => {
                                 textAlign='left'
                                 returnKeyType='done'
                                 keyboardType='default'
-                                placeholder='Type additional notes ...'
+                                placeholder='Add additional notes ...'
                                 style={{ ...globalStyles.lightTheme.textPrimary, flex: 5, height: 48, borderRadius: 8, fontSize: 16 }}
                                 onChangeText={(string) => {
-                                    setRecord({
-                                        ...record,
+                                    setTransaction({
+                                        ...transaction,
                                         details: {
-                                            ...record.details,
+                                            ...transaction.details,
                                             notes: string
                                         }
                                     })
                                 }}
                                 clearButtonMode='while-editing'
-                                defaultValue={record.details.notes}
-                                value={record.details.notes}
+                                defaultValue={transaction.details.notes}
+                                value={transaction.details.notes}
                             />
 
                         </View>
@@ -284,7 +295,7 @@ const RecordDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Cancel Button */}
                         <View style={{ paddingRight: 8 }}>
-                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.goBack()} theme={theme.theme} />
+                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.navigate('Bottom Tab')} theme={theme.theme} />
                         </View>
 
                         {/* // ! Save Button */}
@@ -300,4 +311,4 @@ const RecordDetailsScreen = ({ route, navigation }) => {
     )
 }
 
-export default RecordDetailsScreen;
+export default oldTransactionDetailsScreen;

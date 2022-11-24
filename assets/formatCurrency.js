@@ -4,8 +4,8 @@ const formatCurrency = ({ amount, locale }) => {
     // let checkAmount = String(amount).replace(/[^, ]/g, '');
     let length = String(amount).length
     let getLeft = String(amount).slice(0, length - 1)
-    console.log({ length })
-    console.log({ getLeft })
+    // console.log({ length })
+    // console.log({ getLeft })
     // console.log(checkAmount)
     // console.log(typeof (checkAmount))
     let showFormattedAmount;
@@ -13,9 +13,9 @@ const formatCurrency = ({ amount, locale }) => {
     switch (true) {
         case locale === 'IDR':
             // showFormattedAmount = parseFloat(amount);
-            console.log({amount})
+            // console.log({amount})
             showFormattedAmount = Number(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-            console.log(showFormattedAmount)
+            // console.log(showFormattedAmount)
             break;
         case locale === 'USD':
             showFormattedAmount = Number(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')

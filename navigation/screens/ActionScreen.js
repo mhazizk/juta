@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native"
+import { Text, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
@@ -48,26 +48,26 @@ const ActionScreen = ({ route, navigation }) => {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', width: 300 }}>
 
-                    {/* // ! New Record */}
-                    <View style={{ flex: 1, borderRadius: 8, backgroundColor: '#000', borderWidth: 0, height: 150, margin: 8 }}>
-                        <TouchableOpacity style={{ flex: 1 }}>
-                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 4, alignItems: 'center', justifyContent: 'center' }}>
+                    {/* // ! New Transaction */}
+                    <View style={{ flex: 1, borderRadius: 8, borderWidth: 0, height: 150, margin: 8, overflow: 'hidden' }}>
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Transaction Details Screen')}>
+                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
                                     <IonIcons name='pencil' size={48} color='#fff' />
                                 </View>
-                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>New Record</Text>
+                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>Transaction</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
 
                     {/* // ! New LogBook */}
-                    <View style={{ flex: 1, borderRadius: 8, backgroundColor: '#000', borderWidth: 0, height: 150, margin: 8 }}>
+                    <View style={{ flex: 1, borderRadius: 8, borderWidth: 0, height: 150, margin: 8, overflow: 'hidden' }}>
                         <TouchableOpacity style={{ flex: 1 }}>
-                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 4, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
                                     <IonIcons name='book' size={48} color='#fff' />
                                 </View>
-                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>New LogBook</Text>
+                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>Log Book</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

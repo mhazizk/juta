@@ -17,11 +17,13 @@ const ModalScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         // refresh
-        // console.log(selected)
+        console.log(selected)
     }, [selected])
 
     useEffect(() => {
         setSelected(route?.params?.default);
+        console.log(route.params.default)
+        console.log(selected)
     }, [])
 
     return (
@@ -49,14 +51,19 @@ const ModalScreen = ({ route, navigation }) => {
                 <FlatList
                     style={{ ...globalStyles.lightTheme.view }}
                     data={route?.params?.props}
-                    keyExtractor={(item) => item}
+                    keyExtractor={(item) => item?.name}
                     renderItem={({ item }) => (
                         <>
                             <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
                                 <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                                    <IonIcons
+                                        name={item?.icon?.name}
+                                        size={18}
+                                        color={item?.icon?.color}
+                                        style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 16 }} />
                                     <View style={globalStyles.lightTheme.listItem}>
-                                        <Text style={globalStyles.lightTheme.textPrimary}>{item[0].toUpperCase() + item.substring(1)}</Text>
-                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected == item ? 'flex' : 'none' }} />
+                                        <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
+                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
                                     </View>
                                 </View>
                             </TouchableNativeFeedback>

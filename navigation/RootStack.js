@@ -1,19 +1,22 @@
 import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
-import { Text, View } from "react-native"
+import { Pressable, Text, TouchableOpacity, View } from "react-native"
 import BottomTab from "./BottomTab";
 import ActionScreen from "./screens/ActionScreen";
-import RecordDetailsScreen from "./screens/home/RecordDetailsScreen";
 import ModalScreen from "./screens/ModalScreen";
+import IonIcons from 'react-native-vector-icons/Ionicons';
+import TransactionPreviewScreen from "./screens/home/TrasactionPreviewScreen";
+import TransactionDetailsScreen from "./screens/home/TransactionDetailsScreen";
 
 
 const Stack = createStackNavigator();
 const screens = {
     bottomTab: 'Bottom Tab',
     modalScreen: 'Modal Screen',
-    recordDetailsScreen: 'Record Details Screen',
+    transactionDetailsScreen: 'Transaction Details Screen',
+    transactionPreviewScreen:'Transaction Preview Screen',
     actionScreen: 'Action Screen'
 }
-const RootStack = () => {
+const RootStack = ({navigation}) => {
     return (
         <Stack.Navigator
             initialRouteName={screens.bottomTab}
@@ -45,8 +48,27 @@ const RootStack = () => {
             <Stack.Screen
                 options={{
                     headerShown: true,
+                    // title:'New Transaction',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                            // {/* <TouchableOpacity onPress={()=>navigation.pop(1)} style={{paddingHorizontal:11}}>
+                            //     <IonIcons name='close' size={24} style={{ margin: 3 }} />
+                            // </TouchableOpacity> */}
+                        // </>)
                 }}
-                name={screens.recordDetailsScreen} component={RecordDetailsScreen} />
+                name={screens.transactionPreviewScreen} component={TransactionPreviewScreen} />
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    // title:'New Transaction',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                            // {/* <TouchableOpacity onPress={()=>navigation.pop(1)} style={{paddingHorizontal:11}}>
+                            //     <IonIcons name='close' size={24} style={{ margin: 3 }} />
+                            // </TouchableOpacity> */}
+                        // </>)
+                }}
+                name={screens.transactionDetailsScreen} component={TransactionDetailsScreen} />
         </Stack.Navigator>
     )
 }
