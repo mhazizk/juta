@@ -22,7 +22,21 @@ const userLogBooks = [
         "user_id": "637208d545a0d121607a402e",
         "username": "haziz",
         "logbook_id": "logbook2",
-        "logbook_name": "school",
+        "logbook_name": "logbook that has long name lol hahahaa",
+        "logbook_records": [],
+        "logbook_categories": [],
+        "__v": 0
+    },
+    {
+        "_timestamps": {
+            "created_at": 1668417842641,
+            "updated_at": 1668417842641
+        },
+        "_id": "637209c4e2f8048280ea8af9",
+        "user_id": "637208d545a0d121607a402e",
+        "username": "haziz",
+        "logbook_id": "logbook3",
+        "logbook_name": "another logbook that also has long name but this one surely is longer",
         "logbook_records": [],
         "logbook_categories": [],
         "__v": 0

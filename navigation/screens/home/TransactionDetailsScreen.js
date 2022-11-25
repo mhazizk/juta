@@ -29,23 +29,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     })
 
     // Transaction State
-    const [transaction, setTransaction] = useState({
-        "details": {
-            "in_out": 'expense',
-            "amount": 0,
-            "type": null,
-            "date": null,
-            "notes": null,
-            "category_id": null,
-        },
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "_id": "63720ad4e2f8048280ea8b00",
-        "logbook_id": "63720932e2f8048280ea8af4",
-        "record_id": "63720932e2f8048280ea8af5",
-    })
+    const [transaction, setTransaction] = useState()
 
 
     // Logbook State
@@ -75,7 +59,25 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     useEffect(() => {
         // setLoading(true);
         route?.params?.transaction ?
-            setTransaction(route?.params?.transaction) : null
+            setTransaction(route?.params?.transaction) :
+            setTransaction({
+                "details": {
+                    "in_out": 'expense',
+                    "amount": 0,
+                    "type": null,
+                    "date": null,
+                    "notes": null,
+                    "category_id": null,
+                },
+                "_timestamps": {
+                    "created_at": null,
+                    "updated_at": null
+                },
+                "_id": null,
+                "logbook_id": null,
+                "transaction_id": null,
+            },
+            )
 
         // getFile();
 
@@ -86,7 +88,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         // refresh
-        console.log(transaction.details)
+        console.log(transaction)
         // findCategoryNameById();
     }, [transaction])
 
@@ -178,7 +180,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     return (
         <>
-            <View style={[{ ...globalStyles.lightTheme.view, height: '100%' }, { ...globalTheme.lightTheme.view }]}>
+            {transaction && <View style={[{ ...globalStyles.lightTheme.view, height: '100%' }, { ...globalTheme.lightTheme.view }]}>
                 <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
                     {/* // ! Amount Section */}
@@ -446,7 +448,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     </View>
                 </View>
 
-            </View >
+            </View >}
         </>
     )
 }

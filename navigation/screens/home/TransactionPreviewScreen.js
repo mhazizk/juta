@@ -56,43 +56,21 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     };
 
 
-    const [transaction, setTransaction] = useState({
-        "details": {
-            "in_out": true,
-            "amount": 0,
-            "type": 'cash',
-            "date": 1668417842643,
-            "notes": ''
-        },
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "_id": "63720ad4e2f8048280ea8b00",
-        "logbook_id": "63720932e2f8048280ea8af4",
-        "record_id": "63720932e2f8048280ea8af5",
-    })
+    const [transaction, setTransaction] = useState();
 
 
     useEffect(() => {
-        route?.params?.amount ?
-            setTransaction({
-                ...transaction,
-                details: {
-                    ...transaction.details,
-                    amount: route?.params?.amount,
-                }
-            }) : null
+        setTransaction(route?.params?.transaction)
     }, [])
 
     useEffect(() => {
         // refresh
-        console.log(transaction.details)
+        // console.log(transaction.details)
     }, [transaction])
 
 
     return (
-        <>
+        <>{transaction &&
             <View style={{ ...globalStyles.lightTheme.view, height: '100%' }}>
                 <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
@@ -110,7 +88,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                     {/* // ! Details */}
                     <View style={{ ...globalStyles.lightTheme.view, paddingHorizontal: 16 }}>
-                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>{transaction.details.in_out === 1 ? 'Income' : 'Expense'} Details</Text>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>{transaction.details.in_out[0].toUpperCase() + transaction.details.in_out.substring(1)} Details</Text>
                     </View>
 
                     {/* // ! Type Section */}
@@ -197,7 +175,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                         {/* // ! Edit Button */}
                         <View style={{ paddingRight: 8 }}>
-                            <ButtonSecondary label='Edit' width={150} onPress={() => navigation.navigate('Transaction Details Screen')} theme={theme.theme} />
+                            <ButtonSecondary label='Edit' width={150} onPress={() => navigation.navigate('Transaction Details Screen', { transaction: transaction })} theme={theme.theme} />
                         </View>
 
                         {/* // ! Delete Button */}
@@ -213,7 +191,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
 
                 </ScrollView>
-            </View >
+            </View >}
         </>
     )
 }

@@ -4,7 +4,7 @@ import BottomTab from "./BottomTab";
 import ActionScreen from "./screens/ActionScreen";
 import ModalScreen from "./screens/ModalScreen";
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import TransactionPreviewScreen from "./screens/home/TrasactionPreviewScreen";
+import TransactionPreviewScreen from "./screens/home/TransactionPreviewScreen";
 import TransactionDetailsScreen from "./screens/home/TransactionDetailsScreen";
 
 
