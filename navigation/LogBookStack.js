@@ -3,7 +3,7 @@ import LogBookTab from "../components/LogBookTab";
 import HomeScreen from "./screens/home/HomeScreen";
 import NewLogScreen from "./screens/home/NewLogScreen";
 import TransactionDetailsScreen from "./screens/home/oldTransactionDetailsScreen";
-import TheLogBookScreen from "./screens/home/theLogBookScreen";
+import TheLogBookScreen from "./screens/home/LogBookScreen";
 import NewLogBook from "./screens/home/uLogBookScreen";
 
 const Stack = createStackNavigator();

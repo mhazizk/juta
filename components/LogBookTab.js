@@ -1,5 +1,4 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import LogBookScreen from '../navigation/screens/home/LogBookScreen';
 import NewLogBookScreen from '../navigation/screens/home/NewLogBookScreen';
 import NewLogScreen from '../navigation/screens/home/NewLogScreen';
 import UserScreen from '../navigation/screens/user/UserScreen';
@@ -42,7 +41,6 @@ const LogBookTab = () => {
 
             }}>
             {/* <RenderTab /> */}
-            <Tab.Screen name='logBook1' component={LogBookScreen} />
             <Tab.Screen options={{ title: 'Add' }} name={logBooks.newLogBookScreen} component={NewLogBookScreen} />
         </Tab.Navigator>
     )

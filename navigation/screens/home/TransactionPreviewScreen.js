@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 // import formatCurrency from "../../../assets/formatCurrency";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
@@ -8,56 +8,33 @@ import { ButtonPrimary, ButtonSecondary, ButtonSwitch } from '../../../component
 import 'intl/locale-data/jsonp/en';
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import categories from "../../../database/userCategories";
+import logbooks from "../../../database/userLogBooks";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
 
+    // ! useState Section //
+
+    // Theme State
     const [theme, setTheme] = useState({
         theme: 'lightTheme',
         fontSize: 'medium'
     })
 
+    // Transaction State
+    const [transaction, setTransaction] = useState(null);
 
-    const [date, setDate] = useState(new Date())
+    // Selected Logbook State
+    const [selectedLogbook, setSelectedLogbook] = useState(null)
 
-    const [logbookData, setLogBookData] = useState(
-        {
-            logbook_list: ['private', 'school', 'business'],
-            logbook_selected: {
-                "logbook_id": "63720932e2f8048280ea8af4",
-                "logbook_name": "private"
-            }
-        })
+    // logbook_id : null
+    // logbook_name: null
 
-    const [category, setCategory] = useState(
-        {
-            category_list: ['food and drink', 'transportation', 'gadget', 'property', 'laptop', 'house bill', 'electric bill', 'water bill', 'internet', 'school'],
-            category_selected: {
-                "category_id": "",
-                "category_name": "food and drink"
-            }
-        })
-
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setTransaction({ ...transaction.details.date, details: { ...transaction.details, date: new Date(currentDate).getTime() } });
-    };
-
-    const showMode = (currentMode) => {
-        DateTimePickerAndroid.open({
-            value: date,
-            onChange,
-            mode: currentMode,
-            is24Hour: true,
-        });
-    };
-
-    const showDatepicker = () => {
-        showMode('date');
-    };
+    // Selected Category State
+    const [selectedCategory, setSelectedCategory] = useState(null)
 
 
-    const [transaction, setTransaction] = useState();
-
+    // ! UseEffect Section //
 
     useEffect(() => {
         setTransaction(route?.params?.transaction)
@@ -66,11 +43,76 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     useEffect(() => {
         // refresh
         // console.log(transaction.details)
+        findCategoryNameById();
+        findCategoryIconNameById();
+        findLogbookNamebyId();
+    }, [transaction])
+
+    useEffect(() => {
+        // refresh
+    }, [selectedCategory])
+
+    useEffect(() => {
+        // refresh
+    }, [selectedLogbook])
+
+
+
+    // ! Function Section //
+    // Find Category Name by Id
+    const findCategoryNameById = useMemo(() => {
+        return (
+            () => {
+                if (transaction) {
+                    const id = transaction.details.category_id;
+                    const foundExpenseCategory = categories.expense.filter((category) => { return category.id === id });
+                    const foundIncomeCategory = categories.income.filter((category) => { return category.id === id });
+
+                    if (foundExpenseCategory.length) {
+                        setSelectedCategory(foundExpenseCategory[0]);
+                    } else {
+                        setSelectedCategory(foundIncomeCategory[0]);
+                    }
+                }
+
+            })
+    }, [transaction])
+
+    // Find Category Icon Name by Id
+    const findCategoryIconNameById = useMemo(() => {
+        return (() => {
+            if (transaction) {
+                const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === transaction.details.category_id })
+                const filteredIncomeCategory = categories.income.filter((category) => { return category.id === transaction.details.category_id })
+
+                if (filteredExpenseCategory.length) {
+                    return setSelectedCategory(filteredExpenseCategory[0])
+                    // return filteredExpenseCategory.map((item => item.icon.name));
+                } else {
+                    return setSelectedCategory(filteredIncomeCategory[0])
+                    // return filteredIncomeCategory.map((item) => item.icon.name);
+                }
+            }
+        })
     }, [transaction])
 
 
+
+    // Find Log Book Name by Id
+    const findLogbookNamebyId = useMemo(() => {
+        return (
+            () => {
+                if (transaction) {
+                    const found = logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
+                    setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
+                }
+            }
+        )
+    })
+
+
     return (
-        <>{transaction &&
+        <>{transaction && selectedLogbook && selectedCategory &&
             <View style={{ ...globalStyles.lightTheme.view, height: '100%' }}>
                 <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
@@ -131,7 +173,9 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                         <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                             {/* // ! Book Picker */}
-                            <Text style={globalStyles.lightTheme.textPrimary}>{logbookData.logbook_selected.logbook_name[0].toUpperCase() + logbookData.logbook_selected.logbook_name.substring(1)}</Text>
+                            <Text style={globalStyles.lightTheme.textPrimary}>
+                                {selectedLogbook?.name[0]?.toUpperCase() + selectedLogbook?.name?.substring(1)}
+                            </Text>
 
                         </View>
                     </View>
@@ -147,7 +191,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
 
                             {/* // ! Category Picker */}
-                            <Text style={globalStyles.lightTheme.textPrimary}>{category.category_selected.category_name[0].toUpperCase() + category.category_selected.category_name.substring(1)}</Text>
+                            <IonIcons name={selectedCategory.icon.name} size={18} style={{ paddingRight: 8 }} />
+                            <Text style={globalStyles.lightTheme.textPrimary}>{selectedCategory.name[0].toUpperCase() + selectedCategory.name.substring(1)}</Text>
 
                         </View>
                     </View>
@@ -175,7 +220,15 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                         {/* // ! Edit Button */}
                         <View style={{ paddingRight: 8 }}>
-                            <ButtonSecondary label='Edit' width={150} onPress={() => navigation.navigate('Transaction Details Screen', { transaction: transaction })} theme={theme.theme} />
+                            <ButtonSecondary
+                                label='Edit'
+                                width={150}
+                                onPress={() => navigation.navigate('Transaction Details Screen', {
+                                    transaction: transaction,
+                                    selectedLogbook: selectedLogbook,
+                                    selectedCategory: selectedCategory
+                                })}
+                                theme={theme.theme} />
                         </View>
 
                         {/* // ! Delete Button */}
