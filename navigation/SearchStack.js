@@ -1,6 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View } from "react-native"
-import TransactionDetailsScreen from "./screens/home/oldTransactionDetailsScreen";
+import TransactionDetailsScreen from "./screens/home/TransactionDetailsScreen";
 import SearchScreen from "./screens/search/SearchScreen";
 
 const Stack = createStackNavigator();

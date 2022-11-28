@@ -3,12 +3,17 @@ import BottomTab from './navigation/BottomTab';
 import 'react-native-gesture-handler';
 import RootStack from './navigation/RootStack';
 import { NavigationContainer } from '@react-navigation/native';
+import { GlobalStateProvider } from './modules/GlobalContext';
+
 
 export default function App() {
+
   return (
-    <NavigationContainer>
-      < RootStack />
-    </NavigationContainer>
+    <GlobalStateProvider>
+      <NavigationContainer>
+        < RootStack />
+      </NavigationContainer>
+    </GlobalStateProvider>
   );
 }
 

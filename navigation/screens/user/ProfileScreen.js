@@ -1,12 +1,17 @@
-import { View, Text, TouchableNativeFeedback,StyleSheet } from "react-native"
+import { View, Text, TouchableNativeFeedback, StyleSheet } from "react-native"
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { useGlobalUserAccount } from "../../../modules/GlobalContext";
+import { ACTIONS } from "../../../modules/GlobalReducer";
 
 
 const ProfileScreen = ({ item, navigation }) => {
+
+    const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+
     return (
-        <>
+        <>{userAccount &&
             <View style={{ height: '100%', backgroundColor: '#fff' }}>
                 <UserHeaderComponent />
                 <View style={{ backgroundColor: '#fff', padding: 16 }}>
@@ -17,7 +22,7 @@ const ProfileScreen = ({ item, navigation }) => {
                 <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='person' size={18} style={{ paddingRight: 16 }}/>
+                        <IonIcons name='person' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Avatar</Text>
                         </View>
@@ -25,18 +30,23 @@ const ProfileScreen = ({ item, navigation }) => {
                 </TouchableNativeFeedback>
 
                 {/* // ! Change Nick Name */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
+                <TouchableNativeFeedback onPress={() => navigation.navigate('Modal Screen', {
+                    title: 'Change Nick Name',
+                    modalType: 'textInput',
+                    default: userAccount.profile.nickname,
+                    selected: (item) => { dispatchUserAccount({ type: ACTIONS.USER_ACCOUNT.NICKNAME.SET, payload: item }) }
+                })}>
                     <View style={styles.flatListView}>
                         {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='create' size={18} style={{ paddingRight: 16 }}/>
+                        <IonIcons name='create' size={18} style={{ paddingRight: 16 }} />
                         <View style={globalStyles.lightTheme.listItem}>
                             <Text style={globalStyles.lightTheme.textPrimary}>Change Nick Name</Text>
-                            <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
+                            <Text style={globalStyles.lightTheme.textSecondary}>{userAccount.profile.nickname}</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
 
-            </View>
+            </View>}
         </>
     )
 }

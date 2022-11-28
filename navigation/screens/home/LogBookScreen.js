@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Text, View, Dimensions, FlatList, Animated, findNodeHandle, TouchableNativeFeedback, TouchableOpacity, ActivityIndicator } from "react-native";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 import userCategories from "../../../database/userCategories";
@@ -8,8 +8,11 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import formatCurrency from "../../../assets/formatCurrency";
 import { ButtonPrimary } from "../../../components/Button";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Intl from 'intl';
 import 'intl/locale-data/jsonp/en';
+import { ACTIONS, globalTransactions, initialTransactions } from "../../../modules/GlobalReducer";
+import { useGlobalTransactions } from "../../../modules/GlobalContext";
 
 
 const { width, height } = Dimensions.get('screen');
@@ -17,19 +20,31 @@ const { width, height } = Dimensions.get('screen');
 
 const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
 
-    const [sorted, setSorted] = useState(null);
+    const [sortedTransactions, setSortedTransactions] = useState(null);
+    const [transactionsDate, setTransactionsDate] = useState(null);
 
     useEffect(() => {
-        // console.log(groupBy(transactions, t => t.details.category_id))
-        // console.log(groupBy([1, 2, 3, 4, 5, 6, 7, 8, 9], v => (v % 2 ? "odd" : "even")))
-        if (transactions) {
-            setSorted(transactions.sort(sortTransactions))
-        }
+        // if (transactions) {
+        //     setSortedTransactions(transactions.sort(sortTransactions))
+        // }
     }, [])
 
     useEffect(() => {
-        console.log(sorted)
-    }, [sorted])
+        if (transactions) {
+            setSortedTransactions(transactions.sort(sortTransactions))
+        }
+
+    }, [transactions])
+
+    useEffect(() => {
+        // console.log(sorted)
+        getDateToArray();
+    }, [sortedTransactions])
+
+    useEffect(() => {
+        // refresh
+    }, [transactionsDate])
+
 
     // ! Function Section //
     // Find Category Icon Name by Id
@@ -44,7 +59,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
                 return filteredIncomeCategory.map((item) => item.icon.name);
             }
         })
-    }, [transactions])
+    }, [categories])
 
     // Find Category Name by Id
     const findCategoryNameById = useMemo(() => {
@@ -62,7 +77,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
                     return mapped[0][0].toUpperCase() + mapped[0].substring(1);
                 }
             })
-    }, [transactions])
+    }, [categories])
 
     // Sort Transactions by Date Descending
     const sortTransactions = useMemo(() => {
@@ -79,22 +94,84 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
         )
     }, [transactions])
 
-    // Array Group By
-    // const groupBy = (x, f) => x.reduce((a, b, i) => ((a[f(b, i, x)] ||= []).push(b), a), {})
-    // const groupByArray = (xs, key) => { return xs.reduce((rv, x) => { let v = key instanceof Function ? key(x) : x[key]; let el = rv.find((r) => r && r.key === v); if (el) { el.values.push(x); } else { rv.push({ key: v, values: [x] }); } return rv; }, []); }
+    // Map Transactions Date to Array
+    const getDateToArray = useMemo(() => {
+        return (
+            () => {
+                if (sortedTransactions) {
+                    const arrDate = sortedTransactions.map((transaction) => { return transaction.details.date })
+                    const localDate = arrDate.map((transaction) => { return new Date(transaction).toLocaleDateString() })
+                    // console.log(localDate)
+                    setTransactionsDate(localDate);
+                }
+            })
+    }, [sortedTransactions])
 
+    const getTransactionsByDate = useMemo(() => {
+        return (
+            (date) => {
+                if (date) {
+                    const found = sortedTransactions.filter((transaction) => new Date(transaction.details.date).toLocaleDateString() === date)
+                    return found.map((transaction) => transaction)
+                }
+            }
+        )
+    }, [sortedTransactions])
 
 
     return (
         <>
 
             <Animated.FlatList
+                data={transactionsDate}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => {
+                    return (
+                        <>
+                            {transactionsDate &&
+                                <View style={{ paddingHorizontal: 16 }}>
+                                    <Text style={[{ ...globalStyles.lightTheme.textSecondary },]}>{item}</Text>
+                                </View>}
+
+                            <Animated.FlatList
+                                data={getTransactionsByDate(item)}
+                                keyExtractor={(item) => item.transaction_id}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <>
+                                            {sortedTransactions &&
+                                                <TouchableNativeFeedback onPress={() => onPress(item)}>
+                                                    <View style={globalStyles.lightTheme.listContainer}>
+                                                        <View style={{ paddingRight: 16 }}>
+                                                            <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} />
+                                                        </View>
+                                                        <View style={globalStyles.lightTheme.listItem}>
+                                                            <Text style={globalStyles.lightTheme.textPrimary}>{findCategoryNameById(item.details.category_id)}</Text>
+                                                            <Text>{new Date(item.details.date).toLocaleDateString()}</Text>
+                                                            <View style={{ flexDirection: 'row' }}>
+                                                                <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
+                                                                <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, locale: 'IDR' })}</Text>
+                                                            </View>
+                                                        </View>
+                                                    </View>
+                                                </TouchableNativeFeedback>
+                                            }
+                                        </>
+                                    )
+                                }}
+                            />
+                        </>
+                    )
+                }}
+            />
+
+            {/* <Animated.FlatList
                 data={transactions.sort(sortTransactions)}
                 keyExtractor={(item) => item.transaction_id}
                 renderItem={({ item }) => {
                     return (
                         <>
-                            {transactions?.length &&
+                            {sortedTransactions &&
                                 <TouchableNativeFeedback onPress={() => onPress(item)}>
                                     <View style={globalStyles.lightTheme.listContainer}>
                                         <View style={{ paddingRight: 16 }}>
@@ -114,7 +191,9 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
                         </>
                     )
                 }}
-            />
+            /> */}
+
+
 
             {!transactions?.length &&
                 <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
@@ -126,9 +205,10 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
 }
 
 
-const TheLogBookScreen = ({ navigation }) => {
+const LogBookScreen = ({ navigation }) => {
 
     // ! useState Section //
+    const { state, dispatch } = useGlobalTransactions();
     const [logbooks, setLogbooks] = useState(null);
     const [categories, setCategories] = useState(null);
     const [transactions, setTransactions] = useState(null);
@@ -139,27 +219,44 @@ const TheLogBookScreen = ({ navigation }) => {
 
     // ! useEffect Section
     useEffect(() => {
-        setLogbooks(userLogBooks);
-        setCategories(userCategories);
-        setTransactions(userTransactions);
+        // setLogbooks(userLogBooks);
+        // setCategories(userCategories);
+        // setTransactions(userTransactions);
     }, [])
 
     useEffect(() => {
         // refresh
         // console.log(logbooks?.length)
         // console.log(logbooks)
-    }, [logbooks])
+        // if (state.logbooks) {
+        //     dispatch({
+        //         type: ACTIONS.LOGBOOKS.SET,
+        //         payload: logbooks
+        //     })
+        // }
+    }, [state.logbooks])
 
 
     useEffect(() => {
         // refresh
         // console.log(categories)
-    }, [categories])
+        // if (state.categories) {
+        //     dispatch({
+        //         type: ACTIONS.CATEGORIES.SET,
+        //         payload: categories
+        //     })
+        // }
+    }, [state.categories])
 
     useEffect(() => {
         // refresh
         // console.log(transactions?.length)
-        logbooksToBeSelected()
+        // logbooksToBeSelected()
+        // dispatch({
+        //     type: ACTIONS.TRANSACTIONS.SET,
+        //     payload: transactions
+        // })
+        // saveFile();
     }, [transactions])
 
     useEffect(() => {
@@ -171,6 +268,7 @@ const TheLogBookScreen = ({ navigation }) => {
     useEffect(() => {
         // refresh
         // console.log(selectedLogbooks)
+        // console.log(state.transactions)
         filterTransactions();
     }, [selectedLogbooks])
 
@@ -178,14 +276,21 @@ const TheLogBookScreen = ({ navigation }) => {
         // refresh
     }, [filteredTransactions])
 
+    useEffect(() => {
+        logbooksToBeSelected();
+        console.log(state?.transactions?.length)
+        console.log(state?.logbooks?.length)
+        // console.log(state?.categories)
+    }, [state])
+
 
     // ! Function Section //
     const logbooksToBeSelected = () => {
         try {
-            if (logbooks && transactions && categories) {
+            if (state.logbooks && state.transactions && state.categories) {
 
                 // set data to be passed in modal
-                setData(logbooks.map((logbook) => ({
+                setData(state.logbooks.map((logbook) => ({
                     name: logbook.logbook_name,
                     logbook_id: logbook.logbook_id,
                     key: logbook.logbook_id
@@ -193,9 +298,9 @@ const TheLogBookScreen = ({ navigation }) => {
 
                 // set initial selected logbook
                 setSelectedLogbooks({
-                    name: logbooks[0].logbook_name,
-                    logbook_id: logbooks[0].logbook_id,
-                    key: logbooks[0].logbook_id
+                    name: state.logbooks[0].logbook_name,
+                    logbook_id: state.logbooks[0].logbook_id,
+                    key: state.logbooks[0].logbook_id
                 })
             }
         } catch (error) {
@@ -205,14 +310,21 @@ const TheLogBookScreen = ({ navigation }) => {
     }
 
     const filterTransactions = () => {
-        if (selectedLogbooks) {
-            const filtered = transactions.filter((transaction) => { return transaction.logbook_id === selectedLogbooks.logbook_id });
+        if (selectedLogbooks && state.transactions) {
+            const filtered = state.transactions.filter((transaction) => { return transaction.logbook_id === selectedLogbooks.logbook_id });
             setFilteredTransactions(filtered.map((transaction) => transaction));
         }
     }
 
+    // Save Transaction File locally
+    const saveFile = async () => {
+        try {
+            await AsyncStorage.setItem('trx', JSON.stringify(transactions))
+        } catch (error) {
+            alert(error)
+        }
+    }
 
-    const scrollX = useRef(new Animated.Value(0)).current
 
     return (
         <>
@@ -228,7 +340,8 @@ const TheLogBookScreen = ({ navigation }) => {
                                 {
                                     title: 'Log Books',
                                     props: data,
-                                    selectedList: (item) => {
+                                    modalType: 'list',
+                                    selected: (item) => {
                                         setSelectedLogbooks(item);
                                     },
                                     default: { name: selectedLogbooks?.name }
@@ -257,7 +370,7 @@ const TheLogBookScreen = ({ navigation }) => {
                     <Transactions
                         logbook_id={selectedLogbooks.logbook_id}
                         transactions={filteredTransactions}
-                        categories={categories}
+                        categories={state.categories}
                         onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item })}
                     />}
             </View>
@@ -265,4 +378,4 @@ const TheLogBookScreen = ({ navigation }) => {
     )
 }
 
-export default TheLogBookScreen;
+export default LogBookScreen;

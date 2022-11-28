@@ -12,8 +12,12 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
+import { useGlobalAppSettings } from "../../../modules/GlobalContext";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
+
+    // ! useContext Section //
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
 
     // ! useState Section //
@@ -21,12 +25,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     // Loading State
     const [isLoading, setLoading] = useState(false)
 
-
-    // Theme State
-    const [theme, setTheme] = useState({
-        theme: 'lightTheme',
-        fontSize: 'medium'
-    })
 
     // Transaction State
     const [transaction, setTransaction] = useState(null)
@@ -207,18 +205,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         }
     }
 
-    // Get Transaction File from storage
-    // const getFile = async () => {
-    //     try {
-    //         const json = await AsyncStorage.getItem('trx');
-    //         if (json != null) {
-    //             setTransaction(JSON.parse(json))
-    //             findCategoryNameById();
-    //         }
-    //     } catch (error) {
-    //         alert(error)
-    //     }
-    // }
 
 
     return (
@@ -269,7 +255,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             {
                                 title: 'Transaction',
                                 props: [{ name: 'expense' }, { name: 'income' }],
-                                selectedList: (item) => {
+                                modalType: 'list',
+                                selected: (item) => {
                                     setTransaction({
                                         ...transaction,
                                         details: {
@@ -308,8 +295,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             'Modal Screen',
                             {
                                 title: 'Type',
+                                modalType: 'list',
                                 props: transaction?.details?.in_out === 'expense' ? [{ name: 'cash' }, { name: 'loan' }] : [{ name: 'cash' }],
-                                selectedList: (item) => { setTransaction({ ...transaction, details: { ...transaction.details, type: item.name } }) },
+                                selected: (item) => { setTransaction({ ...transaction, details: { ...transaction.details, type: item.name } }) },
                                 default: { name: transaction.details.type }
                             })}>
                             <View style={globalStyles.lightTheme.listContainer}>
@@ -362,8 +350,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             'Modal Screen',
                             {
                                 title: 'Log Books',
+                                modalType: 'list',
                                 props: loadedLogbooks,
-                                selectedList: (item) => {
+                                selected: (item) => {
                                     setSelectedLogbook({ name: item.name, logbook_id: item.logbook_id });
                                     setTransaction({
                                         ...transaction,
@@ -379,10 +368,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                     <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>From Book</Text>
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', maxWidth:'50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', maxWidth: '50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
 
                                         {/* // ! Book Picker */}
-                                        <Text numberOfLines={1} style={[{...globalStyles.lightTheme.textPrimary, }, {color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
+                                        <Text numberOfLines={1} style={[{ ...globalStyles.lightTheme.textPrimary, }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
                                             {!selectedLogbook?.name ? 'Pick Logbook' : selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name?.substring(1)}
                                         </Text>
 
@@ -398,8 +387,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             onPress={() => navigation.navigate(
                                 'Modal Screen', {
                                 title: 'Category',
+                                modalType:'list',
                                 props: transaction.details.in_out === 'expense' ? categories.expense : categories.income,
-                                selectedList: (item) => {
+                                selected: (item) => {
                                     setSelectedCategory(item);
                                     setTransaction({
                                         ...transaction,
@@ -417,7 +407,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                     <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Category</Text>
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', maxWidth:'50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', maxWidth: '50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
 
                                         {/* // ! Category Picker */}
                                         <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} />
@@ -483,12 +473,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Cancel Button */}
                         <View style={{ paddingRight: 8 }}>
-                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.goBack()} theme={theme.theme} />
+                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.goBack()} theme={appSettings.theme} />
                         </View>
 
                         {/* // ! Save Button */}
                         <View style={{ paddingLeft: 8 }}>
-                            <ButtonPrimary label='Save' width={150} onPress={() => saveFile() && navigation.goBack()} theme={theme.theme} />
+                            <ButtonPrimary label='Save' width={150} onPress={() => saveFile() && navigation.goBack()} theme={appSettings.theme} />
                         </View>
                     </View>
 

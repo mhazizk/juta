@@ -10,13 +10,13 @@ export const ButtonPrimary = ({ label, props, onPress, condition, theme, width }
     let textButtonStyle;
 
     switch (true) {
-        case theme === 'lightTheme':
+        case theme === 'light':
             buttonStyle = globalStyles.lightTheme.buttonPrimary;
             buttonTheme = globalTheme.lightTheme.buttonPrimary;
             textButtonTheme = globalTheme.lightTheme.textButtonPrimary;
             textButtonStyle = globalStyles.lightTheme.textButtonPrimary;
             break;
-        case theme === 'darkTheme':
+        case theme === 'dark':
             buttonStyle = globalStyles.darkTheme.buttonPrimary;
             buttonTheme = globalTheme.darkTheme.buttonPrimary
             textButtonTheme = globalTheme.darkTheme.textButtonPrimary;
@@ -58,13 +58,13 @@ export const ButtonSecondary = ({ label, props, onPress, condition, theme, width
     let textButtonStyle;
 
     switch (true) {
-        case theme === 'lightTheme':
+        case theme === 'light':
             buttonStyle = globalStyles.lightTheme.buttonSecondary;
             buttonTheme = globalTheme.lightTheme.buttonSecondary;
             textButtonTheme = globalTheme.lightTheme.textbuttonSecondary;
             textButtonStyle = globalStyles.lightTheme.textButtonSecondary;
             break;
-        case theme === 'darkTheme':
+        case theme === 'dark':
             buttonStyle = globalStyles.darkTheme.buttonSecondary;
             buttonTheme = globalTheme.darkTheme.buttonSecondary
             textButtonTheme = globalTheme.darkTheme.textbuttonSecondary;
@@ -110,7 +110,7 @@ export const ButtonSwitch = ({ label, condition, onPress, props, theme, width })
 
 
     switch (true) {
-        case theme === 'lightTheme':
+        case theme === 'light':
             // Did Focus
             buttonDidFocusStyle = globalStyles.lightTheme.buttonPrimary;
             buttonDidFocusTheme = globalTheme.lightTheme.buttonPrimary;
@@ -122,7 +122,7 @@ export const ButtonSwitch = ({ label, condition, onPress, props, theme, width })
             textButtonStyle = globalStyles.lightTheme.textButtonSecondary;
             textButtonNotFocusTheme = globalTheme.lightTheme.textButtonSecondary;
             break;
-        case theme === 'darkTheme':
+        case theme === 'dark':
             // Did Focus
             buttonDidFocusStyle = globalStyles.darkTheme.buttonPrimary;
             buttonDidFocusTheme = globalTheme.darkTheme.buttonPrimary;

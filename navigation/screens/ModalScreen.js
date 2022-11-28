@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, Text, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
+import { FlatList, Text, TextInput, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
@@ -7,13 +7,9 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 
 const ModalScreen = ({ route, navigation }) => {
 
-    const [selected, setSelected] = useState();
+    const [selected, setSelected] = useState(null);
+    const [textInput, setTextInput] = useState(null);
 
-
-    const styleSelection =
-        APP_SETTINGS.THEME.USER == 'light' ?
-            globalStyles :
-            globalStyles.darkTheme
 
     useEffect(() => {
         // refresh
@@ -21,9 +17,15 @@ const ModalScreen = ({ route, navigation }) => {
     }, [selected])
 
     useEffect(() => {
+        // refresh
+        console.log(textInput)
+    }, [textInput])
+
+    useEffect(() => {
         setSelected(route?.params?.default);
-        console.log(route.params.default)
-        console.log(selected)
+        setTextInput(route?.params?.default)
+        // console.log(route.params.default)
+        // console.log(selected)
     }, [])
 
     return (
@@ -48,28 +50,42 @@ const ModalScreen = ({ route, navigation }) => {
                 </View>
 
                 {/* // ! Flatlist Map Params Props */}
-                <FlatList
-                    style={{ ...globalStyles.lightTheme.view }}
-                    data={route?.params?.props}
-                    keyExtractor={(item) => item?.name}
-                    renderItem={({ item }) => (
-                        <>
-                            <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
-                                <View style={{ ...globalStyles.lightTheme.listContainer }}>
-                                    <IonIcons
-                                        name={item?.icon?.name}
-                                        size={18}
-                                        color={item?.icon?.color}
-                                        style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 16 }} />
-                                    <View style={globalStyles.lightTheme.listItem}>
-                                        <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
-                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
+                {route.params?.modalType === 'list' &&
+                    <FlatList
+                        style={{ ...globalStyles.lightTheme.view }}
+                        data={route?.params?.props}
+                        keyExtractor={(item) => item?.name}
+                        renderItem={({ item }) => (
+                            <>
+                                <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
+                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                                        <IonIcons
+                                            name={item?.icon?.name}
+                                            size={18}
+                                            color={item?.icon?.color}
+                                            style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 16 }} />
+                                        <View style={globalStyles.lightTheme.listItem}>
+                                            <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
+                                            <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
+                                        </View>
                                     </View>
-                                </View>
-                            </TouchableNativeFeedback>
-                        </>
-                    )}
-                />
+                                </TouchableNativeFeedback>
+                            </>
+                        )}
+                    />}
+
+                {/* // ! Input Params */}
+                {route.params?.modalType === 'textInput' &&
+                    <View style={{ paddingHorizontal: 16 }}>
+                        <TextInput
+                            style={{ paddingHorizontal: 16, fontSize: 16, borderRadius: 8, borderWidth: 1, height: 48 }}
+                            placeholder={route.params?.placeholder ? route.params.placeholder : 'Type here....'}
+                            defaultValue={route.params?.default ? route.params.default : ''}
+                            value={textInput}
+                            onChangeText={(input) => setTextInput(input)}
+                        />
+                    </View>
+                }
 
                 {/* // ! Action Button */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
@@ -80,7 +96,16 @@ const ModalScreen = ({ route, navigation }) => {
                     </View>
                     {/* // ! Save Button */}
                     <View style={{ paddingLeft: 8 }}>
-                        <ButtonPrimary label='Save' onPress={() => { route.params.selectedList(selected); navigation.goBack() }} theme='lightTheme' />
+                        <ButtonPrimary
+                            label='Save'
+                            onPress={
+                                route.params?.modalType === 'list' ?
+                                    () => { route.params.selected(selected); navigation.goBack() } :
+                                    route.params?.modalType === 'textInput' ?
+                                        () => { route.params.selected(textInput); navigation.goBack() } :
+                                        () => { navigation.goBack() }
+                            }
+                            theme='lightTheme' />
                     </View>
                 </View>
             </View>
