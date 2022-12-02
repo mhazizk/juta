@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 // import formatCurrency from "../../../assets/formatCurrency";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 import Intl from 'intl';
@@ -10,8 +10,14 @@ import IonIcons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
+import { useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
+
+    // ! Global State Section //
+    const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+    const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+
 
     // ! useState Section //
 
@@ -170,14 +176,14 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>From Book</Text>
 
                         {/* // ! Container */}
-                        <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
+                        {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 2, alignItems: 'center', justifyContent: 'center' }]}> */}
 
-                            {/* // ! Book Picker */}
-                            <Text style={globalStyles.lightTheme.textPrimary}>
-                                {selectedLogbook?.name[0]?.toUpperCase() + selectedLogbook?.name?.substring(1)}
-                            </Text>
+                        {/* // ! Book Picker */}
+                        <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textPrimary, flex: 2, textAlign: 'right' }}>
+                            {selectedLogbook?.name[0]?.toUpperCase() + selectedLogbook?.name?.substring(1)}
+                        </Text>
 
-                        </View>
+                        {/* </View> */}
                     </View>
 
 
@@ -198,7 +204,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     </View>
 
                     {/* // ! Notes Section */}
-                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
+                    <View style={{ ...globalStyles.lightTheme.view, flexDirection: 'row', alignItems: 'flex-start', minHeight: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                         <IonIcons name='document-text' size={18} style={{ paddingRight: 16 }} />
                         <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Notes</Text>
 
@@ -207,7 +213,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                         {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
                         {/* // ! Notes Input */}
-                        <Text style={globalStyles.lightTheme.textPrimary}>{transaction.details.notes ? transaction.details.notes : 'No notes'}</Text>
+                        <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1, textAlign: 'right' }}>{transaction.details.notes ? transaction.details.notes : 'No notes'}</Text>
                         {/* </View> */}
                     </View>
 
@@ -233,7 +239,34 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                         {/* // ! Delete Button */}
                         <View style={{ paddingLeft: 8 }}>
-                            <ButtonSecondary label='Delete' width={150} onPress={() => navigation.navigate('Transaction Details Screen')} theme={theme.theme} />
+                            <ButtonSecondary
+                                label='Delete'
+                                type='danger'
+                                width={150}
+                                theme={theme.theme}
+                                onPress={() => Alert.alert(
+                                    'Delete Transaction',
+                                    'Are you sure you want to delete this transaction ?',
+                                    [
+                                        {
+                                            text: 'No',
+                                            onPress: () => {
+                                            }, style: 'cancel'
+                                        },
+                                        {
+                                            text: 'Yes',
+                                            onPress: () => {
+                                                navigation.navigate('Loading Screen', {
+                                                    label: 'Deleting Transaction ...',
+                                                    loadingType: 'deleteOneTransaction',
+                                                    transaction_id: transaction.transaction_id,
+                                                    initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
+                                                    initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
+                                                })
+                                            }
+                                        }], { cancelable: false }
+                                )}
+                            />
                         </View>
 
                         {/* // ! Save Button */}

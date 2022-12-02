@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
-import { Text, View, Dimensions, FlatList, Animated, findNodeHandle, TouchableNativeFeedback, TouchableOpacity, ActivityIndicator, SectionList } from "react-native";
+import { Text, View, Dimensions, FlatList, findNodeHandle, TouchableNativeFeedback, TouchableOpacity, ActivityIndicator, SectionList } from "react-native";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -11,12 +11,13 @@ import 'intl/locale-data/jsonp/en';
 import { ACTIONS, globalTransactions, initialTransactions } from "../../../modules/GlobalReducer";
 import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { setSortedTransactions } from "../../../modules/FetchData";
+import Checkbox from 'expo-checkbox'
 
 
 const { width, height } = Dimensions.get('screen');
 
 
-const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
+const Transactions = ({ logbook_id, transactions, categories, onPress, checkListMode }) => {
 
     // ! useState Section //
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -24,6 +25,8 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
     const [transactionsDate, setTransactionsDate] = useState(null);
     const [groupSortedTransactions, setGroupSortedTransactions] = useState(null);
     const [date, setDate] = useState(null);
+    const [checkList, setCheckList] = useState(null);
+    const [enableChecklistMode, setEnableCheckListMode] = useState(false);
 
     // ! useEffect Section //
     useEffect(() => {
@@ -59,6 +62,20 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
         // refresh
         // console.log(groupSortedTransactions)
     }, [groupSortedTransactions])
+
+    useEffect(() => {
+
+        // checkListMode({ mode: enableChecklistMode, length: 0 })
+
+    }, [enableChecklistMode])
+
+    useEffect(() => {
+        // console.log(checkList)
+        // if (checkList) {
+        //     checkListMode({ mode: enableChecklistMode, length: checkList.length })
+        // }
+    }, [checkList])
+
 
 
 
@@ -150,12 +167,60 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
         )
     }, [date, transactions])
 
+
+
     // console.log(groupByCategory)
 
     return (
         <>
+
+            {/* CheckList Mode */}
+            {enableChecklistMode &&
+                <View style={[{ zIndex: 1000, position: 'absolute', width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 0 }, { backgroundColor: '#ddd' }]}>
+                    <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{!checkList || !checkList.length ? 'Nothing' : `${checkList.length} item(s)`} selected</Text>
+
+                    <View style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
+
+                        {/* // ! Clear Selection */}
+                        <TouchableOpacity
+                            onPress={() => setEnableCheckListMode(!enableChecklistMode)}
+                        >
+                            <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <IonIcons name="close-circle" size={20} style={{ paddingRight: 8 }} />
+                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>Clear Selection</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* // ! Delete Selection */}
+                        {/* <TouchableOpacity
+                            onPress={() => setEnableCheckListMode(!enableChecklistMode)}
+                        >
+                            <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <IonIcons name="trash" size={20} style={{ paddingRight: 8 }} />
+                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>Delete Selection</Text>
+                            </View>
+                        </TouchableOpacity> */}
+
+                        {/* // ! Move Selection */}
+                        {/* <TouchableOpacity
+                            onPress={() => setEnableCheckListMode(!enableChecklistMode)}
+                        >
+                            <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <IonIcons name="book" size={20} style={{ paddingRight: 8 }} />
+                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>Move To Book</Text>
+                            </View>
+                        </TouchableOpacity> */}
+                    </View>
+                </View>}
+
+
             {transactions &&
                 <SectionList
+                    initialNumToRender={20}
+                    maxToRenderPerBatch={20}
+                    windowSize={7}
+                    updateCellsBatchingPeriod={1000}
+                    // removeClippedSubviews
                     sections={transactions}
                     keyExtractor={(item, index) => index.toString()}
                     stickySectionHeadersEnabled
@@ -184,17 +249,59 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
                             <>
                                 {/* <Text>{item.details.amount}</Text> */}
                                 {transactions &&
-                                    <TouchableNativeFeedback onPress={() => onPress(item)}>
+                                    <TouchableNativeFeedback
+                                        delayPressIn={0}
+                                        onPress={
+                                            !enableChecklistMode ?
+                                                () => onPress(item) :
+                                                () => !checkList ? setCheckList([item.transaction_id]) :
+                                                    checkList?.some((checked) => checked === item.transaction_id) ?
+                                                        setCheckList(checkList?.filter((checked) => checked !== item.transaction_id)) :
+                                                        setCheckList([...checkList, item.transaction_id])
+                                            // () => console.log(item.transaction_id)
+
+                                        }
+                                        onLongPress={() => {
+                                            setEnableCheckListMode(!enableChecklistMode);
+                                            setCheckList(null)
+                                        }}
+                                        delayLongPress={200}
+                                    >
                                         <View style={globalStyles.lightTheme.listContainer}>
-                                            <View style={{ paddingRight: 16 }}>
-                                                <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} />
-                                            </View>
                                             <View style={globalStyles.lightTheme.listItem}>
-                                                <Text style={globalStyles.lightTheme.textPrimary}>{findCategoryNameById(item.details.category_id)}</Text>
-                                                {/* <Text>{new Date(item.details.date).toLocaleDateString()}</Text> */}
-                                                <View style={{ flexDirection: 'row' }}>
-                                                    <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
-                                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, locale: 'IDR' })}</Text>
+
+                                                {enableChecklistMode &&
+                                                    <View style={{
+                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? '#000' : undefined,
+                                                        height: 20,
+                                                        width: 20,
+                                                        borderColor: checkList?.some((checked) => checked === item.transaction_id) ? undefined : '#bbb',
+                                                        borderWidth: 1,
+                                                        borderRadius: 8,
+                                                        marginRight: 16,
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <IonIcons name={checkList?.some((checked) => checked === item.transaction_id) ? 'checkmark-sharp' : undefined} size={16} color='#fff' />
+                                                    </View>}
+                                                <View style={{ paddingRight: 16 }}>
+                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} />
+                                                </View>
+
+                                                <View style={globalStyles.lightTheme.listItem}>
+                                                    {/* With Notes On */}
+                                                    <View style={{ flex: 1, paddingRight: 16 }}>
+                                                        <Text style={globalStyles.lightTheme.textPrimary}>{findCategoryNameById(item.details.category_id)}</Text>
+                                                        {item.details.notes &&
+                                                            <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{item.details.notes}</Text>}
+                                                    </View>
+
+
+                                                    {/* <Text>{new Date(item.details.date).toLocaleDateString()}</Text> */}
+                                                    <View style={{ flexDirection: 'row' }}>
+                                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
+                                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, locale: 'IDR' })}</Text>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </View>
@@ -207,11 +314,13 @@ const Transactions = ({ logbook_id, transactions, categories, onPress }) => {
                 />}
 
 
-            {!transactions.length &&
+            {
+                !transactions.length &&
                 <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                     <Entypo name='documents' size={48} color='#bbb' style={{ padding: 16 }} />
                     <Text style={{ ...globalStyles.lightTheme.textSecondary }}>No Transactions</Text>
-                </View>}
+                </View>
+            }
         </>
     )
 }
@@ -229,6 +338,7 @@ const LogBookScreen = ({ navigation }) => {
     const [data, setData] = useState(null)
     const [selectedLogbooks, setSelectedLogbooks] = useState(null);
     const [filteredTransactions, setFilteredTransactions] = useState(null);
+    const [checkListMode, setCheckListMode] = useState({ mode: false, length: 0 });
 
 
     // ! useEffect Section
@@ -288,32 +398,41 @@ const LogBookScreen = ({ navigation }) => {
 
     }, [isLoading])
 
+    useEffect(() => {
+        // console.log(checkListMode)
+    }, [checkListMode])
+
 
     // ! Function Section //
-    const logbooksToBeSelected = () => {
-        try {
-            if (rawTransactions.logbooks && sortedTransactions && rawTransactions.categories) {
+    const logbooksToBeSelected = useMemo(() => {
+        return (
+            () => {
+                try {
+                    if (rawTransactions.logbooks && sortedTransactions && rawTransactions.categories) {
 
-                // set data to be passed in modal
-                setData(rawTransactions.logbooks.map((logbook) => ({
-                    name: logbook.logbook_name,
-                    logbook_id: logbook.logbook_id,
-                    key: logbook.logbook_id
-                })))
+                        // set data to be passed in modal
+                        setData(rawTransactions.logbooks.map((logbook) => ({
+                            name: logbook.logbook_name,
+                            logbook_id: logbook.logbook_id,
+                            key: logbook.logbook_id
+                        })))
 
-                // set initial selected logbook
-                setSelectedLogbooks({
-                    name: rawTransactions.logbooks[0].logbook_name,
-                    logbook_id: rawTransactions.logbooks[0].logbook_id,
-                    key: rawTransactions.logbooks[0].logbook_id
-                })
+                        // set initial selected logbook
+                        setSelectedLogbooks({
+                            name: rawTransactions.logbooks[0].logbook_name,
+                            logbook_id: rawTransactions.logbooks[0].logbook_id,
+                            key: rawTransactions.logbooks[0].logbook_id
+                        })
+
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
 
             }
-        } catch (error) {
-            console.log(error)
-        }
+        )
 
-    }
+    })
 
     const filterTransactions = useMemo(() => {
         return (
@@ -324,7 +443,7 @@ const LogBookScreen = ({ navigation }) => {
                 }
             }
         )
-    })
+    }, [selectedLogbooks, sortedTransactions])
 
     const countTransactions = (filtered) => {
         let array = [];
@@ -371,6 +490,12 @@ const LogBookScreen = ({ navigation }) => {
                         </View>
                     </View>}
 
+                {/* CheckList Mode */}
+                {/* {checkListMode.mode &&
+                    <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 8 }]}>
+                        <Text style={{ ...globalStyles.lightTheme.textSecondary }}>{checkListMode.length} selected</Text>
+                    </View>} */}
+
 
                 {/* Transaction Render */}
                 {!isLoading.status && filteredTransactions &&
@@ -379,6 +504,7 @@ const LogBookScreen = ({ navigation }) => {
                         transactions={filteredTransactions}
                         categories={rawTransactions.categories}
                         onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item })}
+                        checkListMode={(item) => setCheckListMode(item)}
                     />}
 
                 {/* Loading data indicator */}

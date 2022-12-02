@@ -50,7 +50,7 @@ export const ButtonPrimary = ({ label, props, onPress, condition, theme, width }
 }
 
 // ! Button Secondary //
-export const ButtonSecondary = ({ label, props, onPress, condition, theme, width }) => {
+export const ButtonSecondary = ({ label, props, type, onPress, condition, theme, width }) => {
 
     let buttonStyle;
     let buttonTheme;

@@ -9,13 +9,17 @@ export const ACTIONS = {
     SORTED_TRANSACTIONS: {
         GROUP_SORTED: {
             SET: 'SET_SORTED_TRANSACTIONS',
+
             CLEAR: 'CLEAR_SORTED_TRANSACTIONS'
         }
     },
     TRANSACTIONS: {
         SET: 'SET_TRANSACTIONS',
         INSERT: 'INSERT_TRANSACTION',
+        PATCH: 'PATCH_TRANSACTION',
         LOAD: 'LOAD_TRANSACTIONS',
+        DELETE_ONE: 'DELETE_ONE_TRANSACTIONS',
+        DELETE_MANY: 'DELETE_MANY_TRANSACTIONS',
         CLEAR: 'CLEAR_TRANSACTIONS'
     },
     GROUPED_TRANSACTIONS: {
@@ -94,7 +98,10 @@ export const ACTIONS = {
 }
 
 export const initialSortedTransactions = {
-    groupSorted: null
+    groupSorted: null,
+    sortedTransactionsInsertCounter: 0,
+    sortedTransactionsPatchCounter: 0,
+    sortedTransactionsDeleteCounter: 0
     //     groupSorted: [
     //         {
     //             logbook1: [
@@ -176,7 +183,46 @@ export const initialLoading = {
 export const globalSortedTransactions = (state, action) => {
     switch (action.type) {
         case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET:
-            return { groupSorted: action.payload }
+            let array = [];
+            let insert;
+            let patch;
+            let deleted;
+
+            // if (action.payload) {
+            action.payload.forEach(
+                (logbook) => logbook.transactions.forEach(
+                    (section) => section.data.forEach(
+                        (transaction) => array.push(transaction.transaction_id))))
+            // }
+
+            // Increment insert counter
+            if (!state.sortedTransactionsInsertCounter) {
+                insert = 1
+            } else {
+                insert = state.sortedTransactionsInsertCounter + 1
+            }
+
+            // Increment patch counter
+            if (!state.sortedTransactionsPatchCounter) {
+                patch = 1
+            } else {
+                patch = state.sortedTransactionsPatchCounter + 1
+            }
+
+            // Increment delete counter
+            if (!state.sortedTransactionsDeleteCounter) {
+                deleted = 1
+            } else {
+                deleted = state.sortedTransactionsDeleteCounter + 1
+            }
+
+
+            return {
+                groupSorted: action.payload,
+                sortedTransactionsInsertCounter: insert,
+                sortedTransactionsPatchCounter: patch,
+                sortedTransactionsDeleteCounter: deleted
+            }
 
         default:
             return state;
@@ -190,11 +236,62 @@ export const globalTransactions = (state, action) => {
         // ! Transactions
         // Set Transactions
         case ACTIONS.TRANSACTIONS.SET:
-            return { ...state, transactions: action.payload }
-        // Insert New Transaction
+            return {
+                ...state,
+                transactions: action.payload,
+                transactionsPatchCounter: 0,
+                transactionsInsertCounter: 0
+            }
+        // ! Insert New Transaction
         case ACTIONS.TRANSACTIONS.INSERT:
-            return { ...state, transactions: [...state.transactions, action.payload] }
-        // Clear Transactions
+
+            let insertedArray = [...state.transactions, action.payload]
+            let count;
+
+            if (!state.transactionsInsertCounter) {
+                count = 1
+            } else {
+                count = state.transactionsInsertCounter + 1
+            }
+            return {
+                ...state,
+                transactions: insertedArray,
+                transactionsInsertCounter: count
+            }
+
+        // ! Patch Transaction
+        case ACTIONS.TRANSACTIONS.PATCH:
+            const filter = state.transactions.filter((transaction) => { return transaction.transaction_id !== action.payload.transaction_id })
+            const pushed = [...filter, action.payload]
+            let patched
+            if (!state.transactionsPatchCounter) {
+                patched = 1
+            } else {
+                patched = state.transactionsPatchCounter + 1
+            }
+            return {
+                ...state,
+                transactions: pushed,
+                transactionsPatchCounter: patched,
+            }
+
+        // ! Delete One Transaction
+        case ACTIONS.TRANSACTIONS.DELETE_ONE:
+            const deleteFiltered = state.transactions.filter((transaction) => { return transaction.transaction_id !== action.payload })
+            let deleted
+            if (!state.transactionsDeleteCounter) {
+                deleted = 1
+            } else {
+                deleted = state.transactionsDeleteCounter + 1
+            }
+
+            return {
+                ...state,
+                transactions: deleteFiltered,
+                transactionsDeleteCounter: deleted
+            }
+
+        // ! Clear Transactions
         case ACTIONS.TRANSACTIONS.CLEAR:
             return { ...state, transactions: null }
 
@@ -206,7 +303,11 @@ export const globalTransactions = (state, action) => {
         // ! Logbooks
         // Set Logbooks
         case ACTIONS.LOGBOOKS.SET:
-            return { ...state, logbooks: action.payload }
+            return {
+                ...state,
+                logbooks: action.payload,
+                logbooksLength: action.payload.length
+            }
         // Clear Logbooks
         case ACTIONS.LOGBOOKS.SET:
             return { ...state, logbooks: null }
@@ -222,7 +323,17 @@ export const globalTransactions = (state, action) => {
         // ! Multiple Actions
         // Set Initial Transactions, Logbooks, and Catogories
         case ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS:
-            return { ...state, ...action.payload }
+            return {
+                ...state,
+                transactions: action.payload.transactions,
+                transactionsPatchCounter: 0,
+                transactionsInsertCounter: 0,
+                transactionsDeleteCounter: 0,
+                logbooks: action.payload.logbooks,
+                logbooksPatchCounter: 0,
+                logbooksLength: action.payload.logbooks.length,
+                categories: action.payload.categories
+            }
 
         default:
             return state;

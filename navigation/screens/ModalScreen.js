@@ -4,9 +4,12 @@ import { globalStyles, globalTheme } from "../../assets/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import { useGlobalLoading } from "../../modules/GlobalContext";
+import { ACTIONS } from "../../modules/GlobalReducer";
 
 const ModalScreen = ({ route, navigation }) => {
 
+    const { isLoading, dispatchLoading } = useGlobalLoading();
     const [selected, setSelected] = useState(null);
     const [textInput, setTextInput] = useState(null);
 
@@ -42,7 +45,8 @@ const ModalScreen = ({ route, navigation }) => {
                     ...globalStyles.lightTheme.view,
                     display: 'flex',
                     justifyContent: 'flex-start',
-                    maxHeight: '50%'
+                    maxHeight: '50%',
+                    borderRadius: 16
                     // flex:1
                 }}>
                 <View style={{ padding: 16 }}>
@@ -100,9 +104,13 @@ const ModalScreen = ({ route, navigation }) => {
                             label='Save'
                             onPress={
                                 route.params?.modalType === 'list' ?
-                                    () => { route.params.selected(selected); navigation.goBack() } :
+                                    () => {
+                                        route.params.selected(selected); navigation.goBack()
+                                    } :
                                     route.params?.modalType === 'textInput' ?
-                                        () => { route.params.selected(textInput); navigation.goBack() } :
+                                        () => {
+                                            route.params.selected(textInput); navigation.goBack()
+                                        } :
                                         () => { navigation.goBack() }
                             }
                             theme='lightTheme' />

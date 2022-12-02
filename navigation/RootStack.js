@@ -5,7 +5,7 @@ import ActionScreen from "./screens/ActionScreen";
 import ModalScreen from "./screens/ModalScreen";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import TransactionPreviewScreen from "./screens/home/TransactionPreviewScreen";
-import TransactionDetailsScreen from "./screens/home/TransactionDetailsScreen";
+import EditTransactionDetailsScreen from "./screens/home/EditTransactionDetailsScreen";
 import { useEffect, useMemo } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGlobalUserAccount, useGlobalAppSettings, useGlobalTransactions, useGlobalSortedTransactions, useGlobalLoading } from "../modules/GlobalContext";
@@ -217,7 +217,7 @@ const RootStack = ({ navigation }) => {
                     // </TouchableOpacity> */}
                     // </>)
                 }}
-                name={screens.transactionDetailsScreen} component={TransactionDetailsScreen} />
+                name={screens.transactionDetailsScreen} component={EditTransactionDetailsScreen} />
 
             {/* // ! New Transaction Details Screen */}
             <Stack.Screen
@@ -234,6 +234,7 @@ const RootStack = ({ navigation }) => {
             {/* // ! Action Screen */}
             <Stack.Screen
                 options={{
+                    gestureEnabled: false,
                     presentation: 'transparentModal',
                     headerShown: false,
                     cardOverlayEnabled: true,

@@ -17,7 +17,7 @@ import userTransactions from "../../../database/userTransactions";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import { setSortedTransactions } from "../../../modules/FetchData";
 
-const TransactionDetailsScreen = ({ route, navigation }) => {
+const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
     // ! useContext Section //
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -121,101 +121,15 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
 
     // Check Initial Transaction from Preview Screen
     const checkInitialTransaction = useMemo(() => {
-        return (() => {
-
-            if (!route?.params?.transaction) {
-                setTransaction({
-                    "details": {
-                        "in_out": 'expense',
-                        "amount": 0,
-                        "type": null,
-                        "date": null,
-                        "notes": null,
-                        "category_id": null,
-                    },
-                    "_timestamps": {
-                        "created_at": Date.now(),
-                        "updated_at": Date.now()
-                    },
-                    "_id": Date.now(),
-                    "logbook_id": null,
-                    "transaction_id": String(Math.random() * Date.now()),
-                },
-                );
-
-                setSelectedCategory({});
-                setSelectedLogbook({});
-            } else {
+        return (
+            () => {
                 setTransaction(route?.params?.transaction);
                 setSelectedCategory(route?.params?.selectedCategory);
                 setSelectedLogbook(route?.params?.selectedLogbook);
             }
 
-        }
         )
     })
-
-
-    // Find Category Name by Id
-    // const findCategoryNameById = () => {
-    //     if (transaction) {
-    //         const id = transaction.details.category_id;
-    //         const foundExpenseCategory = categories.expense.filter((category) => { return category.id === id });
-    //         const foundIncomeCategory = categories.income.filter((category) => { return category.id === id });
-
-    //         if (foundExpenseCategory.length) {
-    //             setSelectedCategory(foundExpenseCategory[0]);
-    //         } else {
-    //             setSelectedCategory(foundIncomeCategory[0]);
-    //         }
-    //     }
-
-    // }
-
-    // Find Category Name by Id
-    // const findCategoryName = useMemo(() => {
-    //     return (
-    //         (id) => {
-    //             const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === id })
-    //             const filteredIncomeCategory = categories.income.filter((category) => { return category.id === id })
-
-    //             if (filteredExpenseCategory.length) {
-    //                 const mapped = filteredExpenseCategory.map((item => item.name));
-    //                 // console.log(mapped[0])
-    //                 return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-    //             } else {
-    //                 const mapped = filteredIncomeCategory.map((item) => item.name);
-    //                 return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-    //             }
-    //         })
-    // }, [transaction])
-
-    // Find Log Book Name by Id
-    // const findLogbookNamebyId = useMemo(() => {
-    //     return (
-    //         () => {
-    //             if (transaction) {
-    //                 const found = logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
-    //                 setSelectedLogbook(found[0])
-    //             }
-    //         }
-    //     )
-    // })
-
-
-    // Save Transaction File locally
-    const saveFile = async () => {
-        try {
-            await AsyncStorage.setItem('transactions', JSON.stringify(rawTransactions.transactions),
-                dispatchSortedTransactions({
-                    type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-                    payload: await setSortedTransactions()
-                })
-            )
-        } catch (error) {
-            alert(error)
-        }
-    }
 
 
     return (
@@ -233,7 +147,7 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                                 returnKeyType='done'
                                 keyboardType='number-pad'
                                 placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
-                                style={[{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}
+                                style={[{ ...globalStyles.lightTheme.textPrimary, paddingLeft: 0, paddingVertical: 16, paddingRight: 16, minHeight: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}
                                 onChangeText={(string) => {
                                     const float =
                                         string ?
@@ -484,7 +398,15 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Cancel Button */}
                         <View style={{ paddingRight: 8 }}>
-                            <ButtonSecondary label='Cancel' width={150} onPress={() => navigation.goBack()} theme={appSettings.theme} />
+                            <ButtonSecondary
+                                label='Cancel'
+                                width={150}
+                                theme={appSettings.theme}
+                                onPress={() => {
+                                    // setRawTransactionsLength(null)
+                                    navigation.navigate('Bottom Tab')
+                                }}
+                            />
                         </View>
 
                         {/* // ! Save Button */}
@@ -494,17 +416,27 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                                 theme={appSettings.theme}
                                 width={150}
                                 onPress={() => {
-                                    dispatchRawTransactions({
-                                        type: ACTIONS.TRANSACTIONS.INSERT,
-                                        payload: transaction
+
+                                    setTransaction({
+                                        ...transaction,
+                                        _timestamps: {
+                                            ...transaction._timestamps,
+                                            updated_at: Date.now()
+                                        }
                                     })
-                                    // dispatchSortedTransactions({
-                                    //     type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-                                    //     payload: await setSortedTransactions()
-                                    // })
-                                    saveFile();
-                                    navigation.goBack()
-                                }} />
+                                    // console.log(rawTransactions.transactionsLength)
+                                    navigation.navigate('Loading Screen', {
+                                        label: 'Saving ...',
+                                        loadingType: 'saveEditedTransaction',
+                                        transaction: transaction,
+                                        initialTransactionsPatchCounter: rawTransactions.transactionsPatchCounter,
+                                        initialSortedTransactionsPatchCounter: sortedTransactions.sortedTransactionsPatchCounter
+                                    })
+
+
+                                }
+                                }
+                            />
                         </View>
                     </View>
 
@@ -513,4 +445,4 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
     )
 }
 
-export default TransactionDetailsScreen;
+export default EditTransactionDetailsScreen;

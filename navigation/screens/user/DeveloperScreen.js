@@ -13,6 +13,7 @@ import userCategories from "../../../database/userCategories";
 import userTransactions from "../../../database/userTransactions";
 import { ScrollView } from "react-native-gesture-handler";
 import { setSortedTransactions } from "../../../modules/FetchData";
+import LargeJSONTransactions from '../../../database/largeTransactions.json'
 
 const DeveloperScreen = ({ item, navigation }) => {
 
@@ -29,6 +30,16 @@ const DeveloperScreen = ({ item, navigation }) => {
         console.log(loaded)
     }, [loaded])
 
+    // Save Transaction File to storage
+    const saveLargeJSONTransactions = async () => {
+        try {
+            await AsyncStorage.setItem('transactions', JSON.stringify(LargeJSONTransactions))
+                .then(() => console.log('saved'))
+
+        } catch (error) {
+            alert(error)
+        }
+    }
     // Save Transaction File to storage
     const saveTransactions = async () => {
         try {
@@ -129,6 +140,17 @@ const DeveloperScreen = ({ item, navigation }) => {
                     <View style={{ backgroundColor: '#fff', padding: 16 }}>
                         <Text style={{ fontSize: 32, color: '#bbb' }}>Developer</Text>
                     </View>
+
+                    {/* // ! Save Large Transactions to Storage */}
+                    <TouchableNativeFeedback
+                        onPress={() => saveLargeJSONTransactions()}>
+                        <View style={styles.flatListView}>
+                            <IonIcons name='download' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Save 1000 Transactions JSON to AsyncStorage</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
 
                     {/* // ! Save Transactions to Storage */}
                     <TouchableNativeFeedback

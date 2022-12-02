@@ -45,7 +45,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     const [date, setDate] = useState(new Date())
 
     // Transactions Length State
-    const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
+    // const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
 
 
     // ! useEffect Section //
@@ -76,7 +76,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             payload: false
         })
 
-        setRawTransactionsLength(null)
+        // setRawTransactionsLength(null)
 
     }, [])
 
@@ -99,25 +99,25 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         // console.log(loadedLogbooks)
     }, [loadedLogbooks])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-    }, [rawTransactionsLength])
+    // }, [rawTransactionsLength])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (!rawTransactionsLength) {
-            setRawTransactionsLength(rawTransactions.transactions.length)
-        }
+    //     if (!rawTransactionsLength) {
+    //         setRawTransactionsLength(rawTransactions.transactions.length)
+    //     }
 
-        if (rawTransactionsLength && rawTransactionsLength < rawTransactions.transactions.length) {
+    // if (rawTransactionsLength && rawTransactionsLength < rawTransactions.transactions.length) {
 
-            setRawTransactionsLength(null);
+    //     setRawTransactionsLength(null);
 
-            saveFile();
+    //     saveFile();
 
-        }
+    // }
 
-    }, [rawTransactions.transactions])
+    // }, [rawTransactions.transactions])
 
     // ! useRef State //
     const inputNotes = useRef(null);
@@ -155,35 +155,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     const insertNameInUserLogBook = () => {
         const inserted = logbooks.map((logbook) => ({ ...logbook, name: logbook.logbook_name }));
         setLoadedLogbooks(inserted);
-    }
-
-
-    // Save Transaction File locally
-    const saveFile = async () => {
-
-        try {
-
-            // console.log(rawTransactions.transactions.length)
-            await AsyncStorage.setItem('transactions', JSON.stringify(rawTransactions.transactions),
-                async () => {
-                    const newSorted = await setSortedTransactions(rawTransactions.transactions);
-
-                    dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-                        payload: newSorted
-                    })
-
-                    dispatchLoading({
-                        type: ACTIONS.LOADING.SET,
-                        payload: false
-                    })
-
-                    navigation.navigate('Bottom Tab')
-                }
-            )
-        } catch (error) {
-            alert(error)
-        }
     }
 
 
@@ -458,7 +429,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 width={150}
                                 theme={appSettings.theme}
                                 onPress={() => {
-                                    setRawTransactionsLength(null)
+                                    // setRawTransactionsLength(null)
                                     navigation.navigate('Bottom Tab')
                                 }}
                             />
@@ -472,24 +443,15 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 width={150}
                                 onPress={() => {
 
+                                    // console.log(rawTransactions.transactionsLength)
                                     navigation.navigate('Loading Screen', {
-                                        label: 'Saving ...'
+                                        label: 'Saving ...',
+                                        loadingType:'saveNewTransaction',
+                                        transaction: transaction,
+                                        initialTransactionsInsertCounter: rawTransactions.transactionsInsertCounter,
+                                        initialSortedTransactionsInsertCounter: sortedTransactions.sortedTransactionsInsertCounter
                                     })
 
-                                    dispatchRawTransactions({
-                                        type: ACTIONS.TRANSACTIONS.INSERT,
-                                        payload: transaction
-                                    })
-
-
-                                    // dispatchLoading({
-                                    //     type: ACTIONS.LOADING.SET,
-                                    //     payload: true
-                                    // })
-
-                                    // // Set Loading
-
-                                    // // Push into transactions array
 
                                 }
                                 }
