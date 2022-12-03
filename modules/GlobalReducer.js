@@ -1,5 +1,26 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
+const sortTransactions = (prevTransaction, currentTransaction) => {
+    if (prevTransaction.details.date < currentTransaction.details.date) {
+        return 1;
+    }
+    if (prevTransaction.details.date > currentTransaction.details.date) {
+        return -1;
+    }
+    return 0;
+}
+
+const sortLogbookTransactions = (prevDateTransaction, currentDateTransaction) => {
+    if (prevDateTransaction.customDate < currentDateTransaction.customDate) {
+        return 1;
+    }
+    if (prevDateTransaction.customDate > currentDateTransaction.customDate) {
+        return -1;
+    }
+    return 0;
+}
+
+
 export const ACTIONS = {
     MULTI_ACTIONS: {
         SET_INIT_TRANSACTIONS: 'SET_INIT_TRANSACTIONS',
@@ -9,7 +30,7 @@ export const ACTIONS = {
     SORTED_TRANSACTIONS: {
         GROUP_SORTED: {
             SET: 'SET_SORTED_TRANSACTIONS',
-
+            INSERT: 'INSERT_SORTED_TRANSACTIONS',
             CLEAR: 'CLEAR_SORTED_TRANSACTIONS'
         }
     },
@@ -98,53 +119,10 @@ export const ACTIONS = {
 }
 
 export const initialSortedTransactions = {
-    groupSorted: null,
     sortedTransactionsInsertCounter: 0,
     sortedTransactionsPatchCounter: 0,
-    sortedTransactionsDeleteCounter: 0
-    //     groupSorted: [
-    //         {
-    //             logbook1: [
-    //                 {
-    //                     title: 'date',
-    //                     data: [
-    //                         { transaction1 },
-    //                         { transaction2 },
-    //                         { transaction3 },
-    //                     ]
-    //                 },
-    //                 {
-    //                     title: 'date',
-    //                     data: [
-    //                         { transaction1 },
-    //                         { transaction2 },
-    //                         { transaction3 },
-    //                     ]
-    //                 },
-    //             ]
-    //         },
-    //         {
-    //             logbook2: [
-    //                 {
-    //                     title: 'date',
-    //                     data: [
-    //                         { transaction1 },
-    //                         { transaction2 },
-    //                         { transaction3 },
-    //                     ]
-    //                 },
-    //                 {
-    //                     title: 'date',
-    //                     data: [
-    //                         { transaction1 },
-    //                         { transaction2 },
-    //                         { transaction3 },
-    //                     ]
-    //                 },
-    //             ]
-    //         },
-    //         { logbook3: [] }
-    //     ]
+    sortedTransactionsDeleteCounter: 0,
+    groupSorted: null
 }
 
 export const initialTransactions = null
@@ -223,6 +201,90 @@ export const globalSortedTransactions = (state, action) => {
                 sortedTransactionsPatchCounter: patch,
                 sortedTransactionsDeleteCounter: deleted
             }
+
+
+        // ! Insert New Transaction Method
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT:
+
+            const newTransaction = action.payload;
+            const customDate = `${new Date(newTransaction.details.date).getFullYear()}/${('0' + (new Date(newTransaction.details.date).getMonth() + 1)).slice(-2)}/${('0' + new Date(newTransaction.details.date).getDate()).slice(-2)}`
+            let groupSortedToBeReplaced;
+
+            // ! Check logbook
+            if (state.groupSorted.some((logbooks) => logbooks.logbook_id === newTransaction.logbook_id)) {
+
+                // Get logboook section
+                const foundLogbook = state.groupSorted.filter((logbook) => logbook.logbook_id === newTransaction.logbook_id)
+                const foundOtherLogbooks = state.groupSorted.filter((logbook) => logbook.logbook_id !== newTransaction.logbook_id)
+                console.log('first')
+
+
+                // Check date and Get date section
+                const foundDateSection = foundLogbook[0].transactions.filter((dateSection) => dateSection.customDate === customDate)
+                const foundOtherDateSection = foundLogbook[0].transactions.filter((dateSection) => dateSection.customDate !== customDate)
+                console.log('second')
+
+                // !  If transaction has new date
+                if (!foundDateSection.length) {
+
+                    // Create new date section
+                    const newDateSection = {
+                        title: new Date(newTransaction.details.date).toLocaleDateString(),
+                        customDate: `${new Date(newTransaction.details.date).getFullYear()}/${('0' + (new Date(newTransaction.details.date).getMonth() + 1)).slice(-2)}/${('0' + new Date(newTransaction.details.date).getDate()).slice(-2)}`,
+                        data: [newTransaction]
+                    };
+
+                    // Insert new date section in logbook
+                    // Replace initial logbook transactions with new section
+                    const mergeLogbookTransactions = [...foundOtherDateSection, newDateSection]
+                    const sortedLogbookTransactions = mergeLogbookTransactions.sort(sortLogbookTransactions)
+                    // console.log(foundOtherDateSection)
+                    const logbookToBeReplaced = { ...foundLogbook[0], transactions: sortedLogbookTransactions }
+                    console.log('sixth')
+                    console.log(logbookToBeReplaced)
+
+                    // Rebuild new sorted transactions
+                    groupSortedToBeReplaced = [...foundOtherLogbooks, logbookToBeReplaced]
+                    console.log(groupSortedToBeReplaced)
+                }
+
+
+                // ! If transaction has same date
+                if (foundDateSection.length) {
+
+                    // Insert new transaction
+                    const insertedTransactions = [...foundDateSection[0].data, newTransaction]
+                    console.log('third')
+
+                    // Sort new inserted transactions
+                    const sortedDateSectionTransactions = insertedTransactions.sort(sortTransactions)
+                    console.log('forth')
+
+                    // Replace initial transactions data with sorted transactions
+                    const sectionToBeInserted = { ...foundDateSection[0], data: sortedDateSectionTransactions }
+                    console.log('fifth')
+
+                    // Replace initial logbook transactions with new section
+                    const mergeLogbookTransactions = [...foundOtherDateSection, sectionToBeInserted]
+                    const sortedLogbookTransactions = mergeLogbookTransactions.sort(sortLogbookTransactions)
+                    // console.log(foundOtherDateSection)
+                    const logbookToBeReplaced = { ...foundLogbook[0], transactions: sortedLogbookTransactions }
+                    console.log('sixth')
+                    console.log(logbookToBeReplaced)
+
+                    // Rebuild new sorted transactions
+                    groupSortedToBeReplaced = [...foundOtherLogbooks, logbookToBeReplaced]
+                    console.log(groupSortedToBeReplaced)
+                }
+
+            }
+
+            return {
+                ...state,
+                groupSorted: groupSortedToBeReplaced,
+                sortedTransactionsInsertCounter: state.sortedTransactionsInsertCounter + 1
+            }
+
 
         default:
             return state;

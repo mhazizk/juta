@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, Text, TextInput, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
@@ -10,6 +10,7 @@ import { ACTIONS } from "../../modules/GlobalReducer";
 const ModalScreen = ({ route, navigation }) => {
 
     const { isLoading, dispatchLoading } = useGlobalLoading();
+    const [localLoading, setLocalLoading] = useState(false);
     const [selected, setSelected] = useState(null);
     const [textInput, setTextInput] = useState(null);
 
@@ -23,6 +24,10 @@ const ModalScreen = ({ route, navigation }) => {
         // refresh
         console.log(textInput)
     }, [textInput])
+
+    useEffect(()=>{
+
+    },[localLoading])
 
     useEffect(() => {
         setSelected(route?.params?.default);
@@ -46,7 +51,8 @@ const ModalScreen = ({ route, navigation }) => {
                     display: 'flex',
                     justifyContent: 'flex-start',
                     maxHeight: '50%',
-                    borderRadius: 16
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16
                     // flex:1
                 }}>
                 <View style={{ padding: 16 }}>
@@ -100,20 +106,36 @@ const ModalScreen = ({ route, navigation }) => {
                     </View>
                     {/* // ! Save Button */}
                     <View style={{ paddingLeft: 8 }}>
-                        <ButtonPrimary
-                            label='Save'
-                            onPress={
-                                route.params?.modalType === 'list' ?
-                                    () => {
-                                        route.params.selected(selected); navigation.goBack()
-                                    } :
-                                    route.params?.modalType === 'textInput' ?
+
+                        {/* {localLoading && */}
+                            {/* <ActivityIndicator
+                                size={32}
+                                color='#fff'
+                                style={{ backgroundColor: '#bbb', borderRadius: 8, height: 48, width: 80 }}
+                            /> */}
+                            {/* } */}
+
+                        {/* {!localLoading && */}
+                            <ButtonPrimary
+                                label='Save'
+                                onPress={
+                                    route.params?.modalType === 'list' ?
                                         () => {
-                                            route.params.selected(textInput); navigation.goBack()
+                                            // dispatchLoading({
+                                            //     type: ACTIONS.LOADING.SET,
+                                            //     payload: true
+                                            // })
+                                            // setLocalLoading(true)
+                                            route.params.selected(selected); navigation.goBack()
                                         } :
-                                        () => { navigation.goBack() }
-                            }
-                            theme='lightTheme' />
+                                        route.params?.modalType === 'textInput' ?
+                                            () => {
+                                                route.params.selected(textInput); navigation.goBack()
+                                            } :
+                                            () => { navigation.goBack() }
+                                }
+                                theme='lightTheme' />
+                                {/* } */}
                     </View>
                 </View>
             </View>

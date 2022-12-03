@@ -444,14 +444,27 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 onPress={() => {
 
                                     // console.log(rawTransactions.transactionsLength)
+                                    // navigation.navigate('Loading Screen', {
+                                    //     label: 'Saving ...',
+                                    //     loadingType:'saveNewTransaction',
+                                    //     transaction: transaction,
+                                    //     initialTransactionsInsertCounter: rawTransactions.transactionsInsertCounter,
+                                    //     initialSortedTransactionsInsertCounter: sortedTransactions.sortedTransactionsInsertCounter
+                                    // })
+
                                     navigation.navigate('Loading Screen', {
                                         label: 'Saving ...',
-                                        loadingType:'saveNewTransaction',
+                                        loadingType:'insertTransaction',
                                         transaction: transaction,
-                                        initialTransactionsInsertCounter: rawTransactions.transactionsInsertCounter,
                                         initialSortedTransactionsInsertCounter: sortedTransactions.sortedTransactionsInsertCounter
                                     })
 
+                                    // dispatchSortedTransactions({
+                                    //     type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT,
+                                    //     payload: transaction
+                                    // })
+
+                                    // navigation.navigate('Bottom Tab')
 
                                 }
                                 }

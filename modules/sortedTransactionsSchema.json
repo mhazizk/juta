@@ -1,0 +1,269 @@
+    {
+        "groupSorted": [
+            {
+                "logbook_id": "logbook_id",
+                "transactions": [
+                    {
+                        "title": "localeDateString",
+                        "customDate": "YYYY-MM-DD",
+                        "data": [
+                            {
+                                "details": {
+                                    "in_out": "expense",
+                                    "amount": 0,
+                                    "type": null,
+                                    "date": null,
+                                    "notes": null,
+                                    "category_id": null
+                                },
+                                "_timestamps": {
+                                    "created_at": "epoch",
+                                    "updated_at": "epoch"
+                                },
+                                "_id": "string",
+                                "logbook_id": "string",
+                                "transaction_id": "string"
+                            },
+                            {
+                                "transaction2": "transaction2"
+                            },
+                            {
+                                "transaction3": "transaction3"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "localeDateString",
+                        "customDate": "YYYY-MM-DD",
+                        "data": [
+                            {
+                                "transaction1": "transaction1"
+                            },
+                            {
+                                "transaction2": "transaction2"
+                            },
+                            {
+                                "transaction3": "transaction3"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "logbook_id": "logbook_id",
+                "transactions": [
+                    {
+                        "title": "localeDateString",
+                        "customDate": "YYYY-MM-DD",
+                        "data": [
+                            {
+                                "transaction1": "transaction1"
+                            },
+                            {
+                                "transaction2": "transaction2"
+                            },
+                            {
+                                "transaction3": "transaction3"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "localeDateString",
+                        "customDate": "YYYY-MM-DD",
+                        "data": [
+                            {
+                                "transaction1": "transaction1"
+                            },
+                            {
+                                "transaction2": "transaction2"
+                            },
+                            {
+                                "transaction3": "transaction3"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "logbook_id": "logbook_id",
+                "transactions": [
+                    {
+                        "title": "localeDateString",
+                        "customDate": "YYYY-MM-DD",
+                        "data": [
+                            {
+                                "transaction1": "transaction1"
+                            },
+                            {
+                                "transaction2": "transaction2"
+                            },
+                            {
+                                "transaction3": "transaction3"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+
+
+    [
+        {
+            "logbook_id": "logbook2",
+            "transactions": [
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook3",
+            "transactions": [
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook1",
+            "transactions": {
+                "customDate": "2022/11/03",
+                "data": [Array
+                ],
+                "title": "12/3/2022"
+            }
+        }
+    ]
+
+
+
+
+
+    {
+        "logbook_id": "logbook1",
+        "transactions": [
+            {
+                "customDate": "2022/12/03",
+                "data": [Array
+                ],
+                "title": "12/3/2022"
+            },
+            {
+                "customDate": "2022/12/02",
+                "data": [Array
+                ],
+                "title": "12/2/2022"
+            },
+            {
+                "customDate": "2022/12/01",
+                "data": [Array
+                ],
+                "title": "12/1/2022"
+            },
+            {
+                "customDate": "2022/11/28",
+                "data": [Array
+                ],
+                "title": "11/28/2022"
+            },
+            {
+                "customDate": "2022/11/25",
+                "data": [Array
+                ],
+                "title": "11/25/2022"
+            },
+            {
+                "customDate": "2022/07/01",
+                "data": [Array
+                ],
+                "title": "7/1/2022"
+            },
+            {
+                "customDate": "2022/04/08",
+                "data": [Array
+                ],
+                "title": "4/8/2022"
+            },
+            {
+                "customDate": "2022/03/16",
+                "data": [Array
+                ],
+                "title": "3/16/2022"
+            },
+            {
+                "customDate": "2022/02/09",
+                "data": [Array
+                ],
+                "title": "2/9/2022"
+            },
+            {
+                "customDate": "2021/02/16",
+                "data": [Array
+                ],
+                "title": "2/16/2021"
+            },
+            {
+                "customDate": "2021/01/23",
+                "data": [Array
+                ],
+                "title": "1/23/2021"
+            }
+        ]
+    }
+
+
+    [
+        {
+            "logbook_id": "logbook2",
+            "transactions": [
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook3",
+            "transactions": [
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook1",
+            "transactions": [
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ]
+            ]
+        }
+    ]

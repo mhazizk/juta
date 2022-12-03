@@ -272,10 +272,10 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
 
                                                 {enableChecklistMode &&
                                                     <View style={{
-                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? '#000' : undefined,
+                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? '#000' : 'transparent',
                                                         height: 20,
                                                         width: 20,
-                                                        borderColor: checkList?.some((checked) => checked === item.transaction_id) ? undefined : '#bbb',
+                                                        borderColor: checkList?.some((checked) => checked === item.transaction_id) ? 'transparent' : '#bbb',
                                                         borderWidth: 1,
                                                         borderRadius: 8,
                                                         marginRight: 16,
@@ -468,6 +468,9 @@ const LogBookScreen = ({ navigation }) => {
                                     props: data,
                                     modalType: 'list',
                                     selected: (item) => {
+                                        // navigation.navigate('Loading Screen', {
+                                        //     loadingType: 'switchLogBook'
+                                        // })
                                         setSelectedLogbooks(item);
                                     },
                                     default: { name: selectedLogbooks?.name }

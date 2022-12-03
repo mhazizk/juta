@@ -6,6 +6,16 @@ import { ACTIONS } from "./GlobalReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 
+// ! Convert and Save Transaction File
+export const convertAndSaveTransctions = async (sortedTransactions) => {
+    if (sortedTransactions) {
+        // Get all transactions
+        const transactionsToBeSaved = [];
+        const getAllTransactions = sortedTransactions.groupSorted.forEach((logbook) => logbook.transactions.forEach((dateSection) => dateSection.data.forEach((transaction) => transactionsToBeSaved.push(transaction))))
+        await AsyncStorage.setItem('transactions', JSON.stringify(transactionsToBeSaved),alert('saved'))
+    }
+}
+
 // ! Get Transaction File from storage
 export const getTransactionsFromStorage = async () => {
     try {
@@ -98,7 +108,12 @@ const mergeTransactionsByLogbook = ({ groupedByLogbook, groupedTransactionsByDat
 const groupByDate = (array) => {
     if (array) {
         const grouped = Object.values(array.reduce((group, transaction) => {
-            group[new Date(transaction.details.date).toLocaleDateString()] = group[new Date(transaction.details.date).toLocaleDateString()] || { title: new Date(transaction.details.date).toLocaleDateString(), data: [] };
+            group[new Date(transaction.details.date).toLocaleDateString()] = group[new Date(transaction.details.date).toLocaleDateString()] ||
+            {
+                title: new Date(transaction.details.date).toLocaleDateString(),
+                customDate: `${new Date(transaction.details.date).getFullYear()}/${('0' + (new Date(transaction.details.date).getMonth() + 1)).slice(-2)}/${('0' + new Date(transaction.details.date).getDate()).slice(-2)}`,
+                data: []
+            };
             group[new Date(transaction.details.date).toLocaleDateString()].data.push(transaction);
             return group;
         }, {}))
@@ -174,6 +189,18 @@ export const setSortedTransactions = async (updatedTransactions = null) => {
 
         })
         .catch((error) => console.log(error))
+}
+
+
+
+// ! Modify Sorted Transactions Data //
+const modifySortedTransactions = async ({ newTransaction, patchTransaction, deleteTransaction }) => {
+
+    const newTrx = newTransaction ? newTransaction : null
+    const patchTrx = patchTransaction ? patchTransaction : null
+    const deleteTrx = deleteTransaction ? deleteTransaction : null
+
+    // New Transactions
 }
 
 

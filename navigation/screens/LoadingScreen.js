@@ -6,7 +6,7 @@ import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
-import { setSortedTransactions } from "../../modules/FetchData";
+import { convertAndSaveTransctions, setSortedTransactions } from "../../modules/FetchData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -23,6 +23,8 @@ const LoadingScreen = ({ route, navigation }) => {
 
         // console.log({ onLoad: route.params.initialRawTransactionsLength })
 
+
+        // ! Transaction Timeout
         setTimeout(
             () => {
 
@@ -53,8 +55,27 @@ const LoadingScreen = ({ route, navigation }) => {
                     })
                 }
 
+                // ! New Insert Transaction Method
+                if (route?.params?.transaction && route?.params?.loadingType === 'insertTransaction') {
+                    dispatchSortedTransactions({
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT,
+                        payload: route?.params?.transaction
+                    })
+                }
+
+
+                // ! Switch LogBook Timeout
+                if (route?.params?.loadingType === 'switchLogBook') {
+                    setTimeout(
+                        () => {
+                            navigation.navigate('Bottom Tab')
+                        }
+                        , 1000)
+
+                }
 
             }
+
 
             , 100)
 
@@ -65,6 +86,17 @@ const LoadingScreen = ({ route, navigation }) => {
     //         navigation.navigate('Bottom Tab')
     //     }
     // }, [isLoading.status])
+
+    // ! New Insert Transaction Method
+    useEffect(() => {
+        if (sortedTransactions.sortedTransactionsInsertCounter > route?.params?.initialSortedTransactionsInsertCounter
+            && route?.params?.loadingType === 'insertTransaction') {
+            navigation.navigate('Bottom Tab')
+            // convertAndSaveTransctions(sortedTransactions);
+        }
+    }, [sortedTransactions.sortedTransactionsInsertCounter])
+
+
 
 
     // ! Insert Transaction Method
@@ -79,15 +111,15 @@ const LoadingScreen = ({ route, navigation }) => {
     }, [rawTransactions.transactionsInsertCounter])
 
     // ! Insert Sorted Transaction Method
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (sortedTransactions.sortedTransactionsInsertCounter > route?.params?.initialSortedTransactionsInsertCounter
-            && route?.params?.loadingType === 'saveNewTransaction') {
-            console.log('render 4')
-            navigation.navigate('Bottom Tab')
-        }
+    //     if (sortedTransactions.sortedTransactionsInsertCounter > route?.params?.initialSortedTransactionsInsertCounter
+    //         && route?.params?.loadingType === 'saveNewTransaction') {
+    //         console.log('render 4')
+    //         navigation.navigate('Bottom Tab')
+    //     }
 
-    }, [sortedTransactions.sortedTransactionsInsertCounter])
+    // }, [sortedTransactions.sortedTransactionsInsertCounter])
 
     // ! Patch Transaction Method
     useEffect(() => {
@@ -164,7 +196,8 @@ const LoadingScreen = ({ route, navigation }) => {
                     alignItems: 'center',
                     maxHeight: '50%',
                     paddingVertical: 24,
-                    borderRadius: 16
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16
                     // flex:1
                 }}>
                 <ActivityIndicator size={48} color='#000' style={{ paddingBottom: 16 }} />
