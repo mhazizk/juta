@@ -32,6 +32,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     // Transaction State
     const [transaction, setTransaction] = useState(null)
 
+    // Previous Transaction State
+    const [prevTransaction, setPrevTransaction] = useState(null)
 
     // Logbook State
     const [selectedLogbook, setSelectedLogbook] = useState(null)
@@ -59,10 +61,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         // refresh
-        console.log(transaction)
+        // console.log(transaction)
         // findCategoryNameById();
         // findCategoryNameById();
     }, [transaction])
+
+    useEffect(() => {
+        console.log(prevTransaction)
+    }, [prevTransaction])
 
     useEffect(() => {
         // refresh
@@ -123,6 +129,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     const checkInitialTransaction = useMemo(() => {
         return (
             () => {
+                setPrevTransaction(route?.params?.transaction);
                 setTransaction(route?.params?.transaction);
                 setSelectedCategory(route?.params?.selectedCategory);
                 setSelectedLogbook(route?.params?.selectedLogbook);
@@ -425,11 +432,18 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                         }
                                     })
                                     // console.log(rawTransactions.transactionsLength)
+                                    // navigation.navigate('Loading Screen', {
+                                    //     label: 'Saving ...',
+                                    //     loadingType: 'saveEditedTransaction',
+                                    //     transaction: transaction,
+                                    //     initialTransactionsPatchCounter: rawTransactions.transactionsPatchCounter,
+                                    //     initialSortedTransactionsPatchCounter: sortedTransactions.sortedTransactionsPatchCounter
+                                    // })
                                     navigation.navigate('Loading Screen', {
                                         label: 'Saving ...',
-                                        loadingType: 'saveEditedTransaction',
-                                        transaction: transaction,
-                                        initialTransactionsPatchCounter: rawTransactions.transactionsPatchCounter,
+                                        loadingType: 'patchTransaction',
+                                        patchTransaction: transaction,
+                                        prevTransaction: prevTransaction,
                                         initialSortedTransactionsPatchCounter: sortedTransactions.sortedTransactionsPatchCounter
                                     })
 

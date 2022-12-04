@@ -160,7 +160,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                         return `${new Date(data).toLocaleDateString(appSettings.language.locale, { month: 'long' })} ${new Date(data).getDate()}`
                     default:
                         return (
-                            `${new Date(data).toLocaleDateString(appSettings.language.locale, { month: 'long' })}, ${new Date(data).toLocaleDateString(appSettings.language.locale, { dateStyle: 'short' })}`
+                            `${new Date(data).toLocaleDateString(appSettings.language.locale, { month: 'long' })}, ${new Date(data).toLocaleDateString(appSettings.language.locale, { day: '2-digit', year: 'numeric' })}`
                         )
                 }
             }
@@ -232,6 +232,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                                     {/* Date Title */}
                                     <Text style={{ ...globalStyles.lightTheme.textSecondary }}>
                                         {checkDate(section.title)}
+                                        {/* {section.customDate} */}
                                     </Text>
 
                                     {/* Sum Amount */}
@@ -291,7 +292,12 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                                                 <View style={globalStyles.lightTheme.listItem}>
                                                     {/* With Notes On */}
                                                     <View style={{ flex: 1, paddingRight: 16 }}>
-                                                        <Text style={globalStyles.lightTheme.textPrimary}>{findCategoryNameById(item.details.category_id)}</Text>
+                                                        <View style={{ flex: 0, flexDirection: 'row', alignItems: 'center', paddingRight: 16 }}>
+                                                            <Text style={[{ marginRight: 8 }, { ...globalStyles.lightTheme.textPrimary }]}>{findCategoryNameById(item.details.category_id)}</Text>
+                                                            <IonIcons name="ellipse" color='#ddd' size={8} />
+                                                            {item.details.date &&
+                                                                <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginLeft: 6 }}>{new Date(item.details.date).toLocaleTimeString(appSettings.language.locale, { hour: '2-digit', minute: '2-digit' })}</Text>}
+                                                        </View>
                                                         {item.details.notes &&
                                                             <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{item.details.notes}</Text>}
                                                     </View>

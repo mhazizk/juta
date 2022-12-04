@@ -63,6 +63,17 @@ const LoadingScreen = ({ route, navigation }) => {
                     })
                 }
 
+                // ! New Patch Transaction Method
+                if (route?.params?.patchTransaction && route?.params?.prevTransaction && route?.params?.loadingType === 'patchTransaction') {
+                    dispatchSortedTransactions({
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH,
+                        payload: {
+                            prevTransaction: route?.params?.prevTransaction,
+                            patchTransaction: route?.params?.patchTransaction,
+                        }
+                    })
+                }
+
 
                 // ! Switch LogBook Timeout
                 if (route?.params?.loadingType === 'switchLogBook') {
@@ -96,6 +107,18 @@ const LoadingScreen = ({ route, navigation }) => {
         }
     }, [sortedTransactions.sortedTransactionsInsertCounter])
 
+
+    // ! New Patch Sorted Transaction Method
+    useEffect(() => {
+
+        // console.log(rawTransactions.transactionsPatchedInSession > route?.params?.initialTransactionsPatchedLength)
+        if (sortedTransactions.sortedTransactionsPatchCounter > route?.params?.initialSortedTransactionsPatchCounter
+            && route?.params?.loadingType === 'patchTransaction') {
+            console.log('render 4')
+            navigation.navigate('Bottom Tab')
+        }
+
+    }, [sortedTransactions.sortedTransactionsPatchCounter])
 
 
 
