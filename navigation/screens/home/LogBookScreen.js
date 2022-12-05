@@ -220,6 +220,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                     maxToRenderPerBatch={20}
                     windowSize={7}
                     updateCellsBatchingPeriod={1000}
+                    contentContainerStyle={{ paddingBottom: 16 }}
                     // removeClippedSubviews
                     sections={transactions}
                     keyExtractor={(item, index) => index.toString()}
@@ -332,7 +333,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
 }
 
 
-const LogBookScreen = ({ navigation }) => {
+const LogBookScreen = ({ route, navigation }) => {
 
     // ! useState Section //
     const { isLoading, dispatchLoading } = useGlobalLoading();
@@ -423,13 +424,15 @@ const LogBookScreen = ({ navigation }) => {
                             key: logbook.logbook_id
                         })))
 
+                        !sortedTransactions?.logbookToOpen ?
+                            setSelectedLogbooks({
+                                name: rawTransactions.logbooks[0].logbook_name,
+                                logbook_id: rawTransactions.logbooks[0].logbook_id,
+                                key: rawTransactions.logbooks[0].logbook_id
+                            }) :
+                            // set initial selected logbook
+                            setSelectedLogbooks(sortedTransactions.logbookToOpen)
                         // set initial selected logbook
-                        setSelectedLogbooks({
-                            name: rawTransactions.logbooks[0].logbook_name,
-                            logbook_id: rawTransactions.logbooks[0].logbook_id,
-                            key: rawTransactions.logbooks[0].logbook_id
-                        })
-
                     }
                 } catch (error) {
                     console.log(error)

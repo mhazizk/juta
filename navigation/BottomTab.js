@@ -27,7 +27,7 @@ const stacks = {
 
 const Tab = createBottomTabNavigator();
 
-const BottomTab = ({ navigation }) => {
+const BottomTab = ({ route, navigation }) => {
     const [activeTab, setActiveTab] = useState();
 
     return (
@@ -77,7 +77,9 @@ const BottomTab = ({ navigation }) => {
                 }
             >
                 <Tab.Screen options={{ title: 'Dashboard' }} name={stacks.dashboardStack} component={DashboardStack} />
-                <Tab.Screen options={{ title: 'Log Book' }} name={stacks.logBookStack} component={LogBooksStack} />
+                <Tab.Screen options={{ title: 'Log Book' }}
+                    name={stacks.logBookStack}
+                    component={LogBooksStack} />
                 <Tab.Screen options={{
                     tabBarItemStyle: { alignSelf: 'center', marginBottom: 28, height: 64 },
                     tabBarActiveTintColor: '#fff'

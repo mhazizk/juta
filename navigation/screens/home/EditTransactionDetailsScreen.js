@@ -24,6 +24,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const [logbookToOpen, setLogbookToOpen] = useState(null);
 
     // ! useState Section //
 
@@ -79,11 +80,27 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     useEffect(() => {
         // refresh
         console.log(selectedLogbook)
+        if (selectedLogbook) {
+
+            setLogbookToOpen(
+                {
+                    name: selectedLogbook.name,
+                    logbook_id: transaction.logbook_id,
+                    key: transaction.logbook_id
+                }
+            )
+
+        }
+
     }, [selectedLogbook])
 
     useEffect(() => {
         // console.log(loadedLogbooks)
     }, [loadedLogbooks])
+
+    useEffect(() => {
+        console.log(logbookToOpen)
+    }, [logbookToOpen])
 
 
     // ! useRef State //
@@ -442,8 +459,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                     navigation.navigate('Loading Screen', {
                                         label: 'Saving ...',
                                         loadingType: 'patchTransaction',
+                                        logbookToOpen: logbookToOpen,
                                         patchTransaction: transaction,
                                         prevTransaction: prevTransaction,
+                                        logbookToOpen: logbookToOpen,
                                         initialSortedTransactionsPatchCounter: sortedTransactions.sortedTransactionsPatchCounter
                                     })
 

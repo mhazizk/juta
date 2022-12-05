@@ -33,6 +33,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     // Selected Logbook State
     const [selectedLogbook, setSelectedLogbook] = useState(null)
 
+    const [logbookToOpen, setLogbookToOpen] = useState(null);
+
     // logbook_id : null
     // logbook_name: null
 
@@ -62,7 +64,9 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
         // refresh
     }, [selectedLogbook])
 
+    useEffect(() => {
 
+    }, [logbookToOpen])
 
     // ! Function Section //
     // Find Category Name by Id
@@ -111,6 +115,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 if (transaction) {
                     const found = logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
                     setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
+                    // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
                 }
             }
         )
@@ -256,11 +261,18 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                                         {
                                             text: 'Yes',
                                             onPress: () => {
+                                                // navigation.navigate('Loading Screen', {
+                                                //     label: 'Deleting Transaction ...',
+                                                //     loadingType: 'deleteOneTransaction',
+                                                //     transaction_id: transaction.transaction_id,
+                                                //     initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
+                                                //     initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
+                                                // })
                                                 navigation.navigate('Loading Screen', {
                                                     label: 'Deleting Transaction ...',
                                                     loadingType: 'deleteOneTransaction',
-                                                    transaction_id: transaction.transaction_id,
-                                                    initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
+                                                    deleteTransaction: transaction,
+                                                    logbookToOpen: selectedLogbook,
                                                     initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
                                                 })
                                             }

@@ -443,28 +443,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 width={150}
                                 onPress={() => {
 
-                                    // console.log(rawTransactions.transactionsLength)
-                                    // navigation.navigate('Loading Screen', {
-                                    //     label: 'Saving ...',
-                                    //     loadingType:'saveNewTransaction',
-                                    //     transaction: transaction,
-                                    //     initialTransactionsInsertCounter: rawTransactions.transactionsInsertCounter,
-                                    //     initialSortedTransactionsInsertCounter: sortedTransactions.sortedTransactionsInsertCounter
-                                    // })
-
                                     navigation.navigate('Loading Screen', {
                                         label: 'Saving ...',
-                                        loadingType:'insertTransaction',
+                                        loadingType: 'insertTransaction',
                                         transaction: transaction,
+                                        logbookToOpen: selectedLogbook,
                                         initialSortedTransactionsInsertCounter: sortedTransactions.sortedTransactionsInsertCounter
                                     })
-
-                                    // dispatchSortedTransactions({
-                                    //     type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT,
-                                    //     payload: transaction
-                                    // })
-
-                                    // navigation.navigate('Bottom Tab')
 
                                 }
                                 }

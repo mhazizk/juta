@@ -28,38 +28,14 @@ const LoadingScreen = ({ route, navigation }) => {
         setTimeout(
             () => {
 
-                // ! Save New Transaction
-                if (route?.params?.transaction && route?.params?.loadingType === 'saveNewTransaction') {
-                    console.log('render 1')
-                    dispatchRawTransactions({
-                        type: ACTIONS.TRANSACTIONS.INSERT,
-                        payload: route?.params?.transaction
-                    })
-                }
-
-                // ! Save Edited Transaction
-                if (route?.params?.transaction && route?.params?.loadingType === 'saveEditedTransaction') {
-                    console.log('render 1')
-                    dispatchRawTransactions({
-                        type: ACTIONS.TRANSACTIONS.PATCH,
-                        payload: route?.params?.transaction
-                    })
-                }
-
-                // ! Delete One Transaction
-                if (route?.params?.transaction_id && route?.params?.loadingType === 'deleteOneTransaction') {
-                    console.log('render 1')
-                    dispatchRawTransactions({
-                        type: ACTIONS.TRANSACTIONS.DELETE_ONE,
-                        payload: route?.params?.transaction_id
-                    })
-                }
-
                 // ! New Insert Transaction Method
                 if (route?.params?.transaction && route?.params?.loadingType === 'insertTransaction') {
                     dispatchSortedTransactions({
                         type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT,
-                        payload: route?.params?.transaction
+                        payload: {
+                            transaction: route?.params?.transaction,
+                            logbookToOpen: route?.params?.logbookToOpen
+                        }
                     })
                 }
 
@@ -70,6 +46,18 @@ const LoadingScreen = ({ route, navigation }) => {
                         payload: {
                             prevTransaction: route?.params?.prevTransaction,
                             patchTransaction: route?.params?.patchTransaction,
+                            logbookToOpen: route?.params?.logbookToOpen
+                        }
+                    })
+                }
+
+                // ! New Delete One Transaction Method
+                if (route?.params?.deleteTransaction && route?.params?.loadingType === 'deleteOneTransaction') {
+                    dispatchSortedTransactions({
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE,
+                        payload: {
+                            deleteTransaction: route?.params?.deleteTransaction,
+                            logbookToOpen: route?.params?.logbookToOpen
                         }
                     })
                 }
@@ -86,7 +74,6 @@ const LoadingScreen = ({ route, navigation }) => {
                 }
 
             }
-
 
             , 100)
 
@@ -114,75 +101,18 @@ const LoadingScreen = ({ route, navigation }) => {
         // console.log(rawTransactions.transactionsPatchedInSession > route?.params?.initialTransactionsPatchedLength)
         if (sortedTransactions.sortedTransactionsPatchCounter > route?.params?.initialSortedTransactionsPatchCounter
             && route?.params?.loadingType === 'patchTransaction') {
-            console.log('render 4')
+            // console.log(route?.params?.logbookToOpen)
             navigation.navigate('Bottom Tab')
         }
 
     }, [sortedTransactions.sortedTransactionsPatchCounter])
 
 
-
-    // ! Insert Transaction Method
+    // ! New Delete One Transaction Method
     useEffect(() => {
-        // console.log(rawTransactions.transactionsLength, route?.params?.initialRawTransactionsLength)
-        // console.log({ check: rawTransactions.transactionsInsertCounter, init: route?.params?.initialTransactionsInsertCounter })
-        if (rawTransactions.transactionsInsertCounter > route?.params?.initialTransactionsInsertCounter
-            && route?.params?.loadingType === 'saveNewTransaction') {
-            console.log('render 2')
-            saveAndLoad()
-        }
-    }, [rawTransactions.transactionsInsertCounter])
-
-    // ! Insert Sorted Transaction Method
-    // useEffect(() => {
-
-    //     if (sortedTransactions.sortedTransactionsInsertCounter > route?.params?.initialSortedTransactionsInsertCounter
-    //         && route?.params?.loadingType === 'saveNewTransaction') {
-    //         console.log('render 4')
-    //         navigation.navigate('Bottom Tab')
-    //     }
-
-    // }, [sortedTransactions.sortedTransactionsInsertCounter])
-
-    // ! Patch Transaction Method
-    useEffect(() => {
-        // console.log({ useeffect: rawTransactions.transactionsPatchedInSession })
-        if (rawTransactions.transactionsPatchCounter > route?.params?.initialTransactionsPatchCounter
-            && route?.params?.loadingType === 'saveEditedTransaction') {
-            console.log('render 2')
-            saveAndLoad()
-        }
-    }, [rawTransactions.transactionsPatchCounter])
-
-
-
-    // ! Patch Sorted Transaction Method
-    useEffect(() => {
-
-        // console.log(rawTransactions.transactionsPatchedInSession > route?.params?.initialTransactionsPatchedLength)
-        if (sortedTransactions.sortedTransactionsPatchCounter > route?.params?.initialSortedTransactionsPatchCounter
-            && route?.params?.loadingType === 'saveEditedTransaction') {
-            console.log('render 4')
-            navigation.navigate('Bottom Tab')
-        }
-
-    }, [sortedTransactions.sortedTransactionsPatchCounter])
-
-
-    // ! Delete One Transaction
-    useEffect(() => {
-        if (rawTransactions.transactionsDeleteCounter > route.params?.initialTransactionsDeleteCounter
+        if (sortedTransactions.sortedTransactionsDeleteCounter > route?.params?.initialSortedTransactionsDeleteCounter
             && route?.params?.loadingType === 'deleteOneTransaction') {
-            console.log('render 2')
-            saveAndLoad();
-        }
-    }, [rawTransactions.transactionsDeleteCounter])
-
-
-    useEffect(() => {
-        if (sortedTransactions.sortedTransactionsDeleteCounter > route.params?.initialSortedTransactionsDeleteCounter
-            && route?.params?.loadingType === 'deleteOneTransaction') {
-            console.log('render 4')
+            // console.log('render 4')
             navigation.navigate('Bottom Tab')
         }
     }, [sortedTransactions.sortedTransactionsDeleteCounter])

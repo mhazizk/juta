@@ -4,6 +4,7 @@ import HomeScreen from "./screens/home/HomeScreen";
 import NewLogScreen from "./screens/home/NewLogScreen";
 import TransactionDetailsScreen from "./screens/home/oldTransactionDetailsScreen";
 import LogBookScreen from "./screens/home/LogBookScreen";
+import { useEffect } from "react";
 
 const Stack = createStackNavigator();
 
@@ -13,11 +14,28 @@ const screens = {
     recordScreen: 'Record Details Screen'
 }
 
-const LogBooksStack = () => {
+const LogBooksStack = ({ route }) => {
+
 
     return (
-        <Stack.Navigator initialRouteName={screens.logBookScreen}>
-            <Stack.Screen options={{title:'Log Books'}} name={screens.logBookScreen} component={LogBookScreen} />
+        <Stack.Navigator
+            initialRouteName={screens.logBookScreen}
+            screenOptions={{
+                headerMode: 'float'
+            }}
+        >
+            <Stack.Screen options={{
+                title: 'Log Books',
+                // headerLeft: (leftHeader) => (
+                //     <>
+                //     </>
+                // )
+
+            }}
+                name={screens.logBookScreen}
+                component={LogBookScreen} />
+
+
             <Stack.Screen name={screens.newLogScreen} component={NewLogScreen} />
             {/* <Stack.Screen options={{title:'Edit Record'}}name={screens.recordScreen} component={RecordDetailsScreen} /> */}
         </Stack.Navigator>

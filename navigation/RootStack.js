@@ -16,6 +16,7 @@ import { getCategoriesFromStorage, getLogbooksFromStorage, getTransactionsFromSt
 import userTransactions from "../database/userTransactions";
 import NewTransactionDetailsScreen from "./screens/home/NewTransactionDetailsScreen";
 import LoadingScreen from "./screens/LoadingScreen";
+import SplashScreen from "./screens/SplashScreen";
 
 
 const Stack = createStackNavigator();
@@ -27,7 +28,8 @@ const screens = {
     newTransactionDetailsScreen: 'New Transaction Details Screen',
     transactionPreviewScreen: 'Transaction Preview Screen',
     actionScreen: 'Action Screen',
-    loadingScreen: 'Loading Screen'
+    loadingScreen: 'Loading Screen',
+    splashScreen: 'Splash Screen'
 }
 const RootStack = ({ navigation }) => {
 
@@ -40,60 +42,66 @@ const RootStack = ({ navigation }) => {
     // ! useEffect for state
     useEffect(() => {
 
-        // Initial load sorted Transactions
-        if (!sortedTransactions.groupSorted) {
-            getSortedTransactions();
-        }
+        dispatchLoading({
+            type: ACTIONS.LOADING.SET,
+            payload: true
+        })
 
-        // Initial load app settings
-        if (!appSettings) {
-            dispatchAppSettings({
-                type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
-                payload: {
-                    theme: 'light',
-                    fontSize: 'medium',
-                    language: 'english',
-                    currency: 'IDR'
-                }
-            })
-        }
 
-        // Initial load user account
-        if (!userAccount) {
-            dispatchUserAccount({
-                type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-                payload: {
-                    profile: {
-                        nickname: 'Jack',
-                        avatar: null
-                    },
-                    account: {
-                        verification: true,
-                        token: 'token123456',
-                        email: 'jack@gmail.com'
-                    }
-                }
-            })
-        }
+        // // Initial load sorted Transactions
+        // if (!sortedTransactions.groupSorted) {
+        //     getSortedTransactions();
+        // }
 
-        // Initial load raw transactions
-        if (!rawTransactions) {
-            Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
-                .then((array) => {
-                    console.log('loaded')
-                    return (
-                        dispatchRawTransactions({
-                            type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
-                            payload: {
-                                transactions: array[0],
-                                categories: array[1],
-                                logbooks: array[2]
-                            }
-                        })
-                    )
-                }
-                )
-        }
+        // // Initial load app settings
+        // if (!appSettings) {
+        //     dispatchAppSettings({
+        //         type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
+        //         payload: {
+        //             theme: 'light',
+        //             fontSize: 'medium',
+        //             language: 'english',
+        //             currency: 'IDR'
+        //         }
+        //     })
+        // }
+
+        // // Initial load user account
+        // if (!userAccount) {
+        //     dispatchUserAccount({
+        //         type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+        //         payload: {
+        //             profile: {
+        //                 nickname: 'Jack',
+        //                 avatar: null
+        //             },
+        //             account: {
+        //                 verification: true,
+        //                 token: 'token123456',
+        //                 email: 'jack@gmail.com'
+        //             }
+        //         }
+        //     })
+        // }
+
+        // // Initial load raw transactions
+        // if (!rawTransactions) {
+        //     Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
+        //         .then((array) => {
+        //             console.log('loaded')
+        //             return (
+        //                 dispatchRawTransactions({
+        //                     type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
+        //                     payload: {
+        //                         transactions: array[0],
+        //                         categories: array[1],
+        //                         logbooks: array[2]
+        //                     }
+        //                 })
+        //             )
+        //         }
+        //         )
+        // }
 
         // getFileFromStorage();
 
@@ -159,7 +167,7 @@ const RootStack = ({ navigation }) => {
 
     return (
         <Stack.Navigator
-            initialRouteName={screens.bottomTab}
+            initialRouteName={screens.splashScreen}
 
             screenOptions={{
                 headerShown: false
@@ -167,7 +175,16 @@ const RootStack = ({ navigation }) => {
 
         >
             {/* // ! Bottom Tab */}
-            <Stack.Screen name={screens.bottomTab} component={BottomTab} />
+            <Stack.Screen name={screens.bottomTab}
+                options={{
+                    title: 'New Transaction',
+                    headerLeft: (leftHeader) => (
+                        <>
+                        </>
+                    )
+
+                }}
+                component={BottomTab} />
 
             {/* // ! Modal Screen */}
             <Stack.Screen
@@ -242,6 +259,20 @@ const RootStack = ({ navigation }) => {
                 }}
                 name={screens.loadingScreen}
                 component={LoadingScreen} />
+
+
+            {/* // ! Splash Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Splash Screen') &&
+                <Stack.Screen
+                    options={{
+                        gestureEnabled: false,
+                        presentation: 'transparentModal',
+                        headerShown: false,
+                        cardOverlayEnabled: true,
+                        cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid
+                    }}
+                    name={screens.splashScreen}
+                    component={SplashScreen} />}
 
         </Stack.Navigator>
     )
