@@ -31,7 +31,7 @@ const LoadingScreen = ({ route, navigation }) => {
                 // ! New Insert Transaction Method
                 if (route?.params?.transaction && route?.params?.loadingType === 'insertTransaction') {
                     dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT,
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_TRANSACTION,
                         payload: {
                             transaction: route?.params?.transaction,
                             logbookToOpen: route?.params?.logbookToOpen
@@ -42,7 +42,7 @@ const LoadingScreen = ({ route, navigation }) => {
                 // ! New Patch Transaction Method
                 if (route?.params?.patchTransaction && route?.params?.prevTransaction && route?.params?.loadingType === 'patchTransaction') {
                     dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH,
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION,
                         payload: {
                             prevTransaction: route?.params?.prevTransaction,
                             patchTransaction: route?.params?.patchTransaction,
@@ -54,7 +54,7 @@ const LoadingScreen = ({ route, navigation }) => {
                 // ! New Delete One Transaction Method
                 if (route?.params?.deleteTransaction && route?.params?.loadingType === 'deleteOneTransaction') {
                     dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE,
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION,
                         payload: {
                             deleteTransaction: route?.params?.deleteTransaction,
                             logbookToOpen: route?.params?.logbookToOpen

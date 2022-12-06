@@ -50,11 +50,6 @@ const SplashScreen = ({ navigation }) => {
 
     const loadInitialState = () => {
 
-        // Initial load sorted Transactions
-        if (!sortedTransactions.groupSorted) {
-            getSortedTransactions();
-        }
-
         // Initial load app settings
         if (!appSettings) {
             dispatchAppSettings({
@@ -63,9 +58,9 @@ const SplashScreen = ({ navigation }) => {
                     theme: 'light',
                     fontSize: 'medium',
                     language: 'english',
+                    locale: 'us-EN',
                     currency: 'IDR',
                     screenHidden: []
-                    // screenHidden: navigation.state.routeName
                 }
             })
         }
@@ -76,11 +71,12 @@ const SplashScreen = ({ navigation }) => {
                 type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
                 payload: {
                     profile: {
-                        nickname: 'Jack',
+                        nickname: 'haziz',
                         avatar: null
                     },
                     account: {
                         verification: true,
+                        user_id: '637208d545a0d121607a402e',
                         token: 'token123456',
                         email: 'jack@gmail.com'
                     }
@@ -89,23 +85,29 @@ const SplashScreen = ({ navigation }) => {
         }
 
         // Initial load raw transactions
-        if (!rawTransactions) {
-            Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
-                .then((array) => {
-                    console.log('loaded')
-                    return (
-                        dispatchRawTransactions({
-                            type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
-                            payload: {
-                                transactions: array[0],
-                                categories: array[1],
-                                logbooks: array[2]
-                            }
-                        })
-                    )
-                }
-                )
+        // if (!rawTransactions) {
+        //     Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
+        //         .then((array) => {
+        //             console.log('loaded')
+        //             return (
+        //                 dispatchRawTransactions({
+        //                     type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
+        //                     payload: {
+        //                         transactions: array[0],
+        //                         categories: array[1],
+        //                         logbooks: array[2]
+        //                     }
+        //                 })
+        //             )
+        //         }
+        //         )
+        // }
+
+        // Initial load sorted Transactions
+        if (!sortedTransactions.groupSorted) {
+            getSortedTransactions();
         }
+
 
     }
 
@@ -127,7 +129,7 @@ const SplashScreen = ({ navigation }) => {
                 }
             }
         )
-    }, [rawTransactions])
+    }, [])
     // }
 
 

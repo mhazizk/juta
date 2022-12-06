@@ -1,5 +1,8 @@
 import { createContext, useContext, useReducer } from "react"
-import { globalAppSettings, GlobalLoading, globalSortedTransactions, globalTransactions, globalUserAccount, initialAppSettings, initialLoading, initialSortedTransactions, initialTransactions, initialUserAccount as initialUserAccount } from "./GlobalReducer";
+import { globalAppSettings, globalCategories, GlobalLoading, globalLogbooks, globalSortedTransactions, globalTransactions, globalUserAccount, initialLoading, initialSortedTransactions, initialTransactions, initialUserAccount as initialUserAccount } from "./GlobalReducer";
+import initialAppSettings from "./InitialAppSettings";
+import initialCategories from "./initialCategories";
+import initialLogbooks from "./InitialLogbooks";
 
 // ! Create Context //
 const GlobalTransactionsContext = createContext();
@@ -7,11 +10,22 @@ const GlobalSortedTransactionsContext = createContext();
 const GlobalSettingsContext = createContext();
 const GlobalUserAccountContext = createContext();
 const GlobalLoadingContext = createContext();
+const GlobalLogbooksContext = createContext();
+const GlobalCategoriesContext = createContext();
 
 // ! useContext //
 export const useGlobalTransactions = () => {
     return useContext(GlobalTransactionsContext);
 }
+
+export const useGlobalLogbooks = () => {
+    return useContext(GlobalLogbooksContext);
+}
+
+export const useGlobalCategories = () => {
+    return useContext(GlobalCategoriesContext);
+}
+
 export const useGlobalSortedTransactions = () => {
     return useContext(GlobalSortedTransactionsContext);
 }
@@ -30,11 +44,13 @@ export const useGlobalLoading = () => {
 
 // ! Context Provider //
 export const GlobalStateProvider = ({ children }) => {
+    const [userAccount, dispatchUserAccount] = useReducer(globalUserAccount, initialUserAccount);
+    const [appSettings, dispatchAppSettings] = useReducer(globalAppSettings, initialAppSettings);
     const [isLoading, dispatchLoading] = useReducer(GlobalLoading, initialLoading);
     const [sortedTransactions, dispatchSortedTransactions] = useReducer(globalSortedTransactions, initialSortedTransactions);
+    const [logbooks, dispatchLogbooks] = useReducer(globalLogbooks, initialLogbooks);
+    const [categories, dispatchCategories] = useReducer(globalCategories, initialCategories);
     const [rawTransactions, dispatchRawTransactions] = useReducer(globalTransactions, initialTransactions);
-    const [appSettings, dispatchAppSettings] = useReducer(globalAppSettings, initialAppSettings);
-    const [userAccount, dispatchUserAccount] = useReducer(globalUserAccount, initialUserAccount);
 
     return (
         <>
@@ -42,9 +58,13 @@ export const GlobalStateProvider = ({ children }) => {
                 <GlobalSettingsContext.Provider value={{ appSettings: appSettings, dispatchAppSettings: dispatchAppSettings }}>
                     <GlobalUserAccountContext.Provider value={{ userAccount: userAccount, dispatchUserAccount: dispatchUserAccount }} >
                         <GlobalTransactionsContext.Provider value={{ rawTransactions: rawTransactions, dispatchRawTransactions: dispatchRawTransactions }}>
-                            <GlobalSortedTransactionsContext.Provider value={{ sortedTransactions: sortedTransactions, dispatchSortedTransactions: dispatchSortedTransactions }}>
-                                {children}
-                            </GlobalSortedTransactionsContext.Provider>
+                            <GlobalLogbooksContext.Provider value={{ logbooks: logbooks, dispatchLogbooks: dispatchLogbooks }}>
+                                <GlobalCategoriesContext.Provider value={{ categories: categories, dispatchCategories: dispatchCategories }}>
+                                    <GlobalSortedTransactionsContext.Provider value={{ sortedTransactions: sortedTransactions, dispatchSortedTransactions: dispatchSortedTransactions }}>
+                                        {children}
+                                    </GlobalSortedTransactionsContext.Provider>
+                                </GlobalCategoriesContext.Provider>
+                            </GlobalLogbooksContext.Provider>
                         </GlobalTransactionsContext.Provider>
                     </GlobalUserAccountContext.Provider>
                 </GlobalSettingsContext.Provider>

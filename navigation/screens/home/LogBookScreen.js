@@ -9,9 +9,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Intl from 'intl';
 import 'intl/locale-data/jsonp/en';
 import { ACTIONS, globalTransactions, initialTransactions } from "../../../modules/GlobalReducer";
-import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { setSortedTransactions } from "../../../modules/FetchData";
-import Checkbox from 'expo-checkbox'
+// import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -145,22 +145,22 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 1:
                         return 'Yesterday'
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 2:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 3:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 4:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 5:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 6:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) === 7:
-                        return new Date(data).toLocaleDateString(appSettings.language.locale, { weekday: 'long' })
+                        return new Date(data).toLocaleDateString(appSettings.locale, { weekday: 'long' })
                     case (todayYear === transactionsYear) && (todayMonth === transactionMonth) && (todayDate - transactionDate) > 7 && (todayDate - transactionDate) <= 31:
-                        return `${new Date(data).toLocaleDateString(appSettings.language.locale, { month: 'long' })} ${new Date(data).getDate()}`
+                        return `${new Date(data).toLocaleDateString(appSettings.locale, { month: 'long' })} ${new Date(data).getDate()}`
                     default:
                         return (
-                            `${new Date(data).toLocaleDateString(appSettings.language.locale, { month: 'long' })}, ${new Date(data).toLocaleDateString(appSettings.language.locale, { day: '2-digit', year: 'numeric' })}`
+                            `${new Date(data).toLocaleDateString(appSettings.locale, { month: 'long' })}, ${new Date(data).toLocaleDateString(appSettings.locale, { day: '2-digit', year: 'numeric' })}`
                         )
                 }
             }
@@ -297,7 +297,7 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
                                                             <Text style={[{ marginRight: 8 }, { ...globalStyles.lightTheme.textPrimary }]}>{findCategoryNameById(item.details.category_id)}</Text>
                                                             <IonIcons name="ellipse" color='#ddd' size={8} />
                                                             {item.details.date &&
-                                                                <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginLeft: 6 }}>{new Date(item.details.date).toLocaleTimeString(appSettings.language.locale, { hour: '2-digit', minute: '2-digit' })}</Text>}
+                                                                <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginLeft: 6 }}>{new Date(item.details.date).toLocaleTimeString(appSettings.locale, { hour: '2-digit', minute: '2-digit' })}</Text>}
                                                         </View>
                                                         {item.details.notes &&
                                                             <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{item.details.notes}</Text>}
@@ -339,8 +339,11 @@ const LogBookScreen = ({ route, navigation }) => {
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
-    const [logbooks, setLogbooks] = useState(null);
-    const [categories, setCategories] = useState(null);
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
+
+    // const [logbooks, setLogbooks] = useState(null);
+    // const [categories, setCategories] = useState(null);
     const [transactions, setTransactions] = useState(null);
     const [data, setData] = useState(null)
     const [selectedLogbooks, setSelectedLogbooks] = useState(null);
@@ -356,7 +359,7 @@ const LogBookScreen = ({ route, navigation }) => {
             payload: true
         })
 
-        // logbooksToBeSelected();
+        logbooksToBeSelected();
 
 
     }, [])
@@ -366,12 +369,6 @@ const LogBookScreen = ({ route, navigation }) => {
 
     }, [sortedTransactions.groupSorted])
 
-    useEffect(() => {
-    }, [rawTransactions.logbooks])
-
-
-    useEffect(() => {
-    }, [rawTransactions.categories])
 
     useEffect(() => {
     }, [transactions])
@@ -387,6 +384,17 @@ const LogBookScreen = ({ route, navigation }) => {
 
     useEffect(() => {
 
+        // set data to be passed in modal
+        setData(logbooks.logbooks.map((logbook) => ({
+            name: logbook.logbook_name,
+            logbook_id: logbook.logbook_id,
+            key: logbook.logbook_id
+        })))
+
+    }, [logbooks.logbooks])
+
+    useEffect(() => {
+
         if (filteredTransactions) {
             dispatchLoading({
                 type: ACTIONS.LOADING.SET,
@@ -399,7 +407,7 @@ const LogBookScreen = ({ route, navigation }) => {
 
         logbooksToBeSelected();
 
-    }, [rawTransactions, rawTransactions.transactions, sortedTransactions])
+    }, [sortedTransactions])
 
     useEffect(() => {
 
@@ -415,10 +423,10 @@ const LogBookScreen = ({ route, navigation }) => {
         return (
             () => {
                 try {
-                    if (rawTransactions.logbooks && sortedTransactions && rawTransactions.categories) {
+                    if (categories.categories && sortedTransactions && logbooks.logbooks) {
 
                         // set data to be passed in modal
-                        setData(rawTransactions.logbooks.map((logbook) => ({
+                        setData(logbooks.logbooks.map((logbook) => ({
                             name: logbook.logbook_name,
                             logbook_id: logbook.logbook_id,
                             key: logbook.logbook_id
@@ -426,9 +434,9 @@ const LogBookScreen = ({ route, navigation }) => {
 
                         !sortedTransactions?.logbookToOpen ?
                             setSelectedLogbooks({
-                                name: rawTransactions.logbooks[0].logbook_name,
-                                logbook_id: rawTransactions.logbooks[0].logbook_id,
-                                key: rawTransactions.logbooks[0].logbook_id
+                                name: logbooks.logbooks[0].logbook_name,
+                                logbook_id: logbooks.logbooks[0].logbook_id,
+                                key: logbooks.logbooks[0].logbook_id
                             }) :
                             // set initial selected logbook
                             setSelectedLogbooks(sortedTransactions.logbookToOpen)
@@ -452,7 +460,7 @@ const LogBookScreen = ({ route, navigation }) => {
                 }
             }
         )
-    }, [selectedLogbooks, sortedTransactions])
+    }, [selectedLogbooks, sortedTransactions.logbookToOpen])
 
     const countTransactions = (filtered) => {
         let array = [];
@@ -514,7 +522,7 @@ const LogBookScreen = ({ route, navigation }) => {
                     <Transactions
                         logbook_id={selectedLogbooks.logbook_id}
                         transactions={filteredTransactions}
-                        categories={rawTransactions.categories}
+                        categories={categories.categories}
                         onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item })}
                         checkListMode={(item) => setCheckListMode(item)}
                     />}

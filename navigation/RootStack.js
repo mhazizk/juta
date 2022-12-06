@@ -17,6 +17,8 @@ import userTransactions from "../database/userTransactions";
 import NewTransactionDetailsScreen from "./screens/home/NewTransactionDetailsScreen";
 import LoadingScreen from "./screens/LoadingScreen";
 import SplashScreen from "./screens/SplashScreen";
+import MyLogbooksScreen from "./screens/user/MyLogbooksScreen";
+import MyCategoriesScreen from "./screens/user/MyCategoriesScreen";
 
 
 const Stack = createStackNavigator();
@@ -29,7 +31,9 @@ const screens = {
     transactionPreviewScreen: 'Transaction Preview Screen',
     actionScreen: 'Action Screen',
     loadingScreen: 'Loading Screen',
-    splashScreen: 'Splash Screen'
+    splashScreen: 'Splash Screen',
+    myLogbooksScreen:'My Logbooks Screen',
+    myCategoriesScreen:'My Categories Screen'
 }
 const RootStack = ({ navigation }) => {
 
@@ -46,64 +50,6 @@ const RootStack = ({ navigation }) => {
             type: ACTIONS.LOADING.SET,
             payload: true
         })
-
-
-        // // Initial load sorted Transactions
-        // if (!sortedTransactions.groupSorted) {
-        //     getSortedTransactions();
-        // }
-
-        // // Initial load app settings
-        // if (!appSettings) {
-        //     dispatchAppSettings({
-        //         type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
-        //         payload: {
-        //             theme: 'light',
-        //             fontSize: 'medium',
-        //             language: 'english',
-        //             currency: 'IDR'
-        //         }
-        //     })
-        // }
-
-        // // Initial load user account
-        // if (!userAccount) {
-        //     dispatchUserAccount({
-        //         type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-        //         payload: {
-        //             profile: {
-        //                 nickname: 'Jack',
-        //                 avatar: null
-        //             },
-        //             account: {
-        //                 verification: true,
-        //                 token: 'token123456',
-        //                 email: 'jack@gmail.com'
-        //             }
-        //         }
-        //     })
-        // }
-
-        // // Initial load raw transactions
-        // if (!rawTransactions) {
-        //     Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
-        //         .then((array) => {
-        //             console.log('loaded')
-        //             return (
-        //                 dispatchRawTransactions({
-        //                     type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
-        //                     payload: {
-        //                         transactions: array[0],
-        //                         categories: array[1],
-        //                         logbooks: array[2]
-        //                     }
-        //                 })
-        //             )
-        //         }
-        //         )
-        // }
-
-        // getFileFromStorage();
 
     }, [])
 
@@ -247,6 +193,30 @@ const RootStack = ({ navigation }) => {
                     )
                 }}
                 name={screens.newTransactionDetailsScreen} component={NewTransactionDetailsScreen} />
+
+            {/* // ! My Logbooks Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'My Logbooks',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.myLogbooksScreen} component={MyLogbooksScreen} />
+
+            {/* // ! My Categories Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'My Categories',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.myCategoriesScreen} component={MyCategoriesScreen} />
 
             {/* // ! Action Screen */}
             <Stack.Screen

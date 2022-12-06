@@ -12,7 +12,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
-import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import userTransactions from "../../../database/userTransactions";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import { setSortedTransactions } from "../../../modules/FetchData";
@@ -24,6 +24,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const { categories, dispathCategories } = useGlobalCategories();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+
 
     // ! useState Section //
 
@@ -153,7 +156,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     // Insert 'name' variable into User Logbooks
     const insertNameInUserLogBook = () => {
-        const inserted = logbooks.map((logbook) => ({ ...logbook, name: logbook.logbook_name }));
+        const inserted = logbooks.logbooks.map((logbook) => ({ ...logbook, name: logbook.logbook_name }));
         setLoadedLogbooks(inserted);
     }
 
@@ -339,7 +342,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 'Modal Screen', {
                                 title: 'Category',
                                 modalType: 'list',
-                                props: transaction.details.in_out === 'expense' ? categories.expense : categories.income,
+                                props: transaction.details.in_out === 'expense' ? categories.categories.expense : categories.categories.income,
                                 selected: (item) => {
                                     setSelectedCategory(item);
                                     setTransaction({

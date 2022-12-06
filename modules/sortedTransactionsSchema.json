@@ -380,3 +380,55 @@
         "setParams": [Function anonymous
         ]
     }
+
+
+    [
+        {
+            "logbook_id": "logbook1",
+            "transactions": [
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook2",
+            "transactions": [
+                [Object
+                ],
+                [Object
+                ],
+                [Object
+                ]
+            ]
+        },
+        {
+            "logbook_id": "logbook3",
+            "transactions": []
+        },
+        {
+            "logbook_id": NaN,
+            "transactions": []
+        }
+    ]

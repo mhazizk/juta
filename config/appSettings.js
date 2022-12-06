@@ -2,7 +2,7 @@ const APP_SETTINGS = {
     THEME: {
         DEFAULT: 'light',
         USER: 'light',
-        OPTIONS: ['light', 'dark']
+        OPTIONS: ['light', 'dark', 'colorOfTheYear2023', 'colorOfTheYear2022']
     },
     FONT_SIZE: {
         DEFAULT: 'medium',
@@ -23,6 +23,24 @@ const APP_SETTINGS = {
         DEFAULT: true,
         USER: true,
         OPTIONS: [false, true]
+    },
+    LOGBOOKS: {
+        DAILY_CALCULATE: {
+            DEFAULT: 'expense-income',
+            USER: 'expense-incomell',
+            OPTIONS: ['expense-only', 'income-only', 'expense-income', 'income-expense']
+        },
+        SHOW_TIME: {
+            DEFAULT: 1,
+            USER: 1,
+            OPTIONS: [1, 0]
+        },
+        SHOW_NOTES: {
+            DEFAULT: 1,
+            USER: 1,
+            OPTIONS: [1, 0]
+        },
+
     }
 }
 

@@ -25,9 +25,9 @@ const ModalScreen = ({ route, navigation }) => {
         console.log(textInput)
     }, [textInput])
 
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[localLoading])
+    }, [localLoading])
 
     useEffect(() => {
         setSelected(route?.params?.default);
@@ -97,6 +97,27 @@ const ModalScreen = ({ route, navigation }) => {
                     </View>
                 }
 
+                {/* // ! Option Flatlist Params */}
+                {route.params?.modalType === 'action' &&
+                    <>
+                        {/* <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'center', padding: 16 }}> */}
+
+                        {/* // ! Delete Action */}
+                        <TouchableNativeFeedback onPress={() => { }}>
+                            <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                                <IonIcons
+                                    name='trash'
+                                    size={18}
+                                    // color={item?.icon?.color}
+                                    style={{ paddingRight: 16 }} />
+                                <View style={globalStyles.lightTheme.listItem}>
+                                    <Text style={globalStyles.lightTheme.textPrimary}>Delete</Text>
+                                </View>
+                            </View>
+                        </TouchableNativeFeedback>
+                        {/* </View> */}
+                    </>}
+
                 {/* // ! Action Button */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
 
@@ -108,34 +129,34 @@ const ModalScreen = ({ route, navigation }) => {
                     <View style={{ paddingLeft: 8 }}>
 
                         {/* {localLoading && */}
-                            {/* <ActivityIndicator
+                        {/* <ActivityIndicator
                                 size={32}
                                 color='#fff'
                                 style={{ backgroundColor: '#bbb', borderRadius: 8, height: 48, width: 80 }}
                             /> */}
-                            {/* } */}
+                        {/* } */}
 
                         {/* {!localLoading && */}
-                            <ButtonPrimary
-                                label='Save'
-                                onPress={
-                                    route.params?.modalType === 'list' ?
+                        <ButtonPrimary
+                            label='Save'
+                            onPress={
+                                route.params?.modalType === 'list' ?
+                                    () => {
+                                        // dispatchLoading({
+                                        //     type: ACTIONS.LOADING.SET,
+                                        //     payload: true
+                                        // })
+                                        // setLocalLoading(true)
+                                        route.params.selected(selected); navigation.goBack()
+                                    } :
+                                    route.params?.modalType === 'textInput' ?
                                         () => {
-                                            // dispatchLoading({
-                                            //     type: ACTIONS.LOADING.SET,
-                                            //     payload: true
-                                            // })
-                                            // setLocalLoading(true)
-                                            route.params.selected(selected); navigation.goBack()
+                                            route.params.selected(textInput); navigation.goBack()
                                         } :
-                                        route.params?.modalType === 'textInput' ?
-                                            () => {
-                                                route.params.selected(textInput); navigation.goBack()
-                                            } :
-                                            () => { navigation.goBack() }
-                                }
-                                theme='lightTheme' />
-                                {/* } */}
+                                        () => { navigation.goBack() }
+                            }
+                            theme='lightTheme' />
+                        {/* } */}
                     </View>
                 </View>
             </View>

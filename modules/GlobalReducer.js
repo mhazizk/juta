@@ -30,10 +30,11 @@ export const ACTIONS = {
     SORTED_TRANSACTIONS: {
         GROUP_SORTED: {
             SET: 'SET_SORTED_TRANSACTIONS',
-            INSERT: 'INSERT_SORTED_TRANSACTIONS',
-            PATCH: 'PATCH_SORTED_TRANSACTIONS',
-            DELETE_ONE: 'DELETE_ONE_TRANSACTION',
-            CLEAR: 'CLEAR_SORTED_TRANSACTIONS'
+            INSERT_TRANSACTION: 'INSERT_SORTED_TRANSACTIONS',
+            PATCH_TRANSACTION: 'PATCH_SORTED_TRANSACTIONS',
+            DELETE_ONE_TRANSACTION: 'DELETE_ONE_TRANSACTION',
+            CLEAR_TRANSACTIONS: 'CLEAR_SORTED_TRANSACTIONS',
+            INSERT_LOGBOOK: 'INSERT_SORTED_LOGBOOK'
         }
     },
     TRANSACTIONS: {
@@ -53,11 +54,17 @@ export const ACTIONS = {
     LOGBOOKS: {
         SET: 'SET_LOGBOOKS',
         LOAD: 'LOAD_LOGBOOKS',
+        INSERT: 'INSERT_LOGBOOK',
+        PATCH: 'PATCH_LOGBOOK',
+        DELETE_ONE: 'DELETE_ONE_LOGBOOK',
         CLEAR: 'CLEAR_LOGBOOKS'
     },
     CATEGORIES: {
         SET: 'SET_CATEGORIES',
         LOAD: 'LOAD_CATEGORIES',
+        INSERT: 'INSERT_CATEGORY',
+        PATCH: 'PATCH_CATEGORY',
+        DELETE_ONE: 'DELETE_ONE_CATEGORY',
         CLEAR: 'CLEAR_CATEGORIES'
     },
     LOADING: {
@@ -128,6 +135,7 @@ export const initialSortedTransactions = {
     sortedTransactionsInsertCounter: 0,
     sortedTransactionsPatchCounter: 0,
     sortedTransactionsDeleteCounter: 0,
+    sortedLogbookInsertCounter: 0,
     logbookToOpen: null,
     groupSorted: null
 }
@@ -139,15 +147,7 @@ export const initialTransactions = null
 //     logbooks: null,
 // }
 
-export const initialAppSettings = null
-// {
-//     theme: null,
-//     fontSize: null,
-//     language: null,
-//     locale: null,
-//     currency: null,
-//     screenHidden: []
-// }
+
 
 export const initialUserAccount = null
 // {
@@ -157,6 +157,7 @@ export const initialUserAccount = null
 //     },
 //     account: {
 //         verification: false,
+//         user_id: null,
 //         token: null,
 //         email: null
 //     }
@@ -166,8 +167,101 @@ export const initialLoading = {
     status: true
 }
 
+export const globalLogbooks = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.LOGBOOKS.INSERT:
+
+            return {
+                ...state,
+                logbookInsertCounter: state.logbookInsertCounter + 1,
+                logbooks: [...state.logbooks, action.payload]
+            }
+
+        case ACTIONS.LOGBOOKS.DELETE_ONE:
+
+            let deleteLogbook = action.payload
+
+
+            return {
+                ...state,
+                logbookDeleteCounter: state.logbookDeleteCounter + 1,
+                logbooks: [...state.logbooks, action.payload]
+            }
+
+        case ACTIONS.LOGBOOKS.PATCH:
+
+            let patchLogbook = action.payload
+
+            // TODO REPLACE LOGBOOK WITH PATCHED ONE AND REPLACE ALL TRANSACTIONS IN IT WITH THE NEW LOGBBOK
+
+            return {
+                ...state,
+                logbookPatchCounter: state.logbookPatchCounter + 1,
+                logbooks: [...state.logbooks, action.payload]
+            }
+
+        default:
+            return state
+    }
+}
+
+
+export const globalCategories = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.CATEGORIES.INSERT:
+
+            return {
+                ...state,
+                categoryInsertCounter: state.categoryInsertCounter + 1,
+                categories: action.payload
+            }
+
+        case ACTIONS.CATEGORIES.DELETE_ONE:
+
+            let deleteCategory = action.payload
+
+
+            return {
+                ...state,
+                categoryDeleteCounter: state.categoryDeleteCounter + 1,
+                categories: action.payload
+            }
+
+        case ACTIONS.CATEGORIES.PATCH:
+
+            let patchCategory = action.payload
+
+            // TODO REPLACE CATEGORY WITH PATCHED ONE AND REPLACE ALL TRANSACTIONS IN IT WITH THE NEW LOGBBOK
+
+            return {
+                ...state,
+                categoryPatchCounter: state.categoryPatchCounter + 1,
+                categories: action.payload
+            }
+
+        default:
+            return state
+    }
+}
+
 export const globalSortedTransactions = (state, action) => {
     switch (action.type) {
+
+        // ! Insert New Logbook
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_LOGBOOK:
+            let newLogbook = action.payload.newLogbook
+
+            const newGroupSortedToBeReplaced = [
+                ...state.groupSorted, newLogbook
+            ]
+
+            console.log(newGroupSortedToBeReplaced)
+            return {
+                ...state,
+                sortedLogbookInsertCounter: state.sortedLogbookInsertCounter + 1,
+                groupSorted: newGroupSortedToBeReplaced,
+                logbookToOpen: action.payload.logbookToOpen
+            }
 
         // ! Set Initial Sorted Transactions
         case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET:
@@ -215,7 +309,7 @@ export const globalSortedTransactions = (state, action) => {
 
 
         // ! Insert New Transaction Method
-        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT:
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_TRANSACTION:
 
             const newTransaction = action.payload.transaction;
             const customDate = `${new Date(newTransaction.details.date).getFullYear()}/${('0' + (new Date(newTransaction.details.date).getMonth() + 1)).slice(-2)}/${('0' + new Date(newTransaction.details.date).getDate()).slice(-2)}`
@@ -300,7 +394,7 @@ export const globalSortedTransactions = (state, action) => {
 
 
         // ! Patch Transaction Method
-        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH:
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:
 
             const newPatchTransaction = action.payload.patchTransaction;
             const prevTransaction = action.payload.prevTransaction;
@@ -917,7 +1011,7 @@ export const globalSortedTransactions = (state, action) => {
             }
 
 
-        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE:
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION:
 
             const deleteTransaction = action.payload.deleteTransaction;
             const customDeleteDate = `${new Date(deleteTransaction.details.date).getFullYear()}/${('0' + (new Date(deleteTransaction.details.date).getMonth() + 1)).slice(-2)}/${('0' + new Date(deleteTransaction.details.date).getDate()).slice(-2)}`
@@ -1063,17 +1157,23 @@ export const globalTransactions = (state, action) => {
                 logbooks: action.payload,
                 logbooksLength: action.payload.length
             }
+
+        // Insert Logbook
+        // case ACTIONS.LOGBOOKS.INSERT:
+        //     return { ...state, logbooks: [...state.logbooks, action.payload] }
+
         // Clear Logbooks
-        case ACTIONS.LOGBOOKS.SET:
-            return { ...state, logbooks: null }
+        // case ACTIONS.LOGBOOKS.SET:
+        //     return { ...state, logbooks: null }
 
         // ! Categories
         // Set Categories
-        case ACTIONS.CATEGORIES.SET:
-            return { ...state, categories: action.payload }
+        // case ACTIONS.CATEGORIES.SET:
+        //     return { ...state, categories: action.payload }
+
         // Clear Categories
-        case ACTIONS.CATEGORIES.SET:
-            return { ...state, categories: null }
+        // case ACTIONS.CATEGORIES.SET:
+        //     return { ...state, categories: null }
 
         // ! Multiple Actions
         // Set Initial Transactions, Logbooks, and Catogories
@@ -1114,7 +1214,8 @@ export const globalAppSettings = (state, action) => {
         case ACTIONS.APP_SETTINGS.LANGUAGE.SET:
             return {
                 ...state,
-                language: action.payload
+                language: action.payload.language,
+                locale: action.payload.locale
             }
 
         // Set App Currency
