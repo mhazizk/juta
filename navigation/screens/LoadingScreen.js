@@ -4,7 +4,7 @@ import { globalStyles, globalTheme } from "../../assets/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions } from "../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
 import { convertAndSaveTransctions, setSortedTransactions } from "../../modules/FetchData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,13 +16,15 @@ const LoadingScreen = ({ route, navigation }) => {
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
 
     const [initial, setInitial] = useState(null);
 
     useEffect(() => {
 
         // console.log({ onLoad: route.params.initialRawTransactionsLength })
-
+console.log(route?.params)
 
         // ! Transaction Timeout
         setTimeout(
@@ -61,6 +63,29 @@ const LoadingScreen = ({ route, navigation }) => {
                         }
                     })
                 }
+
+                // ! New Patch Logbook Method
+                if (route?.params?.patchLogbook &&
+                    logbooks.logbookPatchCounter === route?.params?.initialLogbookPatchCounter &&
+                    route?.params?.loadingType === 'patchLogbook') {
+                    console.log('mulai dispatch')
+                    dispatchLogbooks({
+                        type: ACTIONS.LOGBOOKS.PATCH,
+                        payload: route?.params?.patchLogbook
+                    })
+                }
+
+                // ! New Delete One Logbook Method
+                if (route?.params?.deleteLogbook &&
+                    logbooks.logbookDeleteCounter === route?.params?.initialLogbookDeleteCounter &&
+                    route?.params?.loadingType === 'deleteOneLogbook') {
+                    console.log('mulai dispatch')
+                    dispatchLogbooks({
+                        type: ACTIONS.LOGBOOKS.DELETE_ONE,
+                        payload: route?.params?.deleteLogbook
+                    })
+                }
+
 
 
                 // ! Switch LogBook Timeout
@@ -117,6 +142,30 @@ const LoadingScreen = ({ route, navigation }) => {
         }
     }, [sortedTransactions.sortedTransactionsDeleteCounter])
 
+
+    // ! New Patch Logbook Method
+    useEffect(() => {
+
+        // console.log({ counter: logbooks.logbookPatchCounter })
+        if (logbooks.logbookPatchCounter > route?.params?.initialLogbookPatchCounter
+            && route?.params?.loadingType === 'patchLogbook') {
+            navigation.navigate('Logbook Preview Screen', {
+                logbook: route?.params?.patchLogbook
+            })
+        }
+
+    }, [logbooks.logbookPatchCounter])
+
+    // ! New Delete One Logbook Method
+    useEffect(() => {
+
+        // console.log({ counter: logbooks.logbookPatchCounter })
+        if (logbooks.logbookDeleteCounter > route?.params?.initialLogbookDeleteCounter
+            && route?.params?.loadingType === 'deleteOneLogbook') {
+            navigation.navigate('My Logbooks Screen')
+        }
+
+    }, [logbooks.logbookDeleteCounter])
 
     // ! Save Async Storage && dispatch Sorted Transactions
     const saveAndLoad = async () => {

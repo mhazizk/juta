@@ -432,3 +432,92 @@
             "transactions": []
         }
     ]
+
+
+    [
+        [
+            {
+                "__v": 0,
+                "_id": "637209c4e2f8048280ea8af9",
+                "_timestamps": [Object
+                ],
+                "logbook_categories": [Array
+                ],
+                "logbook_currency": [Object
+                ],
+                "logbook_id": "logbook2",
+                "logbook_name": "logbook that has long name lol hahahaa",
+                "logbook_records": [Array
+                ],
+                "logbook_type": "basic",
+                "user_id": "637208d545a0d121607a402e",
+                "username": "haziz"
+            },
+            {
+                "__v": 0,
+                "_id": "637209c4e2f8048280ea8af9",
+                "_timestamps": [Object
+                ],
+                "logbook_categories": [Array
+                ],
+                "logbook_currency": [Object
+                ],
+                "logbook_id": "logbook3",
+                "logbook_name": "another logbook that also has long name but this one surely is longer",
+                "logbook_records": [Array
+                ],
+                "logbook_type": "basic",
+                "user_id": "637208d545a0d121607a402e",
+                "username": "haziz"
+            }
+        ],
+        {
+            "__v": 0,
+            "_id": "637209c4e2f8048280ea8af9",
+            "_timestamps": {
+                "created_at": 1668417842641,
+                "updated_at": 1668417842641
+            },
+            "logbook_categories": [],
+            "logbook_currency": {
+                "isoCode": "id",
+                "name": "IDR",
+                "symbol": "Rp"
+            },
+            "logbook_id": "logbook1",
+            "logbook_name": "privatettt",
+            "logbook_records": [],
+            "logbook_type": "basic",
+            "user_id": "637208d545a0d121607a402e",
+            "username": "haziz"
+        }
+    ]
+
+
+
+    {
+        "deleteLogbook": {
+            "__v": 0,
+            "_id": "637209c4e2f8048280ea8af9",
+            "_timestamps": {
+                "created_at": 1668417842641,
+                "updated_at": 1668417842641
+            },
+            "logbook_categories": [],
+            "logbook_currency": {
+                "isoCode": "id",
+                "name": "IDR",
+                "symbol": "Rp"
+            },
+            "logbook_id": "logbook3",
+            "logbook_name": "another logbook that also has long name but this one surely is longer",
+            "logbook_records": [],
+            "logbook_type": "basic",
+            "user_id": "637208d545a0d121607a402e",
+            "username": "haziz"
+        },
+        "initialLogbookDeleteCounter": undefined,
+        "label": "Deleting Logbook ...",
+        "loadingType": "deleteOneLogbook",
+        "logbookToOpen": null
+    }

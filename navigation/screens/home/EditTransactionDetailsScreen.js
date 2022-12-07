@@ -88,6 +88,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 {
                     name: selectedLogbook.name,
                     logbook_id: transaction.logbook_id,
+                    logbook_currency: selectedLogbook.logbook_currency,
                     key: transaction.logbook_id
                 }
             )
@@ -304,7 +305,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 modalType: 'list',
                                 props: loadedLogbooks,
                                 selected: (item) => {
-                                    setSelectedLogbook({ name: item.name, logbook_id: item.logbook_id });
+                                    setSelectedLogbook({ name: item.name, logbook_id: item.logbook_id, logbook_currency: item.logbook_currency });
                                     setTransaction({
                                         ...transaction,
                                         logbook_id:

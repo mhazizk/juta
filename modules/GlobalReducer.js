@@ -181,23 +181,27 @@ export const globalLogbooks = (state, action) => {
 
             let deleteLogbook = action.payload
 
+            let foundOtherLogbook = state.logbooks.filter((logbook) => logbook.logbook_id !== deleteLogbook.logbook_id)
 
             return {
                 ...state,
                 logbookDeleteCounter: state.logbookDeleteCounter + 1,
-                logbooks: [...state.logbooks, action.payload]
+                logbooks: [...foundOtherLogbook]
             }
 
         case ACTIONS.LOGBOOKS.PATCH:
 
             let patchLogbook = action.payload
-
+            // console.log(patchLogbook)
+            const foundLogbook = state.logbooks.filter((logbook) => logbook.logbook_id === patchLogbook.logbook_id)
+            foundOtherLogbook = state.logbooks.filter((logbook) => logbook.logbook_id !== patchLogbook.logbook_id)
+            console.log(foundOtherLogbook)
             // TODO REPLACE LOGBOOK WITH PATCHED ONE AND REPLACE ALL TRANSACTIONS IN IT WITH THE NEW LOGBBOK
 
             return {
                 ...state,
-                logbookPatchCounter: state.logbookPatchCounter + 1,
-                logbooks: [...state.logbooks, action.payload]
+                logbooks: [...foundOtherLogbook, patchLogbook],
+                logbookPatchCounter: state.logbookPatchCounter + 1
             }
 
         default:

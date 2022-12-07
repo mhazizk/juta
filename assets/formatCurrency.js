@@ -1,9 +1,19 @@
 // ! Format Currency
-const formatCurrency = ({ amount, locale }) => {
+const formatCurrency = ({ amount, currency }) => {
     // let checkAmount = String(amount).replace(/[^a-zA-Z0-9 ]/g, '');
     // let checkAmount = String(amount).replace(/[^, ]/g, '');
-    let length = String(amount).length
-    let getLeft = String(amount).slice(0, length - 1)
+
+    let cleanAmount = amount
+    let negative
+
+    // check negative sign
+    if (String(cleanAmount).slice(0, 1) === '-') {
+        let length = String(amount).length
+        cleanAmount = String(cleanAmount).slice(1, length)
+        // console.log(cleanAmount)
+        negative = true
+    }
+    // let getLeft = String(amount).slice(0, length - 1)
     // console.log({ length })
     // console.log({ getLeft })
     // console.log(checkAmount)
@@ -11,20 +21,20 @@ const formatCurrency = ({ amount, locale }) => {
     let showFormattedAmount;
 
     switch (true) {
-        case locale === 'IDR':
+        case currency === 'IDR':
             // showFormattedAmount = parseFloat(amount);
             // console.log({amount})
-            showFormattedAmount = Number(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            showFormattedAmount = Number(cleanAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
             // console.log(showFormattedAmount)
             break;
-        case locale === 'USD':
-            showFormattedAmount = Number(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+        case currency === 'USD':
+            showFormattedAmount = Number(cleanAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
             break;
 
         default:
             break;
     }
-    return showFormattedAmount
+    return negative ? `(${String(showFormattedAmount)} )` : `${String(showFormattedAmount)}`
 
 }
 

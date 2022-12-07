@@ -17,7 +17,7 @@ import { setSortedTransactions } from "../../../modules/FetchData";
 const { width, height } = Dimensions.get('screen');
 
 
-const Transactions = ({ logbook_id, transactions, categories, onPress, checkListMode }) => {
+const Transactions = ({ logbook, transactions, categories, onPress, checkListMode }) => {
 
     // ! useState Section //
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -238,9 +238,9 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
 
                                     {/* Sum Amount */}
                                     <View style={[{ padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between' }, { backgroundColor: '#ddd' }]}>
-                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>Rp</Text>
+                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>{logbook.logbook_currency.symbol}</Text>
                                         <Text style={{ ...globalStyles.lightTheme.textSecondary }}>
-                                            {formatCurrency({ amount: sumAmount(section.data), locale: 'IDR' })}
+                                            {formatCurrency({ amount: sumAmount(section.data), currency: appSettings.currency.name })}
                                         </Text>
                                     </View>
                                 </View>}
@@ -306,8 +306,8 @@ const Transactions = ({ logbook_id, transactions, categories, onPress, checkList
 
                                                     {/* <Text>{new Date(item.details.date).toLocaleDateString()}</Text> */}
                                                     <View style={{ flexDirection: 'row' }}>
-                                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>Rp</Text>
-                                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, locale: 'IDR' })}</Text>
+                                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{logbook.logbook_currency.symbol}</Text>
+                                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, currency: appSettings.currency.name })}</Text>
                                                     </View>
                                                 </View>
                                             </View>
@@ -346,7 +346,8 @@ const LogBookScreen = ({ route, navigation }) => {
     // const [categories, setCategories] = useState(null);
     const [transactions, setTransactions] = useState(null);
     const [data, setData] = useState(null)
-    const [selectedLogbooks, setSelectedLogbooks] = useState(null);
+    const [selectedLogbook, setSelectedLogbooks] = useState(null);
+    const [selectedLogbooksCurrency, setSelectedLogbookCurrency] = useState(null);
     const [filteredTransactions, setFilteredTransactions] = useState(null);
     const [checkListMode, setCheckListMode] = useState({ mode: false, length: 0 });
 
@@ -380,7 +381,7 @@ const LogBookScreen = ({ route, navigation }) => {
 
         filterTransactions();
 
-    }, [selectedLogbooks])
+    }, [selectedLogbook])
 
     useEffect(() => {
 
@@ -391,7 +392,7 @@ const LogBookScreen = ({ route, navigation }) => {
             key: logbook.logbook_id
         })))
 
-    }, [logbooks.logbooks])
+    }, [logbooks])
 
     useEffect(() => {
 
@@ -429,6 +430,7 @@ const LogBookScreen = ({ route, navigation }) => {
                         setData(logbooks.logbooks.map((logbook) => ({
                             name: logbook.logbook_name,
                             logbook_id: logbook.logbook_id,
+                            logbook_currency: logbook.logbook_currency,
                             key: logbook.logbook_id
                         })))
 
@@ -436,10 +438,13 @@ const LogBookScreen = ({ route, navigation }) => {
                             setSelectedLogbooks({
                                 name: logbooks.logbooks[0].logbook_name,
                                 logbook_id: logbooks.logbooks[0].logbook_id,
+                                logbook_currency: logbooks.logbooks[0].logbook_currency,
                                 key: logbooks.logbooks[0].logbook_id
-                            }) :
+                            })
+                            :
                             // set initial selected logbook
                             setSelectedLogbooks(sortedTransactions.logbookToOpen)
+
                         // set initial selected logbook
                     }
                 } catch (error) {
@@ -454,13 +459,13 @@ const LogBookScreen = ({ route, navigation }) => {
     const filterTransactions = useMemo(() => {
         return (
             () => {
-                if (selectedLogbooks && sortedTransactions) {
-                    const filtered = sortedTransactions.groupSorted.filter((logbook) => { return logbook.logbook_id === selectedLogbooks.logbook_id });
+                if (selectedLogbook && sortedTransactions) {
+                    const filtered = sortedTransactions.groupSorted.filter((logbook) => { return logbook.logbook_id === selectedLogbook.logbook_id });
                     setFilteredTransactions(filtered[0].transactions.map((transaction) => transaction));
                 }
             }
         )
-    }, [selectedLogbooks, sortedTransactions.logbookToOpen])
+    }, [selectedLogbook, sortedTransactions.logbookToOpen])
 
     const countTransactions = (filtered) => {
         let array = [];
@@ -490,13 +495,13 @@ const LogBookScreen = ({ route, navigation }) => {
                                         // })
                                         setSelectedLogbooks(item);
                                     },
-                                    default: { name: selectedLogbooks?.name }
+                                    default: { name: selectedLogbook?.name }
                                 })}>
                             <View style={[{ height: 48, paddingLeft: 16, flexDirection: 'row', borderRadius: 8, justifyContent: 'space-between', alignItems: 'center' }, { backgroundColor: '#ddd' }]}>
                                 <Text
                                     numberOfLines={1}
                                     style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>
-                                    {selectedLogbooks?.name[0].toUpperCase() + selectedLogbooks?.name.substring(1)}
+                                    {selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name.substring(1)}
                                 </Text>
                                 <IonIcons name='chevron-down' size={18} style={{ flexShrink: 0, paddingHorizontal: 16 }} />
                             </View>
@@ -520,7 +525,7 @@ const LogBookScreen = ({ route, navigation }) => {
                 {/* Transaction Render */}
                 {!isLoading.status && filteredTransactions &&
                     <Transactions
-                        logbook_id={selectedLogbooks.logbook_id}
+                        logbook={selectedLogbook}
                         transactions={filteredTransactions}
                         categories={categories.categories}
                         onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item })}

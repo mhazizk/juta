@@ -307,7 +307,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 modalType: 'list',
                                 props: loadedLogbooks,
                                 selected: (item) => {
-                                    setSelectedLogbook({ name: item.name, logbook_id: item.logbook_id });
+                                    setSelectedLogbook({
+                                        name: item.name,
+                                        logbook_id: item.logbook_id,
+                                        logbook_currency: item.logbook_currency,
+                                    });
                                     setTransaction({
                                         ...transaction,
                                         logbook_id:

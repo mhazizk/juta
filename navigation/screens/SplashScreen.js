@@ -59,7 +59,7 @@ const SplashScreen = ({ navigation }) => {
                     fontSize: 'medium',
                     language: 'english',
                     locale: 'us-EN',
-                    currency: 'IDR',
+                    currency: { name: 'IDR', symbol: 'Rp' },
                     screenHidden: []
                 }
             })

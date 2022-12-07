@@ -15,9 +15,9 @@ const APP_SETTINGS = {
         OPTIONS: [{ name: 'english', locale: 'en-US' }]
     },
     CURRENCY: {
-        DEFAULT: 'IDR',
-        USER: 'IDR',
-        OPTIONS: ['IDR', 'USD']
+        DEFAULT: { name: 'IDR', symbol: 'Rp', isoCode: 'id' },
+        USER: { name: 'IDR', symbol: 'Rp', isoCode: 'id' },
+        OPTIONS: [{ name: 'IDR', symbol: 'Rp', isoCode: 'id' }, { name: 'USD', symbol: '$', isoCode: 'us' }]
     },
     DECIMALS: {
         DEFAULT: true,

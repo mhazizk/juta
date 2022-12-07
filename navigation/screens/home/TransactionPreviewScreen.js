@@ -10,13 +10,14 @@ import IonIcons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
-import { useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
+import { useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
 
     // ! Global State Section //
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
 
     // ! useState Section //
@@ -113,8 +114,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
         return (
             () => {
                 if (transaction) {
-                    const found = logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
-                    setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
+                    const found = logbooks.logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
+                    setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name, logbook_currency: found[0].logbook_currency })
                     // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
                 }
             }

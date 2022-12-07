@@ -19,6 +19,8 @@ import LoadingScreen from "./screens/LoadingScreen";
 import SplashScreen from "./screens/SplashScreen";
 import MyLogbooksScreen from "./screens/user/MyLogbooksScreen";
 import MyCategoriesScreen from "./screens/user/MyCategoriesScreen";
+import EditLogbookScreen from "./screens/user/EditLogbookScreen";
+import LogbookPreviewScren from "./screens/user/LogbookPreviewScreen";
 
 
 const Stack = createStackNavigator();
@@ -32,8 +34,10 @@ const screens = {
     actionScreen: 'Action Screen',
     loadingScreen: 'Loading Screen',
     splashScreen: 'Splash Screen',
-    myLogbooksScreen:'My Logbooks Screen',
-    myCategoriesScreen:'My Categories Screen'
+    myLogbooksScreen: 'My Logbooks Screen',
+    editLogbookScreen: 'Edit Logbook Screen',
+    logbookPreviewScreen: 'Logbook Preview Screen',
+    myCategoriesScreen: 'My Categories Screen'
 }
 const RootStack = ({ navigation }) => {
 
@@ -205,6 +209,30 @@ const RootStack = ({ navigation }) => {
                     // )
                 }}
                 name={screens.myLogbooksScreen} component={MyLogbooksScreen} />
+
+            {/* // ! Edit Logbook Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'Logbook Preview',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.logbookPreviewScreen} component={LogbookPreviewScren} />
+
+            {/* // ! Edit Logbook Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'Edit Logbook',
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.editLogbookScreen} component={EditLogbookScreen} />
 
             {/* // ! My Categories Screen */}
             <Stack.Screen

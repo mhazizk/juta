@@ -6,6 +6,8 @@ import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useGlobalLoading } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
+import CountryFlag from "react-native-country-flag";
+
 
 const ModalScreen = ({ route, navigation }) => {
 
@@ -35,6 +37,20 @@ const ModalScreen = ({ route, navigation }) => {
         // console.log(route.params.default)
         // console.log(selected)
     }, [])
+
+
+    const onPressReturn = () => {
+        switch (true) {
+            case route?.params.modalType === 'list' || route?.params.modalType === 'currencyList':
+                return route.params.selected(selected);
+            case route?.params.modalType === 'textInput':
+                return route.params.selected(textInput);
+
+            default:
+                console.log('thrd')
+                return;
+        }
+    }
 
     return (
         <>
@@ -76,6 +92,33 @@ const ModalScreen = ({ route, navigation }) => {
                                             style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 16 }} />
                                         <View style={globalStyles.lightTheme.listItem}>
                                             <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
+                                            <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
+                                        </View>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </>
+                        )}
+                    />}
+
+
+                {/* // ! Flatlist Params Currency */}
+                {route.params?.modalType === 'currencyList' &&
+                    <FlatList
+                        style={{ ...globalStyles.lightTheme.view }}
+                        data={route?.params?.props}
+                        keyExtractor={(item, id) => item?.name + id}
+                        renderItem={({ item }) => (
+                            <>
+                                <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
+                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                                        <CountryFlag
+                                            isoCode={item?.isoCode}
+                                            size={18}
+                                        />
+                                        <View style={{ ...globalStyles.lightTheme.listItem, paddingLeft: 16 }}>
+                                            <Text style={globalStyles.lightTheme.textPrimary}>
+                                                {item?.name[0].toUpperCase() + item?.name.substring(1)} / {item?.symbol}
+                                            </Text>
                                             <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
                                         </View>
                                     </View>
@@ -139,21 +182,24 @@ const ModalScreen = ({ route, navigation }) => {
                         {/* {!localLoading && */}
                         <ButtonPrimary
                             label='Save'
-                            onPress={
-                                route.params?.modalType === 'list' ?
-                                    () => {
-                                        // dispatchLoading({
-                                        //     type: ACTIONS.LOADING.SET,
-                                        //     payload: true
-                                        // })
-                                        // setLocalLoading(true)
-                                        route.params.selected(selected); navigation.goBack()
-                                    } :
-                                    route.params?.modalType === 'textInput' ?
-                                        () => {
-                                            route.params.selected(textInput); navigation.goBack()
-                                        } :
-                                        () => { navigation.goBack() }
+                            onPress={() => {
+                                onPressReturn()
+                                navigation.goBack()
+                            }
+                                // route.params?.modalType === 'list' ?
+                                // () => {
+                                // dispatchLoading({
+                                //     type: ACTIONS.LOADING.SET,
+                                //     payload: true
+                                // })
+                                // setLocalLoading(true)
+                                //     route.params.selected(selected); navigation.goBack()
+                                // } :
+                                // route.params?.modalType === 'textInput' ?
+                                //     () => {
+                                //         route.params.selected(textInput); navigation.goBack()
+                                //     } :
+                                //     () => { navigation.goBack() }
                             }
                             theme='lightTheme' />
                         {/* } */}

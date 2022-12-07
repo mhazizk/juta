@@ -88,6 +88,8 @@ const ActionScreen = ({ route, navigation }) => {
                                         "_id": Math.random * 10000,
                                         "user_id": userAccount.account.user_id,
                                         "username": null,
+                                        "logbook_currency": { name: 'IDR', symbol: 'Rp', isoCode: 'id' },
+                                        "logbook_type": "basic",
                                         "logbook_id": Math.random() * 10000,
                                         "logbook_name": item,
                                         "logbook_records": [],
@@ -109,7 +111,8 @@ const ActionScreen = ({ route, navigation }) => {
                                             },
                                             logbookToOpen: {
                                                 name: newLogbook.logbook_name,
-                                                logbook_id: newLogbook.logbook_id
+                                                logbook_id: newLogbook.logbook_id,
+                                                logbook_currency: { name: 'IDR', symbol: 'Rp', isoCode: 'id' }
                                             }
                                         }
                                     })

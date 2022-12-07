@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from "react"
-import { globalAppSettings, globalCategories, GlobalLoading, globalLogbooks, globalSortedTransactions, globalTransactions, globalUserAccount, initialLoading, initialSortedTransactions, initialTransactions, initialUserAccount as initialUserAccount } from "./GlobalReducer";
+import { globalAppSettings, globalCategories, GlobalLoading, globalLogbooks, globalSortedTransactions, globalTransactions, globalUserAccount, initialLoading, initialSortedTransactions, initialTransactions, initialUserAccount } from "./GlobalReducer";
 import initialAppSettings from "./InitialAppSettings";
-import initialCategories from "./initialCategories";
+import initialCategories from "./InitialCategories";
 import initialLogbooks from "./InitialLogbooks";
 
 // ! Create Context //
