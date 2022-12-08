@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Text, View, Dimensions, FlatList, findNodeHandle, TouchableNativeFeedback, TouchableOpacity, ActivityIndicator, SectionList } from "react-native";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -11,6 +11,7 @@ import 'intl/locale-data/jsonp/en';
 import { ACTIONS, globalTransactions, initialTransactions } from "../../../modules/GlobalReducer";
 import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { setSortedTransactions } from "../../../modules/FetchData";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 
@@ -81,6 +82,7 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
 
 
     // ! Function Section //
+
     // Find Category Icon Name by Id
     const findCategoryIconNameById = useMemo(() => {
         return ((id) => {
@@ -350,6 +352,29 @@ const LogBookScreen = ({ route, navigation }) => {
     const [selectedLogbooksCurrency, setSelectedLogbookCurrency] = useState(null);
     const [filteredTransactions, setFilteredTransactions] = useState(null);
     const [checkListMode, setCheckListMode] = useState({ mode: false, length: 0 });
+    const [counter, setCounter] = useState({
+        logbookDeleteCounter: 0,
+        logbookPatchCounter: 0
+    })
+    const isFocused = useIsFocused();
+
+    // ! useFocusEffect Section
+    // useIsFocused(
+    //     useCallback(() => {
+    //         console.log('first')
+    //         // logbooksToBeSelected();
+
+    //     }, [
+    //         logbooks.logbookPatchCounter,
+    //         logbooks.logbookDeleteCounter,
+    //         logbooks.logbookInsertCounter,
+    //         sortedTransactions.sortedLogbookDeleteCounter,
+    //         sortedTransactions.sortedLogbookInsertCounter,
+    //         sortedTransactions.sortedTransactionsInsertCounter,
+    //         sortedTransactions.sortedTransactionsDeleteCounter,
+    //         sortedTransactions.sortedTransactionsPatchCounter,
+    //     ]
+    //     ))
 
 
     // ! useEffect Section
@@ -362,13 +387,43 @@ const LogBookScreen = ({ route, navigation }) => {
 
         logbooksToBeSelected();
 
-
     }, [])
-
 
     useEffect(() => {
 
-    }, [sortedTransactions.groupSorted])
+        // if (!isFocused) {
+        //     dispatchLoading({
+        //         type: ACTIONS.LOADING.SET,
+        //         payload: true
+        //     })
+        //     setSelectedLogbooks(null);
+        // }
+
+        if (isFocused &&
+            logbooks.logbookPatchCounter > counter.logbookPatchCounter ||
+            logbooks.logbookDeleteCounter > counter.logbookDeleteCounter) {
+
+            logbooksToBeSelected();
+            // TODO set dispatch logbookToOpen to null to prevent stuck in logbook screen after modifying logbook
+        }
+
+        // if (counter.logbookDeleteCounter || counter.logbookPatchCounter) {
+        //     setData(logbooks.logbooks.map((logbook) => ({
+        //         name: logbook.logbook_name,
+        //         logbook_id: logbook.logbook_id,
+        //         logbook_currency: logbook.logbook_currency,
+        //         key: logbook.logbook_id
+        //     })))
+        // }
+
+
+    }, [isFocused, counter])
+
+
+    // useEffect(() => {
+
+    //     logbooksToBeSelected();
+    // }, [sortedTransactions])
 
 
     useEffect(() => {
@@ -383,16 +438,16 @@ const LogBookScreen = ({ route, navigation }) => {
 
     }, [selectedLogbook])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        // set data to be passed in modal
-        setData(logbooks.logbooks.map((logbook) => ({
-            name: logbook.logbook_name,
-            logbook_id: logbook.logbook_id,
-            key: logbook.logbook_id
-        })))
+    //     // set data to be passed in modal
+    //     console.log(logbooks.logbooks)
 
-    }, [logbooks])
+    // }, [
+    //     logbooks.logbookPatchCounter,
+    //     logbooks.logbookDeleteCounter,
+    //     logbooks.logbookInsertCounter,
+    // ])
 
     useEffect(() => {
 
@@ -406,9 +461,17 @@ const LogBookScreen = ({ route, navigation }) => {
 
     useEffect(() => {
 
+        console.log('rendered')
         logbooksToBeSelected();
 
-    }, [sortedTransactions])
+    }, [
+        sortedTransactions.sortedLogbookDeleteCounter,
+        sortedTransactions.sortedLogbookInsertCounter,
+        sortedTransactions.sortedTransactionsInsertCounter,
+        sortedTransactions.sortedTransactionsDeleteCounter,
+        sortedTransactions.sortedTransactionsDeleteCounter,
+        sortedTransactions.logbookToOpen,
+    ])
 
     useEffect(() => {
 
@@ -433,6 +496,11 @@ const LogBookScreen = ({ route, navigation }) => {
                             logbook_currency: logbook.logbook_currency,
                             key: logbook.logbook_id
                         })))
+
+                        setCounter({
+                            logbookDeleteCounter: logbooks.logbookDeleteCounter,
+                            logbookPatchCounter: logbooks.logbookPatchCounter
+                        })
 
                         !sortedTransactions?.logbookToOpen ?
                             setSelectedLogbooks({
@@ -528,7 +596,7 @@ const LogBookScreen = ({ route, navigation }) => {
                         logbook={selectedLogbook}
                         transactions={filteredTransactions}
                         categories={categories.categories}
-                        onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item })}
+                        onPress={(item) => navigation.navigate('Transaction Preview Screen', { transaction: item, selectedLogbook: selectedLogbook })}
                         checkListMode={(item) => setCheckListMode(item)}
                     />}
 

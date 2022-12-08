@@ -6,6 +6,7 @@ import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
+import { asyncSecureStorage, STORAGE_ACTIONS } from "../../modules/Storage";
 
 const ActionScreen = ({ route, navigation }) => {
 
@@ -88,7 +89,7 @@ const ActionScreen = ({ route, navigation }) => {
                                         "_id": Math.random * 10000,
                                         "user_id": userAccount.account.user_id,
                                         "username": null,
-                                        "logbook_currency": { name: 'IDR', symbol: 'Rp', isoCode: 'id' },
+                                        "logbook_currency": appSettings.currency,
                                         "logbook_type": "basic",
                                         "logbook_id": Math.random() * 10000,
                                         "logbook_name": item,
@@ -139,9 +140,15 @@ const ActionScreen = ({ route, navigation }) => {
                         <ButtonSecondary label='Cancel' width={284} onPress={() => navigation.goBack()} theme='lightTheme' />
                     </View>
                     {/* // ! Save Button */}
-                    {/* <View style={{ paddingLeft: 8 }}>
-                        <ButtonPrimary label='Save' onPress={() => { route.params.selectedList(selected); navigation.goBack() }} theme='lightTheme' />
-                    </View> */}
+                    <View style={{ paddingLeft: 8 }}>
+                        <ButtonPrimary
+                            label='Save Key'
+                            onPress={() => {
+                                asyncSecureStorage({ action: STORAGE_ACTIONS.SET, key: 'token', rawValue: 'haziz123' });
+                                navigation.goBack()
+                            }}
+                            theme='lightTheme' />
+                    </View>
                 </View>
             </View>
         </>

@@ -5,7 +5,7 @@ import APP_SETTINGS from "../../../config/appSettings";
 import { useEffect, useState } from "react";
 import ModalScreen from "../ModalScreen";
 import { globalStyles, globalTheme } from "../../../assets/globalStyles";
-import { useGlobalAppSettings, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userLogBooks from "../../../database/userLogBooks";
@@ -14,12 +14,14 @@ import userTransactions from "../../../database/userTransactions";
 import { ScrollView } from "react-native-gesture-handler";
 import { setSortedTransactions } from "../../../modules/FetchData";
 import LargeJSONTransactions from '../../../database/largeTransactions.json'
+import { asyncSecureStorage, STORAGE_ACTIONS } from "../../../modules/Storage";
 
 const DeveloperScreen = ({ item, navigation }) => {
 
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
     const [loaded, setLoaded] = useState(null)
 
     useEffect(() => {
@@ -231,13 +233,47 @@ const DeveloperScreen = ({ item, navigation }) => {
                     </TouchableNativeFeedback>
 
                     {/* // ! Log global raw transactions length */}
-                    <TouchableNativeFeedback
+                    {/* <TouchableNativeFeedback
                         onPress={() => console.log(rawTransactions.transactions.length)}>
                         <View style={styles.flatListView}>
                             <IonIcons name='code' size={18} style={{ paddingRight: 16 }} />
                             <View style={globalStyles.lightTheme.listItem}>
                                 <Text style={globalStyles.lightTheme.textPrimary}>Log Global Raw Transactions Length</Text>
                                 <Text style={globalStyles.lightTheme.textSecondary}>{rawTransactions.transactions.length}</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback> */}
+
+                    {/* // ! Log app settings */}
+                    <TouchableNativeFeedback
+                        onPress={() => console.log(appSettings)}>
+                        <View style={styles.flatListView}>
+                            <IonIcons name='code' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Log App Settings</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    {/* // ! Load storage account */}
+                    <TouchableNativeFeedback
+                        onPress={() => asyncSecureStorage({ action: STORAGE_ACTIONS.GET, key: 'token' }).then((item) => console.log(item))
+                        }>
+                        <View style={styles.flatListView}>
+                            <IonIcons name='code' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Load TOken</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    {/* // ! Log user account */}
+                    <TouchableNativeFeedback
+                        onPress={() => console.log(userAccount)}>
+                        <View style={styles.flatListView}>
+                            <IonIcons name='code' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Log User Account</Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>

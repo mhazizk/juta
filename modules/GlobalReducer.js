@@ -34,7 +34,8 @@ export const ACTIONS = {
             PATCH_TRANSACTION: 'PATCH_SORTED_TRANSACTIONS',
             DELETE_ONE_TRANSACTION: 'DELETE_ONE_TRANSACTION',
             CLEAR_TRANSACTIONS: 'CLEAR_SORTED_TRANSACTIONS',
-            INSERT_LOGBOOK: 'INSERT_SORTED_LOGBOOK'
+            INSERT_LOGBOOK: 'INSERT_SORTED_LOGBOOK',
+            DELETE_ONE_LOGBOOK: 'DELETE_SORTED_ONE_LOGBOOK'
         }
     },
     TRANSACTIONS: {
@@ -136,6 +137,7 @@ export const initialSortedTransactions = {
     sortedTransactionsPatchCounter: 0,
     sortedTransactionsDeleteCounter: 0,
     sortedLogbookInsertCounter: 0,
+    sortedLogbookDeleteCounter: 0,
     logbookToOpen: null,
     groupSorted: null
 }
@@ -228,7 +230,7 @@ export const globalCategories = (state, action) => {
             return {
                 ...state,
                 categoryDeleteCounter: state.categoryDeleteCounter + 1,
-                categories: action.payload
+                categories: action.payload,
             }
 
         case ACTIONS.CATEGORIES.PATCH:
@@ -250,6 +252,18 @@ export const globalCategories = (state, action) => {
 
 export const globalSortedTransactions = (state, action) => {
     switch (action.type) {
+
+        // ! Delete One Logbook
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_LOGBOOK:
+            const deleteLogbook = action.payload
+            let filterOtherLogbooks = state.groupSorted.filter((logbook) => logbook.logbook_id !== deleteLogbook.logbook_id)
+            console.log('reducer')
+            return {
+                ...state,
+                groupSorted: [...filterOtherLogbooks],
+                logbookToOpen: null,
+                sortedLogbookDeleteCounter: state.sortedLogbookDeleteCounter + 1
+            }
 
         // ! Insert New Logbook
         case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_LOGBOOK:
@@ -306,9 +320,11 @@ export const globalSortedTransactions = (state, action) => {
             return {
                 groupSorted: action.payload,
                 sortedTransactionsInitCounter: state.sortedTransactionsInitCounter + 1,
-                sortedTransactionsInsertCounter: insert,
-                sortedTransactionsPatchCounter: patch,
-                sortedTransactionsDeleteCounter: deleted
+                sortedTransactionsInsertCounter: state.sortedTransactionsInsertCounter || 0,
+                sortedTransactionsPatchCounter: state.sortedTransactionsPatchCounter || 0,
+                sortedTransactionsDeleteCounter: state.sortedTransactionsDeleteCounter || 0,
+                sortedLogbookInsertCounter: state.sortedLogbookInsertCounter || 0,
+                sortedLogbookDeleteCounter: state.sortedLogbookDeleteCounter || 0
             }
 
 

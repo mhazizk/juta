@@ -8,7 +8,7 @@ import TransactionPreviewScreen from "./screens/home/TransactionPreviewScreen";
 import EditTransactionDetailsScreen from "./screens/home/EditTransactionDetailsScreen";
 import { useEffect, useMemo } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useGlobalUserAccount, useGlobalAppSettings, useGlobalTransactions, useGlobalSortedTransactions, useGlobalLoading } from "../modules/GlobalContext";
+import { useGlobalUserAccount, useGlobalAppSettings, useGlobalTransactions, useGlobalSortedTransactions, useGlobalLoading, useGlobalLogbooks, useGlobalCategories } from "../modules/GlobalContext";
 import { ACTIONS } from "../modules/GlobalReducer";
 import userCategories from "../database/userCategories";
 import userLogBooks from "../database/userLogBooks";
@@ -21,24 +21,42 @@ import MyLogbooksScreen from "./screens/user/MyLogbooksScreen";
 import MyCategoriesScreen from "./screens/user/MyCategoriesScreen";
 import EditLogbookScreen from "./screens/user/EditLogbookScreen";
 import LogbookPreviewScren from "./screens/user/LogbookPreviewScreen";
+import OnboardingScreen from "./screens/initial/OnboardingScreen";
+import { asyncStorage, STORAGE_ACTIONS } from "../modules/Storage";
+import InitialSetupScreen from "./screens/initial/InitialSetupScreen";
 
 
 const Stack = createStackNavigator();
 
 const screens = {
+
+    // Main tab navigator
     bottomTab: 'Bottom Tab',
-    modalScreen: 'Modal Screen',
+
+    // First Screen to show
+    initialSplashScreen: 'Initial Splash Screen',
+    initialSetupScreen: 'Initial Setup Screen',
+    splashScreen: 'Splash Screen',
+    onboardingScreen: 'Onboarding Screen',
+
+    // Transactions Screen
     transactionDetailsScreen: 'Transaction Details Screen',
     newTransactionDetailsScreen: 'New Transaction Details Screen',
     transactionPreviewScreen: 'Transaction Preview Screen',
+
+    // User Screen
+    myCategoriesScreen: 'My Categories Screen',
+    myLogbooksScreen: 'My Logbooks Screen',
+    logbookPreviewScreen: 'Logbook Preview Screen',
+    editLogbookScreen: 'Edit Logbook Screen',
+
+    // Modal Screen
+    modalScreen: 'Modal Screen',
     actionScreen: 'Action Screen',
     loadingScreen: 'Loading Screen',
-    splashScreen: 'Splash Screen',
-    myLogbooksScreen: 'My Logbooks Screen',
-    editLogbookScreen: 'Edit Logbook Screen',
-    logbookPreviewScreen: 'Logbook Preview Screen',
-    myCategoriesScreen: 'My Categories Screen'
+
 }
+
 const RootStack = ({ navigation }) => {
 
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -46,6 +64,8 @@ const RootStack = ({ navigation }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
 
     // ! useEffect for state
     useEffect(() => {
@@ -59,12 +79,61 @@ const RootStack = ({ navigation }) => {
 
 
     useEffect(() => {
-        // refresh
-        // if (sortedTransactions.groupSorted) {
-        //     getSortedTransactions();
-        // }
+
+        if (sortedTransactions) {
+
+            asyncStorage({
+                action: STORAGE_ACTIONS.SET,
+                key: 'sortedTransactions',
+                rawValue: sortedTransactions
+            })
+
+        }
+
 
     }, [sortedTransactions])
+
+    useEffect(() => {
+
+        if (appSettings) {
+
+            asyncStorage({
+                action: STORAGE_ACTIONS.SET,
+                key: 'appSettings',
+                rawValue: appSettings
+            })
+
+        }
+
+    }, [appSettings])
+
+    useEffect(() => {
+
+        if (logbooks) {
+
+            asyncStorage({
+                action: STORAGE_ACTIONS.SET,
+                key: 'logbooks',
+                rawValue: logbooks
+            })
+
+        }
+
+    }, [logbooks])
+
+    useEffect(() => {
+
+        if (categories) {
+
+            asyncStorage({
+                action: STORAGE_ACTIONS.SET,
+                key: 'categories',
+                rawValue: categories
+            })
+
+        }
+
+    }, [categories])
 
 
     // const dispatchInitSortedTransactions = () => {
@@ -87,17 +156,6 @@ const RootStack = ({ navigation }) => {
     }, [rawTransactions])
     // }
 
-    // const dispatchInitSortedTransactions = useMemo(() => {
-    //     return (
-    //         () => {
-    //             return dispatchInitSortedTransactions({
-    //                 type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-    //                 payload: setSortedTransactions()
-    //             });
-    //         }
-    //     )
-    // }, [])
-
     // Get Transaction File from storage
     const getFileFromStorage = async () => {
         try {
@@ -117,7 +175,7 @@ const RootStack = ({ navigation }) => {
 
     return (
         <Stack.Navigator
-            initialRouteName={screens.splashScreen}
+            initialRouteName={screens.onboardingScreen}
 
             screenOptions={{
                 headerShown: false
@@ -257,6 +315,32 @@ const RootStack = ({ navigation }) => {
                 }}
                 name={screens.loadingScreen}
                 component={LoadingScreen} />
+
+            {/* // ! Onboarding Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Onboarding Screen') &&
+                <Stack.Screen
+                    options={{
+                        headerShown: false,
+                        title: '',
+                        // headerLeft: (leftHeader) => (
+                        //     <>
+                        //     </>
+                        // )
+                    }}
+                    name={screens.onboardingScreen} component={OnboardingScreen} />}
+
+            {/* // ! Initial Setup Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Initial Setup Screen') &&
+                <Stack.Screen
+                    options={{
+                        headerShown: false,
+                        title: '',
+                        // headerLeft: (leftHeader) => (
+                        //     <>
+                        //     </>
+                        // )
+                    }}
+                    name={screens.initialSetupScreen} component={InitialSetupScreen} />}
 
 
             {/* // ! Splash Screen */}

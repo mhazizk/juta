@@ -78,6 +78,10 @@ const LogbookPreviewScren = ({ route, navigation }) => {
 
     }, [logbookToOpen])
 
+    useEffect(() => {
+
+    }, [sortedTransactions])
+
     // ! Function Section //
 
     const countTransactions = () => {
@@ -222,7 +226,8 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                                                     loadingType: 'deleteOneLogbook',
                                                     deleteLogbook: logbook,
                                                     logbookToOpen: null,
-                                                    initialLogbookDeleteCounter: logbooks.logbookDeleteCounter
+                                                    initialLogbookDeleteCounter: logbooks.logbookDeleteCounter,
+                                                    initialSortedLogbookDeleteCounter: sortedTransactions.sortedLogbookDeleteCounter
                                                 })
                                             }
                                         }], { cancelable: false }

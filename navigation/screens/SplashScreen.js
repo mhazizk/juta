@@ -4,6 +4,7 @@ import { globalStyles } from "../../assets/globalStyles";
 import { getCategoriesFromStorage, getLogbooksFromStorage, getTransactionsFromStorage, setSortedTransactions } from "../../modules/FetchData";
 import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
+import { asyncSecureStorage, STORAGE_ACTIONS } from "../../modules/Storage";
 
 const SplashScreen = ({ navigation }) => {
 
@@ -65,24 +66,25 @@ const SplashScreen = ({ navigation }) => {
             })
         }
 
-        // Initial load user account
-        if (!userAccount) {
-            dispatchUserAccount({
-                type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-                payload: {
-                    profile: {
-                        nickname: 'haziz',
-                        avatar: null
-                    },
-                    account: {
-                        verification: true,
-                        user_id: '637208d545a0d121607a402e',
-                        token: 'token123456',
-                        email: 'jack@gmail.com'
+        const getToken = asyncSecureStorage({ action: STORAGE_ACTIONS.GET, key: 'token' })
+            .then((item) => {
+                dispatchUserAccount({
+                    type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+                    payload: {
+                        profile: {
+                            nickname: 'haziz',
+                            avatar: null
+                        },
+                        account: {
+                            verification: true,
+                            user_id: '637208d545a0d121607a402e',
+                            token: item,
+                            email: 'jack@gmail.com'
+                        }
                     }
-                }
+                })
             })
-        }
+
 
         // Initial load raw transactions
         // if (!rawTransactions) {
@@ -112,6 +114,7 @@ const SplashScreen = ({ navigation }) => {
     }
 
 
+
     // const dispatchInitSortedTransactions = () => {
     const getSortedTransactions = useMemo(() => {
         return (
@@ -131,7 +134,6 @@ const SplashScreen = ({ navigation }) => {
         )
     }, [])
     // }
-
 
 
 

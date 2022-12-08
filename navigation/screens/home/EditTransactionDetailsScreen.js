@@ -167,7 +167,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Amount Section */}
                         <View style={{ ...globalStyles.lightTheme.view, flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                            <Text style={[{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }, { color: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ccc' }]}>Rp</Text>
+                            <Text style={[{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }, { color: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ccc' }]}>{selectedLogbook.logbook_currency.symbol}</Text>
                             <TextInput
                                 maxLength={20}
                                 textAlign='center'

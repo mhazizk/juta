@@ -24,7 +24,7 @@ const LoadingScreen = ({ route, navigation }) => {
     useEffect(() => {
 
         // console.log({ onLoad: route.params.initialRawTransactionsLength })
-console.log(route?.params)
+        console.log(route?.params)
 
         // ! Transaction Timeout
         setTimeout(
@@ -84,6 +84,7 @@ console.log(route?.params)
                         type: ACTIONS.LOGBOOKS.DELETE_ONE,
                         payload: route?.params?.deleteLogbook
                     })
+
                 }
 
 
@@ -133,16 +134,6 @@ console.log(route?.params)
     }, [sortedTransactions.sortedTransactionsPatchCounter])
 
 
-    // ! New Delete One Transaction Method
-    useEffect(() => {
-        if (sortedTransactions.sortedTransactionsDeleteCounter > route?.params?.initialSortedTransactionsDeleteCounter
-            && route?.params?.loadingType === 'deleteOneTransaction') {
-            // console.log('render 4')
-            navigation.navigate('Bottom Tab')
-        }
-    }, [sortedTransactions.sortedTransactionsDeleteCounter])
-
-
     // ! New Patch Logbook Method
     useEffect(() => {
 
@@ -156,16 +147,46 @@ console.log(route?.params)
 
     }, [logbooks.logbookPatchCounter])
 
-    // ! New Delete One Logbook Method
+
+    // ! New Delete One Transaction Method
+    useEffect(() => {
+        if (sortedTransactions.sortedTransactionsDeleteCounter > route?.params?.initialSortedTransactionsDeleteCounter
+            && route?.params?.loadingType === 'deleteOneTransaction') {
+            // console.log('render 4')
+            // dispatchSortedTransactions({
+            //     type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION,
+            //     payload: { deleteTransaction: route?.params?.deleteTransaction }
+            // })
+            navigation.navigate('Bottom Tab')
+        }
+    }, [sortedTransactions.sortedTransactionsDeleteCounter])
+
+
+    // ! New Delete One Logbook Method (Logbook Reducer)
     useEffect(() => {
 
         // console.log({ counter: logbooks.logbookPatchCounter })
         if (logbooks.logbookDeleteCounter > route?.params?.initialLogbookDeleteCounter
             && route?.params?.loadingType === 'deleteOneLogbook') {
-            navigation.navigate('My Logbooks Screen')
+            dispatchSortedTransactions({
+                type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_LOGBOOK,
+                payload: route?.params?.deleteLogbook
+            })
         }
 
     }, [logbooks.logbookDeleteCounter])
+
+    // ! New Delete One Logbook Method (Sorted Transactions Reducer)
+    useEffect(() => {
+
+        if (sortedTransactions.sortedLogbookDeleteCounter > route?.params?.initialSortedLogbookDeleteCounter
+            && route?.params?.loadingType === 'deleteOneLogbook') {
+            navigation.navigate('My Logbooks Screen')
+
+        }
+
+    }, [sortedTransactions.sortedLogbookDeleteCounter])
+
 
     // ! Save Async Storage && dispatch Sorted Transactions
     const saveAndLoad = async () => {

@@ -18,6 +18,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
     const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const [category, setCategory] = useState();
 
 
     // ! useState Section //
@@ -52,9 +53,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     useEffect(() => {
         // refresh
         // console.log(transaction.details)
-        findCategoryNameById();
-        findCategoryIconNameById();
-        findLogbookNamebyId();
+        findCategoryById();
+        // findLogbookNamebyId();
     }, [transaction])
 
     useEffect(() => {
@@ -69,7 +69,26 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
     }, [logbookToOpen])
 
+    useEffect(() => {
+
+    }, [category])
+
     // ! Function Section //
+    // Find Category
+    const findCategoryById = () => {
+        if (transaction) {
+            const id = transaction.details.category_id;
+            const foundExpenseCategory = categories.expense.filter((category) => { return category.id === id });
+            const foundIncomeCategory = categories.income.filter((category) => { return category.id === id });
+
+            if (foundExpenseCategory.length) {
+                setSelectedCategory(foundExpenseCategory[0]);
+            } else {
+                setSelectedCategory(foundIncomeCategory[0]);
+            }
+        }
+    }
+
     // Find Category Name by Id
     const findCategoryNameById = useMemo(() => {
         return (
@@ -110,28 +129,28 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
 
     // Find Log Book Name by Id
-    const findLogbookNamebyId = useMemo(() => {
-        return (
-            () => {
-                if (transaction) {
-                    const found = logbooks.logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
-                    setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name, logbook_currency: found[0].logbook_currency })
-                    // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
-                }
-            }
-        )
-    })
+    // const findLogbookNamebyId = useMemo(() => {
+    //     return (
+    //         () => {
+    //             if (transaction) {
+    //                 const found = logbooks.logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
+    //                 setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name, logbook_currency: found[0].logbook_currency })
+    //                 // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
+    //             }
+    //         }
+    //     )
+    // })
 
 
     return (
-        <>{transaction && selectedLogbook && selectedCategory &&
+        <>{transaction && selectedCategory &&
             <View style={{ ...globalStyles.lightTheme.view, height: '100%' }}>
                 <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
                     {/* // ! Amount Section */}
                     <View style={{ ...globalStyles.lightTheme.view, flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                         <View style={{ ...globalStyles.lightTheme.view, flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                            <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>Rp</Text>
+                            <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>{route?.params?.selectedLogbook?.logbook_currency.symbol}</Text>
                             <Text style={{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }}>{Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}</Text>
                         </View>
                         <View style={{ ...globalStyles.lightTheme.view, flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
@@ -186,7 +205,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
                         {/* // ! Book Picker */}
                         <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textPrimary, flex: 2, textAlign: 'right' }}>
-                            {selectedLogbook?.name[0]?.toUpperCase() + selectedLogbook?.name?.substring(1)}
+                            {route?.params?.selectedLogbook?.name[0]?.toUpperCase() + route?.params?.selectedLogbook?.name?.substring(1)}
                         </Text>
 
                         {/* </View> */}
@@ -237,7 +256,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                                 width={150}
                                 onPress={() => navigation.navigate('Transaction Details Screen', {
                                     transaction: transaction,
-                                    selectedLogbook: selectedLogbook,
+                                    selectedLogbook: route?.params?.selectedLogbook,
                                     selectedCategory: selectedCategory
                                 })}
                                 theme={theme.theme} />

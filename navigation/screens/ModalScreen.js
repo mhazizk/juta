@@ -85,15 +85,23 @@ const ModalScreen = ({ route, navigation }) => {
                             <>
                                 <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
                                     <View style={{ ...globalStyles.lightTheme.listContainer }}>
-                                        <IonIcons
-                                            name={item?.icon?.name}
-                                            size={18}
-                                            color={item?.icon?.color}
-                                            style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 16 }} />
-                                        <View style={globalStyles.lightTheme.listItem}>
+
+                                        {item.logbook_currency &&
+                                            <View style={[{ flex: 0, minWidth: 36, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: '#ddd' }]}>
+                                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{item.logbook_currency.symbol}</Text>
+                                            </View>}
+
+                                        {item.icon &&
+                                            <IonIcons
+                                                name={item?.icon?.name}
+                                                size={18}
+                                                color={item?.icon?.color}
+                                                style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none' }} />}
+
+                                        <View style={{ ...globalStyles.lightTheme.listItem, flex: 1, paddingHorizontal: 16 }}>
                                             <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
-                                            <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
                                         </View>
+                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
                                     </View>
                                 </TouchableNativeFeedback>
                             </>
