@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Text, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { VictoryChart, VictoryGroup, VictoryLine, VictoryTheme } from 'victory-native';
-import { globalStyles, globalTheme } from "../assets/globalStyles";
+import { globalStyles, globalTheme } from "../assets/themes/globalStyles";
 
 
 const ExpenseChartPreview = ({ route, navigation }) => {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, ScrollView, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 // import formatCurrency from "../../../assets/formatCurrency";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import Intl from 'intl';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { ButtonPrimary, ButtonSecondary, ButtonSwitch } from '../../../components/Button';
@@ -11,7 +11,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
 import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
-import formatCurrency from "../../../assets/formatCurrency";
+import formatCurrency from "../../../modules/formatCurrency";
 import CountryFlag from "react-native-country-flag";
 import APP_SETTINGS from "../../../config/appSettings";
 

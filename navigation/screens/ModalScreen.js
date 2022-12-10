@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, TextInput, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
-import { globalStyles, globalTheme } from "../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -55,7 +55,7 @@ const ModalScreen = ({ route, navigation }) => {
     return (
         <>
             {/* // ! Transparent Overlay */}
-            <TouchableOpacity onPress={() => navigation.pop(1)} style={{ flex: 1, backgroundColor: 'transparent' }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ flex: 1, backgroundColor: 'transparent' }}>
                 <View style={{ flex: 1, backgroundColor: 'transparent' }}>
                 </View>
             </TouchableOpacity>

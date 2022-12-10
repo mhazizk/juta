@@ -4,7 +4,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import APP_SETTINGS from "../../../config/appSettings";
 import { useEffect, useState } from "react";
 import ModalScreen from "../ModalScreen";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import { useGlobalAppSettings, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -188,6 +188,51 @@ const DeveloperScreen = ({ item, navigation }) => {
                         </View>
                     </TouchableNativeFeedback>
 
+                    {/* // ! Save Account to Storage */}
+                    <TouchableNativeFeedback
+                        onPress={() => asyncSecureStorage({
+                            action: STORAGE_ACTIONS.SET,
+                            key: 'account',
+                            rawValue: {
+                                profile: {
+                                    nickname: 'Haziz',
+                                    avatar: null
+                                },
+                                account: {
+                                    verification: true,
+                                    user_id: '637208d545a0d121607a402e',
+                                    token: 'token123',
+                                    email: 'mhazizk@gmail.com'
+                                }
+                            }
+                        }).then(() => alert('account saved'))
+                        } >
+                        <View style={styles.flatListView}>
+                            <IonIcons name='download' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Save Account to Device</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    {/* // ! Get Account from Storage */}
+                    <TouchableNativeFeedback
+                        onPress={() =>
+                            asyncSecureStorage({ action: STORAGE_ACTIONS.GET, key: 'account' }).then((item) => {
+                                alert('account loaded');
+                                dispatchUserAccount({
+                                    type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+                                    payload: item
+                                })
+                            })} >
+                        <View style={styles.flatListView}>
+                            <IonIcons name='document' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Load Account from Device and Dispatch</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+
                     {/* // ! Get Transactions from Storage */}
                     <TouchableNativeFeedback
                         onPress={() => getTransactionsFromStorage()}>
@@ -322,6 +367,17 @@ const DeveloperScreen = ({ item, navigation }) => {
                             <IonIcons name='trash' size={18} style={{ paddingRight: 16 }} />
                             <View style={globalStyles.lightTheme.listItem}>
                                 <Text style={globalStyles.lightTheme.textPrimary}>Delete All from Device</Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+
+                    {/* // ! Delete Key from Secure Storage */}
+                    <TouchableNativeFeedback
+                        onPress={() => asyncSecureStorage({ action: STORAGE_ACTIONS.DELETE, key: 'token' })}>
+                        <View style={styles.flatListView}>
+                            <IonIcons name='trash' size={18} style={{ paddingRight: 16 }} />
+                            <View style={globalStyles.lightTheme.listItem}>
+                                <Text style={globalStyles.lightTheme.textPrimary}>Delete Token from Secure Storage</Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>

@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import LogBookTab from '../../../components/LogBookTab';
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 
 const HomeScreen = ({ navigation }) => {
 

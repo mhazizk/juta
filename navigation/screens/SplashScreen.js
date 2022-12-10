@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
-import { globalStyles } from "../../assets/globalStyles";
+import { globalStyles } from "../../assets/themes/globalStyles";
 import { getCategoriesFromStorage, getLogbooksFromStorage, getTransactionsFromStorage, setSortedTransactions } from "../../modules/FetchData";
 import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
-import { asyncSecureStorage, STORAGE_ACTIONS } from "../../modules/Storage";
+import { asyncSecureStorage, asyncStorage, STORAGE_ACTIONS } from "../../modules/Storage";
 
 const SplashScreen = ({ navigation }) => {
 
@@ -20,7 +20,15 @@ const SplashScreen = ({ navigation }) => {
         setTimeout(
             () => {
 
-                loadInitialState();
+                loadInitialState()
+                    .then(() => {
+                        dispatchAppSettings({
+                            type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
+                            payload: 'Splash Screen'
+                        })
+
+                        navigation.navigate('Bottom Tab')
+                    })
 
             }
             , 100)
@@ -49,41 +57,52 @@ const SplashScreen = ({ navigation }) => {
     }, [sortedTransactions.sortedTransactionsInitCounter])
 
 
-    const loadInitialState = () => {
+    const loadInitialState = async () => {
 
         // Initial load app settings
-        if (!appSettings) {
+        const loadAppSettings = await asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'appSettings' })
+
+        if (!loadAppSettings) {
             dispatchAppSettings({
                 type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
                 payload: {
-                    theme: 'light',
+                    theme: { name: 'Light Theme', id: 'light' },
                     fontSize: 'medium',
                     language: 'english',
                     locale: 'us-EN',
-                    currency: { name: 'IDR', symbol: 'Rp' },
+                    currency: { name: 'IDR', symbol: 'Rp', isoCode: 'id' },
                     screenHidden: []
                 }
             })
         }
 
-        const getToken = asyncSecureStorage({ action: STORAGE_ACTIONS.GET, key: 'token' })
-            .then((item) => {
-                dispatchUserAccount({
-                    type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-                    payload: {
-                        profile: {
-                            nickname: 'haziz',
-                            avatar: null
-                        },
-                        account: {
-                            verification: true,
-                            user_id: '637208d545a0d121607a402e',
-                            token: item,
-                            email: 'jack@gmail.com'
-                        }
-                    }
-                })
+        // Load Account from Storage
+        const loadAccount = await asyncSecureStorage({ action: STORAGE_ACTIONS.GET, key: 'account' })
+
+        if (loadAccount) {
+            dispatchUserAccount({
+                type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+                payload: loadAccount
             })
+        }
+
+        // .then((item) => {
+        //         dispatchUserAccount({
+        //             type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+        //             payload: {
+        //                 profile: {
+        //                     nickname: 'haziz',
+        //                     avatar: null
+        //                 },
+        //                 account: {
+        //                     verification: true,
+        //                     user_id: '637208d545a0d121607a402e',
+        //                     token: item,
+        //                     email: 'jack@gmail.com'
+        //                 }
+        //             }
+        //         })
+        //     })
 
 
         // Initial load raw transactions
@@ -106,9 +125,9 @@ const SplashScreen = ({ navigation }) => {
         // }
 
         // Initial load sorted Transactions
-        if (!sortedTransactions.groupSorted) {
-            getSortedTransactions();
-        }
+        // if (!sortedTransactions.groupSorted) {
+        //     getSortedTransactions();
+        // }
 
 
     }

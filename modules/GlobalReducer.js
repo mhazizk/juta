@@ -171,6 +171,14 @@ export const initialLoading = {
 
 export const globalLogbooks = (state, action) => {
     switch (action.type) {
+
+        case ACTIONS.LOGBOOKS.SET:
+
+            return {
+                ...state,
+                logbooks: [action.payload]
+            }
+
         case ACTIONS.LOGBOOKS.INSERT:
 
             return {
@@ -1170,13 +1178,13 @@ export const globalTransactions = (state, action) => {
             return { ...state, groupedTransactions: action.payload }
 
         // ! Logbooks
-        // Set Logbooks
-        case ACTIONS.LOGBOOKS.SET:
-            return {
-                ...state,
-                logbooks: action.payload,
-                logbooksLength: action.payload.length
-            }
+        // // Set Logbooks
+        // case ACTIONS.LOGBOOKS.SET:
+        //     return {
+        //         ...state,
+        //         logbooks: action.payload,
+        //         logbooksLength: action.payload.length
+        //     }
 
         // Insert Logbook
         // case ACTIONS.LOGBOOKS.INSERT:

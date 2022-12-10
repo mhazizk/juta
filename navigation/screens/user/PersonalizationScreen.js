@@ -4,7 +4,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import APP_SETTINGS from "../../../config/appSettings";
 import { useEffect, useState } from "react";
 import ModalScreen from "../ModalScreen";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import { useGlobalAppSettings, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 
@@ -37,9 +37,9 @@ const PersonalizationScreen = ({ item, navigation }) => {
                             'Modal Screen', {
                             title: 'Theme',
                             modalType: 'list',
-                            props: APP_SETTINGS.THEME.OPTIONS.map((theme) => { return { name: theme } }),
-                            default: { name: appSettings.theme },
-                            selected: (item) => dispatchAppSettings({ type: ACTIONS.APP_SETTINGS.THEME.SET, payload: item.name })
+                            props: APP_SETTINGS.THEME.OPTIONS.map((theme) => theme),
+                            default: appSettings.theme,
+                            selected: (item) => dispatchAppSettings({ type: ACTIONS.APP_SETTINGS.THEME.SET, payload: item })
                         }
                         )}>
                         <View style={styles.flatListView}>
@@ -47,7 +47,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
                             <IonIcons name='contrast' size={18} style={{ paddingRight: 16 }} />
                             <View style={globalStyles.lightTheme.listItem}>
                                 <Text style={globalStyles.lightTheme.textPrimary}>Theme</Text>
-                                <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{appSettings.theme[0].toUpperCase() + appSettings.theme.substring(1)} Theme</Text>
+                                <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{appSettings.theme.name[0].toUpperCase() + appSettings.theme.name.substring(1)}</Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>

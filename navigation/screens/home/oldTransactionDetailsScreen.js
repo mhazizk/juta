@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 // import formatCurrency from "../../../assets/formatCurrency";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import Intl from 'intl';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { ButtonPrimary, ButtonSecondary, ButtonSwitch } from '../../../components/Button';

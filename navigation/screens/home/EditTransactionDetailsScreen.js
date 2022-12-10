@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ScrollView, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import formatCurrency from "../../../assets/formatCurrency";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import Intl from 'intl';
 import 'intl/locale-data/jsonp/en';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';

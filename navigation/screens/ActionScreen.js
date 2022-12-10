@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
-import { globalStyles, globalTheme } from "../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -138,16 +138,6 @@ const ActionScreen = ({ route, navigation }) => {
                     {/* // ! Cancel Button */}
                     <View style={{ paddingRight: 0 }}>
                         <ButtonSecondary label='Cancel' width={284} onPress={() => navigation.goBack()} theme='lightTheme' />
-                    </View>
-                    {/* // ! Save Button */}
-                    <View style={{ paddingLeft: 8 }}>
-                        <ButtonPrimary
-                            label='Save Key'
-                            onPress={() => {
-                                asyncSecureStorage({ action: STORAGE_ACTIONS.SET, key: 'token', rawValue: 'haziz123' });
-                                navigation.goBack()
-                            }}
-                            theme='lightTheme' />
                     </View>
                 </View>
             </View>

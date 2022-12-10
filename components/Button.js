@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Text } from "react-native"
-import { globalStyles, globalTheme } from "../assets/globalStyles"
+import { globalStyles, globalTheme } from "../assets/themes/globalStyles"
 
 // ! Button Primary //
 export const ButtonPrimary = ({ label, props, onPress, condition, theme, width }) => {

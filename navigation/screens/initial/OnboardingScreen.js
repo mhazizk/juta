@@ -1,5 +1,5 @@
 import { Image, Text, View } from "react-native";
-import { globalStyles } from "../../../assets/globalStyles";
+import { globalStyles } from "../../../assets/themes/globalStyles";
 import Onboarding from 'react-native-onboarding-swiper'
 import OnboardingImg1 from '../../../assets/icon.png'
 import OnboardingImg2 from '../../../assets/onboarding2.png'

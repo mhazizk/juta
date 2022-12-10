@@ -1,9 +1,9 @@
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Text, View, Dimensions, FlatList, findNodeHandle, TouchableNativeFeedback, TouchableOpacity, ActivityIndicator, SectionList } from "react-native";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import formatCurrency from "../../../assets/formatCurrency";
+import formatCurrency from "../../../modules/formatCurrency";
 import { ButtonPrimary } from "../../../components/Button";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Intl from 'intl';

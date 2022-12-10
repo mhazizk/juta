@@ -1,6 +1,6 @@
 import { Text, TouchableNativeFeedback, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { globalStyles } from "../../../assets/globalStyles";
+import { globalStyles } from "../../../assets/themes/globalStyles";
 import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalUserAccount } from "../../../modules/GlobalContext";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useEffect, useState } from "react";

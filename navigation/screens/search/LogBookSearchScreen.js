@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { globalStyles, globalTheme } from "../../../assets/globalStyles";
+import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 
 const LogBookSearchScreen = () => {
     return (
