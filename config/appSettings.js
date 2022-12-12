@@ -1,12 +1,17 @@
+import { colorOfTheYear2022 } from "../assets/themes/colorOfTheYear2022";
+import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023";
+import { darkTheme } from "../assets/themes/darkTheme";
+import { lightTheme } from "../assets/themes/lightTheme";
+
 const APP_SETTINGS = {
     THEME: {
-        DEFAULT: { name: 'Light Theme', id: 'light' },
-        USER: { name: 'Light Theme', id: 'light' },
+        DEFAULT: { name: 'Light Theme', id: 'light', style: lightTheme },
+        USER: { name: 'Light Theme', id: 'light', style: lightTheme },
         OPTIONS: [
-            { name: 'Light Theme', id: 'light' },
-            { name: 'Dark Theme', id: 'dark' },
-            { name: 'Color of The Year 2023', id: 'colorOfTheYear2023' },
-            { name: 'Color of The Year 2022', id: 'colorOfTheYear2022' }
+            { name: 'Light Theme', id: 'light', style: lightTheme },
+            { name: 'Dark Theme', id: 'dark', style: darkTheme },
+            { name: 'Color of The Year 2023', id: 'colorOfTheYear2023', style: colorOfTheYear2023 },
+            { name: 'Color of The Year 2022', id: 'colorOfTheYear2022', style: colorOfTheYear2022 }
         ]
     },
     FONT_SIZE: {
@@ -32,7 +37,7 @@ const APP_SETTINGS = {
     LOGBOOKS: {
         DAILY_CALCULATE: {
             DEFAULT: 'expense-income',
-            USER: 'expense-incomell',
+            USER: 'expense-income',
             OPTIONS: ['expense-only', 'income-only', 'expense-income', 'income-expense']
         },
         SHOW_TIME: {

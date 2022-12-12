@@ -16,6 +16,7 @@ import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalL
 import userTransactions from "../../../database/userTransactions";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import { setSortedTransactions } from "../../../modules/FetchData";
+import { TextPrimary } from "../../../components/Text";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
@@ -162,11 +163,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     return (
         <>
             {transaction && selectedCategory && selectedLogbook &&
-                <View style={[{ ...globalStyles.lightTheme.view, height: '100%' }, { ...globalTheme.lightTheme.view }]}>
+                <View style={[{ backgroundColor: appSettings.theme.style.colors.background, height: '100%' }]}>
                     <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
                         {/* // ! Amount Section */}
-                        <View style={{ ...globalStyles.lightTheme.view, flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                            {/* <TextPrimary
+                                style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }}
+                            /> */}
                             <Text style={[{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }, { color: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ccc' }]}>{selectedLogbook.logbook_currency.symbol}</Text>
                             <TextInput
                                 maxLength={20}
@@ -393,7 +397,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                         returnKeyType='done'
                                         keyboardType='default'
                                         placeholder='Add additional notes ...'
-                                        style={{ ...globalStyles.lightTheme.textPrimary, flex: 5, height: 48, borderRadius: 8, fontSize: 16 }}
+                                        placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
+                                        style={{ ...appSettings.theme.style.text.textPrimary, flex: 5, height: 48, borderRadius: 8, fontSize: 16 }}
                                         onChangeText={(string) => {
                                             setTransaction({
                                                 ...transaction,
@@ -407,10 +412,24 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                         defaultValue={transaction.details.notes}
                                         value={transaction.details.notes}
                                     />
-
-                                    {/* </View> */}
-                                    {/* <IonIcons name='pencil' size={18} style={{ paddingLeft: 16 }} /> */}
                                 </View>
+                                {transaction.details.notes &&
+                                    <IonIcons onPress={() => {
+                                        setTransaction({
+                                            ...transaction,
+                                            details: {
+                                                ...transaction.details,
+                                                notes: ''
+                                            }
+                                        })
+                                    }}
+                                        name='close-circle'
+                                        size={18}
+                                        style={{ paddingLeft: 16 }}
+                                        color={appSettings.theme.style.colors.foreground} />}
+
+                                {/* </View> */}
+                                {/* <IonIcons name='pencil' size={18} style={{ paddingLeft: 16 }} /> */}
 
                             </View>
                         </TouchableNativeFeedback>

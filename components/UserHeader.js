@@ -1,27 +1,41 @@
 import { Text, View, StyleSheet, Image, TouchableNativeFeedback } from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons'
-import { useGlobalUserAccount } from '../modules/GlobalContext';
+import { useGlobalAppSettings, useGlobalUserAccount } from '../modules/GlobalContext';
+import { TextPrimary } from './Text';
 
 
 const UserHeaderComponent = ({ navigation }) => {
 
     const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-    const checkmark = require('../assets/checkmark.png');
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+    const checkmark = require('../assets/img/checkmark.png');
     return (
         <>
             {userAccount &&
-                <View style={styles.container}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#000', height: 128, width: 128, borderRadius: 128 / 2, borderWidth: 3 }}>
+                <View style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor: appSettings.theme.style.colors.background,
+                    height: '40%',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', borderColor: appSettings.theme.style.colors.primary, height: 128, width: 128, borderRadius: 128 / 2, borderWidth: 3 }}>
                         {/* <Image source={checkmark} style={{ height: 128, width: 128 }} /> */}
-                        <IonIcons name='person' size={64} style={{display:!userAccount.profile.avatar ? 'flex' : 'none' }} />
+                        <IonIcons name='person' size={64} color={appSettings.theme.style.colors.primary} style={{ display: !userAccount.profile.avatar ? 'flex' : 'none' }} />
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                        <Text style={{ fontSize: 32, marginRight: 8 }}>
-                            Hi,
-                        </Text>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', marginRight: 4 }}>
+                        <TextPrimary
+                            label='Hi,'
+                            style={{ fontSize: 32, marginRight: 8 }}
+                        />
+                        <TextPrimary
+                            label={userAccount.profile.nickname}
+                            style={{ fontSize: 32, fontWeight: 'bold', marginRight: 4 }}
+                        />
+                        {/* <Text style={{ fontSize: 32, fontWeight: 'bold', marginRight: 4 }}>
                             {userAccount.profile.nickname}
-                        </Text>
+                        </Text> */}
                         <Image source={checkmark} style={{ display: userAccount.account.verification ? 'flex' : 'none', height: 22, width: 22 }} />
                     </View>
                 </View>}

@@ -21,13 +21,13 @@ const palette = {
     orange: '#F49D1A'
 }
 
-export const lightTheme = {
+export const darkTheme = {
     colors: {
-        background: palette.white[600],
-        foreground: palette.black[600],
-        primary: palette.black[600],
-        secondary: palette.white[400],
-        header: palette.white[600],
+        background: palette.black[600],
+        foreground: palette.white[600],
+        primary: palette.white[600],
+        secondary: palette.black[400],
+        header: palette.black[600],
         success: palette.green,
         warn: palette.orange,
         danger: palette.red,
@@ -36,15 +36,15 @@ export const lightTheme = {
     text: {
         textPrimary: {
             fontSize: 16,
-            color: palette.black[500]
+            color: palette.white[500]
         },
         textSecondary: {
             fontSize: 16,
-            color: palette.white[200]
+            color: palette.black[200]
         },
         textDisabled: {
             fontSize: 16,
-            color: palette.white[200]
+            color: palette.black[200]
         },
         textSuccess: {
             fontSize: 16,
@@ -66,23 +66,23 @@ export const lightTheme = {
     button: {
         buttonPrimary: {
             buttonStyle: {
-                backgroundColor: palette.black[600],
+                backgroundColor: palette.white[600],
                 borderRadius: 8,
             },
             textStyle: {
-                color: palette.white[600],
+                color: palette.black[600],
                 fontSize: 16
             }
         },
         buttonSecondary: {
             buttonStyle: {
                 backgroundColor: 'transparent',
-                borderColor: palette.black[600],
+                borderColor: palette.white[600],
                 borderRadius: 8,
                 borderWidth: 1,
             },
             textStyle: {
-                color: palette.black[600],
+                color: palette.white[600],
                 fontSize: 16
             }
         },
@@ -121,7 +121,7 @@ export const lightTheme = {
             height: 48
         },
         listItem: {
-            borderColor: palette.white[400],
+            borderColor: palette.black[400],
             display: 'flex',
             flex: 1,
             alignItems: 'center',

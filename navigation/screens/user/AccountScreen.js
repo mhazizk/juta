@@ -2,70 +2,59 @@ import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-na
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
-import { useGlobalUserAccount } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalUserAccount } from "../../../modules/GlobalContext";
+import { ListItem } from "../../../components/List";
+import { TextPrimary, TextSecondary } from "../../../components/Text";
 
 
 const AccountScreen = ({ item, navigation }) => {
 
     const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
-    const checkmark = require('../../../assets/checkmark.png');
+
+    const checkmark = require('../../../assets/img/checkmark.png');
 
     return (
         <>
             {userAccount &&
-                <View style={{ height: '100%', backgroundColor: '#fff' }}>
+                <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
                     <UserHeaderComponent />
-                    <View style={{ backgroundColor: '#fff', padding: 16 }}>
+                    {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                         <Text style={{ fontSize: 32, color: '#bbb' }}>Account</Text>
-                    </View>
+                    </View> */}
 
                     {/* // ! Change Email */}
-                    <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
-                        <View style={styles.flatListView}>
-                            {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                            <IonIcons name='mail' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Change Email</Text>
-                                <Text style={globalStyles.lightTheme.textSecondary}>{userAccount.account.email}</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                    <ListItem
+                        leftLabel='Change Email'
+                        rightLabel={userAccount.account.email}
+                        iconLeftName='mail'
+                        onPress={() => alert('Feature in progress ...')}
+                    />
 
                     {/* // ! Change Password */}
-                    <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
-                        <View style={styles.flatListView}>
-                            {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                            <IonIcons name='key' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Change Password</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                    <ListItem
+                        leftLabel='Change Password'
+                        iconLeftName='key'
+                        onPress={() => alert('Feature in progress ...')}
+                    />
 
                     {/* // ! Data */}
-                    <TouchableNativeFeedback onPress={() => navigation.push('Data Screen')}>
-                        <View style={styles.flatListView}>
-                            {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                            <IonIcons name='cube' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Data</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                    <ListItem
+                        leftLabel='Data'
+                        iconLeftName='cube'
+                        onPress={() => navigation.push('Data Screen')}
+                    />
 
                     {/* // ! Verification */}
                     <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
-                        <View style={styles.flatListView}>
+                        <View style={appSettings.theme.style.list.listContainer}>
                             <View style={{ paddingRight: 16 }}>
                                 <Image source={checkmark} style={{ width: 18, height: 18 }} />
                             </View>
-                            {/* <IonIcons name='key-outline' size={18} /> */}
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Verification</Text>
-                                <Text style={globalStyles.lightTheme.textSecondary}>
-                                    {userAccount.account.verification ? 'Verified' : 'Not Verified'}
-                                </Text>
+                            <View style={{ ...appSettings.theme.style.list.listItem }}>
+                                <TextPrimary label='Verification' />
+                                <TextSecondary label={userAccount.account.verification ? 'Verified' : 'Not Verified'} />
                             </View>
                         </View>
                     </TouchableNativeFeedback>

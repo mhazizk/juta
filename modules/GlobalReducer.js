@@ -29,6 +29,7 @@ export const ACTIONS = {
     },
     SORTED_TRANSACTIONS: {
         GROUP_SORTED: {
+            INIT_SETUP: 'INIT_SETUP_SORTED_TRANSACTIONS',
             SET: 'SET_SORTED_TRANSACTIONS',
             INSERT_TRANSACTION: 'INSERT_SORTED_TRANSACTIONS',
             PATCH_TRANSACTION: 'PATCH_SORTED_TRANSACTIONS',
@@ -131,16 +132,16 @@ export const ACTIONS = {
 
 }
 
-export const initialSortedTransactions = {
-    sortedTransactionsInitCounter: 0,
-    sortedTransactionsInsertCounter: 0,
-    sortedTransactionsPatchCounter: 0,
-    sortedTransactionsDeleteCounter: 0,
-    sortedLogbookInsertCounter: 0,
-    sortedLogbookDeleteCounter: 0,
-    logbookToOpen: null,
-    groupSorted: null
-}
+// export const initialSortedTransactions = {
+//     sortedTransactionsInitCounter: 0,
+//     sortedTransactionsInsertCounter: 0,
+//     sortedTransactionsPatchCounter: 0,
+//     sortedTransactionsDeleteCounter: 0,
+//     sortedLogbookInsertCounter: 0,
+//     sortedLogbookDeleteCounter: 0,
+//     logbookToOpen: null,
+//     groupSorted: null
+// }
 
 export const initialTransactions = null
 // {
@@ -222,6 +223,13 @@ export const globalLogbooks = (state, action) => {
 
 export const globalCategories = (state, action) => {
     switch (action.type) {
+
+        case ACTIONS.CATEGORIES.SET:
+            return {
+                ...state,
+                categories: action.payload
+            }
+
         case ACTIONS.CATEGORIES.INSERT:
 
             return {
@@ -260,6 +268,15 @@ export const globalCategories = (state, action) => {
 
 export const globalSortedTransactions = (state, action) => {
     switch (action.type) {
+
+        // ! Init Group Sorted
+        case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP:
+
+            return {
+                ...state,
+                sortedTransactionsInitCounter: 1,
+                groupSorted: action.payload
+            }
 
         // ! Delete One Logbook
         case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_LOGBOOK:

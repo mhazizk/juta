@@ -14,7 +14,7 @@ const SearchScreen = ({ navigation }) => {
         console.log(searchQuery)
     }, [searchQuery]);
 
-    const checkmark = require('../../../assets/checkmark.png')
+    const checkmark = require('../../../assets/img/checkmark.png')
     return (
         <>
             {/* <View style={{backgroundColor: '#fff', alignItems: 'flex-start' }}> */}

@@ -15,6 +15,7 @@ import DashboardScreen from "./screens/dashboard/DashboardScreen";
 import ActionScreen from "./screens/ActionScreen";
 import LogBookTab from "../components/LogBookTab";
 import DashboardStack from "./DashboardStack";
+import { useGlobalAppSettings } from "../modules/GlobalContext";
 
 // Screen names
 const stacks = {
@@ -29,6 +30,7 @@ const Tab = createBottomTabNavigator();
 
 const BottomTab = ({ route, navigation }) => {
     const [activeTab, setActiveTab] = useState();
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
     return (
         <>
@@ -48,8 +50,8 @@ const BottomTab = ({ route, navigation }) => {
                         } else if (rn === stacks.actionStack) {
                             iconName = focused ? 'plus' : 'plus'
                             return (
-                                <View style={{ backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', width: 54, height: 54, borderRadius: 54 / 2 }}>
-                                    <FontAwesome5 name={iconName} color='#fff' size={18} />
+                                <View style={{ backgroundColor: appSettings.theme.style.colors.primary, alignItems: 'center', justifyContent: 'center', width: 54, height: 54, borderRadius: 54 / 2 }}>
+                                    <FontAwesome5 name={iconName} color={appSettings.theme.style.colors.background} size={18} />
                                 </View>)
                         } else if (rn === stacks.searchStack) {
                             iconName = focused ? 'search' : 'search-outline'
@@ -62,12 +64,12 @@ const BottomTab = ({ route, navigation }) => {
 
                     },
                     tabBarIconStyle: {},
-                    tabBarActiveTintColor: '#000',
+                    tabBarActiveTintColor: appSettings.theme.style.colors.primary,
                     // tabBarActiveBackgroundColor: 'black',
                     tabBarLabelStyle: { fontSize: 12, paddingBottom: 0 },
                     tabBarShowLabel: false,
                     // tabBarItemStyle: { height: 64 },
-                    tabBarStyle: { height: 48, paddingHorizontal: 0 },
+                    tabBarStyle: { height: 48, paddingHorizontal: 0, backgroundColor: appSettings.theme.style.colors.background },
                     headerShown: false,
                     // tabBarBadge: '!',
                     tabBarBadgeStyle: { textAlign: 'center', textAlignVertical: 'center' },
@@ -82,7 +84,7 @@ const BottomTab = ({ route, navigation }) => {
                     component={LogBooksStack} />
                 <Tab.Screen options={{
                     tabBarItemStyle: { alignSelf: 'center', marginBottom: 28, height: 64 },
-                    tabBarActiveTintColor: '#fff'
+                    tabBarActiveTintColor: appSettings.theme.style.colors.background
                 }}
                     name={stacks.actionStack}
                     component={ActionScreen}

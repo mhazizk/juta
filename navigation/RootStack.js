@@ -174,6 +174,7 @@ const RootStack = ({ navigation }) => {
 
 
     return (
+
         <Stack.Navigator
             initialRouteName={screens.onboardingScreen}
 
@@ -182,6 +183,48 @@ const RootStack = ({ navigation }) => {
             }}
 
         >
+
+
+            {/* // ! Onboarding Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Onboarding Screen') &&
+                <Stack.Screen
+                    options={{
+                        headerShown: false,
+                        title: '',
+                        // headerLeft: (leftHeader) => (
+                        //     <>
+                        //     </>
+                        // )
+                    }}
+                    name={screens.onboardingScreen} component={OnboardingScreen} />}
+
+            {/* // ! Initial Setup Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Initial Setup Screen') &&
+                <Stack.Screen
+                    options={{
+                        headerShown: false,
+                        title: '',
+                        // headerLeft: (leftHeader) => (
+                        //     <>
+                        //     </>
+                        // )
+                    }}
+                    name={screens.initialSetupScreen} component={InitialSetupScreen} />}
+
+
+            {/* // ! Splash Screen */}
+            {!appSettings?.screenHidden?.some((screen) => screen === 'Splash Screen') &&
+                <Stack.Screen
+                    options={{
+                        gestureEnabled: false,
+                        presentation: 'transparentModal',
+                        headerShown: false,
+                        cardOverlayEnabled: true,
+                        cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid
+                    }}
+                    name={screens.splashScreen}
+                    component={SplashScreen} />}
+
             {/* // ! Bottom Tab */}
             <Stack.Screen name={screens.bottomTab}
                 options={{
@@ -249,6 +292,7 @@ const RootStack = ({ navigation }) => {
                 options={{
                     headerShown: true,
                     title: 'New Transaction',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     headerLeft: (leftHeader) => (
                         <>
                         </>
@@ -261,6 +305,7 @@ const RootStack = ({ navigation }) => {
                 options={{
                     headerShown: true,
                     title: 'My Logbooks',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // headerLeft: (leftHeader) => (
                     //     <>
                     //     </>
@@ -273,6 +318,7 @@ const RootStack = ({ navigation }) => {
                 options={{
                     headerShown: true,
                     title: 'Logbook Preview',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // headerLeft: (leftHeader) => (
                     //     <>
                     //     </>
@@ -285,6 +331,7 @@ const RootStack = ({ navigation }) => {
                 options={{
                     headerShown: true,
                     title: 'Edit Logbook',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // headerLeft: (leftHeader) => (
                     //     <>
                     //     </>
@@ -297,6 +344,7 @@ const RootStack = ({ navigation }) => {
                 options={{
                     headerShown: true,
                     title: 'My Categories',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // headerLeft: (leftHeader) => (
                     //     <>
                     //     </>
@@ -316,45 +364,6 @@ const RootStack = ({ navigation }) => {
                 name={screens.loadingScreen}
                 component={LoadingScreen} />
 
-            {/* // ! Onboarding Screen */}
-            {!appSettings?.screenHidden?.some((screen) => screen === 'Onboarding Screen') &&
-                <Stack.Screen
-                    options={{
-                        headerShown: false,
-                        title: '',
-                        // headerLeft: (leftHeader) => (
-                        //     <>
-                        //     </>
-                        // )
-                    }}
-                    name={screens.onboardingScreen} component={OnboardingScreen} />}
-
-            {/* // ! Initial Setup Screen */}
-            {!appSettings?.screenHidden?.some((screen) => screen === 'Initial Setup Screen') &&
-                <Stack.Screen
-                    options={{
-                        headerShown: false,
-                        title: '',
-                        // headerLeft: (leftHeader) => (
-                        //     <>
-                        //     </>
-                        // )
-                    }}
-                    name={screens.initialSetupScreen} component={InitialSetupScreen} />}
-
-
-            {/* // ! Splash Screen */}
-            {!appSettings?.screenHidden?.some((screen) => screen === 'Splash Screen') &&
-                <Stack.Screen
-                    options={{
-                        gestureEnabled: false,
-                        presentation: 'transparentModal',
-                        headerShown: false,
-                        cardOverlayEnabled: true,
-                        cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid
-                    }}
-                    name={screens.splashScreen}
-                    component={SplashScreen} />}
 
         </Stack.Navigator>
     )

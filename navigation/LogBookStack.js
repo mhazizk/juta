@@ -5,6 +5,7 @@ import NewLogScreen from "./screens/home/NewLogScreen";
 import TransactionDetailsScreen from "./screens/home/oldTransactionDetailsScreen";
 import LogBookScreen from "./screens/home/LogBookScreen";
 import { useEffect } from "react";
+import { useGlobalAppSettings } from "../modules/GlobalContext";
 
 const Stack = createStackNavigator();
 
@@ -15,6 +16,7 @@ const screens = {
 }
 
 const LogBooksStack = ({ route }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
 
     return (
@@ -26,6 +28,8 @@ const LogBooksStack = ({ route }) => {
         >
             <Stack.Screen options={{
                 title: 'Log Books',
+                headerStyle: { backgroundColor: appSettings.theme.style.colors.header },
+                headerShadowVisible: false
                 // headerLeft: (leftHeader) => (
                 //     <>
                 //     </>

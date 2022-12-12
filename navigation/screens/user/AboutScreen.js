@@ -2,63 +2,44 @@ import { View, Text, TouchableNativeFeedback, StyleSheet, Image } from "react-na
 import UserHeaderComponent from "../../../components/UserHeader";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
+import { useGlobalAppSettings } from "../../../modules/GlobalContext";
+import { ListItem } from "../../../components/List";
 
 
 const AboutScreen = ({ item, navigation }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
-    const checkmark = require('../../../assets/checkmark.png');
 
     return (
         <>
-            <View style={{ height: '100%', backgroundColor: '#fff' }}>
+            <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
                 <UserHeaderComponent />
-                <View style={{ backgroundColor: '#fff', padding: 16 }}>
+                {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
-                </View>
+                </View> */}
 
                 {/* // ! Made by */}
-                <TouchableNativeFeedback onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}>
-                    <View style={styles.flatListView}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='information-circle' size={20} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Made by</Text>
-                            <Text style={globalStyles.lightTheme.textSecondary}>Haziz</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    leftLabel='Made by'
+                    rightLabel='Haziz'
+                    iconLeftName='information-circle'
+                    onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}
+                />
 
                 {/* // ! Contact */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
-                    <View style={styles.flatListView}>
-                        <IonIcons name='mail' size={18} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Contact Me</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
-
-                {/* // ! Donate */}
-                <TouchableNativeFeedback onPress={() => alert('Feature in progress ...')}>
-                    <View style={styles.flatListView}>
-                        <IonIcons name='pizza' size={18} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Buy Me a Pizza</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    leftLabel='Contact Me'
+                    iconLeftName='mail'
+                    onPress={() => alert('OTW')}
+                />
 
                 {/* // ! App Version */}
-                <TouchableNativeFeedback onPress={() => alert('Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !')}>
-                    <View style={styles.flatListView}>
-                        <IonIcons name='phone-portrait' size={18} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>App Version</Text>
-                            <Text style={globalStyles.lightTheme.textSecondary}>v.1.0.0</Text>
-
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    leftLabel='App Version'
+                    rightLabel='v.1.0.0'
+                    iconLeftName='phone-portrait'
+                    onPress={() => alert('OTW')}
+                />
 
             </View>
         </>

@@ -2,84 +2,65 @@ import { StyleSheet, Text, TouchableNativeFeedback, View, Image } from "react-na
 import UserHeaderComponent from "../../../components/UserHeader"
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLogbooks } from "../../../modules/GlobalContext";
+import { TextPrimary } from "../../../components/Text";
+import { ListItem } from "../../../components/List";
 
 const UserScreen = ({ navigation }) => {
 
-    const checkmark = require('../../../assets/checkmark.png')
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
+
     return (
         <>
-            <View style={{ height: '100%', backgroundColor: '#fff' }}>
+            <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
                 <UserHeaderComponent />
-                {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
-                    <Text style={{ fontSize: 32, color: '#bbb' }}>Cash Log Settings</Text>
-                </View> */}
 
                 {/* // ! My Profile */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('Profile Screen')}>
-                    <View style={[globalStyles.lightTheme.listContainer, globalTheme.lightTheme.listContainer]}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='person' size={18} style={{ paddingRight: 16 }} />
-                        <View style={[globalStyles.lightTheme.listItem, globalTheme.lightTheme.listItem]}>
-                            <Text style={[globalStyles.lightTheme.textPrimary, globalTheme.lightTheme.textPrimary]}>My Profile</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
-
+                <ListItem
+                    pressable
+                    leftLabel='Profile'
+                    iconLeftName='person'
+                    onPress={() => navigation.navigate('Profile Screen')}
+                />
 
                 {/* // ! My Logbooks */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('My Logbooks Screen')}>
-                    <View style={[globalStyles.lightTheme.listContainer, globalTheme.lightTheme.listContainer]}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='book' size={18} style={{ paddingRight: 16 }} />
-                        <View style={[globalStyles.lightTheme.listItem, globalTheme.lightTheme.listItem]}>
-                            <Text style={[globalStyles.lightTheme.textPrimary, globalTheme.lightTheme.textPrimary]}>My Logbooks</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    pressable
+                    leftLabel='My Logbooks'
+                    rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
+                    iconLeftName='book'
+                    onPress={() => navigation.navigate('My Logbooks Screen')}
+                />
 
                 {/* // ! My Categories */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('My Categories Screen')}>
-                    <View style={styles.flatListView}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>My Categories</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    pressable
+                    leftLabel='My Categories'
+                    rightLabel={`${categories?.categories.expense?.length + categories?.categories.income?.length} categories`}
+                    iconLeftName='pricetags'
+                    onPress={() => navigation.navigate('My Categories Screen')}
+                />
+
 
                 {/* // ! Settings */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('Settings Screen')}>
-                    <View style={styles.flatListView}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='build' size={20} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Settings</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    pressable
+                    leftLabel='Settings'
+                    iconLeftName='build'
+                    onPress={() => navigation.navigate('Settings Screen')}
+                />
+
 
                 {/* // ! About */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('About Screen')}>
-                    <View style={styles.flatListView}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='information-circle' size={20} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>About</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
+                <ListItem
+                    pressable
+                    leftLabel='About'
+                    iconLeftName='information-circle'
+                    onPress={() => navigation.navigate('About Screen')}
+                />
 
-                {/* // ! Developer */}
-                <TouchableNativeFeedback onPress={() => navigation.navigate('Developer Screen')}>
-                    <View style={styles.flatListView}>
-                        {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                        <IonIcons name='settings' size={20} style={{ paddingRight: 16 }} />
-                        <View style={globalStyles.lightTheme.listItem}>
-                            <Text style={globalStyles.lightTheme.textPrimary}>Developer</Text>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
             </View>
         </>
     )

@@ -7,6 +7,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
 import { asyncSecureStorage, STORAGE_ACTIONS } from "../../modules/Storage";
+import { TextButtonPrimary, TextPrimary } from "../../components/Text";
 
 const ActionScreen = ({ route, navigation }) => {
 
@@ -43,7 +44,7 @@ const ActionScreen = ({ route, navigation }) => {
             {/* // ! Content card */}
             <View
                 style={{
-                    ...globalStyles.lightTheme.view,
+                    backgroundColor: appSettings.theme.style.colors.background,
                     display: 'flex',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
@@ -54,7 +55,10 @@ const ActionScreen = ({ route, navigation }) => {
                     // flex:1
                 }}>
                 <View style={{ padding: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>New</Text>
+                    <TextPrimary
+                        label='New'
+                        style={{ fontSize: 24 }}
+                    />
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', width: 300 }}>
@@ -63,11 +67,13 @@ const ActionScreen = ({ route, navigation }) => {
                     <View style={{ flex: 1, borderRadius: 8, borderWidth: 0, height: 150, margin: 8, overflow: 'hidden' }}>
                         <TouchableOpacity style={{ flex: 1 }}
                             onPress={() => navigation.navigate('New Transaction Details Screen')}>
-                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: appSettings.theme.style.colors.primary, alignItems: 'center', justifyContent: 'center' }}>
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                                    <IonIcons name='pencil' size={48} color='#fff' />
+                                    <IonIcons name='pencil' size={48} color={appSettings.theme.style.colors.background} />
                                 </View>
-                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>Transaction</Text>
+                                <TextButtonPrimary
+                                    label='Transaction'
+                                />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -122,11 +128,13 @@ const ActionScreen = ({ route, navigation }) => {
                                     navigation.goBack()
                                 }
                             })}>
-                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ flex: 1, flexDirection: 'column', padding: 16, margin: 0, backgroundColor: appSettings.theme.style.colors.primary, alignItems: 'center', justifyContent: 'center' }}>
                                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                                    <IonIcons name='book' size={48} color='#fff' />
+                                    <IonIcons name='book' size={48} color={appSettings.theme.style.colors.background} />
                                 </View>
-                                <Text style={[globalStyles.lightTheme.textPrimary, { color: '#fff' }]}>Log Book</Text>
+                                <TextButtonPrimary
+                                    label='LogBook'
+                                />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -137,7 +145,7 @@ const ActionScreen = ({ route, navigation }) => {
 
                     {/* // ! Cancel Button */}
                     <View style={{ paddingRight: 0 }}>
-                        <ButtonSecondary label='Cancel' width={284} onPress={() => navigation.goBack()} theme='lightTheme' />
+                        <ButtonSecondary label='Cancel' width={284} onPress={() => navigation.goBack()} />
                     </View>
                 </View>
             </View>

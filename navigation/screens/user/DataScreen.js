@@ -6,7 +6,6 @@ import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 
 const DataScreen = ({ item, navigation }) => {
 
-    const checkmark = require('../../../assets/checkmark.png');
 
     return (
         <>

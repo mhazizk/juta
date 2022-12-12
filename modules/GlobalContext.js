@@ -1,8 +1,9 @@
 import { createContext, useContext, useReducer } from "react"
-import { globalAppSettings, globalCategories, GlobalLoading, globalLogbooks, globalSortedTransactions, globalTransactions, globalUserAccount, initialLoading, initialSortedTransactions, initialTransactions, initialUserAccount } from "./GlobalReducer";
+import { globalAppSettings, globalCategories, GlobalLoading, globalLogbooks, globalSortedTransactions, globalTransactions, globalUserAccount, initialLoading, initialTransactions, initialUserAccount } from "./GlobalReducer";
 import initialAppSettings from "./InitialAppSettings";
 import initialCategories from "./InitialCategories";
 import initialLogbooks from "./InitialLogbooks";
+import InitialSortedTransactions from "./InitialSortedTransactions";
 
 // ! Create Context //
 const GlobalTransactionsContext = createContext();
@@ -47,7 +48,7 @@ export const GlobalStateProvider = ({ children }) => {
     const [userAccount, dispatchUserAccount] = useReducer(globalUserAccount, initialUserAccount);
     const [appSettings, dispatchAppSettings] = useReducer(globalAppSettings, initialAppSettings);
     const [isLoading, dispatchLoading] = useReducer(GlobalLoading, initialLoading);
-    const [sortedTransactions, dispatchSortedTransactions] = useReducer(globalSortedTransactions, initialSortedTransactions);
+    const [sortedTransactions, dispatchSortedTransactions] = useReducer(globalSortedTransactions, InitialSortedTransactions);
     const [logbooks, dispatchLogbooks] = useReducer(globalLogbooks, initialLogbooks);
     const [categories, dispatchCategories] = useReducer(globalCategories, initialCategories);
     const [rawTransactions, dispatchRawTransactions] = useReducer(globalTransactions, initialTransactions);

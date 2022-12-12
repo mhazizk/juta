@@ -10,7 +10,7 @@ const DashboardScreen = ({ navigation }) => {
 
     const [date, setDate] = useState()
 
-    const checkmark = require('../../../assets/checkmark.png');
+    const checkmark = require('../../../assets/img/checkmark.png');
 
     useEffect(() => {
         // in epoch time

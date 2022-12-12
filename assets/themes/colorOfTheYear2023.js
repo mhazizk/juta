@@ -18,16 +18,17 @@ const palette = {
     red: '#CD0E61',
     purple: '#5A31F4',
     green: '#0ECD9D',
-    orange: '#F49D1A'
+    orange: '#F49D1A',
+    primary: '#BC2649'
 }
 
-export const lightTheme = {
+export const colorOfTheYear2023 = {
     colors: {
         background: palette.white[600],
         foreground: palette.black[600],
-        primary: palette.black[600],
+        primary: palette.primary,
         secondary: palette.white[400],
-        header: palette.white[600],
+        header: palette.primary,
         success: palette.green,
         warn: palette.orange,
         danger: palette.red,

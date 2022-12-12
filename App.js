@@ -2,18 +2,33 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View, StatusBar } from 'rea
 import BottomTab from './navigation/BottomTab';
 import 'react-native-gesture-handler';
 import RootStack from './navigation/RootStack';
-import { NavigationContainer } from '@react-navigation/native';
-import { GlobalStateProvider } from './modules/GlobalContext';
+import { NavigationContainer, DarkTheme } from '@react-navigation/native';
+import { GlobalStateProvider, useGlobalAppSettings } from './modules/GlobalContext';
 
 
 export default function App() {
-
+  // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const dark = 'dark'
   return (
-    <GlobalStateProvider>
-      <NavigationContainer>
-        < RootStack />
-      </NavigationContainer>
-    </GlobalStateProvider>
+    <>
+      {
+        // appSettings?.theme?.id !== 'dark' && 
+        dark !== 'dark' &&
+        <GlobalStateProvider>
+          < NavigationContainer >
+            < RootStack />
+          </NavigationContainer>
+        </GlobalStateProvider >}
+
+      {
+        // appSettings?.theme?.id === 'dark' &&
+        dark === 'dark' &&
+        <GlobalStateProvider>
+          < NavigationContainer theme={DarkTheme}>
+            < RootStack />
+          </NavigationContainer>
+        </GlobalStateProvider >}
+    </>
   );
 }
 

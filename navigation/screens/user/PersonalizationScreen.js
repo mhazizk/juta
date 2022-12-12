@@ -7,6 +7,7 @@ import ModalScreen from "../ModalScreen";
 import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import { useGlobalAppSettings, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
+import { ListItem } from "../../../components/List";
 
 
 const PersonalizationScreen = ({ item, navigation }) => {
@@ -25,14 +26,18 @@ const PersonalizationScreen = ({ item, navigation }) => {
     return (
         <>
             {appSettings &&
-                <View style={{ height: '100%', backgroundColor: '#fff' }}>
+                <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
                     <UserHeaderComponent />
-                    <View style={{ backgroundColor: '#fff', padding: 16 }}>
+                    {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                         <Text style={{ fontSize: 32, color: '#bbb' }}>Personalization</Text>
-                    </View>
+                    </View> */}
 
                     {/* // ! App Theme */}
-                    <TouchableNativeFeedback
+                    <ListItem
+                        pressable
+                        leftLabel='Theme'
+                        rightLabel={appSettings.theme.name}
+                        iconLeftName='contrast'
                         onPress={() => navigation.navigate(
                             'Modal Screen', {
                             title: 'Theme',
@@ -41,19 +46,14 @@ const PersonalizationScreen = ({ item, navigation }) => {
                             default: appSettings.theme,
                             selected: (item) => dispatchAppSettings({ type: ACTIONS.APP_SETTINGS.THEME.SET, payload: item })
                         }
-                        )}>
-                        <View style={styles.flatListView}>
-                            {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                            <IonIcons name='contrast' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Theme</Text>
-                                <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{appSettings.theme.name[0].toUpperCase() + appSettings.theme.name.substring(1)}</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                        )}
+                    />
 
                     {/* // ! Font Size */}
-                    <TouchableNativeFeedback
+                    <ListItem
+                        leftLabel='Font Size'
+                        rightLabel={appSettings.fontSize[0].toUpperCase() + appSettings.fontSize.substring(1)}
+                        iconLeftName='text'
                         onPress={() => navigation.navigate(
                             'Modal Screen', {
                             title: 'Font Size',
@@ -62,19 +62,13 @@ const PersonalizationScreen = ({ item, navigation }) => {
                             selected: (item) => dispatchAppSettings({ type: ACTIONS.APP_SETTINGS.FONT_SIZE.SET, payload: item.name }),
                             default: { name: appSettings.fontSize }
                         })}
-                    >
-                        <View style={styles.flatListView}>
-                            {/* <Image source={checkmark} style={{ width: 18, height: 18 }} /> */}
-                            <IonIcons name='text' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Font Size</Text>
-                                <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>{appSettings.fontSize[0].toUpperCase() + appSettings.fontSize.substring(1)}</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                    />
 
                     {/* // ! Language */}
-                    <TouchableNativeFeedback
+                    <ListItem
+                        leftLabel='Language'
+                        rightLabel={appSettings.language[0].toUpperCase() + appSettings.language.substring(1)}
+                        iconLeftName='language'
                         onPress={() => navigation.navigate(
                             'Modal Screen', {
                             title: 'Language',
@@ -93,17 +87,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
                             ,
                             default: { name: appSettings.language }
                         })}
-                    >
-                        <View style={styles.flatListView}>
-                            <IonIcons name='language' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Language</Text>
-                                <Text style={{ ...globalStyles.lightTheme.textSecondary, color: '#bbb' }}>
-                                    {appSettings.language[0].toUpperCase() + appSettings.language.substring(1)}
-                                </Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                    />
 
                 </View>}
         </>

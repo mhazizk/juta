@@ -1,6 +1,6 @@
 import { FlatList, Image, Text, TextInput, TouchableNativeFeedback, View } from "react-native";
 import { globalStyles } from "../../../assets/themes/globalStyles";
-import { useGlobalAppSettings, useGlobalLogbooks, useGlobalUserAccount } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import { useEffect, useRef, useState } from "react";
 import APP_SETTINGS from "../../../config/appSettings";
@@ -10,27 +10,30 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 
 // Image Import
 import Onboarding from 'react-native-onboarding-swiper'
-import OnboardingImg1 from '../../../assets/icon.png'
-import OnboardingImg2 from '../../../assets/onboarding2.png'
-import OnboardingImg3 from '../../../assets/onboarding3.png'
-import OnboardingImg4 from '../../../assets/onboarding4.png'
-import OnboardingImg5 from '../../../assets/onboarding5.png'
-import colorOfTheYear2023 from '../../../assets/colorOfTheYear2023.png'
-import colorOfTheYear2022 from '../../../assets/colorOfTheYear2022.png'
-import doneSetup from '../../../assets/doneSetup.png'
-import light from '../../../assets/light.png'
-import dark from '../../../assets/dark.png'
-import large from '../../../assets/large.png'
-import medium from '../../../assets/medium.png'
-import small from '../../../assets/small.png'
+import colorOfTheYear2023 from '../../../assets/img/colorOfTheYear2023.png'
+import colorOfTheYear2022 from '../../../assets/img/colorOfTheYear2022.png'
+import doneSetup from '../../../assets/img/doneSetup.png'
+import light from '../../../assets/img/light.png'
+import dark from '../../../assets/img/dark.png'
+import large from '../../../assets/img/large.png'
+import medium from '../../../assets/img/medium.png'
+import small from '../../../assets/img/small.png'
+import { lightTheme } from "../../../assets/themes/lightTheme";
+import { asyncStorage, STORAGE_ACTIONS } from "../../../modules/Storage";
+import userCategories from "../../../database/userCategories";
+import initialCategories from "../../../modules/InitialCategories";
+import InitialSortedTransactions from "../../../modules/InitialSortedTransactions";
 
 const InitialSetupScreen = ({ navigation }) => {
 
+    const { transactions, dispatchTransactions } = useGlobalTransactions();
+    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
+    const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
-    const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
     const [selectedAppSettings, setSelectedAppSettings] = useState({
-        theme: { name: 'Light Theme', id: 'light' },
+        theme: { name: 'Light Theme', id: 'light', style: lightTheme },
         fontSize: 'medium',
         language: 'english',
         locale: 'us-EN',
@@ -108,7 +111,7 @@ const InitialSetupScreen = ({ navigation }) => {
     }
 
 
-    const checkSetup = () => {
+    const finalizeSetup = async () => {
 
         // Check Logbook
         const logbookToDispatch =
@@ -129,9 +132,15 @@ const InitialSetupScreen = ({ navigation }) => {
             "__v": 0
         }
 
+
         dispatchAppSettings({
             type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
             payload: selectedAppSettings
+        })
+
+        dispatchCategories({
+            type: ACTIONS.CATEGORIES.SET,
+            payload: userCategories
         })
 
         dispatchLogbooks({
@@ -139,8 +148,29 @@ const InitialSetupScreen = ({ navigation }) => {
             payload: logbookToDispatch
         })
 
-        return navigation.navigate('Splash Screen')
+        dispatchSortedTransactions({
+            type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
+            payload: [
+                {
+                    "logbook_id": newLogbook.logbook_id,
+                    "transactions": []
+                }
+            ]
+        })
 
+        // dispatchSortedTransactions({
+        // })
+
+        // Save to storage
+        const saveTransaction = await asyncStorage({ action: STORAGE_ACTIONS.SET, key: 'transactions', rawValue: [] })
+        const saveCategories = await asyncStorage({ action: STORAGE_ACTIONS.SET, key: 'categories', rawValue: initialCategories })
+        const saveSortedTransactions = await asyncStorage({ action: STORAGE_ACTIONS.SET, key: 'sortedTrasactions', rawValue: InitialSortedTransactions })
+        const saveAppSettings = await asyncStorage({ action: STORAGE_ACTIONS.SET, key: 'appSettings', rawValue: selectedAppSettings })
+
+        Promise.all([saveCategories, saveTransaction, saveSortedTransactions, saveAppSettings])
+            .then(() => {
+                return navigation.navigate('Bottom Tab')
+            })
     }
 
     const pages = [
@@ -323,7 +353,7 @@ const InitialSetupScreen = ({ navigation }) => {
                 transitionAnimationDuration={250}
                 showSkip={false}
                 onDone={() => {
-                    checkSetup()
+                    finalizeSetup()
                 }}
                 pages={pages}
             />

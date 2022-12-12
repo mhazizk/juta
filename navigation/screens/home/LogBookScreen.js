@@ -12,6 +12,7 @@ import { ACTIONS, globalTransactions, initialTransactions } from "../../../modul
 import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { setSortedTransactions } from "../../../modules/FetchData";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { TextButtonPrimary, TextPrimary, TextSecondary } from "../../../components/Text";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 
@@ -178,8 +179,11 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
 
             {/* CheckList Mode */}
             {enableChecklistMode &&
-                <View style={[{ zIndex: 1000, position: 'absolute', width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 0 }, { backgroundColor: '#ddd' }]}>
-                    <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{!checkList || !checkList.length ? 'Nothing' : `${checkList.length} item(s)`} selected</Text>
+                <View style={[{ zIndex: 1000, position: 'absolute', width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 0 }, { backgroundColor: appSettings.theme.style.colors.background }]}>
+                    <TextPrimary
+                        label={`${!checkList || !checkList.length ? 'Nothing' : `${checkList.length} item(s)`} selected`}
+                    />
+                    {/* <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{!checkList || !checkList.length ? 'Nothing' : `${checkList.length} item(s)`} selected</Text> */}
 
                     <View style={{ minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
 
@@ -188,8 +192,10 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                             onPress={() => setEnableCheckListMode(!enableChecklistMode)}
                         >
                             <View style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <IonIcons name="close-circle" size={20} style={{ paddingRight: 8 }} />
-                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>Clear Selection</Text>
+                                <IonIcons name="close-circle" size={20} color={appSettings.theme.style.colors.foreground} style={{ paddingRight: 8 }} />
+                                <TextPrimary
+                                    label='Clear Selection'
+                                />
                             </View>
                         </TouchableOpacity>
 
@@ -230,20 +236,22 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                     renderSectionHeader={({ section }) => (
                         <>
                             {transactions &&
-                                <View style={[{ paddingTop: 16, paddingBottom: 8, paddingHorizontal: 16, flexDirection: 'row', justifyContent: 'space-between' }, { backgroundColor: '#fff' }]}>
+                                <View style={[{ paddingTop: 16, paddingBottom: 8, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, { backgroundColor: appSettings.theme.style.colors.background }]}>
 
                                     {/* Date Title */}
-                                    <Text style={{ ...globalStyles.lightTheme.textSecondary }}>
-                                        {checkDate(section.title)}
-                                        {/* {section.customDate} */}
-                                    </Text>
+                                    <TextSecondary
+                                        label={checkDate(section.title)}
+                                    />
 
                                     {/* Sum Amount */}
-                                    <View style={[{ padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between' }, { backgroundColor: '#ddd' }]}>
-                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }}>{logbook.logbook_currency.symbol}</Text>
-                                        <Text style={{ ...globalStyles.lightTheme.textSecondary }}>
-                                            {formatCurrency({ amount: sumAmount(section.data), currency: appSettings.currency.name })}
-                                        </Text>
+                                    <View style={[{ padding: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between' }, { backgroundColor: appSettings.theme.style.colors.secondary }]}>
+                                        <TextButtonPrimary
+                                            label={logbook.logbook_currency.symbol}
+                                            style={{ paddingRight: 8 }}
+                                        />
+                                        <TextButtonPrimary
+                                            label={formatCurrency({ amount: sumAmount(section.data), currency: appSettings.currency.name })}
+                                        />
                                     </View>
                                 </View>}
                         </>
@@ -271,45 +279,69 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                                         }}
                                         delayLongPress={200}
                                     >
-                                        <View style={globalStyles.lightTheme.listContainer}>
-                                            <View style={globalStyles.lightTheme.listItem}>
+                                        <View style={appSettings.theme.style.list.listContainer}>
+                                            <View style={appSettings.theme.style.list.listItem}>
 
                                                 {enableChecklistMode &&
                                                     <View style={{
-                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? '#000' : 'transparent',
+                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? appSettings.theme.style.colors.foreground : 'transparent',
                                                         height: 20,
                                                         width: 20,
-                                                        borderColor: checkList?.some((checked) => checked === item.transaction_id) ? 'transparent' : '#bbb',
+                                                        borderColor: checkList?.some((checked) => checked === item.transaction_id) ? 'transparent' : appSettings.theme.style.colors.secondary,
                                                         borderWidth: 1,
                                                         borderRadius: 8,
                                                         marginRight: 16,
                                                         justifyContent: 'center',
                                                         alignItems: 'center'
                                                     }}>
-                                                        <IonIcons name={checkList?.some((checked) => checked === item.transaction_id) ? 'checkmark-sharp' : undefined} size={16} color='#fff' />
+                                                        <IonIcons name={checkList?.some((checked) => checked === item.transaction_id) ? 'checkmark-sharp' : undefined} size={16} color={appSettings.theme.style.colors.background} />
                                                     </View>}
                                                 <View style={{ paddingRight: 16 }}>
-                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} />
+                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} color={appSettings.theme.style.colors.foreground} />
                                                 </View>
 
-                                                <View style={globalStyles.lightTheme.listItem}>
+                                                <View style={appSettings.theme.style.list.listItem}>
                                                     {/* With Notes On */}
                                                     <View style={{ flex: 1, paddingRight: 16 }}>
                                                         <View style={{ flex: 0, flexDirection: 'row', alignItems: 'center', paddingRight: 16 }}>
-                                                            <Text style={[{ marginRight: 8 }, { ...globalStyles.lightTheme.textPrimary }]}>{findCategoryNameById(item.details.category_id)}</Text>
-                                                            <IonIcons name="ellipse" color='#ddd' size={8} />
+                                                            <TextPrimary
+                                                                label={findCategoryNameById(item.details.category_id)}
+                                                                style={{ marginRight: 8 }}
+                                                            />
+                                                            {/* <Text style={[{ marginRight: 8 }, { ...globalStyles.lightTheme.textPrimary }]}></Text> */}
+                                                            <IonIcons name="ellipse" color={appSettings.theme.style.colors.secondary} size={8} />
                                                             {item.details.date &&
-                                                                <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginLeft: 6 }}>{new Date(item.details.date).toLocaleTimeString(appSettings.locale, { hour: '2-digit', minute: '2-digit' })}</Text>}
+                                                                <TextSecondary
+                                                                    label={new Date(item.details.date).toLocaleTimeString(appSettings.locale, { hour: '2-digit', minute: '2-digit' })}
+                                                                    style={{ fontSize: 14, marginLeft: 6 }}
+                                                                    numberOfLines={1}
+                                                                />}
+                                                            {/* {item.details.date &&
+                                                                <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginLeft: 6 }}>{new Date(item.details.date).toLocaleTimeString(appSettings.locale, { hour: '2-digit', minute: '2-digit' })}</Text>} */}
                                                         </View>
                                                         {item.details.notes &&
-                                                            <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{item.details.notes}</Text>}
+                                                            <TextSecondary
+                                                                label={item.details.notes}
+                                                                style={{ fontSize: 14 }}
+                                                                numberOfLines={1}
+                                                            />}
+                                                        {/* {item.details.notes &&
+                                                            <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{item.details.notes}</Text>} */}
                                                     </View>
 
 
                                                     {/* <Text>{new Date(item.details.date).toLocaleDateString()}</Text> */}
-                                                    <View style={{ flexDirection: 'row' }}>
-                                                        <Text style={{ ...globalStyles.lightTheme.textSecondary, fontSize: 14, marginRight: 4 }}>{logbook.logbook_currency.symbol}</Text>
-                                                        <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 18 }}>{formatCurrency({ amount: item.details.amount, currency: appSettings.currency.name })}</Text>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                        <TextSecondary
+                                                            label={logbook.logbook_currency.symbol}
+                                                            style={{ fontSize: 14, paddingRight: 8 }}
+                                                            numberOfLines={1}
+                                                        />
+                                                        <TextPrimary
+                                                            label={formatCurrency({ amount: item.details.amount, currency: appSettings.currency.name })}
+                                                            style={{ fontSize: 18 }}
+                                                            numberOfLines={1}
+                                                        />
                                                     </View>
                                                 </View>
                                             </View>
@@ -326,8 +358,10 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
             {
                 !transactions.length &&
                 <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                    <Entypo name='documents' size={48} color='#bbb' style={{ padding: 16 }} />
-                    <Text style={{ ...globalStyles.lightTheme.textSecondary }}>No Transactions</Text>
+                    <Entypo name='documents' size={48} color={appSettings.theme.style.colors.secondary} style={{ padding: 16 }} />
+                    <TextSecondary
+                        label='No Transactions'
+                    />
                 </View>
             }
         </>
@@ -338,6 +372,7 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
 const LogBookScreen = ({ route, navigation }) => {
 
     // ! useState Section //
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -544,11 +579,11 @@ const LogBookScreen = ({ route, navigation }) => {
 
     return (
         <>
-            <View style={{ height: '100%', backgroundColor: '#fff' }}>
+            <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
 
                 {/* Header */}
                 {!isLoading.status && filteredTransactions &&
-                    <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 8 }]}>
+                    <View style={[{ backgroundColor: appSettings.theme.style.colors.header, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 8 }]}>
                         <TouchableOpacity
                             style={{ flexShrink: 1, flexGrow: 1, maxWidth: '70%' }}
                             onPress={() => navigation.navigate(
@@ -565,21 +600,29 @@ const LogBookScreen = ({ route, navigation }) => {
                                     },
                                     default: { name: selectedLogbook?.name }
                                 })}>
-                            <View style={[{ height: 48, paddingLeft: 16, flexDirection: 'row', borderRadius: 8, justifyContent: 'space-between', alignItems: 'center' }, { backgroundColor: '#ddd' }]}>
-                                <Text
+                            <View style={[{ height: 48, paddingLeft: 16, flexDirection: 'row', borderRadius: 8, justifyContent: 'space-between', alignItems: 'center' }, { backgroundColor: appSettings.theme.style.colors.foreground }]}>
+                                <TextButtonPrimary
+                                    label={selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name.substring(1)}
+                                    style={{ flex: 1 }}
+                                    numberOfLines={1}
+                                />
+                                {/* <Text
                                     numberOfLines={1}
                                     style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>
                                     {selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name.substring(1)}
-                                </Text>
-                                <IonIcons name='chevron-down' size={18} style={{ flexShrink: 0, paddingHorizontal: 16 }} />
+                                </Text> */}
+                                <IonIcons name='chevron-down' size={18} color={appSettings.theme.style.colors.background} style={{ flexShrink: 0, paddingHorizontal: 16 }} />
                             </View>
                         </TouchableOpacity>
 
                         {/* Number of Transactions */}
                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                            <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary }}>
+                            <TextSecondary
+                                label={`${!filteredTransactions.length ? 'No' : countTransactions(filteredTransactions)} Transactions`}
+                            />
+                            {/* <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary }}>
                                 {!filteredTransactions.length ? 'No' : countTransactions(filteredTransactions)} Transactions
-                            </Text>
+                            </Text> */}
                         </View>
                     </View>}
 

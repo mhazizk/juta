@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
+import { lightTheme } from "../../assets/themes/lightTheme";
 import { getCategoriesFromStorage, getLogbooksFromStorage, getTransactionsFromStorage, setSortedTransactions } from "../../modules/FetchData";
 import { useGlobalAppSettings, useGlobalLoading, useGlobalSortedTransactions, useGlobalTransactions, useGlobalUserAccount } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
@@ -66,7 +67,7 @@ const SplashScreen = ({ navigation }) => {
             dispatchAppSettings({
                 type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
                 payload: {
-                    theme: { name: 'Light Theme', id: 'light' },
+                    theme: { name: 'Light Theme', id: 'light', style: lightTheme },
                     fontSize: 'medium',
                     language: 'english',
                     locale: 'us-EN',
@@ -123,11 +124,11 @@ const SplashScreen = ({ navigation }) => {
         //         }
         //         )
         // }
-
+        // console.log(sortedTransactions)
         // Initial load sorted Transactions
-        // if (!sortedTransactions.groupSorted) {
-        //     getSortedTransactions();
-        // }
+        if (!sortedTransactions.groupSorted) {
+            await getSortedTransactions();
+        }
 
 
     }
@@ -135,23 +136,18 @@ const SplashScreen = ({ navigation }) => {
 
 
     // const dispatchInitSortedTransactions = () => {
-    const getSortedTransactions = useMemo(() => {
-        return (
-            async () => {
-                try {
-
-                    dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-                        payload: await setSortedTransactions()
-                    })
+    const getSortedTransactions = async () => {
+        try {
+            dispatchSortedTransactions({
+                type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
+                payload: await setSortedTransactions()
+            })
 
 
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-        )
-    }, [])
+        } catch (error) {
+            console.log(error)
+        }
+    }
     // }
 
 

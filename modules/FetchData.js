@@ -5,6 +5,7 @@ import { GlobalSettingsContext, useGlobalUserAccount, useGlobalAppSettings, useG
 import { ACTIONS } from "./GlobalReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
+import { asyncStorage, STORAGE_ACTIONS } from "./Storage";
 
 // ! Convert and Save Transaction File
 export const convertAndSaveTransctions = async (sortedTransactions) => {
@@ -12,7 +13,7 @@ export const convertAndSaveTransctions = async (sortedTransactions) => {
         // Get all transactions
         const transactionsToBeSaved = [];
         const getAllTransactions = sortedTransactions.groupSorted.forEach((logbook) => logbook.transactions.forEach((dateSection) => dateSection.data.forEach((transaction) => transactionsToBeSaved.push(transaction))))
-        await AsyncStorage.setItem('transactions', JSON.stringify(transactionsToBeSaved),alert('saved'))
+        await AsyncStorage.setItem('transactions', JSON.stringify(transactionsToBeSaved), alert('saved'))
     }
 }
 
@@ -123,13 +124,29 @@ const groupByDate = (array) => {
 
 
 
+// ! New Sorted Transactions //
+export const initSortedTransactions = async () => {
+
+    const loadTransactions = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'transactions' })
+    const loadLogbooks = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'logbooks' })
+    const loadCategories = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'categories' })
+
+    return Promise.all([loadCategories, loadLogbooks, loadTransactions])
+        .then((array) => {
+            if (array[2]) {
+
+            }
+        })
+}
+
+
 // ! Set Sorted Transactions //
 export const setSortedTransactions = async (updatedTransactions = null) => {
 
     // try {
-    const loadTransactions = getTransactionsFromStorage()
-    const loadLogbooks = getLogbooksFromStorage()
-    const loadCategories = getCategoriesFromStorage()
+    const loadTransactions = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'transactions' })
+    const loadLogbooks = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'logbooks' })
+    const loadCategories = asyncStorage({ action: STORAGE_ACTIONS.GET, key: 'categories' })
 
     let sorted
     let groupedByLogbook;

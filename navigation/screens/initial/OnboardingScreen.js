@@ -2,12 +2,13 @@ import { Image, Text, View } from "react-native";
 import { globalStyles } from "../../../assets/themes/globalStyles";
 import Onboarding from 'react-native-onboarding-swiper'
 import OnboardingImg1 from '../../../assets/icon.png'
-import OnboardingImg2 from '../../../assets/onboarding2.png'
-import OnboardingImg3 from '../../../assets/onboarding3.png'
-import OnboardingImg4 from '../../../assets/onboarding4.png'
-import OnboardingImg5 from '../../../assets/onboarding5.png'
+import OnboardingImg2 from '../../../assets/img/onboarding2.png'
+import OnboardingImg3 from '../../../assets/img/onboarding3.png'
+import OnboardingImg4 from '../../../assets/img/onboarding4.png'
+import OnboardingImg5 from '../../../assets/img/onboarding5.png'
 import { useGlobalAppSettings } from "../../../modules/GlobalContext";
 import { ACTIONS } from "../../../modules/GlobalReducer";
+import { lightTheme } from "../../../assets/themes/lightTheme";
 
 const OnboardingScreen = ({ navigation }) => {
 
@@ -23,7 +24,7 @@ const OnboardingScreen = ({ navigation }) => {
                     dispatchAppSettings({
                         type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
                         payload: {
-                            theme: { name: 'Light Theme', id: 'light' },
+                            theme: { name: 'Light Theme', id: 'light', style: lightTheme },
                             screenHidden: ['Onboarding Screen'],
                             fontSize: 'medium',
                             language: 'english',

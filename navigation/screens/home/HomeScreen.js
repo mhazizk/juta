@@ -11,7 +11,7 @@ const HomeScreen = ({ navigation }) => {
     const [recordAxios, setRecordAxios] = useState();
     const [sumRecordsByDate, setSumRecordsbyDate] = useState();
 
-    const checkmark = require('../../../assets/checkmark.png');
+    const checkmark = require('../../../assets/img/checkmark.png');
 
     // const getRecords = async () => {
     //     try {

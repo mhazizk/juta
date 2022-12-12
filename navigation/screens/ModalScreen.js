@@ -4,14 +4,17 @@ import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { useGlobalLoading } from "../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalLoading } from "../../modules/GlobalContext";
 import { ACTIONS } from "../../modules/GlobalReducer";
 import CountryFlag from "react-native-country-flag";
+import { TextPrimary } from "../../components/Text";
+import { ListItem } from "../../components/List";
 
 
 const ModalScreen = ({ route, navigation }) => {
 
     const { isLoading, dispatchLoading } = useGlobalLoading();
+    const { appSettings, dispathAppSettings } = useGlobalAppSettings();
     const [localLoading, setLocalLoading] = useState(false);
     const [selected, setSelected] = useState(null);
     const [textInput, setTextInput] = useState(null);
@@ -62,28 +65,39 @@ const ModalScreen = ({ route, navigation }) => {
 
             {/* // ! Content card */}
             <View
-                style={{
-                    ...globalStyles.lightTheme.view,
+                style={[{
+                    backgroundColor: appSettings.theme.style.colors.background
+                },
+                {
                     display: 'flex',
                     justifyContent: 'flex-start',
                     maxHeight: '50%',
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16
                     // flex:1
-                }}>
+                }]}>
                 <View style={{ padding: 16 }}>
-                    <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>{route?.params?.title}</Text>
+                    <TextPrimary
+                        label={route?.params?.title}
+                        style={{ fontSize: 24 }}
+                    />
                 </View>
 
                 {/* // ! Flatlist Map Params Props */}
                 {route.params?.modalType === 'list' &&
                     <FlatList
-                        style={{ ...globalStyles.lightTheme.view }}
                         data={route?.params?.props}
                         keyExtractor={(item, id) => item?.name + id}
                         renderItem={({ item }) => (
                             <>
-                                <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
+                                <ListItem
+                                    pressable
+                                    iconLeftName={item?.icon?.name}
+                                    iconRightName={selected?.name == item?.name ? 'checkmark-circle' : null}
+                                    leftLabel={item?.name[0].toUpperCase() + item?.name.substring(1)}
+                                    onPress={() => { setSelected(item) }}
+                                />
+                                {/* <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
                                     <View style={{ ...globalStyles.lightTheme.listContainer }}>
 
                                         {item.logbook_currency &&
@@ -103,7 +117,7 @@ const ModalScreen = ({ route, navigation }) => {
                                         </View>
                                         <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
                                     </View>
-                                </TouchableNativeFeedback>
+                                </TouchableNativeFeedback> */}
                             </>
                         )}
                     />}
@@ -112,22 +126,21 @@ const ModalScreen = ({ route, navigation }) => {
                 {/* // ! Flatlist Params Currency */}
                 {route.params?.modalType === 'currencyList' &&
                     <FlatList
-                        style={{ ...globalStyles.lightTheme.view }}
                         data={route?.params?.props}
                         keyExtractor={(item, id) => item?.name + id}
                         renderItem={({ item }) => (
                             <>
                                 <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
-                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                                    <View style={appSettings.theme.style.list.listContainer}>
                                         <CountryFlag
                                             isoCode={item?.isoCode}
                                             size={18}
                                         />
-                                        <View style={{ ...globalStyles.lightTheme.listItem, paddingLeft: 16 }}>
-                                            <Text style={globalStyles.lightTheme.textPrimary}>
-                                                {item?.name[0].toUpperCase() + item?.name.substring(1)} / {item?.symbol}
-                                            </Text>
-                                            <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
+                                        <View style={{ ...appSettings.theme.style.list.listItem, paddingLeft: 16 }}>
+                                            <TextPrimary
+                                                label={`${item?.name[0].toUpperCase() + item?.name.substring(1)} / ${item?.symbol}`}
+                                            />
+                                            <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} color={appSettings.theme.style.colors.foreground} />
                                         </View>
                                     </View>
                                 </TouchableNativeFeedback>
@@ -139,8 +152,9 @@ const ModalScreen = ({ route, navigation }) => {
                 {route.params?.modalType === 'textInput' &&
                     <View style={{ paddingHorizontal: 16 }}>
                         <TextInput
-                            style={{ paddingHorizontal: 16, fontSize: 16, borderRadius: 8, borderWidth: 1, height: 48 }}
+                            style={{ paddingHorizontal: 16, fontSize: 16, borderRadius: 8, borderWidth: 1, height: 48, borderColor: appSettings.theme.style.colors.primary, color: appSettings.theme.style.text.textPrimary.color }}
                             placeholder={route.params?.placeholder ? route.params.placeholder : 'Type here....'}
+                            placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
                             defaultValue={route.params?.default ? route.params.default : ''}
                             value={textInput}
                             onChangeText={(input) => setTextInput(input)}
@@ -155,7 +169,7 @@ const ModalScreen = ({ route, navigation }) => {
 
                         {/* // ! Delete Action */}
                         <TouchableNativeFeedback onPress={() => { }}>
-                            <View style={{ ...globalStyles.lightTheme.listContainer }}>
+                            <View style={appSettings.theme.style.list.listContainer}>
                                 <IonIcons
                                     name='trash'
                                     size={18}
@@ -174,7 +188,7 @@ const ModalScreen = ({ route, navigation }) => {
 
                     {/* // ! Cancel Button */}
                     <View style={{ paddingRight: 8 }}>
-                        <ButtonSecondary label='Cancel' onPress={() => navigation.goBack()} theme='lightTheme' />
+                        <ButtonSecondary label='Cancel' onPress={() => navigation.goBack()} theme={appSettings.theme.style} />
                     </View>
                     {/* // ! Save Button */}
                     <View style={{ paddingLeft: 8 }}>
@@ -209,7 +223,7 @@ const ModalScreen = ({ route, navigation }) => {
                                 //     } :
                                 //     () => { navigation.goBack() }
                             }
-                            theme='lightTheme' />
+                            theme={appSettings.theme.style} />
                         {/* } */}
                     </View>
                 </View>

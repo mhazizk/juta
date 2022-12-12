@@ -1,17 +1,51 @@
 import { Text } from "react-native";
 import { lightTheme } from "../assets/themes/lightTheme";
+import { useGlobalAppSettings } from "../modules/GlobalContext";
 
 
 // ! TEXT COMPONENT //
 
 
 // ! Text Primary //
-export const TextPrimary = ({ label, props, theme, style }) => {
+export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
 
     return (
         <>
-            <Text style={[{ ...theme.text.textPrimary || lightTheme.text.textPrimary }, { ...style || null }]}>
+            <Text numberOfLines={numberOfLines} style={[{ ...appSettings.theme.style.text.textPrimary }, { ...style || null }]}>
                 {label || 'Primary Text'}
+            </Text>
+        </>
+    )
+}
+
+
+// ! Text Button Primary //
+export const TextButtonPrimary = ({ label, props, numberOfLines, style }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+    return (
+        <>
+            <Text
+                numberOfLines={numberOfLines || null}
+                style={[{ ...appSettings.theme.style.button.buttonPrimary.textStyle }, { ...style || null }]}
+            >
+                {label || 'Primary Text'}
+            </Text>
+        </>
+    )
+}
+
+// ! Text Button Secondary //
+export const TextButtonSecondary = ({ label, props, theme, style }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+
+    return (
+        <>
+            <Text style={appSettings.theme.style.button.buttonSecondary.textStyle}>
+                {label || 'Secondary Text'}
             </Text>
         </>
     )
@@ -19,10 +53,11 @@ export const TextPrimary = ({ label, props, theme, style }) => {
 
 // ! Text Secondary //
 export const TextSecondary = ({ label, props, theme, style }) => {
+    const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
     return (
         <>
-            <Text style={[{ ...theme.text.textSecondary || lightTheme.text.textSecondary }, { ...style || null }]}>
+            <Text style={[{ ...appSettings.theme.style.text.textSecondary }, { ...style || null }]}>
                 {label || 'Secondary Text'}
             </Text>
         </>

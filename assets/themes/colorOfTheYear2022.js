@@ -21,13 +21,11 @@ const palette = {
     orange: '#F49D1A'
 }
 
-export const lightTheme = {
+export const colorOfTheYear2022 = {
     colors: {
-        background: palette.white[600],
+        background: palette.white[200],
         foreground: palette.black[600],
         primary: palette.black[600],
-        secondary: palette.white[400],
-        header: palette.white[600],
         success: palette.green,
         warn: palette.orange,
         danger: palette.red,
@@ -65,26 +63,14 @@ export const lightTheme = {
     },
     button: {
         buttonPrimary: {
-            buttonStyle: {
-                backgroundColor: palette.black[600],
-                borderRadius: 8,
-            },
-            textStyle: {
-                color: palette.white[600],
-                fontSize: 16
-            }
+            backgroundColor: palette.black[600],
+            borderRadius: 8,
+            borderWidth: 1
         },
         buttonSecondary: {
-            buttonStyle: {
-                backgroundColor: 'transparent',
-                borderColor: palette.black[600],
-                borderRadius: 8,
-                borderWidth: 1,
-            },
-            textStyle: {
-                color: palette.black[600],
-                fontSize: 16
-            }
+            backgroundColor: 'transparent',
+            borderColor: palette.black[600],
+            borderRadius: 8,
         },
         buttonDisabled: {
             backgroundColor: palette.white[200],
@@ -108,29 +94,6 @@ export const lightTheme = {
         buttonFailure: {
             backgroundColor: palette.red,
             borderRadius: 8,
-        }
-    },
-    list: {
-        listContainer: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            backgroundColor: 'transparent',
-            paddingHorizontal: 16,
-            height: 48
-        },
-        listItem: {
-            borderColor: palette.white[400],
-            display: 'flex',
-            flex: 1,
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingVertical: 0,
-            borderBottomWidth: 0.5,
-            minHeight: 46,
-            textAlignVertical: 'center'
         }
     }
 }

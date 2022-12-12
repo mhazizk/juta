@@ -5,6 +5,7 @@ import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, u
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useEffect, useState } from "react";
 import { ACTIONS } from "../../../modules/GlobalReducer";
+import { ListItem } from "../../../components/List";
 
 
 const MyLogbooksScreen = ({ navigation }) => {
@@ -49,39 +50,32 @@ const MyLogbooksScreen = ({ navigation }) => {
     return (
         <>
             {loadedLogbooks &&
-                <View style={{ backgroundColor: '#fff', height: '100%' }}>
+                <View style={{ backgroundColor: appSettings.theme.style.colors.background, height: '100%' }}>
                     <FlatList
                         data={loadedLogbooks}
                         keyExtractor={(item) => item.logbook_id}
                         style={{ flex: 1 }}
                         renderItem={({ item }) => (
                             <>
-                                <TouchableNativeFeedback
+                                <ListItem
+                                    pressable
+                                    leftLabel={item?.logbook_name[0]?.toUpperCase() + item?.logbook_name?.substring(1)}
+                                    iconLeftName='book'
+                                    iconRightName='chevron-forward'
                                     onPress={() => {
                                         navigation.navigate('Logbook Preview Screen', {
                                             logbook: item,
                                         })
                                     }}
-                                >
-                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
-                                        <IonIcons
-                                            name='book'
-                                            size={18}
-                                            style={{ paddingRight: 16 }} />
-                                        <View style={globalStyles.lightTheme.listItem}>
-                                            <Text style={globalStyles.lightTheme.textPrimary}>{item?.logbook_name[0]?.toUpperCase() + item?.logbook_name?.substring(1)}</Text>
-                                        </View>
-                                        <IonIcons
-                                            name='chevron-forward'
-                                            size={18}
-                                        />
-                                    </View>
-                                </TouchableNativeFeedback>
+                                />
                             </>
                         )}
                         ListFooterComponent={() => (
                             <>
-                                <TouchableNativeFeedback
+                                <ListItem
+                                    pressable
+                                    leftLabel='Add New Logbook'
+                                    iconLeftName='add-circle'
                                     onPress={() => navigation.navigate('Modal Screen', {
                                         modalType: 'textInput',
                                         title: 'Create New Log Book',
@@ -126,17 +120,8 @@ const MyLogbooksScreen = ({ navigation }) => {
                                             })
 
                                         }
-                                    })} >
-                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
-                                        <IonIcons
-                                            name='add-circle'
-                                            size={18}
-                                            style={{ paddingRight: 16 }} />
-                                        <View style={{ ...globalStyles.lightTheme.listItem }}>
-                                            <Text style={globalStyles.lightTheme.textPrimary}>Add New Logbook</Text>
-                                        </View>
-                                    </View>
-                                </TouchableNativeFeedback>
+                                    })}
+                                />
                             </>
                         )}
                     />
