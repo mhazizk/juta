@@ -28,6 +28,8 @@ export const lightTheme = {
         primary: palette.black[600],
         secondary: palette.white[400],
         header: palette.white[600],
+        incomeAmount: '#008888',
+        incomeSymbol: '#00B19B',
         success: palette.green,
         warn: palette.orange,
         danger: palette.red,

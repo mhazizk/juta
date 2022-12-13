@@ -8,9 +8,9 @@ import { ButtonIconDanger, ButtonPrimary, ButtonSecondary, ButtonSwitch } from '
 import 'intl/locale-data/jsonp/en';
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
-import categories from "../../../database/userCategories";
+// import categories from "../../../database/userCategories";
 import logbooks from "../../../database/userLogBooks";
-import { useGlobalAppSettings, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories, useGlobalLogbooks, useGlobalSortedTransactions, useGlobalTransactions } from "../../../modules/GlobalContext";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
@@ -20,6 +20,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+    const { categories, dispatchCategories } = useGlobalCategories();
     const [category, setCategory] = useState();
 
 
@@ -75,15 +76,20 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
     }, [category])
 
+    useEffect(() => {
+
+    }, [categories])
+
     // ! Function Section //
     // Find Category
     const findCategoryById = () => {
         if (transaction) {
             const id = transaction.details.category_id;
-            const foundExpenseCategory = categories.expense.filter((category) => { return category.id === id });
-            const foundIncomeCategory = categories.income.filter((category) => { return category.id === id });
+            const foundExpenseCategory = categories.categories.expense.filter((category) => { return category.id === id });
+            const foundIncomeCategory = categories.categories.income.filter((category) => { return category.id === id });
 
             if (foundExpenseCategory.length) {
+                console.log(foundExpenseCategory[0])
                 setSelectedCategory(foundExpenseCategory[0]);
             } else {
                 setSelectedCategory(foundIncomeCategory[0]);
@@ -111,22 +117,22 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     }, [transaction])
 
     // Find Category Icon Name by Id
-    const findCategoryIconNameById = useMemo(() => {
-        return (() => {
-            if (transaction) {
-                const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === transaction.details.category_id })
-                const filteredIncomeCategory = categories.income.filter((category) => { return category.id === transaction.details.category_id })
+    // const findCategoryIconNameById = useMemo(() => {
+    //     return (() => {
+    //         if (transaction) {
+    //             const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === transaction.details.category_id })
+    //             const filteredIncomeCategory = categories.income.filter((category) => { return category.id === transaction.details.category_id })
 
-                if (filteredExpenseCategory.length) {
-                    return setSelectedCategory(filteredExpenseCategory[0])
-                    // return filteredExpenseCategory.map((item => item.icon.name));
-                } else {
-                    return setSelectedCategory(filteredIncomeCategory[0])
-                    // return filteredIncomeCategory.map((item) => item.icon.name);
-                }
-            }
-        })
-    }, [transaction])
+    //             if (filteredExpenseCategory.length) {
+    //                 return setSelectedCategory(filteredExpenseCategory[0])
+    //                 // return filteredExpenseCategory.map((item => item.icon.name));
+    //             } else {
+    //                 return setSelectedCategory(filteredIncomeCategory[0])
+    //                 // return filteredIncomeCategory.map((item) => item.icon.name);
+    //             }
+    //         }
+    //     })
+    // }, [transaction])
 
 
 
@@ -155,19 +161,19 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                                 <TextSecondary
                                     label={route?.params?.selectedLogbook?.logbook_currency.symbol}
-                                    style={{ paddingRight: 8 }}
+                                    style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeSymbol : appSettings.theme.style.text.textSecondary.color }}
                                 />
                                 <TextPrimary
                                     label={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
-                                    style={{ height: 36, fontSize: 36 }}
+                                    style={{ height: 36, fontSize: 36, color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeAmount : appSettings.theme.style.text.textPrimary.color }}
                                 />
                             </View>
-                            <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                            {/* <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                                 <TextSecondary
                                     label={transaction.details.in_out === 1 ? 'Income' : 'Expense'}
                                     style={{ paddingTop: 8 }}
                                 />
-                            </View>
+                            </View> */}
                         </View>
                         {/* </ScrollView> */}
 
@@ -253,7 +259,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
 
                                 {/* // ! Category Picker */}
-                                <IonIcons name={selectedCategory.icon.name} size={18} style={{ paddingRight: 8 }} color={appSettings.theme.style.colors.foreground} />
+                                <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} color={selectedCategory?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : selectedCategory?.icon?.color} />
                                 <TextPrimary
                                     label={selectedCategory.name[0].toUpperCase() + selectedCategory.name.substring(1)}
                                 />

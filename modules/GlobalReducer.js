@@ -242,24 +242,105 @@ export const globalCategories = (state, action) => {
 
             let deleteCategory = action.payload
 
+            const findExpenseCategoryToDelete = state.categories.expense.filter((category) => category.id === deleteCategory.id)
+            const findIncomeCategoryToDelete = state.categories.income.filter((category) => category.id === deleteCategory.id)
 
-            return {
-                ...state,
-                categoryDeleteCounter: state.categoryDeleteCounter + 1,
-                categories: action.payload,
+            if (findExpenseCategoryToDelete.length) {
+                const foundExpenseCategory = state.categories.expense.filter((category) => category.id !== deleteCategory.id)
+                const sortedExpenseCategory = foundExpenseCategory.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                return {
+                    ...state,
+                    categoryDeleteCounter: state.categoryDeleteCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        expense: sortedExpenseCategory
+                    }
+                }
+            }
+
+            if (findIncomeCategoryToDelete.length) {
+                const foundIncomeCategory = state.categories.income.filter((category) => category.id !== deleteCategory.id)
+                const sortedIncomeCategory = foundIncomeCategory.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+
+                return {
+                    ...state,
+                    categoryDeleteCounter: state.categoryDeleteCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        income: sortedIncomeCategory
+                    }
+                }
             }
 
         case ACTIONS.CATEGORIES.PATCH:
 
             let patchCategory = action.payload
 
-            // TODO REPLACE CATEGORY WITH PATCHED ONE AND REPLACE ALL TRANSACTIONS IN IT WITH THE NEW LOGBBOK
+            const findExpenseCategory = state.categories.expense.filter((category) => category.id === patchCategory.id)
+            const findIncomeCategory = state.categories.income.filter((category) => category.id === patchCategory.id)
 
-            return {
-                ...state,
-                categoryPatchCounter: state.categoryPatchCounter + 1,
-                categories: action.payload
+            if (findExpenseCategory.length) {
+                const foundExpenseCategory = state.categories.expense.filter((category) => category.id !== patchCategory.id)
+                const sortedExpenseCategory = [...foundExpenseCategory, patchCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                return {
+                    ...state,
+                    categoryPatchCounter: state.categoryPatchCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        expense: sortedExpenseCategory
+                    }
+                }
             }
+
+            if (findIncomeCategory.length) {
+                const foundIncomeCategory = state.categories.income.filter((category) => category.id !== patchCategory.id)
+                const sortedIncomeCategory = [...foundIncomeCategory, patchCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                return {
+                    ...state,
+                    categoryPatchCounter: state.categoryPatchCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        income: sortedIncomeCategory
+                    }
+                }
+            }
+
 
         default:
             return state

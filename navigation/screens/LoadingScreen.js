@@ -8,6 +8,7 @@ import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalL
 import { ACTIONS } from "../../modules/GlobalReducer";
 import { convertAndSaveTransctions, setSortedTransactions } from "../../modules/FetchData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TextPrimary } from "../../components/Text";
 
 
 const LoadingScreen = ({ route, navigation }) => {
@@ -87,6 +88,29 @@ const LoadingScreen = ({ route, navigation }) => {
 
                 }
 
+                // ! New Patch One Category Method
+                if (route?.params?.patchCategory &&
+                    categories.categoryPatchCounter === route?.params?.initialCategoryPatchCounter &&
+                    route?.params?.loadingType === 'patchCategory') {
+                    console.log('mulai dispatch')
+                    dispatchCategories({
+                        type: ACTIONS.CATEGORIES.PATCH,
+                        payload: route?.params?.patchCategory
+                    })
+                }
+
+
+                // ! New Delete One Category Method
+                if (route?.params?.deleteCategory &&
+                    categories.categoryDeleteCounter === route?.params?.initialCategoryDeleteCounter &&
+                    route?.params?.loadingType === 'deleteCategory') {
+                    console.log('mulai dispatch')
+                    dispatchCategories({
+                        type: ACTIONS.CATEGORIES.DELETE_ONE,
+                        payload: route?.params?.deleteCategory
+                    })
+                }
+
 
 
                 // ! Switch LogBook Timeout
@@ -146,6 +170,26 @@ const LoadingScreen = ({ route, navigation }) => {
         }
 
     }, [logbooks.logbookPatchCounter])
+
+
+    // ! New Patch One Category Method
+    useEffect(() => {
+        if (categories.categoryPatchCounter > route?.params?.initialCategoryPatchCounter
+            && route?.params?.loadingType === 'patchCategory') {
+            navigation.navigate('Category Preview Screen', {
+                category: route?.params?.patchCategory
+            })
+        }
+    }, [categories.categoryPatchCounter])
+
+    // ! New Delete One Category Method
+    useEffect(() => {
+        if (categories.categoryDeleteCounter > route?.params?.initialCategoryDeleteCounter
+            && route?.params?.loadingType === 'deleteCategory') {
+            navigation.navigate('My Categories Screen')
+        }
+
+    }, [categories.categoryDeleteCounter])
 
 
     // ! New Delete One Transaction Method
@@ -213,7 +257,7 @@ const LoadingScreen = ({ route, navigation }) => {
             {/* {isLoading && */}
             <View
                 style={{
-                    ...globalStyles.lightTheme.view,
+                    backgroundColor: appSettings.theme.style.colors.background,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -223,9 +267,11 @@ const LoadingScreen = ({ route, navigation }) => {
                     borderTopRightRadius: 16
                     // flex:1
                 }}>
-                <ActivityIndicator size={48} color='#000' style={{ paddingBottom: 16 }} />
+                <ActivityIndicator size={48} color={appSettings.theme.style.colors.primary} style={{ paddingBottom: 16 }} />
                 <View >
-                    <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{route?.params?.label}</Text>
+                    <TextPrimary
+                        label={route?.params?.label}
+                    />
                 </View>
             </View>
             {/* } */}

@@ -172,7 +172,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                             <TextPrimary
                                 label={selectedLogbook?.logbook_currency?.symbol || appSettings.currency.symbol}
-                                style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }}
+                                style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeSymbol : appSettings.theme.style.text.textSecondary.color }}
                             />
                             <TextInput
                                 maxLength={20}
@@ -180,7 +180,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 returnKeyType='done'
                                 keyboardType='number-pad'
                                 placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
-                                style={[{ ...globalStyles.lightTheme.textPrimary, height: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}
+                                placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
+                                style={[{ ...appSettings.theme.style.text.textPrimary, height: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeSymbol : appSettings.theme.style.text.textPrimary.color }]}
                                 onChangeText={(string) => {
                                     const float =
                                         string ?
@@ -392,7 +393,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                     <View style={[{ flexDirection: 'row', maxWidth: '50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Category Picker */}
-                                        <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} color={appSettings.theme.style.colors.foreground} />
+                                        <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} color={selectedCategory?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : selectedCategory?.icon?.color} />
 
                                         <TextPrimary
                                             label={selectedCategory?.name ? selectedCategory?.name[0].toUpperCase() + selectedCategory?.name.substring(1) : 'Pick Category'}

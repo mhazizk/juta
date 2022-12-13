@@ -320,7 +320,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                                         })
 
                                         navigation.navigate('Loading Screen', {
-                                            label: 'Saving ...',
+                                            label: 'Saving Logbook ...',
                                             loadingType: 'patchLogbook',
                                             logbookToOpen: logbookToOpen,
                                             patchLogbook: logbook,

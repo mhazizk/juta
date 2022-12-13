@@ -28,6 +28,8 @@ export const darkTheme = {
         primary: palette.white[600],
         secondary: palette.black[400],
         header: palette.black[600],
+        incomeAmount: '#00B19B',
+        incomeSymbol: '#008888',
         success: palette.green,
         warn: palette.orange,
         danger: palette.red,
@@ -61,7 +63,7 @@ export const darkTheme = {
         textFailure: {
             fontSize: 16,
             color: palette.red
-        }
+        },
     },
     button: {
         buttonPrimary: {

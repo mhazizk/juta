@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
@@ -11,7 +11,9 @@ import { TextPrimary } from "../../components/Text";
 import { ListItem } from "../../components/List";
 
 
+
 const ModalScreen = ({ route, navigation }) => {
+
 
     const { isLoading, dispatchLoading } = useGlobalLoading();
     const { appSettings, dispathAppSettings } = useGlobalAppSettings();
@@ -19,6 +21,15 @@ const ModalScreen = ({ route, navigation }) => {
     const [selected, setSelected] = useState(null);
     const [textInput, setTextInput] = useState(null);
 
+    const colors = [
+        { name: 'Default', color: appSettings.theme.style.colors.foreground },
+        { name: 'Red', color: '#FF5252' },
+        { name: 'Blue', color: '#2196F3' },
+        { name: 'Green', color: '#4CAF50' },
+        { name: 'Yellow', color: '#FFEB3B' },
+        { name: 'Orange', color: '#FF9800' },
+        { name: 'Purple', color: '#9C27B0' },
+    ]
 
     useEffect(() => {
         // refresh
@@ -44,7 +55,10 @@ const ModalScreen = ({ route, navigation }) => {
 
     const onPressReturn = () => {
         switch (true) {
-            case route?.params.modalType === 'list' || route?.params.modalType === 'currencyList':
+            case route?.params.modalType === 'list' ||
+                route?.params.modalType === 'currencyList' ||
+                route?.params.modalType === 'colorPicker' ||
+                route?.params.modalType === 'iconPicker':
                 return route.params.selected(selected);
             case route?.params.modalType === 'textInput':
                 return route.params.selected(textInput);
@@ -71,7 +85,7 @@ const ModalScreen = ({ route, navigation }) => {
                 {
                     display: 'flex',
                     justifyContent: 'flex-start',
-                    maxHeight: '50%',
+                    maxHeight: '60%',
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16
                     // flex:1
@@ -83,7 +97,7 @@ const ModalScreen = ({ route, navigation }) => {
                     />
                 </View>
 
-                {/* // ! Flatlist Map Params Props */}
+                {/* // ! Flatlist Category Props */}
                 {route.params?.modalType === 'list' &&
                     <FlatList
                         data={route?.params?.props}
@@ -93,6 +107,7 @@ const ModalScreen = ({ route, navigation }) => {
                                 <ListItem
                                     pressable
                                     iconLeftName={item?.icon?.name}
+                                    iconLeftColor={item?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : item?.icon?.color}
                                     iconRightName={selected?.name == item?.name ? 'checkmark-circle' : null}
                                     leftLabel={item?.name[0].toUpperCase() + item?.name.substring(1)}
                                     onPress={() => { setSelected(item) }}
@@ -182,6 +197,68 @@ const ModalScreen = ({ route, navigation }) => {
                         </TouchableNativeFeedback>
                         {/* </View> */}
                     </>}
+
+
+                {/* // ! Pick Color */}
+                {route.params?.modalType === 'colorPicker' &&
+                    <FlatList
+                        horizontal
+                        // numColumns={4}
+                        // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
+                        data={colors}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }}
+                        keyExtractor={(item, id) => item?.name}
+                        renderItem={({ item }) => (
+                            <>
+                                <TouchableOpacity
+                                    style={{ marginRight: 8 }}
+                                    onPress={() => { setSelected(item) }}>
+                                    {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
+
+                                    {/* Color Circle */}
+                                    <View style={{ height: 48, width: 48, borderRadius: 48 / 2, backgroundColor: item.color, alignItems: 'center', justifyContent: 'center' }} >
+                                        <IonIcons name='checkmark-sharp' size={24} color={appSettings.theme.style.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} />
+                                    </View>
+
+                                    {/* </View> */}
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    />}
+
+
+                {/* // ! Pick Icon */}
+                {route.params?.modalType === 'iconPicker' &&
+                    <FlatList
+                        numColumns={6}
+                        columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
+                        data={route?.params?.props}
+                        showsHorizontalScrollIndicator={false}
+                        style={{ height: '100%' }}
+                        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center', justifyContent: 'space-between' }}
+                        keyExtractor={(item, id) => item?.name}
+                        renderItem={({ item }) => (
+                            <>
+                                <TouchableOpacity
+                                    style={{ marginRight: 8 }}
+                                    onPress={() => { setSelected(item) }}>
+                                    {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
+
+                                    {/* Color Circle */}
+                                    <View style={{ height: 48, width: 48, borderWidth: 2, borderRadius: 48 / 2, borderColor: selected?.name === item.name ? appSettings.theme.style.colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }} >
+                                        {item.pack === 'ion_icons' &&
+                                            <IonIcons name={item.name} size={24} color={item.color === 'default' ? appSettings.theme.style.colors.foreground : item.color} />}
+                                        {/* <IonIcons name='checkmark-sharp' size={24} color={appSettings.theme.style.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
+                                    </View>
+
+                                    {/* </View> */}
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    />}
+
+
 
                 {/* // ! Action Button */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>

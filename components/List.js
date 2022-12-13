@@ -4,7 +4,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons'
 import { useGlobalAppSettings } from "../modules/GlobalContext"
 
 
-export const ListItem = ({ leftLabel, rightLabel, props, theme, pressable, iconLeftName, iconRightName, onPress }) => {
+export const ListItem = ({ leftLabel, rightLabel, props, theme, pressable, iconLeftName, iconLeftColor, iconRightName, onPress }) => {
 
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -14,7 +14,7 @@ export const ListItem = ({ leftLabel, rightLabel, props, theme, pressable, iconL
             {pressable &&
                 <TouchableNativeFeedback onPress={onPress} >
                     <View style={appSettings.theme.style.list.listContainer}>
-                        {iconLeftName && <IonIcons name={iconLeftName} size={18} color={appSettings.theme.style.colors.foreground || lightTheme.colors.foreground} style={{ paddingRight: 16 }} />}
+                        {iconLeftName && <IonIcons name={iconLeftName} size={18} color={iconLeftColor || appSettings.theme.style.colors.foreground} style={{ paddingRight: 16 }} />}
                         <View
                             style={appSettings.theme.style.list.listItem}
                         >

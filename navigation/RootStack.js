@@ -24,6 +24,8 @@ import LogbookPreviewScren from "./screens/user/LogbookPreviewScreen";
 import OnboardingScreen from "./screens/initial/OnboardingScreen";
 import { asyncStorage, STORAGE_ACTIONS } from "../modules/Storage";
 import InitialSetupScreen from "./screens/initial/InitialSetupScreen";
+import CategoryPreviewScreen from "./screens/user/CategoryPreviewScreen";
+import EditCategoryScreen from "./screens/user/EditCategoryScreen";
 
 
 const Stack = createStackNavigator();
@@ -46,6 +48,8 @@ const screens = {
 
     // User Screen
     myCategoriesScreen: 'My Categories Screen',
+    categoryPreviewScreen: 'Category Preview Screen',
+    editCategoryScreen: 'Edit Category Screen',
     myLogbooksScreen: 'My Logbooks Screen',
     logbookPreviewScreen: 'Logbook Preview Screen',
     editLogbookScreen: 'Edit Logbook Screen',
@@ -263,6 +267,7 @@ const RootStack = ({ navigation }) => {
             <Stack.Screen
                 options={{
                     headerShown: true,
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // title:'New Transaction',
                     // headerLeft: (leftHeader) => (
                     //     <>
@@ -277,6 +282,7 @@ const RootStack = ({ navigation }) => {
             <Stack.Screen
                 options={{
                     headerShown: true,
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
                     // title:'New Transaction',
                     // headerLeft: (leftHeader) => (
                     //     <>
@@ -351,6 +357,32 @@ const RootStack = ({ navigation }) => {
                     // )
                 }}
                 name={screens.myCategoriesScreen} component={MyCategoriesScreen} />
+
+            {/* // ! Category Preview Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'Category Preview',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.categoryPreviewScreen} component={CategoryPreviewScreen} />
+
+            {/* // ! Edit Category Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'Edit Category',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
+                    // headerLeft: (leftHeader) => (
+                    //     <>
+                    //     </>
+                    // )
+                }}
+                name={screens.editCategoryScreen} component={EditCategoryScreen} />
 
             {/* // ! Action Screen */}
             <Stack.Screen

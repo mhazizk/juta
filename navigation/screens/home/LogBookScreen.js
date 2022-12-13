@@ -117,6 +117,28 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
     }, [categories, transactions])
 
 
+    // Find Category Color by Id
+    const findCategoryColorById = useMemo(() => {
+        return (
+            (id) => {
+                const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === id })
+                const filteredIncomeCategory = categories.income.filter((category) => { return category.id === id })
+
+                if (filteredExpenseCategory.length) {
+                    const mapped = filteredExpenseCategory.map((item) => item.icon.color);
+                    return mapped[0] === 'default' ? appSettings.theme.style.colors.foreground : mapped[0];
+                }
+                else {
+                    const mapped = filteredIncomeCategory.map((item) => item.icon.color);
+                    return mapped[0] === 'default' ? appSettings.theme.style.colors.foreground : mapped[0];
+                }
+
+            }
+        )
+
+    }, [categories, transactions])
+
+
     // Sum Amount in Section
     const sumAmount = useMemo(() => {
         return (
@@ -284,7 +306,7 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
 
                                                 {enableChecklistMode &&
                                                     <View style={{
-                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? appSettings.theme.style.colors.foreground : 'transparent',
+                                                        backgroundColor: checkList?.some((checked) => checked === item.transaction_id) ? appSettings.theme.style.colors.primary : 'transparent',
                                                         height: 20,
                                                         width: 20,
                                                         borderColor: checkList?.some((checked) => checked === item.transaction_id) ? 'transparent' : appSettings.theme.style.colors.secondary,
@@ -297,7 +319,7 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                                                         <IonIcons name={checkList?.some((checked) => checked === item.transaction_id) ? 'checkmark-sharp' : undefined} size={16} color={appSettings.theme.style.colors.background} />
                                                     </View>}
                                                 <View style={{ paddingRight: 16 }}>
-                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} color={appSettings.theme.style.colors.foreground} />
+                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} color={findCategoryColorById(item.details.category_id) || appSettings.theme.style.colors.foreground} />
                                                 </View>
 
                                                 <View style={appSettings.theme.style.list.listItem}>
@@ -334,12 +356,12 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                         <TextSecondary
                                                             label={logbook.logbook_currency.symbol}
-                                                            style={{ fontSize: 14, paddingRight: 8 }}
+                                                            style={{ fontSize: 14, paddingRight: 8, color: item.details.in_out === 'income' ? appSettings.theme.style.colors.incomeSymbol : appSettings.theme.style.text.textSecondary.color }}
                                                             numberOfLines={1}
                                                         />
                                                         <TextPrimary
                                                             label={formatCurrency({ amount: item.details.amount, currency: appSettings.currency.name })}
-                                                            style={{ fontSize: 18 }}
+                                                            style={{ fontSize: 18, color: item.details.in_out === 'income' ? appSettings.theme.style.colors.incomeAmount : appSettings.theme.style.text.textPrimary.color }}
                                                             numberOfLines={1}
                                                         />
                                                     </View>

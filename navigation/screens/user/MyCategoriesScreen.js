@@ -59,8 +59,9 @@ const MyCategoriesScreen = ({ navigation }) => {
                                             pressable
                                             leftLabel={item?.name[0].toUpperCase() + item?.name.substring(1)}
                                             iconLeftName={item.icon.name}
+                                            iconLeftColor={item.icon.color === 'default' ? appSettings.theme.style.colors.primary : item.icon.color}
                                             iconRightName='chevron-forward'
-                                            onPress={() => alert('test')}
+                                            onPress={() => navigation.navigate('Category Preview Screen', { category: item })}
                                         />
                                     </>
                                 )

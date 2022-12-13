@@ -16,7 +16,7 @@ import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalL
 import userTransactions from "../../../database/userTransactions";
 import { ACTIONS } from "../../../modules/GlobalReducer";
 import { setSortedTransactions } from "../../../modules/FetchData";
-import { TextPrimary } from "../../../components/Text";
+import { TextPrimary, TextSecondary } from "../../../components/Text";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
@@ -168,17 +168,18 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Amount Section */}
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                            {/* <TextPrimary
-                                style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }}
-                            /> */}
-                            <Text style={[{ ...globalStyles.lightTheme.textSecondary, paddingRight: 8 }, { color: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ccc' }]}>{selectedLogbook.logbook_currency.symbol}</Text>
+                            <TextSecondary
+                                label={selectedLogbook.logbook_currency.symbol}
+                                style={{ paddingRight: 8, color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeSymbol : appSettings.theme.style.text.textSecondary.color }}
+                            />
                             <TextInput
                                 maxLength={20}
                                 textAlign='center'
                                 returnKeyType='done'
                                 keyboardType='number-pad'
                                 placeholder={Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(transaction.details.amount)}
-                                style={[{ ...globalStyles.lightTheme.textPrimary, paddingLeft: 0, paddingVertical: 16, paddingRight: 16, minHeight: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}
+                                placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
+                                style={[{ ...appSettings.theme.style.text.textPrimary, paddingLeft: 0, paddingVertical: 16, paddingRight: 16, minHeight: 36, fontSize: 36 }, { color: transaction.details.in_out === 'income' ? appSettings.theme.style.colors.incomeAmount : appSettings.theme.style.text.textPrimary.color }]}
                                 onChangeText={(string) => {
                                     const float =
                                         string ?
@@ -199,10 +200,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         {/* </ScrollView> */}
 
                         {/* // ! Details Section */}
-                        <View style={[{ ...globalStyles.lightTheme.listContainer, justifyContent: 'space-between' }]}>
-                            <View style={{ ...globalStyles.lightTheme.view }}>
-                                <Text style={{ ...globalStyles.lightTheme.textPrimary, fontSize: 24 }}>{transaction.details.in_out[0].toUpperCase() + transaction.details.in_out.substring(1)} Details</Text>
-                            </View>
+                        <View style={[{ ...appSettings.theme.style.list.listContainer, justifyContent: 'space-between' }]}>
+                            <TextPrimary
+                                label={`${transaction.details.in_out[0].toUpperCase() + transaction.details.in_out.substring(1)} Details`}
+                                style={{ fontSize: 24 }}
+                            />
                         </View>
 
                         {/* // ! Transaction Type Section */}
@@ -225,22 +227,25 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 },
                                 default: { name: transaction.details.in_out }
                             })}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <IonIcons name='swap-horizontal-sharp' size={18} style={{ paddingRight: 16 }} />
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Transaction</Text>
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <IonIcons name='swap-horizontal-sharp' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                                    <TextPrimary
+                                        label='Transaction'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Transaction Picker */}
-                                        <Text
-                                            style={[globalStyles.lightTheme.textPrimary, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
-                                            {transaction.details.in_out[0].toUpperCase() + transaction.details.in_out.substring(1)}
-                                        </Text>
+                                        <TextPrimary
+                                            label={transaction.details.in_out[0].toUpperCase() + transaction.details.in_out.substring(1)}
+                                            style={{ color: transaction.details.in_out === 'income' ? '#00695c' : appSettings.theme.style.text.textPrimary.color }}
+                                        />
 
                                     </View>
-                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} />
+                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} color={appSettings.theme.style.colors.foreground} />
                                 </View>
                             </View>
                         </TouchableNativeFeedback>
@@ -256,22 +261,24 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 selected: (item) => { setTransaction({ ...transaction, details: { ...transaction.details, type: item.name } }) },
                                 default: { name: transaction.details.type }
                             })}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <FontAwesome5 name='coins' size={18} style={{ paddingRight: 16 }} />
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Type</Text>
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <FontAwesome5 name='coins' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                                    <TextPrimary
+                                        label='Type'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Type Picker */}
-                                        <Text
-                                            style={[globalStyles.lightTheme.textPrimary, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
-                                            {!transaction?.details?.type ? 'Pick type' : transaction?.details?.type[0].toUpperCase() + transaction?.details?.type?.substring(1)}
-                                        </Text>
-
+                                        <TextPrimary
+                                            label={!transaction?.details?.type ? 'Pick type' : transaction?.details?.type[0].toUpperCase() + transaction?.details?.type?.substring(1)}
+                                            style={{ color: transaction.details.in_out === 'income' ? '#00695c' : appSettings.theme.style.text.textPrimary.color }}
+                                        />
                                     </View>
-                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} />
+                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} color={appSettings.theme.style.colors.foreground} />
                                 </View>
                             </View>
                         </TouchableNativeFeedback>
@@ -279,22 +286,27 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Date Section */}
                         <TouchableNativeFeedback onPress={showDatepicker}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <IonIcons name='calendar' size={18} style={{ paddingRight: 16 }} />
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <IonIcons name='calendar' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                                     {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Date</Text>
+                                    <TextPrimary
+                                        label='Date'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Date Picker */}
-                                        <Text style={[globalStyles.lightTheme.textPrimary, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
-                                            {!transaction?.details?.date ? 'Pick date' : new Date(transaction.details.date).toDateString()}
-                                        </Text>
+                                        <TextPrimary
+                                            label={!transaction?.details?.date ? 'Pick date' : new Date(transaction.details.date).toDateString()}
+                                            style={{ color: transaction.details.in_out === 'income' ? '#00695c' : appSettings.theme.style.text.textPrimary.color }}
+                                        />
+
 
                                     </View>
-                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} />
+                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} color={appSettings.theme.style.colors.foreground} />
 
                                 </View>
                             </View>
@@ -318,21 +330,26 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 },
                                 default: { name: selectedLogbook?.name }
                             })}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <IonIcons name='book' size={18} style={{ paddingRight: 16 }} />
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>From Book</Text>
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <IonIcons name='book' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                                    <TextPrimary
+                                        label='From Book'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', maxWidth: '50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Book Picker */}
-                                        <Text numberOfLines={1} style={[{ ...globalStyles.lightTheme.textPrimary, }, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
-                                            {!selectedLogbook?.name ? 'Pick Logbook' : selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name?.substring(1)}
-                                        </Text>
+                                        <TextPrimary
+                                            label={!selectedLogbook?.name ? 'Pick Logbook' : selectedLogbook?.name[0].toUpperCase() + selectedLogbook?.name?.substring(1)}
+                                            style={{ color: transaction.details.in_out === 'income' ? '#00695c' : appSettings.theme.style.text.textPrimary.color }}
+                                        />
+
 
                                     </View>
-                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} />
+                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} color={appSettings.theme.style.colors.foreground} />
 
                                 </View>
                             </View>
@@ -357,23 +374,26 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 },
                                 default: selectedCategory
                             })}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} />
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Category</Text>
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                                    <TextPrimary
+                                        label='Category'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
-                                    <View style={[{ flexDirection: 'row', maxWidth: '50%', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : '#ddd' }]}>
+                                    <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: transaction.details.in_out === 'income' ? '#c3f4f4' : appSettings.theme.style.colors.secondary }]}>
 
                                         {/* // ! Category Picker */}
-                                        <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} />
-
-                                        <Text style={[globalStyles.lightTheme.textPrimary, { color: transaction.details.in_out === 'income' ? '#00695c' : '#000' }]}>
-                                            {selectedCategory?.name ? selectedCategory?.name[0].toUpperCase() + selectedCategory?.name.substring(1) : 'Pick category'}
-                                        </Text>
+                                        <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} color={selectedCategory?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : selectedCategory?.icon?.color} />
+                                        <TextPrimary
+                                            label={selectedCategory?.name ? selectedCategory?.name[0].toUpperCase() + selectedCategory?.name.substring(1) : 'Pick category'}
+                                            style={{ color: transaction.details.in_out === 'income' ? '#00695c' : appSettings.theme.style.text.textPrimary.color }}
+                                        />
 
                                     </View>
-                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} />
+                                    <IonIcons name='chevron-forward' size={18} style={{ paddingLeft: 16 }} color={appSettings.theme.style.colors.foreground} />
 
                                 </View>
                             </View>
@@ -381,10 +401,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
                         {/* // ! Notes Section */}
                         <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
-                            <View style={globalStyles.lightTheme.listContainer}>
-                                <View style={{ ...globalStyles.lightTheme.listItem, flexDirection: 'row', alignItems: 'center' }}>
-                                    <IonIcons name='document-text' size={18} style={{ paddingRight: 16 }} />
-                                    <Text style={{ ...globalStyles.lightTheme.textPrimary, flex: 1 }}>Notes</Text>
+                            <View style={appSettings.theme.style.list.listContainer}>
+                                <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}>
+                                    <IonIcons name='document-text' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                                    <TextPrimary
+                                        label='Notes'
+                                        style={{ flex: 1 }}
+                                    />
 
                                     {/* // ! Container */}
                                     {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
@@ -450,7 +473,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                                 theme={appSettings.theme}
                                 onPress={() => {
                                     // setRawTransactionsLength(null)
-                                    navigation.navigate('Bottom Tab')
+                                    navigation.goBack()
                                 }}
                             />
                         </View>
