@@ -26,6 +26,7 @@ import { asyncStorage, STORAGE_ACTIONS } from "../modules/Storage";
 import InitialSetupScreen from "./screens/initial/InitialSetupScreen";
 import CategoryPreviewScreen from "./screens/user/CategoryPreviewScreen";
 import EditCategoryScreen from "./screens/user/EditCategoryScreen";
+import NewCategoryScreen from "./screens/user/NewCategoryScreen";
 
 
 const Stack = createStackNavigator();
@@ -47,6 +48,7 @@ const screens = {
     transactionPreviewScreen: 'Transaction Preview Screen',
 
     // User Screen
+    newCategoryScreen: 'New Category Screen',
     myCategoriesScreen: 'My Categories Screen',
     categoryPreviewScreen: 'Category Preview Screen',
     editCategoryScreen: 'Edit Category Screen',
@@ -383,6 +385,21 @@ const RootStack = ({ navigation }) => {
                     // )
                 }}
                 name={screens.editCategoryScreen} component={EditCategoryScreen} />
+
+            {/* // ! New Category Screen */}
+            <Stack.Screen
+                options={{
+                    headerShown: true,
+                    title: 'New Category',
+                    headerStyle: { backgroundColor: appSettings?.theme?.style?.colors?.header },
+                }}
+                name={screens.newCategoryScreen} component={NewCategoryScreen} />
+
+
+
+
+
+
 
             {/* // ! Action Screen */}
             <Stack.Screen

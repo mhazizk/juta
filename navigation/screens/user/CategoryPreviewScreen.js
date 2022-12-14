@@ -45,7 +45,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     // logbook_name: null
 
     // Selected Category State
-    const [selectedCategory, setSelectedCategory] = useState(null)
+    const [categoryType, setCategoryType] = useState(null)
 
 
     // ! UseEffect Section //
@@ -61,6 +61,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     useEffect(() => {
         // refresh
         console.log(category)
+        findCategoryType();
         // console.log(transaction.details)
         // findCategoryNameById();
         // findCategoryIconNameById();
@@ -70,7 +71,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         // refresh
-    }, [selectedCategory])
+    }, [categoryType])
 
     useEffect(() => {
         // refresh
@@ -85,12 +86,42 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     }, [sortedTransactions])
 
     // ! Function Section //
+    const findCategoryType = () => {
+        const findExpenseCategory = categories.categories.expense.some(category => category.id === route?.params?.category?.id)
+        const findIncomeCategory = categories.categories.income.some(category => category.id === route?.params?.category?.id)
 
+        if (findExpenseCategory) {
+            setCategoryType('expense')
+        }
+        if (findIncomeCategory) {
+            setCategoryType('income')
+        }
+    }
+
+    const countTransactions = () => {
+        let array = [];
+
+        sortedTransactions.groupSorted.forEach(
+            (logbook) => {
+                logbook.transactions.forEach(
+                    (section) => {
+                        section.data.forEach(
+                            (transaction) => {
+                                if (transaction.details.category_id === category.id) {
+                                    array.push(transaction.details.category_id)
+                                }
+                            })
+                    }
+                )
+            })
+        console.log(array)
+        return !array.length ? 'No Transactions' : `${array.length} Transactions`
+    }
 
 
     return (
         <>
-            {category &&
+            {category && categoryType &&
                 <View style={{ backgroundColor: appSettings.theme.style.colors.background, height: '100%' }}>
                     <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
 
@@ -111,11 +142,33 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                             />
                         </View>
 
+                        {/* // ! Category Type Section */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
+                            {/* <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}> */}
+                            <IonIcons name='swap-horizontal-sharp' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                            <TextPrimary
+                                label='Type'
+                                style={{ flex: 1 }}
+                            />
+
+                            {/* // ! Container */}
+                            {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: appSettings.theme.style.colors.secondary }]}> */}
+
+                            {/* // ! Transaction Picker */}
+                            <TextPrimary
+                                label={categoryType[0].toUpperCase() + categoryType.substring(1)}
+                            />
+
+                            {/* </View> */}
+                            {/* </View> */}
+                        </View>
+
+
                         {/* // ! Color Section */}
                         <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                             <IonIcons name='color-fill' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                             <TextPrimary
-                                label='Color'
+                                label='Icon Color'
                                 style={{ flex: 1 }}
                             />
 
@@ -130,6 +183,28 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                     style={{ paddingLeft: 8 }}
                                 /> */}
                             </View>
+                        </View>
+
+
+                        {/* // ! Count Transactions Section */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
+                            {/* <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}> */}
+                            <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
+                            <TextPrimary
+                                label='Total Transactions'
+                                style={{ flex: 1 }}
+                            />
+
+                            {/* // ! Container */}
+                            {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: appSettings.theme.style.colors.secondary }]}> */}
+
+                            {/* // ! Transaction Picker */}
+                            <TextPrimary
+                                label={countTransactions()}
+                            />
+
+                            {/* </View> */}
+                            {/* </View> */}
                         </View>
 
 
@@ -187,7 +262,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                     width={150}
                                     onPress={() => navigation.navigate('Edit Category Screen', {
                                         category: category,
-                                        selectedCategory: selectedCategory
+                                        categoryType: categoryType,
                                     })}
                                 />
                                 {/* <ButtonSecondary
@@ -209,27 +284,47 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                     label='Delete'
                                     type='danger'
                                     width={150}
-                                    onPress={() => Alert.alert(
-                                        'Delete This Category ?',
-                                        'All transactions assigned to this category will also be deleted. Deleted category and transactions can not be restored',
-                                        [
-                                            {
-                                                text: 'No',
-                                                onPress: () => {
-                                                }, style: 'cancel'
-                                            },
-                                            {
-                                                text: 'Yes',
-                                                onPress: () => {
-                                                    navigation.navigate('Loading Screen', {
-                                                        label: 'Deleting Category ...',
-                                                        loadingType: 'deleteCategory',
-                                                        deleteCategory: category,
-                                                        initialCategoryDeleteCounter: categories.categoryDeleteCounter,
-                                                    })
-                                                }
-                                            }], { cancelable: false }
-                                    )}
+                                    onPress={() => {
+                                        if (countTransactions() !== 'No Transactions') {
+                                            Alert.alert(
+                                                'Delete Category',
+                                                'You cannot delete a category with transactions. Please delete all transactions first.',
+                                                [
+                                                    {
+                                                        text: 'OK',
+                                                        onPress: () => { }
+                                                    }
+                                                ],
+                                                { cancelable: false }
+                                            )
+
+                                        }
+                                        if (countTransactions() === 'No Transactions') {
+
+                                            Alert.alert(
+                                                'Delete Category',
+                                                `Are you sure you want to delete this category? This will delete all transactions associated with this category.`,
+                                                [
+                                                    {
+                                                        text: 'No',
+                                                        onPress: () => {
+                                                        }, style: 'cancel'
+                                                    },
+                                                    {
+                                                        text: 'Yes',
+                                                        onPress: () => {
+                                                            navigation.navigate('Loading Screen', {
+                                                                label: 'Deleting Category ...',
+                                                                loadingType: 'deleteCategory',
+                                                                deleteCategory: category,
+                                                                initialCategoryDeleteCounter: categories.categoryDeleteCounter,
+                                                            })
+                                                        }
+                                                    }], { cancelable: false }
+                                            )
+                                        }
+                                    }
+                                    }
                                 />
                             </View>
 

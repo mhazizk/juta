@@ -95,7 +95,25 @@ const LoadingScreen = ({ route, navigation }) => {
                     console.log('mulai dispatch')
                     dispatchCategories({
                         type: ACTIONS.CATEGORIES.PATCH,
-                        payload: route?.params?.patchCategory
+                        payload: {
+                            categoryType: route?.params?.categoryType,
+                            patchCategory: route?.params?.patchCategory
+                        }
+                    })
+                }
+
+
+                // ! New Insert Category Method
+                if (route?.params?.insertCategory &&
+                    categories.categoryInsertCounter === route?.params?.initialCategoryInsertCounter &&
+                    route?.params?.loadingType === 'insertCategory') {
+                    console.log('mulai dispatch')
+                    dispatchCategories({
+                        type: ACTIONS.CATEGORIES.INSERT,
+                        payload: {
+                            categoryType: route?.params?.categoryType,
+                            insertCategory: route?.params?.insertCategory
+                        }
                     })
                 }
 
@@ -181,6 +199,16 @@ const LoadingScreen = ({ route, navigation }) => {
             })
         }
     }, [categories.categoryPatchCounter])
+
+    // ! New Insert Category Method
+    useEffect(() => {
+        if (categories.categoryInsertCounter > route?.params?.initialCategoryInsertCounter
+            && route?.params?.loadingType === 'insertCategory') {
+            navigation.navigate('My Categories Screen')
+        }
+
+    }, [categories.categoryInsertCounter])
+
 
     // ! New Delete One Category Method
     useEffect(() => {

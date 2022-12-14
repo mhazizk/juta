@@ -91,7 +91,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
         if (filtered.length) {
             filtered[0].transactions.forEach((section) => section.data.forEach((transaction) => array.push(transaction.transaction_id)))
         }
-        return array.length
+        return !array.length ? 'No Transactions' : `${array.length} Transactions`
     }
 
     const sumBalance = () => {
@@ -191,7 +191,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                             <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                                 <TextPrimary
-                                    label={`${!countTransactions() ? 'No' : countTransactions()} transactions`}
+                                    label={countTransactions()}
                                     style={{ flex: 0 }}
                                     numberOfLines={1}
                                 />

@@ -3,7 +3,8 @@ import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import { TextPrimary } from "../../../components/Text";
 import { useGlobalAppSettings, useGlobalCategories, useGlobalLogbooks, useGlobalSortedTransactions } from "../../../modules/GlobalContext";
 
-const LogBookSearchScreen = () => {
+const TransactionSearchScreen = () => {
+
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { sortedTransactions, dispatchSortedTransctions } = useGlobalSortedTransactions();
     const { categories, dispatchCategories } = useGlobalCategories();
@@ -13,11 +14,11 @@ const LogBookSearchScreen = () => {
         <>
             <View style={{ height: '100%', backgroundColor: appSettings.theme.style.colors.background }}>
                 <TextPrimary
-                label='Logbook Search Screen'
+                label='Transaction Search Screen'
                 />
             </View>
         </>
     )
 }
 
-export default LogBookSearchScreen;
+export default TransactionSearchScreen;

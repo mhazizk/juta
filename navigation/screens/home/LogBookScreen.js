@@ -13,6 +13,7 @@ import { useGlobalAppSettings, useGlobalCategories, useGlobalLoading, useGlobalL
 import { setSortedTransactions } from "../../../modules/FetchData";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { TextButtonPrimary, TextPrimary, TextSecondary } from "../../../components/Text";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 
@@ -131,6 +132,28 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                 else {
                     const mapped = filteredIncomeCategory.map((item) => item.icon.color);
                     return mapped[0] === 'default' ? appSettings.theme.style.colors.foreground : mapped[0];
+                }
+
+            }
+        )
+
+    }, [categories, transactions])
+
+
+    // Find Category Color by Id
+    const findCategoryIconPackById = useMemo(() => {
+        return (
+            (id) => {
+                const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === id })
+                const filteredIncomeCategory = categories.income.filter((category) => { return category.id === id })
+
+                if (filteredExpenseCategory.length) {
+                    const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
+                    return mapped[0];
+                }
+                else {
+                    const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
+                    return mapped[0];
                 }
 
             }
@@ -318,8 +341,13 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
                                                     }}>
                                                         <IonIcons name={checkList?.some((checked) => checked === item.transaction_id) ? 'checkmark-sharp' : undefined} size={16} color={appSettings.theme.style.colors.background} />
                                                     </View>}
-                                                <View style={{ paddingRight: 16 }}>
-                                                    <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} color={findCategoryColorById(item.details.category_id) || appSettings.theme.style.colors.foreground} />
+                                                <View style={{ paddingRight: 16, width: 32, height: 32, alignItems: 'center', justifyContent: 'center'}}>
+                                                    
+                                                    {findCategoryIconPackById(item.details.category_id) === 'ion_icons' &&
+                                                        <IonIcons name={findCategoryIconNameById(item.details.category_id)} size={18} color={findCategoryColorById(item.details.category_id) || appSettings.theme.style.colors.foreground} />}
+                                                   
+                                                    {findCategoryIconPackById(item.details.category_id) === 'font_awesome_5' &&
+                                                        <FontAwesome5Icon name='book' size={18} color={findCategoryColorById(item.details.category_id) || appSettings.theme.style.colors.foreground} />}
                                                 </View>
 
                                                 <View style={appSettings.theme.style.list.listItem}>

@@ -73,6 +73,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                                             pressable
                                             rightLabel='Add New Category'
                                             iconRightName='add'
+                                            onPress={() => navigation.navigate('New Category Screen')}
                                         />
                                     </>
                                 )

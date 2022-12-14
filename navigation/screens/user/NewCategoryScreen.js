@@ -2,49 +2,39 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { TextPrimary } from "../../../components/Text";
-import { useGlobalAppSettings, useGlobalCategories, useGlobalSortedTransactions } from "../../../modules/GlobalContext";
+import { useGlobalAppSettings, useGlobalCategories } from "../../../modules/GlobalContext";
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { ionIcons } from "../../../assets/iconPack/ionIcons";
 import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
+import uuid from "react-native-uuid";
 
-const EditCategoryScreen = ({ route, navigation }) => {
+
+const NewCategoryScreen = ({ route, navigation }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
     const { categories, dispatchCategories } = useGlobalCategories();
-    const { sortedTransactions, dispatchSortedTransactions } = useGlobalSortedTransactions();
     const [category, setCategory] = useState(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
-        setCategory({
-            type: route?.params?.categoryType,
-            category: route?.params?.category
-        })
+        setCategory(
+            {
+                type: 'expense',
+                category: {
+                    name: '',
+                    id: uuid.v4(),
+                    icon: {
+                        name: 'fast-food',
+                        color: 'default',
+                        pack: 'ion_icons'
+                    }
+                }
+            }
+        )
     }, [])
 
     useEffect(() => {
         console.log(category)
     }, [category])
-
-    const inputRef = useRef(null);
-
-    const countTransactions = () => {
-        let array = [];
-
-        sortedTransactions.groupSorted.forEach(
-            (logbook) => {
-                logbook.transactions.forEach(
-                    (section) => {
-                        section.data.forEach(
-                            (transaction) => {
-                                if (transaction.details.category_id === category.category.id) {
-                                    array.push(transaction.details.category_id)
-                                }
-                            })
-                    }
-                )
-            })
-        console.log(array)
-        return !array.length ? 'No Transactions' : `${array.length} Transactions`
-    }
 
 
     return (
@@ -202,27 +192,6 @@ const EditCategoryScreen = ({ route, navigation }) => {
                             </View>
                         </TouchableNativeFeedback>
 
-                        {/* // ! Count Transactions Section */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
-                            {/* <View style={{ ...appSettings.theme.style.list.listItem, flexDirection: 'row', alignItems: 'center' }}> */}
-                            <IonIcons name='pricetags' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
-                            <TextPrimary
-                                label='Total Transactions'
-                                style={{ flex: 1 }}
-                            />
-
-                            {/* // ! Container */}
-                            {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: appSettings.theme.style.colors.secondary }]}> */}
-
-                            {/* // ! Transaction Picker */}
-                            <TextPrimary
-                                label={countTransactions()}
-                            />
-
-                            {/* </View> */}
-                            {/* </View> */}
-                        </View>
-
 
                         {/* // ! Balance Section */}
                         {/* <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
@@ -286,7 +255,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                                     label='Save'
                                     width={150}
                                     onPress={() => {
-                                        if (category.name === '') {
+                                        if (!category.category.name) {
                                             Alert.alert(
                                                 'Category Name is Required',
                                                 'Please enter a category name',
@@ -294,6 +263,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                                                     {
                                                         text: 'OK',
                                                         onPress: () => {
+                                                            inputRef.current.focus()
                                                         }, style: 'cancel'
                                                     }
                                                 ],
@@ -302,10 +272,10 @@ const EditCategoryScreen = ({ route, navigation }) => {
                                         } else {
                                             navigation.navigate('Loading Screen', {
                                                 label: 'Saving Category ...',
-                                                loadingType: 'patchCategory',
+                                                loadingType: 'insertCategory',
                                                 categoryType: category.type,
-                                                patchCategory: category.category,
-                                                initialCategoryPatchCounter: categories.categoryPatchCounter
+                                                insertCategory: category.category,
+                                                initialCategoryInsertCounter: categories.categoryInsertCounter
                                             })
                                         }
                                     }}
@@ -353,4 +323,4 @@ const EditCategoryScreen = ({ route, navigation }) => {
 
 }
 
-export default EditCategoryScreen;
+export default NewCategoryScreen;

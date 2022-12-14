@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Alert, FlatList, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, View } from "react-native"
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import APP_SETTINGS from "../../config/appSettings";
@@ -62,6 +62,8 @@ const ModalScreen = ({ route, navigation }) => {
                 return route.params.selected(selected);
             case route?.params.modalType === 'textInput':
                 return route.params.selected(textInput);
+
+            // return !textInput ? route.params.selected(route.params?.placeholder) : route.params.selected(textInput);
 
             default:
                 console.log('thrd')
@@ -282,8 +284,28 @@ const ModalScreen = ({ route, navigation }) => {
                         <ButtonPrimary
                             label='Save'
                             onPress={() => {
-                                onPressReturn()
-                                navigation.goBack()
+
+                                if (route.params?.modalType === 'textInput' && !textInput) {
+                                    Alert.alert(
+                                        'Error',
+                                        'Please enter a value',
+                                        [
+                                            { text: 'OK', onPress: () => console.log('OK Pressed') }
+                                        ],
+                                        { cancelable: false }
+                                    )
+                                }
+
+                                if (route.params?.modalType === 'textInput' && textInput) {
+                                    onPressReturn()
+                                    navigation.goBack()
+                                }
+
+                                if (route.params?.modalType !== 'textInput') {
+                                    onPressReturn()
+                                    navigation.goBack()
+                                }
+
                             }
                                 // route.params?.modalType === 'list' ?
                                 // () => {

@@ -232,11 +232,53 @@ export const globalCategories = (state, action) => {
 
         case ACTIONS.CATEGORIES.INSERT:
 
-            return {
-                ...state,
-                categoryInsertCounter: state.categoryInsertCounter + 1,
-                categories: action.payload
+            let insertCategory = action.payload.insertCategory
+            let insertCategoryType = action.payload.categoryType
+
+            if (insertCategoryType === 'expense') {
+                const sortedExpenseCategory = [...state.categories.expense, insertCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+
+                return {
+                    ...state,
+                    categoryInsertCounter: state.categoryInsertCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        expense: sortedExpenseCategory
+                    }
+                }
             }
+
+            if (insertCategoryType === 'income') {
+                const sortedIncomeCategory = [...state.categories.income, insertCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+
+                return {
+                    ...state,
+                    categoryInsertCounter: state.categoryInsertCounter + 1,
+                    categories: {
+                        ...state.categories,
+                        income: sortedIncomeCategory
+                    }
+                }
+            }
+
 
         case ACTIONS.CATEGORIES.DELETE_ONE:
 
@@ -292,12 +334,83 @@ export const globalCategories = (state, action) => {
 
         case ACTIONS.CATEGORIES.PATCH:
 
-            let patchCategory = action.payload
+            let patchCategory = action.payload.patchCategory
+            let patchCategoryType = action.payload.categoryType
 
             const findExpenseCategory = state.categories.expense.filter((category) => category.id === patchCategory.id)
+            const findOtherExpenseCategory = state.categories.expense.filter((category) => category.id !== patchCategory.id)
             const findIncomeCategory = state.categories.income.filter((category) => category.id === patchCategory.id)
+            const findOtherIncomeCategory = state.categories.income.filter((category) => category.id !== patchCategory.id)
 
-            if (findExpenseCategory.length) {
+            if (patchCategoryType === 'expense'
+                && !findExpenseCategory.length) {
+
+                const sortedExpenseCategory = [...state.categories.expense, patchCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                const sortedIncomeCategory = findOtherIncomeCategory.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                return {
+                    ...state,
+                    categoryPatchCounter: state.categoryPatchCounter + 1,
+                    categories: {
+                        expense: sortedExpenseCategory,
+                        income: sortedIncomeCategory
+                    }
+                }
+            }
+
+            if (patchCategoryType === 'income'
+                && !findIncomeCategory.length) {
+
+                const sortedExpenseCategory = findOtherExpenseCategory.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                const sortedIncomeCategory = [...state.categories.income, patchCategory].sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.name > b.name) {
+                        return 1
+                    }
+                    return 0
+                })
+
+                return {
+                    ...state,
+                    categoryPatchCounter: state.categoryPatchCounter + 1,
+                    categories: {
+                        expense: sortedExpenseCategory,
+                        income: sortedIncomeCategory
+                    }
+                }
+            }
+
+            if (patchCategoryType === 'expense'
+                && findExpenseCategory.length
+            ) {
                 const foundExpenseCategory = state.categories.expense.filter((category) => category.id !== patchCategory.id)
                 const sortedExpenseCategory = [...foundExpenseCategory, patchCategory].sort((a, b) => {
                     if (a.name < b.name) {
@@ -319,7 +432,9 @@ export const globalCategories = (state, action) => {
                 }
             }
 
-            if (findIncomeCategory.length) {
+            if (patchCategoryType === 'income'
+                && findIncomeCategory.length
+            ) {
                 const foundIncomeCategory = state.categories.income.filter((category) => category.id !== patchCategory.id)
                 const sortedIncomeCategory = [...foundIncomeCategory, patchCategory].sort((a, b) => {
                     if (a.name < b.name) {

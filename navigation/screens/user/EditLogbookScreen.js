@@ -193,6 +193,13 @@ const EditLogbookScreen = ({ route, navigation }) => {
                                 defaultValue={logbook.logbook_name}
                                 value={logbook.logbook_name}
                             />
+                            {logbook.logbook_name &&
+                                <IonIcons
+                                    onPress={() => setLogbook({ ...logbook, logbook_name: '' })}
+                                    name='close-circle'
+                                    size={20}
+                                    style={{ padding: 16 }}
+                                    color={appSettings.theme.style.colors.foreground} />}
 
                         </View>
                         {/* </ScrollView> */}
