@@ -1,0 +1,31 @@
+[
+  {
+    "transaction": {
+      "_timestamps": {
+        "created_at": 1671097333191,
+        "updated_at": 1671097333191
+      },
+      "_id": 1671097333191,
+      "transaction_id": "1470066065045.311",
+      "logbook_id": "logbook1",
+      "details": {
+        "in_out": "expense",
+        "amount": 0,
+        "type": "loan",
+        "date": 1671097333155,
+        "category_id": "6",
+        "notes": "Pesawat"
+      }
+    },
+    "category": {
+      "categoryName": "Travel",
+      "categoryId": "6",
+      "icon": {
+        "iconPack": "ion_icons",
+        "iconColor": "#151515",
+        "iconName": "airplane"
+      }
+    },
+    "logbook": { "logbookId": "logbook1" }
+  }
+]

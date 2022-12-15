@@ -120,7 +120,7 @@ export const lightTheme = {
             alignItems: 'center',
             backgroundColor: 'transparent',
             paddingHorizontal: 16,
-            height: 48
+            minHeight: 48
         },
         listItem: {
             borderColor: palette.white[400],

@@ -14,6 +14,7 @@ import { setSortedTransactions } from "../../../modules/FetchData";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { TextButtonPrimary, TextPrimary, TextSecondary } from "../../../components/Text";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import { relativeDate } from "../../../modules/RelativeDate";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 
@@ -140,7 +141,7 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
     }, [categories, transactions])
 
 
-    // Find Category Color by Id
+    // Find Category Icon Pack by Id
     const findCategoryIconPackById = useMemo(() => {
         return (
             (id) => {
@@ -285,7 +286,8 @@ const Transactions = ({ logbook, transactions, categories, onPress, checkListMod
 
                                     {/* Date Title */}
                                     <TextSecondary
-                                        label={checkDate(section.title)}
+                                        // label={checkDate(section.title)}
+                                        label={relativeDate({dateToCheck:section.title, currentDate:date, locale:appSettings.locale})}
                                     />
 
                                     {/* Sum Amount */}
