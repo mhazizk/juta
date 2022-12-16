@@ -54,26 +54,45 @@ const GlobalSearchResultsScreen = ({
   }, [searchQuery]);
 
   useEffect(() => {
-    console.log(JSON.stringify(searchResult));
+    // console.log(JSON.stringify(searchResult));
   }, [searchResult]);
 
   // ! Function Section
   const search = () => {
+    let finalArray = [];
+    let categoryId = [];
     // Search Transctions
     if (searchQuery) {
-      let array = [];
+      // Search Categories
+      const searchCategory = () => {
+        categories.categories.expense.forEach((category) => {
+          if (category.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+            categoryId.push(category.id);
+          }
+        });
 
+        categories.categories.income.forEach((category) => {
+          if (category.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+            categoryId.push(category.id);
+          }
+        });
+      };
+
+      searchCategory();
+      console.log({ categoryId });
+
+      // Search Transactions
       const searchResult = sortedTransactions.groupSorted.forEach((logbook) =>
         logbook.transactions.forEach((section) =>
           section.data.forEach((transaction) => {
             if (
-              transaction.details.category_id
-                ?.toLowerCase()
-                .includes(searchQuery.toLowerCase()) ||
+              categoryId.some((id) => id === transaction.details.category_id) ||
               transaction.details?.notes
                 ?.toLowerCase()
                 .includes(searchQuery.toLowerCase()) ||
-              transaction.details.amount?.toString().includes(searchQuery)
+              transaction.details.amount
+                ?.toString()
+                .includes(searchQuery.toString())
             ) {
               const iconColor = findCategoryColorById(
                 transaction.details.category_id
@@ -89,8 +108,7 @@ const GlobalSearchResultsScreen = ({
               );
 
               const foundLogbook = findLogbookById(logbook.logbook_id);
-              console.log(foundLogbook);
-              array.push({
+              finalArray.push({
                 transaction: transaction,
                 category: {
                   categoryName,
@@ -103,14 +121,15 @@ const GlobalSearchResultsScreen = ({
                   logbookCurrency: foundLogbook.logbook_currency,
                 },
               });
-
-              setSearchResult({ status: "done", result: array });
-            } else {
-              setSearchResult({ status: "done", result: [] });
             }
           })
         )
       );
+      if (finalArray.length) {
+        setSearchResult({ status: "done", result: finalArray });
+      } else {
+        setSearchResult({ status: "done", result: [] });
+      }
     }
   };
 

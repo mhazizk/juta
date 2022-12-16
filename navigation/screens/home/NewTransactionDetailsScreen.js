@@ -243,6 +243,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }}
               />
               <TextInput
+                keyboardAppearance={
+                  appSettings.theme.id === "dark" ? "dark" : "default"
+                }
                 maxLength={20}
                 textAlign="center"
                 returnKeyType="done"

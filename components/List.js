@@ -88,11 +88,12 @@ export const ListItem = ({
 
 export const TransactionListItem = ({
   transactionType,
-  transactionDate,
+  transactionHour,
   transactionNotes,
   transactionAmount,
   currency,
   categoryName,
+  categoryType,
   leftLabel,
   rightLabel,
   props,
@@ -107,126 +108,122 @@ export const TransactionListItem = ({
 
   return (
     <>
-      {pressable && (
-        <TouchableNativeFeedback onPress={onPress}>
-          <View
-            style={{
-              ...appSettings.theme.style.list.listContainer,
-              justifyContent: "space-between",
-            }}
-          >
-            {/* Outer Left Side */}
-            {iconLeftName && (
-              <IonIcons
-                name={iconLeftName}
-                size={18}
-                color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
-                }
-                style={{ paddingRight: 16 }}
-              />
-            )}
+      <TouchableNativeFeedback onPress={() => onPress()}>
+        <View
+          style={{
+            ...appSettings.theme.style.list.listContainer,
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Outer Left Side */}
+          {iconLeftName && (
+            <IonIcons
+              name={iconLeftName}
+              size={18}
+              color={iconLeftColor || appSettings.theme.style.colors.foreground}
+              style={{ paddingRight: 16 }}
+            />
+          )}
 
-            {/* Line Container */}
-            <View style={appSettings.theme.style.list.listItem}>
+          {/* Line Container */}
+          <View style={appSettings.theme.style.list.listItem}>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              {/* Top Left Side */}
               <View
                 style={{
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
                 }}
               >
-                {/* Top Left Side */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  {categoryName && <TextPrimary label={categoryName} />}
-                  {transactionDate && (
-                    <>
-                      <IonIcons
-                        name="ellipse"
-                        color={appSettings.theme.style.colors.secondary}
-                        size={8}
-                        style={{ paddingHorizontal: 8 }}
-                      />
-                      <TextSecondary
-                        label={new Date(transactionDate).toLocaleTimeString(
-                          appSettings.locale,
-                          { hour: "2-digit", minute: "2-digit" }
-                        )}
-                        style={{ fontSize: 14 }}
-                      />
-                    </>
-                  )}
-                </View>
-                {/* Bottom Left Side */}
-                {transactionNotes && (
-                  <TextSecondary
-                    label={transactionNotes}
-                    numberOfLines={1}
-                    style={{ fontSize: 14 }}
-                  />
+                {categoryName && <TextPrimary label={categoryName} />}
+                {transactionHour && (
+                  <>
+                    <IonIcons
+                      name="ellipse"
+                      color={appSettings.theme.style.colors.secondary}
+                      size={8}
+                      style={{ paddingHorizontal: 8 }}
+                    />
+                    <TextSecondary
+                      label={new Date(transactionHour).toLocaleTimeString(
+                        appSettings.locale,
+                        { hour: "2-digit", minute: "2-digit" }
+                      )}
+                      style={{ fontSize: 14 }}
+                    />
+                  </>
                 )}
               </View>
-
-              {/* Right Side */}
-              {transactionAmount && (
-                <>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                    }}
-                  >
-                    <TextSecondary
-                      label={currency.symbol}
-                      style={{
-                        paddingRight: 8,
-                        color:
-                          transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeSymbol
-                            : appSettings.theme.style.text.textSecondary.color,
-                      }}
-                    />
-                    <TextPrimary
-                      style={{
-                        fontSize: 18,
-                        color:
-                          transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeAmount
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                      label={formatCurrency({
-                        amount: transactionAmount,
-                        currency: currency.name,
-                      })}
-                    />
-                  </View>
-                </>
+              {/* Bottom Left Side */}
+              {transactionNotes && (
+                <TextSecondary
+                  label={transactionNotes}
+                  numberOfLines={1}
+                  style={{ fontSize: 14 }}
+                />
               )}
             </View>
 
             {/* Right Side */}
-            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-              {iconRightName && (
-                <IonIcons
-                  name={iconRightName}
-                  size={iconRightName === "checkmark-circle" ? 22 : 18}
-                  color={
-                    appSettings.theme.style.colors.foreground ||
-                    lightTheme.colors.foreground
-                  }
-                  style={{ paddingLeft: 16 }}
-                />
-              )}
-            </View>
+            {transactionAmount && (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <TextSecondary
+                    label={currency.symbol}
+                    style={{
+                      paddingRight: 8,
+                      color:
+                        categoryType === "income"
+                          ? appSettings.theme.style.colors.incomeSymbol
+                          : appSettings.theme.style.text.textSecondary.color,
+                    }}
+                  />
+                  <TextPrimary
+                    style={{
+                      fontSize: 18,
+                      color:
+                        categoryType === "income"
+                          ? appSettings.theme.style.colors.incomeAmount
+                          : appSettings.theme.style.text.textPrimary.color,
+                    }}
+                    label={formatCurrency({
+                      amount: transactionAmount,
+                      currency: currency.name,
+                    })}
+                  />
+                </View>
+              </>
+            )}
           </View>
-        </TouchableNativeFeedback>
-      )}
+
+          {/* Right Side */}
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+            {iconRightName && (
+              <IonIcons
+                name={iconRightName}
+                size={iconRightName === "checkmark-circle" ? 22 : 18}
+                color={
+                  appSettings.theme.style.colors.foreground ||
+                  lightTheme.colors.foreground
+                }
+                style={{ paddingLeft: 16 }}
+              />
+            )}
+          </View>
+        </View>
+      </TouchableNativeFeedback>
     </>
   );
 };
@@ -371,6 +368,7 @@ export const SearchResultListItem = ({
                       label={currency.symbol}
                       style={{
                         paddingRight: 8,
+                        fontSize: 14,
                         color:
                           transactionType === "income"
                             ? appSettings.theme.style.colors.incomeSymbol

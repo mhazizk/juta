@@ -1,11 +1,14 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import { useGlobalAppSettings } from '../modules/GlobalContext';
 import ExpenseChartPreview from './ExpenseChartPreview';
 import IncomeChartPreview from './IncomeChartPreview';
 
 const Tab = createMaterialTopTabNavigator();
 
 const ChartTab = () => {
+
+    const {appSettings, dispatchAppSettings} = useGlobalAppSettings();
 
     const charts = {
         expenseChart: 'Expense Chart Preview Screen',
