@@ -1,3 +1,5 @@
+import MyBudgetImg from "../../../assets/img/myBudget.png";
+import MyLogbookImg from "../../../assets/img/myLogbook.png";
 import { useEffect, useState } from "react";
 import {
   Text,
@@ -7,6 +9,8 @@ import {
   Image,
   Dimensions,
   FlatList,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
@@ -25,7 +29,12 @@ import Carousel from "react-native-reanimated-carousel";
 import { StatusBar } from "expo-status-bar";
 import ExpenseChartPreview from "../../../components/ExpenseChartPreview";
 import IncomeChartPreview from "../../../components/IncomeChartPreview";
-import RecentTransactions from "../search/RecentTransactions";
+import RecentTransactions from "../../../components/RecentTransactions";
+import MyLogbooks from "../../../components/MyLogbooks";
+import { ImgButton } from "../../../components/Button";
+import { MyBudget } from "../../../components/MyBudget";
+
+const screenWidth = Dimensions.get("window").width;
 
 const DashboardScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -61,10 +70,12 @@ const DashboardScreen = ({ navigation }) => {
             position: "absolute",
             top: 0,
             left: 0,
+            right: 0,
             width: "100%",
-            height: "20%",
+            height: "25%",
             backgroundColor: appSettings.theme.style.colors.header,
-            borderBottomRightRadius: 500,
+            // borderBottomRightRadius: 16,
+            // borderBottomLeftRadius: 16,
           }}
         />
 
@@ -73,7 +84,7 @@ const DashboardScreen = ({ navigation }) => {
           style={{
             // backgroundColor: appSettings.theme.style.colors.header,
             flexDirection: "column",
-            paddingHorizontal: 16,
+            padding: 16,
           }}
         >
           <TextPrimary
@@ -111,7 +122,7 @@ const DashboardScreen = ({ navigation }) => {
         {/* //! Carousel Section */}
         <View
           style={{
-            paddingTop: 32,
+            paddingTop: 16,
             flexDirection: "column",
           }}
         >
@@ -120,7 +131,7 @@ const DashboardScreen = ({ navigation }) => {
             loop
             autoPlay
             scrollAnimationDuration={1500}
-            width={Dimensions.get("window").width}
+            width={screenWidth}
             height={200}
             data={["expense", "income"]}
             key={(index) => index}
@@ -154,15 +165,61 @@ const DashboardScreen = ({ navigation }) => {
         {/* <Chart /> */}
 
         {/* //! Recent Transactions Section */}
-        <View
+        <ScrollView
           style={{
             flex: 1,
             paddingTop: 32,
             flexDirection: "column",
           }}
         >
-          <RecentTransactions />
-        </View>
+          {/* My Budget */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingBottom: 32,
+              paddingHorizontal: 16,
+            }}
+          >
+            <ImgButton
+              label="My Logbooks"
+              textColor={appSettings.theme.style.colors.background}
+              iconName="book"
+              iconColor="#48ADFF"
+              iconPack="ionIcons"
+              boxColor="#90CEFF"
+              boxHeight={150}
+              boxWidth={screenWidth / 2 - 24}
+              onPress={() => navigation.navigate("My Logbooks Screen")}
+            />
+            <MyBudget
+              boxWidth={screenWidth / 2 - 24}
+              onPress={() => navigation.navigate("My Logbooks Screen")}
+            />
+          </View>
+          {/* <MyBudget
+            onPress={(item) => {
+              navigation.navigate("Logbook Preview Screen", {
+                logbook: item,
+              });
+            }}
+          /> */}
+          {/* <MyLogbooks
+            onPress={(item) => {
+              navigation.navigate("Logbook Preview Screen", {
+                logbook: item,
+              });
+            }}
+          /> */}
+          <RecentTransactions
+            onPress={({ transaction, selectedLogbook }) => {
+              navigation.navigate("Transaction Preview Screen", {
+                transaction: transaction,
+                selectedLogbook: selectedLogbook,
+              });
+            }}
+          />
+        </ScrollView>
       </View>
       {/* <TransactionListItem
               /> */}

@@ -1,31 +1,55 @@
-[
-  {
-    "transaction": {
-      "_timestamps": {
-        "created_at": 1671097333191,
-        "updated_at": 1671097333191
+{
+  "status": "done",
+  "result": [
+    {
+      "transaction": {
+        "_timestamps": {
+          "created_at": 1671274104514,
+          "updated_at": 1671274104514
+        },
+        "_id": 1671274104514,
+        "transaction_id": "246766929939.3903",
+        "logbook_id": "logbook1",
+        "details": {
+          "in_out": "expense",
+          "type": "cash",
+          "date": 1671274104514,
+          "notes": null,
+          "category_id": "7",
+          "amount": 20
+        }
       },
-      "_id": 1671097333191,
-      "transaction_id": "1470066065045.311",
+      "category": {
+        "categoryName": "Health",
+        "categoryId": "7",
+        "icon": {
+          "iconPack": "ion_icons",
+          "iconColor": "#151515",
+          "iconName": "medical"
+        }
+      },
+      "logbook": {
+        "logbookName": "My Logbook",
+        "logbookId": "logbook1",
+        "logbookCurrency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" }
+      }
+    },
+    {
+      "_timestamps": {
+        "created_at": 1671274104514,
+        "updated_at": 1671274104514
+      },
+      "_id": 1671274104514,
+      "transaction_id": "246766929939.3903",
       "logbook_id": "logbook1",
       "details": {
         "in_out": "expense",
-        "amount": 0,
-        "type": "loan",
-        "date": 1671097333155,
-        "category_id": "6",
-        "notes": "Pesawat"
+        "type": "cash",
+        "date": 1671274104514,
+        "notes": null,
+        "category_id": "7",
+        "amount": 20
       }
-    },
-    "category": {
-      "categoryName": "Travel",
-      "categoryId": "6",
-      "icon": {
-        "iconPack": "ion_icons",
-        "iconColor": "#151515",
-        "iconName": "airplane"
-      }
-    },
-    "logbook": { "logbookId": "logbook1" }
-  }
-]
+    }
+  ]
+}

@@ -24,6 +24,7 @@ const DashboardStack = () => {
             backgroundColor: appSettings.theme.style.colors.header,
           },
           headerShadowVisible: false,
+          headerShown: false,
         }}
         name={screens.dashboardScreen}
         component={DashboardScreen}
