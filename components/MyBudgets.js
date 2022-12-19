@@ -1,10 +1,13 @@
 import { TouchableOpacity, View } from "react-native";
 import { TextPrimary } from "./Text";
-import { useGlobalAppSettings } from "../modules/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalBudgets,
+} from "../modules/GlobalContext";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
-export const MyBudget = ({
+export const MyBudgets = ({
   label,
   props,
   onPress,
@@ -20,9 +23,10 @@ export const MyBudget = ({
   textColor,
 }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { budgets, dispatchBudgets } = useGlobalBudgets();
 
   // TODO Add Budget widget logic
-  
+
   return (
     <>
       <TouchableOpacity onPress={() => onPress()}>

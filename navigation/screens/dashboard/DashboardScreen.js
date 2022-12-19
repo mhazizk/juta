@@ -32,7 +32,7 @@ import IncomeChartPreview from "../../../components/IncomeChartPreview";
 import RecentTransactions from "../../../components/RecentTransactions";
 import MyLogbooks from "../../../components/MyLogbooks";
 import { ImgButton } from "../../../components/Button";
-import { MyBudget } from "../../../components/MyBudget";
+import { MyBudgets } from "../../../components/MyBudgets";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -192,9 +192,9 @@ const DashboardScreen = ({ navigation }) => {
               boxWidth={screenWidth / 2 - 24}
               onPress={() => navigation.navigate("My Logbooks Screen")}
             />
-            <MyBudget
+            <MyBudgets
               boxWidth={screenWidth / 2 - 24}
-              onPress={() => navigation.navigate("My Logbooks Screen")}
+              onPress={() => navigation.navigate("My Budgets Screen")}
             />
           </View>
           {/* <MyBudget

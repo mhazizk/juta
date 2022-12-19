@@ -1,13 +1,15 @@
-import { TouchableNativeFeedback, View } from "react-native";
+import { Dimensions, TouchableNativeFeedback, View } from "react-native";
 import { TextPrimary, TextSecondary } from "./Text";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { useGlobalAppSettings } from "../modules/GlobalContext";
 import formatCurrency from "../modules/formatCurrency";
 import { relativeDate } from "../modules/RelativeDate";
+import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 export const ListItem = ({
   leftLabel,
   rightLabel,
+  iconPack,
   props,
   theme,
   pressable,
@@ -23,7 +25,7 @@ export const ListItem = ({
       {pressable && (
         <TouchableNativeFeedback onPress={onPress}>
           <View style={appSettings.theme.style.list.listContainer}>
-            {iconLeftName && (
+            {iconPack === "IonIcons" && (
               <IonIcons
                 name={iconLeftName}
                 size={18}
@@ -33,11 +35,24 @@ export const ListItem = ({
                 style={{ paddingRight: 16 }}
               />
             )}
+            {iconPack === "FontAwesome5" && (
+              <FontAwesome5Icon
+                name={iconLeftName}
+                color={
+                  iconLeftColor || appSettings.theme.style.colors.foreground
+                }
+                size={18}
+                style={{
+                  transform: [{ scaleX: -1 }],
+                  paddingLeft: 16,
+                }}
+              />
+            )}
             <View style={appSettings.theme.style.list.listItem}>
               {leftLabel && <TextPrimary label={leftLabel} />}
               {rightLabel && <TextSecondary label={rightLabel} />}
             </View>
-            {iconRightName && (
+            {iconPack === "IonIcons" && (
               <IonIcons
                 name={iconRightName}
                 size={iconRightName === "checkmark-circle" ? 22 : 18}
@@ -410,6 +425,118 @@ export const SearchResultListItem = ({
           </View>
         </TouchableNativeFeedback>
       )}
+    </>
+  );
+};
+
+export const CardList = ({
+  title,
+  rightLabel,
+  iconPack,
+  props,
+  theme,
+  pressable,
+  limit,
+  spent,
+  iconLeftName,
+  iconLeftColor,
+  iconRightName,
+  onPress,
+}) => {
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+  const screenWidth = Dimensions.get("window").width;
+  const spentWidth = `${(spent / limit) * 100}%`;
+
+  return (
+    <>
+      <TouchableNativeFeedback onPress={onPress}>
+        {/* Card Container */}
+        <View
+          style={{
+            backgroundColor: appSettings.theme.style.colors.secondary,
+            padding: 16,
+            borderRadius: 16,
+          }}
+        >
+          <View>
+            {iconPack === "FontAwesome5" && (
+              <FontAwesome5Icon
+                name={iconLeftName}
+                color={
+                  iconLeftColor || appSettings.theme.style.colors.background
+                }
+                size={54}
+                style={{
+                  position: "absolute",
+                  bottom: -20,
+                  right: -20,
+                  transform: [{ scaleX: -1 }],
+                }}
+              />
+            )}
+            <View style={appSettings.theme.style.list.listItem}>
+              {/* Title Section */}
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <FontAwesome5Icon
+                  name={iconLeftName}
+                  color={
+                    iconLeftColor || appSettings.theme.style.colors.foreground
+                  }
+                  size={20}
+                  style={{
+                    transform: [{ scaleX: -1 }],
+                  }}
+                />
+
+                {title && (
+                  <TextPrimary
+                    label={title}
+                    style={{ fontWeight: "bold", paddingLeft: 16 }}
+                  />
+                )}
+                {rightLabel && <TextSecondary label={rightLabel} />}
+              </View>
+            </View>
+
+            {/* Progress Bar */}
+            <View style={{ position: "relative", height: 150 }}>
+              <View
+                style={{
+                  position: "absolute",
+                  height: 10,
+                  width: "100%",
+                  backgroundColor: appSettings.theme.style.colors.foreground,
+                  borderRadius: 16,
+                }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  height: 70,
+                  width: spentWidth,
+                }}
+              >
+                <View
+                  style={{
+                    position: "relative",
+                    height: 10,
+                    width: '100%',
+                    backgroundColor: appSettings.theme.style.colors.primary,
+                    borderRadius: 16,
+                  }}
+                />
+                <View style={{alignItems:'center', justifyContent:'center' }}>
+                  <IonIcons name="chevron-up" size={20} />
+                  <TextPrimary label={`${spent/limit*100}% spent`} />
+                  <TextPrimary label={formatCurrency({amount:spent, currency:appSettings.currency.name})} />
+                </View>
+              </View>
+            </View>
+            {/* Limit Section */}
+          </View>
+        </View>
+      </TouchableNativeFeedback>
     </>
   );
 };

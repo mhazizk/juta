@@ -159,7 +159,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // Date Picker
   const showMode = (currentMode) => {
     DateTimePickerAndroid.open({
-      value: date,
+      value: new Date(transaction.details.date),
       onChange,
       mode: currentMode,
       is24Hour: true,
@@ -167,7 +167,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   };
 
   // Date Picker
-  const showDatepicker = () => {
+  const showDatePicker = () => {
     showMode("date");
   };
 
@@ -481,7 +481,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableNativeFeedback>
 
             {/* // ! Date Section */}
-            <TouchableNativeFeedback onPress={showDatepicker}>
+            <TouchableNativeFeedback onPress={showDatePicker}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
                   style={{

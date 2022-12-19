@@ -1,55 +1,15 @@
 {
-  "status": "done",
-  "result": [
+  "budgetPatchCounter": 0,
+  "budgetInsertCOunter": 0,
+  "budgetDeleteCounter": 0,
+  "budgets": [
     {
-      "transaction": {
-        "_timestamps": {
-          "created_at": 1671274104514,
-          "updated_at": 1671274104514
-        },
-        "_id": 1671274104514,
-        "transaction_id": "246766929939.3903",
-        "logbook_id": "logbook1",
-        "details": {
-          "in_out": "expense",
-          "type": "cash",
-          "date": 1671274104514,
-          "notes": null,
-          "category_id": "7",
-          "amount": 20
-        }
-      },
-      "category": {
-        "categoryName": "Health",
-        "categoryId": "7",
-        "icon": {
-          "iconPack": "ion_icons",
-          "iconColor": "#151515",
-          "iconName": "medical"
-        }
-      },
-      "logbook": {
-        "logbookName": "My Logbook",
-        "logbookId": "logbook1",
-        "logbookCurrency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" }
-      }
-    },
-    {
-      "_timestamps": {
-        "created_at": 1671274104514,
-        "updated_at": 1671274104514
-      },
-      "_id": 1671274104514,
-      "transaction_id": "246766929939.3903",
-      "logbook_id": "logbook1",
-      "details": {
-        "in_out": "expense",
-        "type": "cash",
-        "date": 1671274104514,
-        "notes": null,
-        "category_id": "7",
-        "amount": 20
-      }
+      "budgetId": null,
+      "budgetName": "Test Budget",
+      "recurring": false,
+      "amount": null,
+      "startDate": null,
+      "finishDate": null
     }
   ]
 }
