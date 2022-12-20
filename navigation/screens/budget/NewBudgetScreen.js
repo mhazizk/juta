@@ -20,7 +20,7 @@ const NewBudgetScreen = ({ navigation }) => {
     budget_id: Math.floor(Math.random() * 1000000000),
     budget_name: "Monthly Budget",
     repeat: false,
-    amount: 0,
+    limit: 0,
     start_date: Date.now(),
     finish_date: Date.now() + 2629746000,
   });
@@ -72,8 +72,8 @@ const NewBudgetScreen = ({ navigation }) => {
     switch (true) {
       case !newBudget.budget_name.length:
         return alert("Please enter a budget name");
-      case !newBudget.amount:
-        return alert("Please enter a budget limit amount");
+      case !newBudget.limit:
+        return alert("Please enter a budget limit limit");
       case !newBudget.start_date:
         return alert("Please select a budget start date");
       case !newBudget.finish_date:
@@ -167,10 +167,10 @@ const NewBudgetScreen = ({ navigation }) => {
               placeholder: "Enter budget limit ...",
               keyboardType: "numeric",
               inputType: "number",
-              default: !newBudget.amount
+              default: !newBudget.limit
                 ? null
                 : formatCurrency({
-                    amount: newBudget.amount,
+                    amount: newBudget.limit,
                     currency: appSettings.currency.name,
                   }),
               selected: (string) => {
@@ -182,7 +182,7 @@ const NewBudgetScreen = ({ navigation }) => {
                 console.log({ removedThousands });
                 setNewBudget({
                   ...newBudget,
-                  amount: removedThousands,
+                  limit: removedThousands,
                 });
               },
             })
@@ -236,13 +236,13 @@ const NewBudgetScreen = ({ navigation }) => {
                 />
                 <TextPrimary
                   label={
-                    newBudget.amount > 15
+                    newBudget.limit > 15
                       ? formatCurrency({
-                          amount: newBudget.amount,
+                          amount: newBudget.limit,
                           currency: appSettings.currency.name,
                         }).slice(0, 15) + "..."
                       : formatCurrency({
-                          amount: newBudget.amount,
+                          amount: newBudget.limit,
                           currency: appSettings.currency.name,
                         })
                   }
