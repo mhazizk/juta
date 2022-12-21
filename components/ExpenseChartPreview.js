@@ -16,7 +16,7 @@ import { globalStyles, globalTheme } from "../assets/themes/globalStyles";
 import { useGlobalAppSettings } from "../modules/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
 
-const ExpenseChartPreview = ({ route, navigation }) => {
+const ExpenseChartPreview = ({ onPress }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
   const [chartData, setChartData] = useState({
@@ -36,11 +36,7 @@ const ExpenseChartPreview = ({ route, navigation }) => {
   return (
     <>
       {/* //! Summary Section */}
-      <TouchableNativeFeedback
-        onPress={() => {
-          navigation.navigate("Analytics Screen");
-        }}
-      >
+      <TouchableNativeFeedback onPress={() => onPress()}>
         <View
           style={{
             flexDirection: "column",
@@ -75,11 +71,17 @@ const ExpenseChartPreview = ({ route, navigation }) => {
             <VictoryGroup theme={VictoryTheme.grayscale}>
               <VictoryLine
                 data={chartData.data}
-                animate={{ duration: 100 }}
+                animate={{
+                  duration: 2000,
+                  onLoad: { duration: 1000 },
+                }}
+                // animate={{ duration: 100 }}
                 interpolation="natural"
                 x="date"
                 y="amount"
-                style={{ data: { stroke: appSettings.theme.style.colors.foreground } }}
+                style={{
+                  data: { stroke: appSettings.theme.style.colors.foreground },
+                }}
               />
             </VictoryGroup>
           </View>

@@ -183,6 +183,34 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
+        // ! New Patch One Budget Method
+        if (
+          route?.params?.patchBudget &&
+          budgets.budgetPatchCounter ===
+            route?.params?.initialBudgetPatchCounter &&
+          route?.params?.loadingType === "patchBudget"
+        ) {
+          console.log("mulai dispatch");
+          dispatchBudgets({
+            type: ACTIONS.BUDGETS.PATCH,
+            payload: route?.params?.patchBudget,
+          });
+        }
+
+        // ! New Delete One Budget Method
+        if (
+          route?.params?.deleteBudget &&
+          budgets.budgetDeleteCounter ===
+            route?.params?.initialBudgetDeleteCounter &&
+          route?.params?.loadingType === "deleteBudget"
+        ) {
+          console.log("mulai dispatch");
+          dispatchBudgets({
+            type: ACTIONS.BUDGETS.DELETE_ONE,
+            payload: route?.params?.deleteBudget,
+          });
+        }
+
         // ! Switch LogBook Timeout
         if (route?.params?.loadingType === "switchLogBook") {
           setTimeout(() => {
@@ -273,6 +301,26 @@ const LoadingScreen = ({ route, navigation }) => {
       navigation.navigate("My Budgets Screen");
     }
   }, [budgets.budgetInsertCounter]);
+
+  // ! New Patch Budget Method
+  useEffect(() => {
+    if (
+      budgets.budgetPatchCounter > route?.params?.initialBudgetPatchCounter &&
+      route?.params?.loadingType === "patchBudget"
+    ) {
+      navigation.navigate("My Budgets Screen");
+    }
+  }, [budgets.budgetPatchCounter]);
+
+  // ! New Delete One Budget Method
+  useEffect(() => {
+    if (
+      budgets.budgetDeleteCounter > route?.params?.initialBudgetDeleteCounter &&
+      route?.params?.loadingType === "deleteBudget"
+    ) {
+      navigation.navigate("My Budgets Screen");
+    }
+  }, [budgets.budgetDeleteCounter]);
 
   // ! New Delete One Category Method
   useEffect(() => {

@@ -10,7 +10,14 @@ import {
   useGlobalSortedTransactions,
 } from "../modules/GlobalContext";
 
-const RecentTransactions = ({ route, navigation, onPress }) => {
+const RecentTransactions = ({
+  route,
+  navigation,
+  onPress,
+  startDate,
+  finishDate,
+  title,
+}) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -52,41 +59,89 @@ const RecentTransactions = ({ route, navigation, onPress }) => {
     if (sortedTransactions.groupSorted?.length) {
       sortedTransactions.groupSorted.forEach((logbook) => {
         if (logbook.transactions.length) {
-          logbook.transactions[0].data.forEach((transaction) => {
-            const iconColor = findCategoryColorById(
-              transaction.details.category_id
+          if (startDate && finishDate) {
+            logbook.transactions.forEach((section) =>
+              section.data.forEach((transaction) => {
+                if (
+                  transaction.details.date >= startDate &&
+                  transaction.details.date <= finishDate
+                ) {
+                  const iconColor = findCategoryColorById(
+                    transaction.details.category_id
+                  );
+                  const iconName = findCategoryIconNameById(
+                    transaction.details.category_id
+                  );
+                  const iconPack = findCategoryIconPackById(
+                    transaction.details.category_id
+                  );
+                  const categoryName = findCategoryNameById(
+                    transaction.details.category_id
+                  );
+                  const foundLogbook = findLogbookById(logbook.logbook_id);
+                  finalArray.push({
+                    transaction: transaction,
+                    category: {
+                      categoryName,
+                      categoryId: transaction.details.category_id,
+                      icon: { iconPack, iconColor, iconName },
+                    },
+                    logbook: {
+                      logbookName: foundLogbook.logbook_name,
+                      logbookId: logbook.logbook_id,
+                      logbookCurrency: foundLogbook.logbook_currency,
+                    },
+                  });
+                }
+              })
             );
-            const iconName = findCategoryIconNameById(
-              transaction.details.category_id
-            );
-            const iconPack = findCategoryIconPackById(
-              transaction.details.category_id
-            );
-            const categoryName = findCategoryNameById(
-              transaction.details.category_id
-            );
-            const foundLogbook = findLogbookById(logbook.logbook_id);
-            finalArray.push({
-              transaction: transaction,
-              category: {
-                categoryName,
-                categoryId: transaction.details.category_id,
-                icon: { iconPack, iconColor, iconName },
-              },
-              logbook: {
-                logbookName: foundLogbook.logbook_name,
-                logbookId: logbook.logbook_id,
-                logbookCurrency: foundLogbook.logbook_currency,
-              },
+          }
+
+          if (!startDate && !finishDate) {
+            logbook.transactions.forEach((section) => {
+              section.data.forEach((transaction) => {
+                if (
+                  transaction._timestamps.updated_at >=
+                    Date.now() - 1000 * 60 * 60 * 24 * 7 &&
+                  transaction._timestamps.updated_at <= Date.now()
+                ) {
+                  const iconColor = findCategoryColorById(
+                    transaction.details.category_id
+                  );
+                  const iconName = findCategoryIconNameById(
+                    transaction.details.category_id
+                  );
+                  const iconPack = findCategoryIconPackById(
+                    transaction.details.category_id
+                  );
+                  const categoryName = findCategoryNameById(
+                    transaction.details.category_id
+                  );
+                  const foundLogbook = findLogbookById(logbook.logbook_id);
+                  finalArray.push({
+                    transaction: transaction,
+                    category: {
+                      categoryName,
+                      categoryId: transaction.details.category_id,
+                      icon: { iconPack, iconColor, iconName },
+                    },
+                    logbook: {
+                      logbookName: foundLogbook.logbook_name,
+                      logbookId: logbook.logbook_id,
+                      logbookCurrency: foundLogbook.logbook_currency,
+                    },
+                  });
+                }
+              });
             });
-          });
+          }
         }
       });
       finalArray.sort((a, b) => {
-        if (a.transaction.details.date < b.transaction.details.date) {
+        if (a.transaction._timestamps.updated_at < b.transaction._timestamps.updated_at) {
           return 1;
         }
-        if (a.transaction.details.date > b.transaction.details.date) {
+        if (a.transaction._timestamps.updated_at > b.transaction._timestamps.updated_at) {
           return -1;
         }
         return 0;
@@ -247,14 +302,14 @@ const RecentTransactions = ({ route, navigation, onPress }) => {
   return (
     <>
       <TextPrimary
-        label="Recent Transactions"
+        label={title || "Recent Transactions"}
         style={{ fontSize: 18, fontWeight: "bold", paddingHorizontal: 16 }}
       />
       <View
         style={{
           flex: 0,
           flexDirection: "column",
-          paddingTop: 8
+          paddingTop: 8,
         }}
       >
         <FlatList
@@ -302,7 +357,7 @@ const RecentTransactions = ({ route, navigation, onPress }) => {
         />
         {!recentTransactions.result.length && (
           <TextSecondary
-            label="No Recent Transactions"
+            label={`No ${title || "Recent Transactions"}`}
             style={{ paddingHorizontal: 16 }}
           />
         )}

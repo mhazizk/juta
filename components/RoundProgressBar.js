@@ -33,8 +33,8 @@ export const RoundProgressBar = ({
           radius={radius || 80}
           hideLegend={true}
           chartConfig={{
-            backgroundColor:
-              backgroundColor || appSettings.theme.style.colors.background,
+            // backgroundColor:
+            //   backgroundColor || appSettings.theme.style.colors.background,
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
             decimalPlaces: 2, // optional, defaults to 2dp

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { ActiveBudgetCard, CardList, ListItem } from "../../../components/List";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
@@ -11,6 +10,8 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ProgressChart } from "react-native-chart-kit";
 import RecentTransactions from "../../../components/RecentTransactions";
+import { useIsFocused } from "@react-navigation/native";
+import { ActiveBudget } from "../../../components/ActiveBudget";
 
 const MyBudgetsScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -23,6 +24,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
     transactionList: [],
   });
   const [inactiveBudgets, setInactiveBudgets] = useState([]);
+  const isFocus = useIsFocused();
 
   useEffect(() => {
     findActiveBudget();
@@ -30,9 +32,11 @@ const MyBudgetsScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    findActiveBudget();
-    findInactiveBudget();
-  }, [budgets]);
+    if (isFocus) {
+      findActiveBudget();
+      findInactiveBudget();
+    }
+  }, [budgets, isFocus]);
 
   useEffect(() => {
     findActiveBudget();
@@ -78,6 +82,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
       transactionList.sort((a, b) => b.details.date - a.details.date);
       return setActiveBudget({ budget: activeBudget, spent, transactionList });
     }
+    return setActiveBudget({ budget: null, spent: null, transactionList: [] });
   };
 
   const findInactiveBudget = () => {
@@ -99,43 +104,52 @@ const MyBudgetsScreen = ({ route, navigation }) => {
       >
         {/* Active Budget */}
         {activeBudget.budget && (
-          <ActiveBudgetCard
-            // Card Props
-            onPress={() => {}}
-            title={activeBudget.budget.budget_name}
-            iconPack="FontAwesome5"
-            iconLeftName="piggy-bank"
-            rightLabel="Edit"
-            // Limit Props
-            limit={activeBudget.budget.limit}
-            // spent={activeBudget.spent}
-            spent={activeBudget.spent}
-            // Transactions Props
-            transactionList={activeBudget.transactionList}
-            // Chart Props
-            width={Dimensions.get("window").width - 32}
-            startDate={activeBudget.budget.start_date}
-            finishDate={activeBudget.budget.finish_date}
-            data={{
-              labels: ["Active"],
-              // data: [activeBudget.spent / activeBudget.budget.limit],
-              data: [
-                (activeBudget.spent > activeBudget.budget.limit
-                  ? activeBudget.budget.limit
-                  : activeBudget.spent) / activeBudget.budget.limit,
-              ],
-            }}
-          />
+          <>
+            <ActiveBudget
+              // Card Props
+              onPress={() => {
+                navigation.navigate("Edit Budget Screen", {
+                  budget: activeBudget.budget,
+                });
+              }}
+              title={activeBudget.budget.budget_name}
+              iconPack="FontAwesome5"
+              iconLeftName="piggy-bank"
+              rightLabel="Edit"
+              repeat={activeBudget.budget.repeat}
+              // Limit Props
+              limit={activeBudget.budget.limit}
+              // spent={activeBudget.spent}
+              spent={activeBudget.spent}
+              // Transactions Props
+              transactionList={activeBudget.transactionList}
+              // Chart Props
+              width={Dimensions.get("window").width - 32}
+              startDate={activeBudget.budget.start_date}
+              finishDate={activeBudget.budget.finish_date}
+              data={{
+                labels: ["Active"],
+                // data: [activeBudget.spent / activeBudget.budget.limit],
+                data: [
+                  (activeBudget.spent > activeBudget.budget.limit
+                    ? activeBudget.budget.limit
+                    : activeBudget.spent) / activeBudget.budget.limit,
+                ],
+              }}
+            />
+            <RecentTransactions
+              title="Transactions in Range"
+              startDate={activeBudget.budget?.start_date || null}
+              finishDate={activeBudget.budget?.finish_date || null}
+              onPress={({ transaction, selectedLogbook }) => {
+                navigation.navigate("Transaction Preview Screen", {
+                  transaction: transaction,
+                  selectedLogbook: selectedLogbook,
+                });
+              }}
+            />
+          </>
         )}
-        {/* {activeBudget?.transactionList?.length && ( */}
-        <RecentTransactions
-          onPress={({ transaction, selectedLogbook }) => {
-            navigation.navigate("Transaction Preview Screen", {
-              transaction: transaction,
-              selectedLogbook: selectedLogbook,
-            });
-          }}
-        />
         {/* )} */}
 
         {/* Previous Budget */}

@@ -46,6 +46,8 @@ import NewCategoryScreen from "./screens/user/NewCategoryScreen";
 import MyBudgetsScreen from "./screens/budget/MyBudgetsScreen";
 import NewBudgetScreen from "./screens/budget/NewBudgetScreen";
 import BudgetPreviewScreen from "./screens/budget/BudgetPreviewScreen";
+import EditBudgetScreen from "./screens/budget/EditBudgetScreen";
+import AnalyticsScreen from "./screens/dashboard/AnalyticsScreen";
 
 const Stack = createStackNavigator();
 
@@ -76,7 +78,11 @@ const screens = {
   // Budget Screen
   myBudgetsScreen: "My Budgets Screen",
   newBudgetScreen: "New Budget Screen",
+  editBudgetScreen: "Edit Budget Screen",
   budgetPreviewScreen: "Budget Preview Screen",
+
+  // Analytics Screen
+  analyticsScreen: "Analytics Screen",
 
   // Modal Screen
   modalScreen: "Modal Screen",
@@ -483,6 +489,40 @@ const RootStack = ({ navigation }) => {
         }}
         name={screens.budgetPreviewScreen}
         component={BudgetPreviewScreen}
+      />
+
+      {/* // ! Analytics Screen */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Analytics",
+          headerStyle: {
+            backgroundColor: appSettings?.theme?.style?.colors?.header,
+          },
+          // headerLeft: (leftHeader) => (
+          //     <>
+          //     </>
+          // )
+        }}
+        name={screens.analyticsScreen}
+        component={AnalyticsScreen}
+      />
+
+      {/* // ! Edit Budget Screen */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Edit Budget",
+          headerStyle: {
+            backgroundColor: appSettings?.theme?.style?.colors?.header,
+          },
+          // headerLeft: (leftHeader) => (
+          //     <>
+          //     </>
+          // )
+        }}
+        name={screens.editBudgetScreen}
+        component={EditBudgetScreen}
       />
 
       {/* // ! Action Screen */}

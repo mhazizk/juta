@@ -14,7 +14,7 @@ import { RoundProgressBar } from "./RoundProgressBar";
 import { dailyLimit } from "../modules/DailyLimit";
 import formatCurrency from "../modules/formatCurrency";
 
-export const MyBudgets = ({
+export const MyBudgetsPreview = ({
   label,
   props,
   onPress,
@@ -28,6 +28,7 @@ export const MyBudgets = ({
   iconColor,
   iconName,
   textColor,
+  isFocused,
 }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -44,12 +45,16 @@ export const MyBudgets = ({
   }, []);
 
   useEffect(() => {
-    findActiveBudget();
-  }, [budgets]);
+    if (isFocused) {
+      findActiveBudget();
+    }
+  }, [budgets, isFocused]);
 
   useEffect(() => {
     findActiveBudget();
   }, [sortedTransactions.groupSorted]);
+
+  useEffect(() => {}, [activeBudget]);
 
   // ! Function Section
   const findActiveBudget = () => {
@@ -85,6 +90,7 @@ export const MyBudgets = ({
       transactionList.sort((a, b) => b.details.date - a.details.date);
       return setActiveBudget({ budget: activeBudget, spent, transactionList });
     }
+    return setActiveBudget({ budget: null, spent: null, transactionList: [] });
   };
 
   return (
@@ -187,25 +193,31 @@ export const MyBudgets = ({
 
                   <View
                     style={{
+                      marginVertical: 4,
                       height: 1,
                       width: "100%",
-                      backgroundColor: appSettings.theme.style.colors.secondary,
+                      backgroundColor:
+                        appSettings.theme.style.button.buttonPrimary.textStyle
+                          .color,
                     }}
                   />
                   <TextButtonPrimary
-                    label={`${
-                      (activeBudget.spent / activeBudget.budget.limit) * 100
-                    }% spent`}
-                    style={{ fontSize: 14 }}
-                  />
-                  <TextButtonPrimary
-                    label={`${
-                      ((activeBudget.budget.limit - activeBudget.spent) /
-                        activeBudget.budget.limit) *
+                    label={`${(
+                      (activeBudget.spent / activeBudget.budget.limit) *
                       100
-                    }% left`}
+                    ).toFixed(0)}% spent`}
                     style={{ fontSize: 14 }}
                   />
+                  {activeBudget.spent / activeBudget.budget.limit < 1 && (
+                    <TextButtonPrimary
+                      label={`${(
+                        ((activeBudget.budget.limit - activeBudget.spent) /
+                          activeBudget.budget.limit) *
+                        100
+                      ).toFixed(0)}% left`}
+                      style={{ fontSize: 14 }}
+                    />
+                  )}
                 </View>
               </View>
             </>

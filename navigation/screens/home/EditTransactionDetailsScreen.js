@@ -188,7 +188,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           label: "Saving Transction ...",
           loadingType: "patchTransaction",
           logbookToOpen: logbookToOpen,
-          patchTransaction: transaction,
+          patchTransaction: {
+            ...transaction,
+            _timestamps: { ...transaction._timestamps, updated_at: Date.now() },
+          },
           prevTransaction: prevTransaction,
           logbookToOpen: logbookToOpen,
           initialSortedTransactionsPatchCounter:
@@ -833,13 +836,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 theme={appSettings.theme}
                 width={150}
                 onPress={() => {
-                  setTransaction({
-                    ...transaction,
-                    _timestamps: {
-                      ...transaction._timestamps,
-                      updated_at: Date.now(),
-                    },
-                  });
                   checkFinalTransaction();
                 }}
               />

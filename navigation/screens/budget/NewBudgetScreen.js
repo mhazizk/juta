@@ -21,7 +21,7 @@ const NewBudgetScreen = ({ navigation }) => {
     budget_name: "Monthly Budget",
     repeat: false,
     limit: 0,
-    start_date: Date.now(),
+    start_date: +new Date().setHours(0, 0, 0, 0),
     finish_date: Date.now() + 2629746000,
   });
 
@@ -59,7 +59,7 @@ const NewBudgetScreen = ({ navigation }) => {
       onChange: mode === "start" ? onChangeStart : onChangeFinish,
       mode: currentMode,
       is24Hour: true,
-      minimumDate: new Date(newBudget.start_date),
+      minimumDate: mode === "start" ? new Date().setHours(0, 0, 0, 0) : new Date(newBudget.start_date),
     });
   };
 

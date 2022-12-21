@@ -239,6 +239,14 @@ export const globalBudgets = (state, action) => {
         (budget) => budget.budget_id !== deleteBudget.budget_id
       );
 
+      if (!foundOtherBudget.length) {
+        return {
+          ...state,
+          budgetDeleteCounter: state.budgetDeleteCounter + 1,
+          budgets: [],
+        };
+      }
+
       let sortOtherBudgets = foundOtherBudget.sort((a, b) => {
         if (a.budget_name < b.budget_name) {
           return -1;

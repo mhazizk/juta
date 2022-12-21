@@ -32,7 +32,8 @@ import IncomeChartPreview from "../../../components/IncomeChartPreview";
 import RecentTransactions from "../../../components/RecentTransactions";
 import MyLogbooks from "../../../components/MyLogbooks";
 import { ImgButton } from "../../../components/Button";
-import { MyBudgets } from "../../../components/MyBudgets";
+import { MyBudgetsPreview } from "../../../components/MyBudgetsPreview";
+import { useIsFocused } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -45,11 +46,16 @@ const DashboardScreen = ({ navigation }) => {
   const [date, setDate] = useState();
 
   const checkmark = require("../../../assets/img/checkmark.png");
+  const isFocus = useIsFocused();
 
   useEffect(() => {
     // in epoch time
     setDate(Date.now());
   }, []);
+
+  useEffect(() => {
+    console.log({ isFocus });
+  }, [isFocus]);
 
   // convert epoch number in date
   const getHours = new Date(date).getHours();
@@ -154,7 +160,11 @@ const DashboardScreen = ({ navigation }) => {
                     }}
                   >
                     {/* <TextPrimary label={index === 0 ? "Expense" : "Income"} /> */}
-                    {<ExpenseChartPreview />}
+                    {
+                      <ExpenseChartPreview
+                        onPress={() => navigation.navigate("Analytics Screen")}
+                      />
+                    }
                     {/* {index === 1 && <IncomeChartPreview />} */}
                   </View>
                 </View>
@@ -192,7 +202,8 @@ const DashboardScreen = ({ navigation }) => {
               boxWidth={screenWidth / 2 - 24}
               onPress={() => navigation.navigate("My Logbooks Screen")}
             />
-            <MyBudgets
+            <MyBudgetsPreview
+              isFocused={isFocus}
               boxWidth={screenWidth / 2 - 24}
               onPress={() => navigation.navigate("My Budgets Screen")}
             />
