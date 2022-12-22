@@ -53,9 +53,9 @@ const DashboardScreen = ({ navigation }) => {
     setDate(Date.now());
   }, []);
 
-  useEffect(() => {
-    console.log({ isFocus });
-  }, [isFocus]);
+  // useEffect(() => {
+  //   // console.log({ isFocus });
+  // }, [isFocus]);
 
   // convert epoch number in date
   const getHours = new Date(date).getHours();
