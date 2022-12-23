@@ -70,7 +70,7 @@ export const darkTheme = {
     buttonPrimary: {
       buttonStyle: {
         backgroundColor: palette.white[600],
-        borderRadius: 8,
+        borderRadius: 16,
       },
       textStyle: {
         color: palette.black[600],
@@ -81,7 +81,7 @@ export const darkTheme = {
       buttonStyle: {
         backgroundColor: "transparent",
         borderColor: palette.white[600],
-        borderRadius: 8,
+        borderRadius: 16,
         borderWidth: 1,
       },
       textStyle: {

@@ -6,6 +6,7 @@ import {
   TouchableHighlight,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ChartComponent from "../../../components/Chart";
@@ -34,14 +35,15 @@ import { CustomBarChart } from "../../../components/CustomBarChart";
 import { hexToRgb } from "../../../modules/HexToRGB";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 import formatCurrency from "../../../modules/formatCurrency";
-import { ButtonSwitch } from "../../../components/Button";
+import { ButtonSwitch, oldButtonSwitch } from "../../../components/Button";
+import { findTransactionsToPlot } from "../../../modules/FindTransactionsToPlot";
 
 const AnalyticsScreen = () => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const [activeBudget, setActiveBudget] = useState({
     budget: null,
@@ -50,7 +52,7 @@ const AnalyticsScreen = () => {
   });
 
   const [graph, setGraph] = useState({
-    status: "loading",
+    status: "empty",
     rangeDay: 7,
     graphData: {
       mainGraph: [],
@@ -59,17 +61,32 @@ const AnalyticsScreen = () => {
     },
   });
 
+  const findTransactions = () =>
+    findTransactionsToPlot({
+      appSettings: appSettings,
+      groupSorted: sortedTransactions.groupSorted,
+      logbooks: logbooks,
+      categories: categories,
+      budgets: budgets,
+      graph: graph,
+      setGraph: (item) => setGraph(item),
+      activeBudget: activeBudget,
+      setActiveBudget: (item) => setActiveBudget(item),
+    });
+
   useEffect(() => {
-    findTransactions();
+    let isUnmounted = false;
+
+    if (!isUnmounted) {
+      findTransactions();
+    }
+    console.log("Mounted");
+
+    return () => {
+      // isUnmounted = true;
+      console.log("Unmounted");
+    };
   }, []);
-
-  useEffect(() => {
-    findTransactions();
-  }, [budgets]);
-
-  useEffect(() => {
-    // console.log(JSON.stringify(graph));
-  }, [graph]);
 
   useEffect(() => {
     setGraph({
@@ -77,167 +94,28 @@ const AnalyticsScreen = () => {
       status: "loading",
     });
     findTransactions();
-  }, [sortedTransactions.groupSorted]);
+  }, [budgets]);
+
+  useEffect(() => {
+    console.log(JSON.stringify(graph));
+    if (graph.status === "loading") {
+      findTransactions();
+    }
+  }, [graph.rangeDay, graph.status]);
+
+  // useEffect(() => {
+  //   setGraph({
+  //     ...graph,
+  //     status: "loading",
+  //   });
+  //   findTransactions();
+  // }, [sortedTransactions.groupSorted]);
 
   useEffect(() => {
     console.log(activeBudget);
   }, [activeBudget]);
 
   // ! Function Section
-
-  // Find transactions within range
-  const findTransactions = () => {
-    // setGraph({
-    //   ...graph,
-    //   status: "loading",
-    // });
-
-    let transactionList = [];
-    let spentList = [];
-    let totalSpent = 0;
-    let mainGraph = [];
-    let unsortedMainGraph = [];
-    let shadowGraph = [];
-    let limitLine = [];
-    let dailyLimit = 0;
-    let today = Date.now();
-    let month = new Date(today).getMonth();
-    let year = new Date(today).getFullYear();
-    let day = new Date(today).getDate();
-
-    if (sortedTransactions.groupSorted.length) {
-      if (
-        sortedTransactions.groupSorted.some(
-          (logbook) => logbook.transactions.length
-        )
-      ) {
-        sortedTransactions.groupSorted.forEach((logbook) => {
-          logbook.transactions.forEach((section) => {
-            section.data.forEach((transaction) => {
-              // Find transactions within range
-              if (
-                transaction.details.date <= today &&
-                transaction.details.date >=
-                  today - 1000 * 60 * 60 * 24 * graph.rangeDay
-              ) {
-                const iconColor = findCategoryColorById({
-                  id: transaction.details.category_id,
-                  categories: categories.categories,
-                });
-                const iconName = findCategoryIconNameById({
-                  id: transaction.details.category_id,
-                  categories: categories.categories,
-                });
-                const iconPack = findCategoryIconNameById({
-                  id: transaction.details.category_id,
-                  categories: categories.categories,
-                });
-                const categoryName = findCategoryNameById({
-                  id: transaction.details.category_id,
-                  categories: categories.categories,
-                });
-                const foundLogbook = findLogbookById({
-                  id: logbook.logbook_id,
-                  logbooks: logbooks.logbooks,
-                });
-                transactionList.push({
-                  transaction: transaction,
-                  category: {
-                    categoryName,
-                    categoryId: transaction.details.category_id,
-                    icon: { iconPack, iconColor, iconName },
-                  },
-                  logbook: {
-                    logbookName: foundLogbook.logbook_name,
-                    logbookId: logbook.logbook_id,
-                    logbookCurrency: foundLogbook.logbook_currency,
-                  },
-                });
-              }
-            });
-          });
-        });
-        if (transactionList.length) {
-          transactionList.forEach((list) => {
-            totalSpent += list.transaction.details.amount;
-          });
-          for (let i = 0; i < graph.rangeDay; i++) {
-            let sumAmount = [];
-            let reducedAmount = 0;
-            let date = new Date(today - 1000 * 60 * 60 * 24 * i);
-            transactionList.forEach((list) => {
-              if (
-                new Date(list.transaction.details.date).getDate() ===
-                date.getDate()
-              ) {
-                sumAmount.push(list.transaction.details.amount);
-              }
-            });
-            if (sumAmount.length) {
-              reducedAmount = sumAmount.reduce((a, b) => a + b, 0);
-            }
-            unsortedMainGraph.push({
-              i: date.getDate(),
-              x: date.toLocaleDateString(appSettings.locale, {
-                weekday: "short",
-              }),
-              y: reducedAmount,
-            });
-            unsortedMainGraph = unsortedMainGraph.sort((a, b) => {
-              if (a.i < b.i) return -1;
-              if (a.i > b.i) return 1;
-              return 0;
-            });
-          }
-        }
-        if (budgets.budgets.length) {
-          budgets.budgets.forEach((budget) => {
-            if (budget.start_date <= today && budget.finish_date >= today) {
-              const range = budget.finish_date - budget.start_date;
-              const rangeDay = range / (1000 * 60 * 60 * 24);
-              dailyLimit = +parseFloat(budget.limit / rangeDay).toFixed(2);
-            }
-          });
-        }
-
-        if (unsortedMainGraph.length) {
-          let shadowLimit = 0;
-          unsortedMainGraph.forEach((data) => {
-            if (data.y > shadowLimit) {
-              shadowLimit = data.y;
-            }
-          });
-          unsortedMainGraph.forEach((data) => {
-            mainGraph.push({
-              x: data.x,
-              y: data.y,
-            });
-            shadowGraph.push({
-              x: data.x,
-              y: dailyLimit > shadowLimit ? dailyLimit : shadowLimit,
-            });
-            if (dailyLimit && dailyLimit < shadowLimit) {
-              limitLine.push({
-                x: data.x,
-                y: dailyLimit,
-              });
-            }
-          });
-        }
-        setActiveBudget({
-          ...activeBudget,
-          spent: totalSpent,
-          limit: dailyLimit,
-        });
-
-        setGraph({
-          ...graph,
-          status: "done",
-          graphData: { mainGraph, shadowGraph, limitLine },
-        });
-      }
-    }
-  };
 
   return (
     <>
@@ -283,43 +161,111 @@ const AnalyticsScreen = () => {
           </View>
         )}
         {graph.status === "done" && (
-          <CustomBarChart
-            //   Graph Data
-            mainGraph={
-              graph.graphData.mainGraph.length
-                ? graph.graphData.mainGraph
-                : null
-            }
-            shadowGraph={
-              graph.graphData.shadowGraph.length
-                ? graph.graphData.shadowGraph
-                : null
-            }
-            limitLine={
-              graph.graphData.limitLine.length
-                ? graph.graphData.limitLine
-                : null
-            }
-            symbol={appSettings.currency.symbol}
-            //  Graph Style
-            successColor={appSettings.theme.style.colors.success}
-            primaryColor={appSettings.theme.style.colors.foreground}
-            overBudgetBarColor={appSettings.theme.style.colors.danger}
-            warnBudgetBarColor={appSettings.theme.style.colors.warn}
-            shadowBarColor={hexToRgb({
-              hex: appSettings.theme.style.colors.secondary,
-              opacity: 0.5,
-            })}
-            width={Dimensions.get("window").width}
-            height={220}
-            textColor={appSettings.theme.style.text.textSecondary.color}
-            barRadius={10}
-            barWidth={28}
-          />
+          <>
+            <CustomBarChart
+              //   Graph Data
+              mainGraph={
+                graph.status === "done" ? graph.graphData.mainGraph : null
+              }
+              shadowGraph={
+                graph.status === "done" ? graph.graphData.shadowGraph : null
+              }
+              limitLine={
+                graph.status === "done" && graph.graphData.limitLine.length
+                  ? graph.graphData.limitLine
+                  : null
+              }
+              symbol={appSettings.currency.symbol}
+              rangeDay={graph.rangeDay}
+              //  Graph Style
+              successColor={appSettings.theme.style.colors.success}
+              primaryColor={appSettings.theme.style.colors.foreground}
+              overBudgetBarColor={appSettings.theme.style.colors.danger}
+              warnBudgetBarColor={appSettings.theme.style.colors.warn}
+              shadowBarColor={hexToRgb({
+                hex: appSettings.theme.style.colors.secondary,
+                opacity: 0.5,
+              })}
+              width={Dimensions.get("window").width}
+              height={220}
+              textColor={appSettings.theme.style.text.textSecondary.color}
+              barRadius={8}
+              barWidth={
+                graph.rangeDay === 7 ? 28 : graph.rangeDay === 30 ? 8 : 16
+              }
+            />
+            {/* // TODO add 30 days graph option  */}
+            {/* Range selector */}
+            <View
+              style={{
+                flexDirection: "row",
+                padding: 16,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ButtonSwitch
+                onPress={() => {
+                  setGraph({ ...graph, rangeDay: 7, status: "loading" });
+                }}
+                condition={graph.rangeDay === 7}
+                label="Last week"
+              />
+              <ButtonSwitch
+                onPress={() => {
+                  setGraph({ ...graph, rangeDay: 30, status: "loading" });
+                }}
+                condition={graph.rangeDay === 30}
+                label="Last month"
+              />
+              <ButtonSwitch
+                onPress={() => {
+                  setGraph({ ...graph, rangeDay: 365, status: "loading" });
+                }}
+                condition={graph.rangeDay === 365}
+                label="Last year"
+              />
+            </View>
+          </>
         )}
-        {/* // TODO add 30 days graph option  */}
         {/* // TODO add time range button switch  */}
         {/* // TODO add average spent amount  */}
+        {graph.status === "loading" && (
+          <ActivityIndicator
+            size={50}
+            color={appSettings.theme.style.colors.primary}
+          />
+        )}
+        {graph.status === "empty" && (
+          <View
+            style={{
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <IonIcons
+              name="analytics"
+              color={appSettings.theme.style.colors.secondary}
+              size={48}
+              style={{
+                paddingBottom: 16,
+              }}
+            />
+            <TextSecondary
+              label={`You don't have transaction yet. \n Start adding transaction to see your analytics.`}
+              style={{ textAlign: "center" }}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 16,
+              }}
+            ></View>
+          </View>
+        )}
       </View>
     </>
   );

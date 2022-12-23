@@ -1,6 +1,6 @@
 import MyBudgetImg from "../../../assets/img/myBudget.png";
 import MyLogbookImg from "../../../assets/img/myLogbook.png";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Text,
   TouchableNativeFeedback,
@@ -21,7 +21,9 @@ import { TextPrimary } from "../../../components/Text";
 import TopExpenses from "../../../components/TopExpenses";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
   useGlobalCategories,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../../modules/GlobalContext";
@@ -34,28 +36,68 @@ import MyLogbooks from "../../../components/MyLogbooks";
 import { ImgButton } from "../../../components/Button";
 import { MyBudgetsPreview } from "../../../components/MyBudgetsPreview";
 import { useIsFocused } from "@react-navigation/native";
+import { findTransactionsToPlot } from "../../../modules/FindTransactionsToPlot";
+import { hexToRgb } from "../../../modules/HexToRGB";
+import { CustomBarChart } from "../../../components/CustomBarChart";
 
 const screenWidth = Dimensions.get("window").width;
 
 const DashboardScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
-  const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const [date, setDate] = useState();
+  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const [activeBudget, setActiveBudget] = useState({
+    budget: null,
+    spent: null,
+    transactionList: [],
+  });
 
+  const [graph, setGraph] = useState({
+    status: "empty",
+    rangeDay: 7,
+    graphData: {
+      mainGraph: [],
+      shadowGraph: [],
+      limitLine: [],
+    },
+  });
+
+  const [date, setDate] = useState();
+  const cardHeight = 200;
   const checkmark = require("../../../assets/img/checkmark.png");
   const isFocus = useIsFocused();
 
+  const findTransactions = useMemo(() => {
+    return () =>
+      findTransactionsToPlot({
+        appSettings: appSettings,
+        groupSorted: sortedTransactions.groupSorted,
+        logbooks: logbooks,
+        categories: categories,
+        budgets: budgets,
+        graph: graph,
+        setGraph: (item) => setGraph(item),
+        activeBudget: activeBudget,
+        setActiveBudget: (item) => setActiveBudget(item),
+      });
+  }, [sortedTransactions, budgets, graph, activeBudget]);
+
   useEffect(() => {
     // in epoch time
+    findTransactions();
     setDate(Date.now());
   }, []);
 
-  // useEffect(() => {
-  //   // console.log({ isFocus });
-  // }, [isFocus]);
+  useEffect(() => {
+    if (!isFocus) {
+      findTransactions();
+      setDate(Date.now());
+    }
+  }, [isFocus]);
 
   // convert epoch number in date
   const getHours = new Date(date).getHours();
@@ -138,36 +180,94 @@ const DashboardScreen = ({ navigation }) => {
             autoPlay
             scrollAnimationDuration={1500}
             width={screenWidth}
-            height={200}
+            height={cardHeight}
             data={["expense", "income"]}
             key={(index) => index}
             renderItem={({ index }) => (
               <>
                 {/* Container */}
-                <View
-                  style={{
-                    // backgroundColor: appSettings.theme.style.colors.background,
-                    padding: 16,
-                  }}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Analytics Screen")}
                 >
-                  {/* Card */}
                   <View
                     style={{
-                      backgroundColor: appSettings.theme.style.colors.secondary,
+                      // backgroundColor: appSettings.theme.style.colors.background,
                       padding: 16,
-                      borderRadius: 16,
-                      height: "100%",
                     }}
                   >
-                    {/* <TextPrimary label={index === 0 ? "Expense" : "Income"} /> */}
-                    {
-                      <ExpenseChartPreview
-                        onPress={() => navigation.navigate("Analytics Screen")}
-                      />
-                    }
-                    {/* {index === 1 && <IncomeChartPreview />} */}
+                    {/* Card */}
+                    <View
+                      style={{
+                        backgroundColor:
+                          appSettings.theme.style.colors.secondary,
+                        padding: 16,
+                        borderRadius: 16,
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {/* <ExpenseChartPreview
+                       /> */}
+                      {graph.status === "done" && (
+                        <>
+                          <CustomBarChart
+                            //   Graph Data
+                            mainGraph={
+                              graph.status === "done"
+                                ? graph.graphData.mainGraph
+                                : null
+                            }
+                            shadowGraph={
+                              graph.status === "done"
+                                ? graph.graphData.shadowGraph
+                                : null
+                            }
+                            limitLine={
+                              graph.status === "done" &&
+                              graph.graphData.limitLine.length
+                                ? graph.graphData.limitLine
+                                : null
+                            }
+                            symbol={appSettings.currency.symbol}
+                            rangeDay={graph.rangeDay}
+                            //  Graph Style
+                            successColor={
+                              appSettings.theme.style.colors.success
+                            }
+                            primaryColor={
+                              appSettings.theme.style.colors.foreground
+                            }
+                            overBudgetBarColor={
+                              appSettings.theme.style.colors.danger
+                            }
+                            warnBudgetBarColor={
+                              appSettings.theme.style.colors.warn
+                            }
+                            shadowBarColor={hexToRgb({
+                              hex: appSettings.theme.style.colors.secondary,
+                              opacity: 0.5,
+                            })}
+                            width={Dimensions.get("window").width - 32}
+                            height={cardHeight - 32}
+                            textColor={
+                              appSettings.theme.style.text.textSecondary.color
+                            }
+                            barRadius={8}
+                            barWidth={
+                              graph.rangeDay === 7
+                                ? 28
+                                : graph.rangeDay === 30
+                                ? 8
+                                : 16
+                            }
+                          />
+                        </>
+                      )}
+                      {/* {index === 1 && <IncomeChartPreview />} */}
+                    </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               </>
             )}
           />

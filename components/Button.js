@@ -376,8 +376,53 @@ export const ImgButton = ({
 //     )
 // }
 
-// ! Button Switch //
+// ! Button Primary
 export const ButtonSwitch = ({
+  label,
+  props,
+  onPress,
+  condition,
+  theme,
+  width,
+  style,
+}) => {
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            condition
+              ? { ...appSettings.theme.style.button.buttonPrimary.buttonStyle }
+              : {
+                  ...appSettings.theme.style.button.buttonSecondary.buttonStyle,
+                  borderWidth: 0,
+                },
+            {
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
+          {condition && <TextButtonPrimary label={label} />}
+          {!condition && <TextSecondary label={label} />}
+          {/* </View> */}
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
+// ! Button Switch //
+export const oldButtonSwitch = ({
   label,
   condition,
   onPress,

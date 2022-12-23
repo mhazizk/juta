@@ -1,33 +1,48 @@
 {
-  "rangeDay": 7,
+  "rangeDay": 365,
   "status": "done",
   "graphData": {
     "mainGraph": [
-      { "x": "Fri", "y": 0 },
-      { "x": "Sat", "y": 0 },
-      { "x": "Sun", "y": 0 },
-      { "x": "Mon", "y": 0 },
-      { "x": "Tue", "y": 0 },
-      { "x": "Wed", "y": 0 },
-      { "x": "Thu", "y": 100000 }
+      { "x": "Jan", "y": 0, "month": 0, "year": 2022 },
+      { "x": "Feb", "y": 0, "month": 1, "year": 2022 },
+      { "x": "Mar", "y": 0, "month": 2, "year": 2022 },
+      { "x": "Apr", "y": 0, "month": 3, "year": 2022 },
+      { "x": "May", "y": 0, "month": 4, "year": 2022 },
+      { "x": "Jun", "y": 0, "month": 5, "year": 2022 },
+      { "x": "Jul", "y": 0, "month": 6, "year": 2022 },
+      { "x": "Aug", "y": 0, "month": 7, "year": 2022 },
+      { "x": "Sep", "y": 0, "month": 8, "year": 2022 },
+      { "x": "Oct", "y": 0, "month": 9, "year": 2022 },
+      { "x": "Nov", "y": 0, "month": 10, "year": 2022 },
+      { "x": "Dec", "y": 85000, "month": 11, "year": 2022 }
     ],
     "shadowGraph": [
-      { "x": "Fri", "y": 100000 },
-      { "x": "Sat", "y": 100000 },
-      { "x": "Sun", "y": 100000 },
-      { "x": "Mon", "y": 100000 },
-      { "x": "Tue", "y": 100000 },
-      { "x": "Wed", "y": 100000 },
-      { "x": "Thu", "y": 100000 }
+      { "x": "Jan", "y": 85000, "month": 0, "year": 2022 },
+      { "x": "Feb", "y": 85000, "month": 1, "year": 2022 },
+      { "x": "Mar", "y": 85000, "month": 2, "year": 2022 },
+      { "x": "Apr", "y": 85000, "month": 3, "year": 2022 },
+      { "x": "May", "y": 85000, "month": 4, "year": 2022 },
+      { "x": "Jun", "y": 85000, "month": 5, "year": 2022 },
+      { "x": "Jul", "y": 85000, "month": 6, "year": 2022 },
+      { "x": "Aug", "y": 85000, "month": 7, "year": 2022 },
+      { "x": "Sep", "y": 85000, "month": 8, "year": 2022 },
+      { "x": "Oct", "y": 85000, "month": 9, "year": 2022 },
+      { "x": "Nov", "y": 85000, "month": 10, "year": 2022 },
+      { "x": "Dec", "y": 85000, "month": 11, "year": 2022 }
     ],
     "limitLine": [
-      { "x": "Fri", "y": 0 },
-      { "x": "Sat", "y": 0 },
-      { "x": "Sun", "y": 0 },
-      { "x": "Mon", "y": 0 },
-      { "x": "Tue", "y": 0 },
-      { "x": "Wed", "y": 0 },
-      { "x": "Thu", "y": 0 }
+      { "x": "Jan", "y": 47814.98, "month": 0, "year": 2022 },
+      { "x": "Feb", "y": 47814.98, "month": 1, "year": 2022 },
+      { "x": "Mar", "y": 47814.98, "month": 2, "year": 2022 },
+      { "x": "Apr", "y": 47814.98, "month": 3, "year": 2022 },
+      { "x": "May", "y": 47814.98, "month": 4, "year": 2022 },
+      { "x": "Jun", "y": 47814.98, "month": 5, "year": 2022 },
+      { "x": "Jul", "y": 47814.98, "month": 6, "year": 2022 },
+      { "x": "Aug", "y": 47814.98, "month": 7, "year": 2022 },
+      { "x": "Sep", "y": 47814.98, "month": 8, "year": 2022 },
+      { "x": "Oct", "y": 47814.98, "month": 9, "year": 2022 },
+      { "x": "Nov", "y": 47814.98, "month": 10, "year": 2022 },
+      { "x": "Dec", "y": 47814.98, "month": 11, "year": 2022 }
     ]
   }
 }
