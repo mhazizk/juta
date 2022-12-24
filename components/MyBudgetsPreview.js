@@ -134,9 +134,13 @@ export const MyBudgetsPreview = ({
               />
             )}
 
-            <TextButtonPrimary
+            <TextPrimary
               label="My Budget"
-              style={{ fontSize: 18, fontWeight: "bold" }}
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: appSettings.theme.style.colors.black,
+              }}
             />
           </View>
           {activeBudget.budget && (

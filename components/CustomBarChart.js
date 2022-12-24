@@ -21,6 +21,7 @@ export const CustomBarChart = ({
   width,
   height,
   //   Color
+  showAxisLabels,
   primaryColor,
   successColor,
   overBudgetBarColor,
@@ -76,7 +77,12 @@ export const CustomBarChart = ({
         >
           <VictoryGroup
             // padding={{ top: 0, bottom: 48, left: 80, right: 22 }}
-            padding={{ top: 0, bottom: 36, left: 46, right: 0 }}
+            padding={{
+              top: 0,
+              bottom: showAxisLabels ? 36 : 0,
+              left: showAxisLabels ? 46 : 40,
+              right: showAxisLabels ? 0 : 40,
+            }}
             height={height || 200}
             width={width || 200}
             domainPadding={{ x: [maxAmount().length * 8, 30] }}
@@ -85,20 +91,24 @@ export const CustomBarChart = ({
             // animate={{ duration: 1000 }}
           >
             {/* Shadow Graph */}
-            <VictoryBar
-              fixLabelOverlap={true}
-              //   labels={({ datum }) => datum.x}
-              //   labelComponent={<VictoryLabel dy={24} />}
-              alignment="middle"
-              height={height}
-              //   domainPadding={{ x: 10, y: 100 }}
-              barWidth={barWidth}
-              cornerRadius={{ top: barWidth / 4, bottom: barWidth / 4 }}
-              style={{
-                data: { fill: rangeDay === 7 ? shadowBarColor : "transparent" },
-              }}
-              data={shadowGraph}
-            />
+            {showAxisLabels && (
+              <VictoryBar
+                fixLabelOverlap={true}
+                //   labels={({ datum }) => datum.x}
+                //   labelComponent={<VictoryLabel dy={24} />}
+                alignment="middle"
+                height={height}
+                //   domainPadding={{ x: 10, y: 100 }}
+                barWidth={barWidth}
+                cornerRadius={{ top: barWidth / 4, bottom: barWidth / 4 }}
+                style={{
+                  data: {
+                    fill: rangeDay === 7 ? shadowBarColor : "transparent",
+                  },
+                }}
+                data={shadowGraph}
+              />
+            )}
             {/* Main Graph */}
             <VictoryBar
               data={mainGraph}
@@ -107,38 +117,44 @@ export const CustomBarChart = ({
               barWidth={barWidth}
               cornerRadius={{ top: barWidth / 4, bottom: barWidth / 4 }}
               labels={({ datum }) => {
-                switch (rangeDay) {
-                  case 7:
-                    return datum.x;
-                  case 30:
-                    return [
-                      new Date(datum.epochDate).getDate(),
-                      new Date(datum.epochDate).toLocaleDateString(
-                        appSettings.locale,
-                        { month: "short" }
-                      ),
-                    ];
-                  case 365:
-                    return [datum.x, datum.year];
+                if (showAxisLabels) {
+                  switch (rangeDay) {
+                    case 7:
+                      return datum.x;
+                    case 30:
+                      return [
+                        new Date(datum.epochDate).getDate(),
+                        new Date(datum.epochDate).toLocaleDateString(
+                          appSettings.locale,
+                          { month: "short" }
+                        ),
+                      ];
+                    case 365:
+                      return [datum.x, datum.year];
 
-                  default:
-                    return datum.x;
+                    default:
+                      return datum.x;
+                  }
                 }
               }}
               style={{
                 data: {
                   fill: ({ datum }) => {
-                    if (limitLine) {
-                      switch (true) {
-                        case datum.y / limitLine[0].y < 0.8:
-                          return successColor;
-                        case datum.y / limitLine[0].y >= 0.8 &&
-                          datum.y / limitLine[0].y < 1:
-                          return warnBudgetBarColor;
-                        case datum.y / limitLine[0].y >= 1:
-                          return overBudgetBarColor;
-                        default:
-                          return primaryColor;
+                    if (showAxisLabels) {
+                      if (limitLine) {
+                        switch (true) {
+                          case datum.y / limitLine[0].y < 0.8:
+                            return successColor;
+                          case datum.y / limitLine[0].y >= 0.8 &&
+                            datum.y / limitLine[0].y < 1:
+                            return warnBudgetBarColor;
+                          case datum.y / limitLine[0].y >= 1:
+                            return overBudgetBarColor;
+                          default:
+                            return primaryColor;
+                        }
+                      } else {
+                        return primaryColor;
                       }
                     } else {
                       return primaryColor;
@@ -241,7 +257,7 @@ export const CustomBarChart = ({
             />
 
             {/* Limit Line */}
-            {limitLine && (
+            {limitLine && showAxisLabels && (
               <VictoryLine
                 // animate={{ duration: 1000 }}
                 standalone={true}
@@ -274,52 +290,54 @@ export const CustomBarChart = ({
               />
             )}
 
-            <VictoryGroup
-              domainPadding={{ x: 0 }}
-              // animate={{ duration: 1000 }}
-            >
-              {/* Bottom Amount */}
-              <VictoryLabel
-                datum={{ x: 0.3, y: 0 }}
-                verticalAnchor="end"
-                textAnchor="end"
-                text={`0`}
-                //   backgroundPadding={{ right: 8 }}
-                style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
-              />
-
-              {/* Max Amount */}
-              <VictoryLabel
-                datum={{
-                  x: 0.3,
-                  y: limitLine
-                    ? limitLine[0].y > shadowGraph[0].y
-                      ? limitLine[0].y
-                      : shadowGraph[0].y
-                    : shadowGraph[0].y,
-                }}
-                verticalAnchor="start"
-                textAnchor="end"
-                text={maxAmount()}
-                //   backgroundPadding={{ right: 0 }}
-                style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
-              />
-
-              {/* Limit Amount */}
-              {limitLine && (
+            {showAxisLabels && (
+              <VictoryGroup
+                domainPadding={{ x: 0 }}
+                // animate={{ duration: 1000 }}
+              >
+                {/* Bottom Amount */}
                 <VictoryLabel
-                  datum={{ x: 0.3, y: limitLine[0].y }}
+                  datum={{ x: 0.3, y: 0 }}
+                  verticalAnchor="end"
                   textAnchor="end"
-                  text={`${(limitLine[0].y / 1000).toFixed(0)} k`}
-                  // backgroundPadding={{ right: 0 }}
-                  style={{
-                    fill: primaryColor,
-                    fontSize: 14,
-                    textAlign: "right",
-                  }}
+                  text={`0`}
+                  //   backgroundPadding={{ right: 8 }}
+                  style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
                 />
-              )}
-            </VictoryGroup>
+
+                {/* Max Amount */}
+                <VictoryLabel
+                  datum={{
+                    x: 0.3,
+                    y: limitLine
+                      ? limitLine[0].y > shadowGraph[0].y
+                        ? limitLine[0].y
+                        : shadowGraph[0].y
+                      : shadowGraph[0].y,
+                  }}
+                  verticalAnchor="start"
+                  textAnchor="end"
+                  text={maxAmount()}
+                  //   backgroundPadding={{ right: 0 }}
+                  style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
+                />
+
+                {/* Limit Amount */}
+                {limitLine && (
+                  <VictoryLabel
+                    datum={{ x: 0.3, y: limitLine[0].y }}
+                    textAnchor="end"
+                    text={`${(limitLine[0].y / 1000).toFixed(0)} k`}
+                    // backgroundPadding={{ right: 0 }}
+                    style={{
+                      fill: primaryColor,
+                      fontSize: 14,
+                      textAlign: "right",
+                    }}
+                  />
+                )}
+              </VictoryGroup>
+            )}
           </VictoryGroup>
         </View>
       )}

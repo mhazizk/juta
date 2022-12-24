@@ -188,6 +188,7 @@ const AnalyticsScreen = () => {
               })}
               width={Dimensions.get("window").width}
               height={220}
+              showAxisLabels
               textColor={appSettings.theme.style.text.textSecondary.color}
               barRadius={8}
               barWidth={
