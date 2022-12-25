@@ -115,7 +115,8 @@ const ModalScreen = ({ route, navigation }) => {
               <>
                 <ListItem
                   pressable
-                  iconLeftName={item?.icon?.name}
+                  iconLeftName={item?.icon?.name || route?.params?.iconProps?.name}
+                  iconPack={item?.icon?.pack || route?.params?.iconProps?.pack}
                   iconLeftColor={
                     item?.icon?.color === "default"
                       ? appSettings.theme.style.colors.foreground
@@ -131,27 +132,6 @@ const ModalScreen = ({ route, navigation }) => {
                     setSelected(item);
                   }}
                 />
-                {/* <TouchableNativeFeedback onPress={() => { setSelected(item) }}>
-                                    <View style={{ ...globalStyles.lightTheme.listContainer }}>
-
-                                        {item.logbook_currency &&
-                                            <View style={[{ flex: 0, minWidth: 36, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: '#ddd' }]}>
-                                                <Text style={{ ...globalStyles.lightTheme.textPrimary }}>{item.logbook_currency.symbol}</Text>
-                                            </View>}
-
-                                        {item.icon &&
-                                            <IonIcons
-                                                name={item?.icon?.name}
-                                                size={18}
-                                                color={item?.icon?.color}
-                                                style={{ display: item?.icon?.pack === 'ion_icons' ? 'flex' : 'none' }} />}
-
-                                        <View style={{ ...globalStyles.lightTheme.listItem, flex: 1, paddingHorizontal: 16 }}>
-                                            <Text style={globalStyles.lightTheme.textPrimary}>{item?.name[0].toUpperCase() + item?.name.substring(1)}</Text>
-                                        </View>
-                                        <IonIcons name='checkmark-circle' size={22} style={{ display: selected?.name == item?.name ? 'flex' : 'none' }} />
-                                    </View>
-                                </TouchableNativeFeedback> */}
               </>
             )}
           />
@@ -236,7 +216,7 @@ const ModalScreen = ({ route, navigation }) => {
               }
               defaultValue={route.params?.default ? route.params.default : ""}
               value={textInput}
-                          onChangeText={(input) => setTextInput(input)}
+              onChangeText={(input) => setTextInput(input)}
             />
             {textInput && (
               <IonIcons
@@ -369,7 +349,7 @@ const ModalScreen = ({ route, navigation }) => {
                       justifyContent: "center",
                     }}
                   >
-                    {item.pack === "ion_icons" && (
+                    {item.pack === "IonIcons" && (
                       <IonIcons
                         name={item.name}
                         size={24}

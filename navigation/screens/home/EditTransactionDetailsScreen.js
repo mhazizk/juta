@@ -682,7 +682,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       size={18}
                       style={{
                         display:
-                          selectedCategory?.icon?.pack === "ion_icons"
+                          selectedCategory?.icon?.pack === "IonIcons"
                             ? "flex"
                             : "none",
                         paddingRight: 8,

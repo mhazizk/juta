@@ -25,7 +25,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                     icon: {
                         name: 'fast-food',
                         color: 'default',
-                        pack: 'ion_icons'
+                        pack: 'IonIcons'
                     }
                 }
             }

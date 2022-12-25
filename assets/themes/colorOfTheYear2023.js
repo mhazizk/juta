@@ -29,6 +29,7 @@ export const colorOfTheYear2023 = {
     primary: palette.primary,
     secondary: palette.white[400],
     header: palette.primary,
+    cardBackground: '#eabdc8',
     textHeader: palette.white[600],
     success: palette.green,
     warn: palette.orange,

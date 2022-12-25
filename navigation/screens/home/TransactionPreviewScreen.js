@@ -259,7 +259,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
 
                                 {/* // ! Category Picker */}
-                                <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'ion_icons' ? 'flex' : 'none', paddingRight: 8 }} color={selectedCategory?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : selectedCategory?.icon?.color} />
+                                <IonIcons name={selectedCategory?.icon?.name} size={18} style={{ display: selectedCategory?.icon?.pack === 'IonIcons' ? 'flex' : 'none', paddingRight: 8 }} color={selectedCategory?.icon?.color === 'default' ? appSettings.theme.style.colors.foreground : selectedCategory?.icon?.color} />
                                 <TextPrimary
                                     label={selectedCategory.name[0].toUpperCase() + selectedCategory.name.substring(1)}
                                 />

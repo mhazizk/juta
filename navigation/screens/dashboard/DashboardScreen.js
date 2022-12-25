@@ -45,6 +45,9 @@ import { findTransactionsToPlot } from "../../../modules/FindTransactionsToPlot"
 import { hexToRgb } from "../../../modules/HexToRGB";
 import { CustomBarChart } from "../../../components/CustomBarChart";
 import formatCurrency from "../../../modules/formatCurrency";
+import Loading from "../../../components/Loading";
+import CashImg from "../../../assets/img/cash.png";
+import CoinsImg from "../../../assets/img/coins-color.png";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -61,7 +64,7 @@ const DashboardScreen = ({ navigation }) => {
     spent: null,
     transactionList: [],
   });
-
+  const [date, setDate] = useState();
   const [graph, setGraph] = useState({
     status: "empty",
     rangeDay: 7,
@@ -71,8 +74,8 @@ const DashboardScreen = ({ navigation }) => {
       limitLine: [],
     },
   });
+  const [screenLoading, setScreenLoading] = useState(false);
 
-  const [date, setDate] = useState();
   const cardHeight = 200;
   const checkmark = require("../../../assets/img/checkmark.png");
   const isFocus = useIsFocused();
@@ -102,10 +105,19 @@ const DashboardScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (isFocus) {
-      findTransactions();
-      setDate(Date.now());
+      setScreenLoading(true);
     }
   }, [isFocus]);
+
+  useEffect(() => {
+    if (screenLoading) {
+      setTimeout(() => {
+        findTransactions();
+        setDate(Date.now());
+        setScreenLoading(false);
+      }, 1);
+    }
+  }, [screenLoading]);
 
   // convert epoch number in date
   const getHours = new Date(date).getHours();
@@ -113,123 +125,137 @@ const DashboardScreen = ({ navigation }) => {
 
   return (
     <>
-      {/* <StatusBar style="light" /> */}
-      <View
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
-        {/* Bleeding Header Color */}
+      {/* Loading */}
+      {screenLoading && (
         <View
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            width: "100%",
-            height: "25%",
-            backgroundColor: appSettings.theme.style.colors.header,
-            // borderBottomRightRadius: 16,
-            // borderBottomLeftRadius: 16,
-          }}
-        />
-
-        {/* //! Header Section */}
-        <View
-          style={{
-            // backgroundColor: appSettings.theme.style.colors.header,
-            flexDirection: "column",
-            padding: 16,
+            height: "100%",
+            backgroundColor: appSettings.theme.style.colors.background,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <TextPrimary
-            label={
-              getHours <= 4
-                ? "Good Night"
-                : 4 < getHours && getHours <= 10
-                ? "Good Morning"
-                : 10 < getHours && getHours <= 15
-                ? "Good Afternoon"
-                : 15 < getHours && getHours <= 21
-                ? "Good Evening"
-                : 21 < getHours && getHours <= 24
-                ? "Good Night"
-                : "Good Day"
-            }
-            style={{ color: appSettings.theme.style.colors.textHeader }}
-          />
-          <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-            <TextPrimary
-              label={userAccount?.profile?.nickname}
-              style={{
-                fontWeight: "bold",
-                fontSize: 36,
-                color: appSettings.theme.style.colors.textHeader,
-              }}
-            />
-            <Image
-              source={checkmark}
-              style={{ width: 20, height: 20, marginLeft: 4 }}
-            />
-          </View>
+          <Loading />
         </View>
-
-        {/* //! Carousel Section */}
+      )}
+      {/* <StatusBar style="light" /> */}
+      {!screenLoading && (
         <View
           style={{
-            // paddingTop: 16,
-            flexDirection: "column",
+            height: "100%",
+            backgroundColor: appSettings.theme.style.colors.background,
           }}
         >
-          {/* <ChartTab /> */}
-          <Carousel
-            loop
-            autoPlay
-            autoPlayInterval={1000}
-            scrollAnimationDuration={3000}
-            width={screenWidth}
-            height={cardHeight}
-            data={["expense", "income"]}
-            key={(index) => index}
-            renderItem={({ index }) => (
-              <>
-                {/* Container */}
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Analytics Screen")}
-                  style={{
-                    shadowColor: appSettings.theme.style.colors.foreground,
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 16,
-                    elevation: 5,
-                  }}
-                >
-                  <View
+          {/* Bleeding Header Color */}
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              width: "100%",
+              height: "25%",
+              backgroundColor: appSettings.theme.style.colors.header,
+              // borderBottomRightRadius: 16,
+              // borderBottomLeftRadius: 16,
+            }}
+          />
+
+          {/* //! Header Section */}
+          <View
+            style={{
+              // backgroundColor: appSettings.theme.style.colors.header,
+              flexDirection: "column",
+              padding: 16,
+            }}
+          >
+            <TextPrimary
+              label={
+                getHours <= 4
+                  ? "Good Night"
+                  : 4 < getHours && getHours <= 10
+                  ? "Good Morning"
+                  : 10 < getHours && getHours <= 15
+                  ? "Good Afternoon"
+                  : 15 < getHours && getHours <= 21
+                  ? "Good Evening"
+                  : 21 < getHours && getHours <= 24
+                  ? "Good Night"
+                  : "Good Day"
+              }
+              style={{ color: appSettings.theme.style.colors.textHeader }}
+            />
+            <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+              <TextPrimary
+                label={userAccount?.profile?.nickname}
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 36,
+                  color: appSettings.theme.style.colors.textHeader,
+                }}
+              />
+              <Image
+                source={checkmark}
+                style={{ width: 20, height: 20, marginLeft: 4 }}
+              />
+            </View>
+          </View>
+
+          {/* //! Carousel Section */}
+          <View
+            style={{
+              // paddingTop: 16,
+              flexDirection: "column",
+            }}
+          >
+            {/* <ChartTab /> */}
+            <Carousel
+              loop
+              autoPlay
+              autoPlayInterval={2000}
+              scrollAnimationDuration={3000}
+              width={screenWidth}
+              height={cardHeight}
+              data={["expense", "income"]}
+              key={(index) => index}
+              renderItem={({ index }) => (
+                <>
+                  {/* Container */}
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Analytics Screen")}
                     style={{
-                      // backgroundColor: appSettings.theme.style.colors.background,
-                      padding: 16,
+                      shadowColor: appSettings.theme.style.colors.foreground,
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 16,
+                      elevation: 5,
                     }}
                   >
-                    {/* Card */}
                     <View
                       style={{
-                        backgroundColor: appSettings.theme.style.colors.success,
+                        // backgroundColor: appSettings.theme.style.colors.background,
                         padding: 16,
-                        borderRadius: 16,
-                        height: "100%",
-                        width: "100%",
-                        alignItems: "center",
-                        justifyContent: "center",
                       }}
                     >
-                      {/* <ExpenseChartPreview
-                       /> */}
-                      {graph.status === "done" && (
-                        <>
+                      {/* Card */}
+                      <View
+                        style={{
+                          backgroundColor:
+                            // appSettings.theme.style.colors.secondary,
+                            "#FFE088",
+                          padding: 16,
+                          borderRadius: 16,
+                          height: "100%",
+                          width: "100%",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {graph.status !== "done" && (
                           <View
                             style={{
                               height: "100%",
@@ -239,176 +265,216 @@ const DashboardScreen = ({ navigation }) => {
                               zIndex: 1,
                             }}
                           >
-                            <View
-                              style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <TextSecondary
-                                label={appSettings.currency.symbol}
-                                style={{
-                                  paddingRight: 4,
-                                  color: appSettings.theme.style.colors.black,
-                                }}
-                              />
-                              <TextPrimary
-                                style={{
-                                  fontSize: 32,
-                                  fontWeight: "bold",
-                                  color: appSettings.theme.style.colors.black,
-                                }}
-                                label={formatCurrency({
-                                  amount: activeBudget.spent,
-                                  currency: appSettings.currency.name,
-                                })}
-                              />
-                            </View>
                             <TextPrimary
                               style={{
                                 zIndex: 1,
                                 color: appSettings.theme.style.colors.black,
+                                textAlign: "center",
+                                textAlignVertical: "center",
                               }}
-                              label="Total Expense this week"
+                              label={`Add transactions to see your ${index === 0 ? "expenses" : "income"} graph here`}
                             />
                           </View>
+                        )}
 
-                          <View
+                        {graph.status === "done" && (
+                          <>
+                            <View
+                              style={{
+                                height: "100%",
+                                width: "100%",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                zIndex: 1,
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <TextSecondary
+                                  label={appSettings.currency.symbol}
+                                  style={{
+                                    paddingRight: 4,
+                                    color: appSettings.theme.style.colors.black,
+                                  }}
+                                />
+                                <TextPrimary
+                                  style={{
+                                    fontSize: 32,
+                                    fontWeight: "bold",
+                                    color: appSettings.theme.style.colors.black,
+                                  }}
+                                  label={formatCurrency({
+                                    amount: activeBudget.spent,
+                                    currency: appSettings.currency.name,
+                                  })}
+                                />
+                              </View>
+                              <TextPrimary
+                                style={{
+                                  zIndex: 1,
+                                  color: appSettings.theme.style.colors.black,
+                                }}
+                                label="Total Expense this week"
+                              />
+                            </View>
+
+                            <View
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                left: 0,
+                                zIndex: 0,
+                              }}
+                            >
+                              <CustomBarChart
+                                //   Graph Data
+                                mainGraph={
+                                  graph.status === "done"
+                                    ? graph.graphData.mainGraph
+                                    : null
+                                }
+                                shadowGraph={
+                                  graph.status === "done"
+                                    ? graph.graphData.shadowGraph
+                                    : null
+                                }
+                                limitLine={
+                                  graph.status === "done" &&
+                                  graph.graphData.limitLine.length
+                                    ? graph.graphData.limitLine
+                                    : null
+                                }
+                                symbol={appSettings.currency.symbol}
+                                rangeDay={graph.rangeDay}
+                                //  Graph Style
+                                successColor={
+                                  appSettings.theme.style.colors.success
+                                }
+                                primaryColor={hexToRgb({
+                                  hex: appSettings.theme.style.colors.white,
+                                  opacity: 0.1,
+                                })}
+                                overBudgetBarColor={
+                                  appSettings.theme.style.colors.danger
+                                }
+                                warnBudgetBarColor={
+                                  appSettings.theme.style.colors.warn
+                                }
+                                shadowBarColor={hexToRgb({
+                                  hex: appSettings.theme.style.colors.success,
+                                  opacity: 0,
+                                })}
+                                width={Dimensions.get("window").width - 32}
+                                height={cardHeight - 64}
+                                textColor={
+                                  appSettings.theme.style.text.textSecondary
+                                    .color
+                                }
+                                barRadius={8}
+                                barWidth={
+                                  graph.rangeDay === 7
+                                    ? 28
+                                    : graph.rangeDay === 30
+                                    ? 8
+                                    : 16
+                                }
+                              />
+                            </View>
+                          </>
+                        )}
+                        {/* {index === 1 && <IncomeChartPreview />} */}
+                        {graph.status !== "done" && (
+                          <Image
+                            source={CoinsImg}
                             style={{
                               position: "absolute",
-                              top: 0,
-                              right: 0,
-                              bottom: 0,
-                              left: 0,
+                              // top: 0,
+                              right: -50,
+                              bottom: -50,
+                              // left: 0,
                               zIndex: 0,
+                              width: 250,
+                              height: 250,
+                              opacity: 0.5,
+                              resizeMode: "contain",
                             }}
-                          >
-                            <CustomBarChart
-                              //   Graph Data
-                              mainGraph={
-                                graph.status === "done"
-                                  ? graph.graphData.mainGraph
-                                  : null
-                              }
-                              shadowGraph={
-                                graph.status === "done"
-                                  ? graph.graphData.shadowGraph
-                                  : null
-                              }
-                              limitLine={
-                                graph.status === "done" &&
-                                graph.graphData.limitLine.length
-                                  ? graph.graphData.limitLine
-                                  : null
-                              }
-                              symbol={appSettings.currency.symbol}
-                              rangeDay={graph.rangeDay}
-                              //  Graph Style
-                              successColor={
-                                appSettings.theme.style.colors.success
-                              }
-                              primaryColor={hexToRgb({
-                                hex: appSettings.theme.style.colors.white,
-                                opacity: 0.1,
-                              })}
-                              overBudgetBarColor={
-                                appSettings.theme.style.colors.danger
-                              }
-                              warnBudgetBarColor={
-                                appSettings.theme.style.colors.warn
-                              }
-                              shadowBarColor={hexToRgb({
-                                hex: appSettings.theme.style.colors.success,
-                                opacity: 0,
-                              })}
-                              width={Dimensions.get("window").width - 32}
-                              height={cardHeight - 64}
-                              textColor={
-                                appSettings.theme.style.text.textSecondary.color
-                              }
-                              barRadius={8}
-                              barWidth={
-                                graph.rangeDay === 7
-                                  ? 28
-                                  : graph.rangeDay === 30
-                                  ? 8
-                                  : 16
-                              }
-                            />
-                          </View>
-                        </>
-                      )}
-                      {/* {index === 1 && <IncomeChartPreview />} */}
+                          />
+                        )}
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </>
-            )}
-          />
-        </View>
-        {/* <Chart /> */}
-
-        {/* //! Recent Transactions Section */}
-        <ScrollView
-          style={{
-            flex: 1,
-            paddingTop: 32,
-            flexDirection: "column",
-          }}
-        >
-          {/* My Budget */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingBottom: 32,
-              paddingHorizontal: 16,
-            }}
-          >
-            <ImgButton
-              label="My Logbooks"
-              textColor={appSettings.theme.style.colors.black}
-              iconName="book"
-              iconColor="#48ADFF"
-              iconPack="ionIcons"
-              boxColor="#90CEFF"
-              boxHeight={150}
-              boxWidth={screenWidth / 2 - 24}
-              onPress={() => navigation.navigate("My Logbooks Screen")}
-            />
-            <MyBudgetsPreview
-              isFocused={isFocus}
-              boxWidth={screenWidth / 2 - 24}
-              onPress={() => navigation.navigate("My Budgets Screen")}
+                  </TouchableOpacity>
+                </>
+              )}
             />
           </View>
-          {/* <MyBudget
+          {/* <Chart /> */}
+
+          {/* //! Recent Transactions Section */}
+          {/* <ScrollView
+            style={{
+              flex: 1,
+              // paddingTop: 16,
+              flexDirection: "column",
+            }}
+          > */}
+            {/* My Budget */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingBottom: 32,
+                paddingHorizontal: 16,
+              }}
+            >
+              <ImgButton
+                label="My Logbooks"
+                textColor={appSettings.theme.style.colors.black}
+                iconName="book"
+                iconColor="#48ADFF"
+                iconPack="IonIcons"
+                boxColor="#90CEFF"
+                boxHeight={150}
+                boxWidth={screenWidth / 2 - 24}
+                onPress={() => navigation.navigate("My Logbooks Screen")}
+              />
+              <MyBudgetsPreview
+                isFocused={isFocus}
+                boxWidth={screenWidth / 2 - 24}
+                onPress={() => navigation.navigate("My Budgets Screen")}
+              />
+            </View>
+            {/* <MyBudget
             onPress={(item) => {
               navigation.navigate("Logbook Preview Screen", {
                 logbook: item,
               });
             }}
           /> */}
-          {/* <MyLogbooks
+            {/* <MyLogbooks
             onPress={(item) => {
               navigation.navigate("Logbook Preview Screen", {
                 logbook: item,
               });
             }}
           /> */}
-          <RecentTransactions
-            onPress={({ transaction, selectedLogbook }) => {
-              navigation.navigate("Transaction Preview Screen", {
-                transaction: transaction,
-                selectedLogbook: selectedLogbook,
-              });
-            }}
-          />
-        </ScrollView>
-      </View>
-      {/* <TransactionListItem
-              /> */}
+            <RecentTransactions
+              onPress={({ transaction, selectedLogbook }) => {
+                navigation.navigate("Transaction Preview Screen", {
+                  transaction: transaction,
+                  selectedLogbook: selectedLogbook,
+                });
+              }}
+            />
+          {/* </ScrollView> */}
+        </View>
+      )}
     </>
   );
 };

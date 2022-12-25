@@ -297,6 +297,20 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   maximumFractionDigits: 2,
                 }).format(transaction.details.amount)}
               />
+              {transaction?.details?.amount !== 0 && (
+                <IonIcons
+                  onPress={() =>
+                    setTransaction({
+                      ...transaction,
+                      details: { ...transaction?.details, amount: 0 },
+                    })
+                  }
+                  name="close-circle"
+                  size={20}
+                  style={{ padding: 16 }}
+                  color={appSettings.theme.style.colors.foreground}
+                />
+              )}
             </View>
             {/* </ScrollView> */}
 
@@ -547,9 +561,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             <TouchableNativeFeedback
               onPress={() =>
                 navigation.navigate("Modal Screen", {
-                  title: "Log Books",
+                  title: "Logbooks",
                   modalType: "list",
                   props: loadedLogbooks,
+                  iconProps: {
+                    name: "book",
+                    pack: "IonIcons",
+                  },
                   selected: (item) => {
                     setSelectedLogbook({
                       name: item.name,
@@ -692,7 +710,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       size={18}
                       style={{
                         display:
-                          selectedCategory?.icon?.pack === "ion_icons"
+                          selectedCategory?.icon?.pack === "IonIcons"
                             ? "flex"
                             : "none",
                         paddingRight: 8,

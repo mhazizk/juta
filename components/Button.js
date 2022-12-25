@@ -247,7 +247,7 @@ export const ImgButton = ({
               color: textColor,
             }}
           />
-          {iconPack === "ionIcons" && (
+          {iconPack === "IonIcons" && (
             <IonIcons
               name={iconName}
               color={iconColor}
