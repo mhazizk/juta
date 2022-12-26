@@ -1,14 +1,38 @@
 {
-  "__v": 0,
-  "_id": "logbook1",
-  "_timestamps": { "created_at": 1671977932261, "updated_at": 1671977932261 },
-  "logbook_categories": [],
-  "logbook_currency": { "isoCode": "id", "name": "IDR", "symbol": "Rp" },
-  "logbook_id": "logbook1",
-  "logbook_name": "My Logbook",
-  "logbook_records": [],
-  "logbook_type": "basic",
-  "name": "My Logbook",
-  "user_id": "haziz1",
-  "username": "mhazizk"
+  "status": "done",
+  "result": [
+    {
+      "transaction": {
+        "_timestamps": {
+          "created_at": 1672066514524,
+          "updated_at": 1672066514524
+        },
+        "_id": 1672066514524,
+        "transaction_id": "410880432481.6812",
+        "logbook_id": "logbook1",
+        "details": {
+          "date": 1672066514524,
+          "notes": null,
+          "in_out": "income",
+          "amount": 50,
+          "type": "cash",
+          "category_id": "15"
+        }
+      },
+      "category": {
+        "categoryName": "Interest",
+        "categoryId": "15",
+        "icon": {
+          "iconPack": "IonIcons",
+          "iconColor": "#151515",
+          "iconName": "trending-up"
+        }
+      },
+      "logbook": {
+        "logbookName": "My Logbook",
+        "logbookId": "logbook1",
+        "logbookCurrency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" }
+      }
+    }
+  ]
 }

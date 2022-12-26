@@ -71,14 +71,15 @@ const AnalyticsScreen = () => {
   const findTransactions = useMemo(() => {
     return () => {
       findTransactionsToPlot({
+        expenseOnly: true,
         appSettings: appSettings,
         groupSorted: sortedTransactions.groupSorted,
         logbooks: logbooks,
         categories: categories,
         budgets: budgets,
         graph: graph,
-        setGraph: (item) => setGraph(item),
         activeBudget: activeBudget,
+        setGraph: (item) => setGraph(item),
         setActiveBudget: (item) => setActiveBudget(item),
       });
       setScreenLoading(false);

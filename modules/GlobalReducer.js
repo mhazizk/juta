@@ -39,6 +39,7 @@ export const ACTIONS = {
       CLEAR_TRANSACTIONS: "CLEAR_SORTED_TRANSACTIONS",
       INSERT_LOGBOOK: "INSERT_SORTED_LOGBOOK",
       DELETE_ONE_LOGBOOK: "DELETE_SORTED_ONE_LOGBOOK",
+      PATCH_CATEGORY: "PATCH_SORTED_CATEGORY",
     },
   },
   TRANSACTIONS: {
@@ -439,7 +440,7 @@ export const globalCategories = (state, action) => {
 
     case ACTIONS.CATEGORIES.PATCH:
       let patchCategory = action.payload.patchCategory;
-      let patchCategoryType = action.payload.categoryType;
+      let patchCategoryType = action.payload.targetCategoryType;
 
       const findExpenseCategory = state.categories.expense.filter(
         (category) => category.id === patchCategory.id
@@ -591,6 +592,178 @@ export const globalSortedTransactions = (state, action) => {
         groupSorted: action.payload,
       };
 
+    // ! Patch Category
+    case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_CATEGORY:
+      const patchCategory = action.payload.patchCategory;
+      const targetCategoryType = action.payload.targetCategoryType;
+      const prevCategoryType = action.payload.prevCategoryType;
+      let groupSorted = state.groupSorted;
+      let patchedGroupSorted;
+      let foundTransactions = [];
+      let patchedTransactions = [];
+
+      // Find transaction with the same category id
+      const findTransaction = state.groupSorted.forEach((logbook) =>
+        logbook.transactions.forEach((section) =>
+          section.data.forEach((transaction) => {
+            if (transaction.details.category_id === patchCategory.id) {
+              foundTransactions.push({
+                transaction: {
+                  ...transaction,
+                  details: {
+                    ...transaction.details,
+                    in_out: targetCategoryType,
+                  },
+                },
+                sectionTitle: section.title,
+                logbookId: logbook.logbook_id,
+              });
+            }
+          })
+        )
+      );
+
+      // Patch transaction with the same category id
+      const patchTransaction = foundTransactions.forEach(
+        (patchedTransaction) => {
+          // Filter logbook
+          const findLogbook = groupSorted.filter((logbook) => {
+            return logbook.logbook_id === patchedTransaction.logbookId;
+          });
+          const findOtherLogbook = groupSorted.filter((logbook) => {
+            return logbook.logbook_id !== patchedTransaction.logbookId;
+          });
+
+          // Filter section
+          const findSection = findLogbook[0].transactions.filter((section) => {
+            return section.title === patchedTransaction.sectionTitle;
+          });
+          const findOtherSection = findLogbook[0]?.transactions.filter(
+            (section) => {
+              return section.title !== patchedTransaction.sectionTitle;
+            }
+          );
+
+          // Filter transaction
+          // const findTransaction = findSection[0].data.filter((transaction) => {
+          //   return transaction.id === patchedTransaction.transaction.id;
+          // });
+          const findOtherTransaction = findSection[0]?.data.filter(
+            (transaction) => {
+              return (
+                transaction.transaction_id !==
+                patchedTransaction.transaction.transaction_id
+              );
+            }
+          );
+
+          groupSorted = [
+            ...findOtherLogbook,
+            {
+              ...findLogbook[0],
+              transactions: [
+                ...findOtherSection,
+                {
+                  ...findSection[0],
+                  data: [
+                    ...findOtherTransaction,
+                    patchedTransaction.transaction,
+                  ],
+                },
+              ],
+            },
+          ];
+        }
+      );
+      // Find transaction with the same category id in group sorted and save it to foundTransactions
+      // console.log("start", JSON.stringify(groupSorted));
+      // groupSorted.forEach((logbook) => {
+      //   logbook.transactions.forEach((section) => {
+      //     section.data.forEach((transaction) => {
+      //       if (transaction.details.category_id === patchCategory.id) {
+      //         let otherLogbook = state.groupSorted.filter((otherLogbook) => {
+      //           otherLogbook.logbook_id !== logbook.logbook_id;
+      //         });
+      //         let otherSection = state.groupSorted.filter((otherLogbook) => {
+      //           if (otherLogbook.logbook_id === logbook.logbook_id) {
+      //             otherLogbook.transactions.filter((otherSection) => {
+      //               otherSection.title !== section.title;
+      //             });
+      //           }
+      //         });
+      //         let otherTransaction = state.groupSorted.filter(
+      //           (otherLogbook) => {
+      //             if (otherLogbook.logbook_id === logbook.logbook_id) {
+      //               otherLogbook.transactions.filter((otherSection) => {
+      //                 if (otherSection.title === section.title) {
+      //                   otherSection.data.filter(
+      //                     (otherTransaction) =>
+      //                       otherTransaction.details.category_id !==
+      //                       transaction.details.category_id
+      //                   );
+      //                 }
+      //               });
+      //             }
+      //           }
+      //         );
+
+      //         let patchedTransaction = {
+      //           ...transaction,
+      //           details: {
+      //             ...transaction.details,
+      //             in_out: targetCategoryType,
+      //           },
+      //         };
+      //         // console.log(transaction);
+      //         // console.log(patchedTransaction);
+      //         let patchedSection = {
+      //           ...section,
+      //           data: [
+      //             otherTransaction,
+      //             //   section.data.filter((otherTransaction) => {
+      //             //   otherTransaction.details.category_id !== patchCategory.id;
+      //             // }),
+      //             patchedTransaction,
+      //           ],
+      //         };
+
+      //         let patchedLogbook = {
+      //           ...logbook,
+      //           transactions: [
+      //             // ...logbook.transactions.filter((otherSection) => {
+      //             //   otherSection.title !== patchedSection.title;
+      //             // }),
+
+      //             otherSection,
+      //             patchedSection,
+      //           ],
+      //         };
+
+      //         groupSorted = [
+      //           // ...state.groupSorted.filter((otherLogbook) => {
+      //           //   otherLogbook.logbook_id !== logbook.logbook_id;
+      //           // }),
+
+      //           otherLogbook,
+      //           patchedLogbook,
+      //         ];
+
+      //         // patchedGroupSorted.push(transaction);
+      //         // console.log(JSON.stringify(groupSorted));
+      //       }
+      //     });
+      //   });
+      // });
+      console.log("reducer");
+      console.log("final", JSON.stringify(groupSorted));
+
+      return {
+        ...state,
+        groupSorted: groupSorted || state.groupSorted,
+        sortedTransactionsPatchCounter:
+          state.sortedTransactionsPatchCounter + 1,
+      };
+
     // ! Delete One Logbook
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_LOGBOOK:
       const deleteLogbook = action.payload;
@@ -611,7 +784,6 @@ export const globalSortedTransactions = (state, action) => {
 
       const newGroupSortedToBeReplaced = [...state.groupSorted, newLogbook];
 
-      console.log(newGroupSortedToBeReplaced);
       return {
         ...state,
         sortedLogbookInsertCounter: state.sortedLogbookInsertCounter + 1,

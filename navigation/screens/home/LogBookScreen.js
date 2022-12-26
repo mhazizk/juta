@@ -463,9 +463,9 @@ const Transactions = ({
                     categoryName={findCategoryNameById(
                       item.details.category_id
                     )}
-                    categoryType={findCategoryTypeById(
-                      item.details.category_id
-                    )}
+                    // categoryType={findCategoryTypeById(
+                    //   item.details.category_id
+                    // )}
                     transactionHour={item.details.date}
                     transactionType={item.details.in_out}
                     transactionNotes={item.details.notes}

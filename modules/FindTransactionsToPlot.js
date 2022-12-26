@@ -12,6 +12,7 @@ import {
 export const findTransactionsToPlot = ({
   groupSorted,
   logbooks,
+  expenseOnly,
   categories,
   budgets,
   graph,
@@ -35,11 +36,13 @@ export const findTransactionsToPlot = ({
 
   if (groupSorted.length) {
     if (groupSorted.some((logbook) => logbook.transactions.length)) {
+      //  if (expenseOnly) {
       groupSorted.forEach((logbook) => {
         logbook.transactions.forEach((section) => {
           section.data.forEach((transaction) => {
             // Find transactions within range
             if (
+              transaction.details.in_out === "expense" &&
               transaction.details.date <= today &&
               transaction.details.date >=
                 today - 1000 * 60 * 60 * 24 * graph.rangeDay
@@ -77,6 +80,19 @@ export const findTransactionsToPlot = ({
                   logbookCurrency: foundLogbook.logbook_currency,
                 },
               });
+              // }
+              // else {
+              //   console.log("No transactions found");
+              //   return;
+              //   setGraph({
+              //   status: "empty",
+              //   rangeDay: 7,
+              //   graphData: {
+              //     mainGraph: [],
+              //     shadowGraph: [],
+              //     limitLine: [],
+              //   },
+              // });
             }
           });
         });
@@ -239,15 +255,23 @@ export const findTransactionsToPlot = ({
       });
       setGraph({
         ...graph,
-        status: "done",
+        status:
+          mainGraph.length || shadowGraph.length || limitLine.length
+            ? "done"
+            : "empty",
         graphData: { mainGraph, shadowGraph, limitLine },
       });
     } else {
       setGraph({
-        ...graph,
         status: "empty",
-        // graphData: { mainGraph, shadowGraph, limitLine },
+        rangeDay: 7,
+        graphData: {
+          mainGraph: [],
+          shadowGraph: [],
+          limitLine: [],
+        },
       });
     }
+    // }
   }
 };

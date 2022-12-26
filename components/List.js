@@ -210,7 +210,7 @@ export const TransactionListItem = ({
                     style={{
                       paddingRight: 8,
                       color:
-                        categoryType === "income"
+                        transactionType === "income"
                           ? appSettings.theme.style.colors.incomeSymbol
                           : appSettings.theme.style.text.textSecondary.color,
                     }}
@@ -219,7 +219,7 @@ export const TransactionListItem = ({
                     style={{
                       fontSize: 18,
                       color:
-                        categoryType === "income"
+                        transactionType === "income"
                           ? appSettings.theme.style.colors.incomeAmount
                           : appSettings.theme.style.text.textPrimary.color,
                     }}

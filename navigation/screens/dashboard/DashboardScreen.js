@@ -82,19 +82,21 @@ const DashboardScreen = ({ navigation }) => {
 
   const findTransactions = useMemo(() => {
     return () => {
-      console.log("findTransactions");
+      // console.log("findTransactions");
       findTransactionsToPlot({
+        expenseOnly: true,
         appSettings: appSettings,
         groupSorted: sortedTransactions.groupSorted,
         logbooks: logbooks,
         categories: categories,
         budgets: budgets,
         graph: graph,
-        setGraph: (item) => setGraph(item),
         activeBudget: activeBudget,
+        setGraph: (item) => setGraph(item),
         setActiveBudget: (item) => setActiveBudget(item),
       });
     };
+    // }, [sortedTransactions, budgets, graph, activeBudget]);
   }, [sortedTransactions, budgets, graph, activeBudget]);
 
   useEffect(() => {
@@ -118,6 +120,14 @@ const DashboardScreen = ({ navigation }) => {
       }, 1);
     }
   }, [screenLoading]);
+
+  useEffect(() => {
+    console.log("graph", graph);
+  }, [graph]);
+
+  useEffect(() => {
+    console.log("activeBudget", activeBudget);
+  }, [activeBudget]);
 
   // convert epoch number in date
   const getHours = new Date(date).getHours();
@@ -272,7 +282,9 @@ const DashboardScreen = ({ navigation }) => {
                                 textAlign: "center",
                                 textAlignVertical: "center",
                               }}
-                              label={`Add transactions to see your ${index === 0 ? "expenses" : "income"} graph here`}
+                              label={`Add transactions to see your ${
+                                index === 0 ? "expenses" : "income"
+                              } graph here`}
                             />
                           </View>
                         )}
@@ -424,54 +436,54 @@ const DashboardScreen = ({ navigation }) => {
               flexDirection: "column",
             }}
           > */}
-            {/* My Budget */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingBottom: 32,
-                paddingHorizontal: 16,
-              }}
-            >
-              <ImgButton
-                label="My Logbooks"
-                textColor={appSettings.theme.style.colors.black}
-                iconName="book"
-                iconColor="#48ADFF"
-                iconPack="IonIcons"
-                boxColor="#90CEFF"
-                boxHeight={150}
-                boxWidth={screenWidth / 2 - 24}
-                onPress={() => navigation.navigate("My Logbooks Screen")}
-              />
-              <MyBudgetsPreview
-                isFocused={isFocus}
-                boxWidth={screenWidth / 2 - 24}
-                onPress={() => navigation.navigate("My Budgets Screen")}
-              />
-            </View>
-            {/* <MyBudget
-            onPress={(item) => {
-              navigation.navigate("Logbook Preview Screen", {
-                logbook: item,
-              });
+          {/* My Budget */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingBottom: 32,
+              paddingHorizontal: 16,
             }}
-          /> */}
-            {/* <MyLogbooks
-            onPress={(item) => {
-              navigation.navigate("Logbook Preview Screen", {
-                logbook: item,
-              });
-            }}
-          /> */}
-            <RecentTransactions
-              onPress={({ transaction, selectedLogbook }) => {
-                navigation.navigate("Transaction Preview Screen", {
-                  transaction: transaction,
-                  selectedLogbook: selectedLogbook,
-                });
-              }}
+          >
+            <ImgButton
+              label="My Logbooks"
+              textColor={appSettings.theme.style.colors.black}
+              iconName="book"
+              iconColor="#48ADFF"
+              iconPack="IonIcons"
+              boxColor="#90CEFF"
+              boxHeight={150}
+              boxWidth={screenWidth / 2 - 24}
+              onPress={() => navigation.navigate("My Logbooks Screen")}
             />
+            <MyBudgetsPreview
+              isFocused={isFocus}
+              boxWidth={screenWidth / 2 - 24}
+              onPress={() => navigation.navigate("My Budgets Screen")}
+            />
+          </View>
+          {/* <MyBudget
+            onPress={(item) => {
+              navigation.navigate("Logbook Preview Screen", {
+                logbook: item,
+              });
+            }}
+          /> */}
+          {/* <MyLogbooks
+            onPress={(item) => {
+              navigation.navigate("Logbook Preview Screen", {
+                logbook: item,
+              });
+            }}
+          /> */}
+          <RecentTransactions
+            onPress={({ transaction, selectedLogbook }) => {
+              navigation.navigate("Transaction Preview Screen", {
+                transaction: transaction,
+                selectedLogbook: selectedLogbook,
+              });
+            }}
+          />
           {/* </ScrollView> */}
         </View>
       )}

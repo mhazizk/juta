@@ -134,7 +134,7 @@ const LoadingScreen = ({ route, navigation }) => {
           dispatchCategories({
             type: ACTIONS.CATEGORIES.PATCH,
             payload: {
-              categoryType: route?.params?.categoryType,
+              targetCategoryType: route?.params?.targetCategoryType,
               patchCategory: route?.params?.patchCategory,
             },
           });
@@ -244,6 +244,7 @@ const LoadingScreen = ({ route, navigation }) => {
   // ! New Patch Sorted Transaction Method
   useEffect(() => {
     // console.log(rawTransactions.transactionsPatchedInSession > route?.params?.initialTransactionsPatchedLength)
+    // Patch Transaction
     if (
       sortedTransactions.sortedTransactionsPatchCounter >
         route?.params?.initialSortedTransactionsPatchCounter &&
@@ -251,6 +252,18 @@ const LoadingScreen = ({ route, navigation }) => {
     ) {
       // console.log(route?.params?.logbookToOpen)
       navigation.navigate("Bottom Tab");
+    }
+    // Patch Category
+    if (
+      sortedTransactions.sortedTransactionsPatchCounter >
+        route?.params?.initialSortedTransactionsPatchCounter &&
+      route?.params?.loadingType === "patchCategory"
+    ) {
+      navigation.navigate("Category Preview Screen", {
+        prevCategoryType: route?.params?.prevCategoryType,
+        targetCategoryType: route?.params?.targetCategoryType,
+        category: route?.params?.patchCategory,
+      });
     }
   }, [sortedTransactions.sortedTransactionsPatchCounter]);
 
@@ -275,9 +288,18 @@ const LoadingScreen = ({ route, navigation }) => {
         route?.params?.initialCategoryPatchCounter &&
       route?.params?.loadingType === "patchCategory"
     ) {
-      navigation.navigate("Category Preview Screen", {
-        category: route?.params?.patchCategory,
+      dispatchSortedTransactions({
+        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_CATEGORY,
+        payload: {
+          targetCategoryType: route?.params?.targetCategoryType,
+          patchCategory: route?.params?.patchCategory,
+          initialSortedTransactionsPatchCounter:
+            route?.params?.initialSortedTransactionsPatchCounter,
+        },
       });
+      // navigation.navigate("Category Preview Screen", {
+      //   category: route?.params?.patchCategory,
+      // });
     }
   }, [categories.categoryPatchCounter]);
 

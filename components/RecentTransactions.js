@@ -13,6 +13,7 @@ import {
 const RecentTransactions = ({
   route,
   navigation,
+  expenseOnly,
   onPress,
   startDate,
   finishDate,
@@ -59,10 +60,12 @@ const RecentTransactions = ({
     if (sortedTransactions.groupSorted?.length) {
       sortedTransactions.groupSorted.forEach((logbook) => {
         if (logbook.transactions.length) {
-          if (startDate && finishDate) {
+          // if (startDate && finishDate) {
+          if (expenseOnly) {
             logbook.transactions.forEach((section) =>
               section.data.forEach((transaction) => {
                 if (
+                  transaction.details.in_out === "expense" &&
                   transaction.details.date >= startDate &&
                   transaction.details.date <= finishDate
                 ) {
@@ -138,10 +141,16 @@ const RecentTransactions = ({
         }
       });
       finalArray.sort((a, b) => {
-        if (a.transaction._timestamps.updated_at < b.transaction._timestamps.updated_at) {
+        if (
+          a.transaction._timestamps.updated_at <
+          b.transaction._timestamps.updated_at
+        ) {
           return 1;
         }
-        if (a.transaction._timestamps.updated_at > b.transaction._timestamps.updated_at) {
+        if (
+          a.transaction._timestamps.updated_at >
+          b.transaction._timestamps.updated_at
+        ) {
           return -1;
         }
         return 0;
@@ -321,9 +330,10 @@ const RecentTransactions = ({
                 recentTransactions.result.length && (
                   <SearchResultListItem
                     pressable
-                    transactionType={findCategoryTypeById(
-                      item.category.categoryId
-                    )}
+                    // transactionType={findCategoryTypeById(
+                    //   item.category.categoryId
+                    // )}
+                    transactionType={item.transaction.details.in_out}
                     transaction={item.transaction}
                     logbook={item.logbook}
                     onPress={() => {

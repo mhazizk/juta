@@ -141,6 +141,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
               title="Transactions in Range"
               startDate={activeBudget.budget?.start_date || null}
               finishDate={activeBudget.budget?.finish_date || null}
+              expenseOnly
               onPress={({ transaction, selectedLogbook }) => {
                 navigation.navigate("Transaction Preview Screen", {
                   transaction: transaction,
