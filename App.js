@@ -6,14 +6,13 @@ import {
   View,
   // StatusBar,
 } from "react-native";
-import BottomTab from "./navigation/BottomTab";
 import "react-native-gesture-handler";
-import RootStack from "./navigation/RootStack";
+import RootStack from "./src/navigations/RootStack";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import {
   GlobalStateProvider,
   useGlobalAppSettings,
-} from "./modules/GlobalContext";
+} from "./src/reducers/GlobalContext";
 
 export default function App() {
   // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();

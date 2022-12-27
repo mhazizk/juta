@@ -1,0 +1,10 @@
+[
+  {
+    "category": {
+      "name": "shopping",
+      "id": "4",
+      "icon": { "name": "cart", "color": "default", "pack": "IonIcons" }
+    },
+    "totalSpent": 0
+  }
+]
