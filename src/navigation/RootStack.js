@@ -2,11 +2,9 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from "@react-navigation/stack";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import BottomTab from "./BottomTab";
 import ActionScreen from "./screens/ActionScreen";
 import ModalScreen from "./screens/ModalScreen";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import TransactionPreviewScreen from "./screens/logbook/TransactionPreviewScreen";
 import EditTransactionDetailsScreen from "./screens/logbook/EditTransactionDetailsScreen";
 import { useEffect, useMemo } from "react";
@@ -21,15 +19,9 @@ import {
   useGlobalCategories,
 } from "../utils/GlobalContext";
 import { ACTIONS } from "../utils/GlobalReducer";
-import userCategories from "../database/userCategories";
-import userLogBooks from "../database/userLogBooks";
 import {
-  getCategoriesFromStorage,
-  getLogbooksFromStorage,
-  getTransactionsFromStorage,
-  setSortedTransactions,
+  setSortedTransactions
 } from "../utils/FetchData";
-import userTransactions from "../database/userTransactions";
 import NewTransactionDetailsScreen from "./screens/logbook/NewTransactionDetailsScreen";
 import LoadingScreen from "./screens/LoadingScreen";
 import SplashScreen from "./screens/SplashScreen";
@@ -38,7 +30,9 @@ import MyCategoriesScreen from "./screens/user/MyCategoriesScreen";
 import EditLogbookScreen from "./screens/user/EditLogbookScreen";
 import LogbookPreviewScren from "./screens/user/LogbookPreviewScreen";
 import OnboardingScreen from "./screens/initial/OnboardingScreen";
-import { asyncStorage, STORAGE_ACTIONS } from "../utils/Storage";
+// import { persistStorage.asyncStorage, PERSIST_ACTIONS } from "../utils/Storage";
+import persistStorage from "../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 import InitialSetupScreen from "./screens/initial/InitialSetupScreen";
 import CategoryPreviewScreen from "./screens/user/CategoryPreviewScreen";
 import EditCategoryScreen from "./screens/user/EditCategoryScreen";
@@ -48,6 +42,7 @@ import NewBudgetScreen from "./screens/budget/NewBudgetScreen";
 import BudgetPreviewScreen from "./screens/budget/BudgetPreviewScreen";
 import EditBudgetScreen from "./screens/budget/EditBudgetScreen";
 import AnalyticsScreen from "./screens/dashboard/AnalyticsScreen";
+import persistStorage from "../reducers/persist/persistStorage";
 
 const Stack = createStackNavigator();
 
@@ -110,8 +105,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (sortedTransactions) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "sortedTransactions",
         rawValue: sortedTransactions,
       });
@@ -120,8 +115,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (appSettings) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "appSettings",
         rawValue: appSettings,
       });
@@ -130,8 +125,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (logbooks) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "logbooks",
         rawValue: logbooks,
       });
@@ -140,8 +135,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (categories) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "categories",
         rawValue: categories,
       });

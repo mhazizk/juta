@@ -5,10 +5,11 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
-  useGlobalSortedTransactions
+  useGlobalSortedTransactions,
 } from "../reducers/GlobalContext";
 import { ListItem, SearchResultListItem, TransactionListItem } from "./List";
 import { TextPrimary, TextSecondary } from "./Text";
+import * as utils from "../utils";
 
 const RecentTransactions = ({
   route,
@@ -57,87 +58,80 @@ const RecentTransactions = ({
     // });
     let finalArray = [];
 
-    if (sortedTransactions.groupSorted?.length) {
+    if (sortedTransactions.groupSorted.length) {
       sortedTransactions.groupSorted.forEach((logbook) => {
         if (logbook.transactions.length) {
           // if (startDate && finishDate) {
-          if (expenseOnly) {
-            logbook.transactions.forEach((section) =>
-              section.data.forEach((transaction) => {
-                if (
-                  transaction.details.in_out === "expense" &&
-                  transaction.details.date >= startDate &&
-                  transaction.details.date <= finishDate
-                ) {
-                  const iconColor = findCategoryColorById(
-                    transaction.details.category_id
-                  );
-                  const iconName = findCategoryIconNameById(
-                    transaction.details.category_id
-                  );
-                  const iconPack = findCategoryIconPackById(
-                    transaction.details.category_id
-                  );
-                  const categoryName = findCategoryNameById(
-                    transaction.details.category_id
-                  );
-                  const foundLogbook = findLogbookById(logbook.logbook_id);
-                  finalArray.push({
-                    transaction: transaction,
-                    category: {
-                      categoryName,
-                      categoryId: transaction.details.category_id,
-                      icon: { iconPack, iconColor, iconName },
-                    },
-                    logbook: {
-                      logbookName: foundLogbook.logbook_name,
-                      logbookId: logbook.logbook_id,
-                      logbookCurrency: foundLogbook.logbook_currency,
-                    },
-                  });
-                }
-              })
-            );
-          }
-
-          if (!startDate && !finishDate) {
-            logbook.transactions.forEach((section) => {
-              section.data.forEach((transaction) => {
-                if (
-                  transaction._timestamps.updated_at >=
-                    Date.now() - 1000 * 60 * 60 * 24 * 7 &&
-                  transaction._timestamps.updated_at <= Date.now()
-                ) {
-                  const iconColor = findCategoryColorById(
-                    transaction.details.category_id
-                  );
-                  const iconName = findCategoryIconNameById(
-                    transaction.details.category_id
-                  );
-                  const iconPack = findCategoryIconPackById(
-                    transaction.details.category_id
-                  );
-                  const categoryName = findCategoryNameById(
-                    transaction.details.category_id
-                  );
-                  const foundLogbook = findLogbookById(logbook.logbook_id);
-                  finalArray.push({
-                    transaction: transaction,
-                    category: {
-                      categoryName,
-                      categoryId: transaction.details.category_id,
-                      icon: { iconPack, iconColor, iconName },
-                    },
-                    logbook: {
-                      logbookName: foundLogbook.logbook_name,
-                      logbookId: logbook.logbook_id,
-                      logbookCurrency: foundLogbook.logbook_currency,
-                    },
-                  });
-                }
+          // if (expenseOnly) {
+          logbook.transactions.forEach((section) =>
+            section.data.forEach((transaction) => {
+              const iconColor = utils.FindById.findCategoryColorById({
+                id: transaction.details.category_id,
+                categories: categories.categories,
+                defaultColor: appSettings.theme.style.colors.foreground,
               });
-            });
-          }
+              const iconName = utils.FindById.findCategoryIconNameById({
+                id: transaction.details.category_id,
+                categories: categories.categories,
+              });
+              const iconPack = utils.FindById.findCategoryIconPackById({
+                id: transaction.details.category_id,
+                categories: categories.categories,
+              });
+              const categoryName = utils.FindById.findCategoryNameById({
+                id: transaction.details.category_id,
+                categories: categories.categories,
+              });
+              const foundLogbook = utils.FindById.findLogbookById({
+                id: logbook?.logbook_id,
+                logbooks: logbooks.logbooks,
+              });
+
+              if (
+                expenseOnly &&
+                transaction.details.in_out === "expense" &&
+                transaction.details.date >= startDate &&
+                transaction.details.date <= finishDate
+              ) {
+                finalArray.push({
+                  transaction: transaction,
+                  category: {
+                    categoryName,
+                    categoryId: transaction.details.category_id,
+                    icon: { iconPack, iconColor, iconName },
+                  },
+                  logbook: {
+                    logbookName: foundLogbook.logbook_name,
+                    logbookId: logbook.logbook_id,
+                    logbookCurrency: foundLogbook.logbook_currency,
+                  },
+                });
+              }
+
+              if (
+                !startDate &&
+                !finishDate &&
+                transaction._timestamps.updated_at >=
+                  Date.now() - 1000 * 60 * 60 * 24 * 7 &&
+                transaction._timestamps.updated_at <= Date.now()
+              ) {
+                finalArray.push({
+                  transaction: transaction,
+                  category: {
+                    categoryName,
+                    categoryId: transaction.details.category_id,
+                    icon: { iconPack, iconColor, iconName },
+                  },
+                  logbook: {
+                    logbookName: foundLogbook.logbook_name,
+                    logbookId: logbook.logbook_id,
+                    logbookCurrency: foundLogbook.logbook_currency,
+                  },
+                });
+              }
+            })
+          );
+          // }
         }
       });
       finalArray.sort((a, b) => {
@@ -173,140 +167,6 @@ const RecentTransactions = ({
       }
     }
   };
-
-  // Find Logbook By Id
-  const findLogbookById = useMemo(() => {
-    return (id) => {
-      const filteredLogbook = logbooks.logbooks.filter((logbook) => {
-        if (logbook.logbook_id === id) {
-          return logbook;
-        }
-      });
-      if (filteredLogbook.length) {
-        return filteredLogbook.map((item) => item)[0];
-      }
-    };
-  }, [logbooks]);
-
-  // Find Category Icon Name by Id
-  const findCategoryIconNameById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-
-      if (filteredExpenseCategory.length) {
-        return filteredExpenseCategory.map((item) => item.icon.name)[0];
-      } else {
-        return filteredIncomeCategory.map((item) => item.icon.name)[0];
-      }
-    };
-  }, [categories]);
-
-  // Find Category Name by Id
-  const findCategoryNameById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.name);
-        // console.log(mapped[0])
-        return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.name);
-        return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-      }
-    };
-  }, [categories]);
-
-  // Find Category Color by Id
-  const findCategoryColorById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.icon.color);
-        return mapped[0] === "default"
-          ? appSettings.theme.style.colors.foreground
-          : mapped[0];
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.icon.color);
-        return mapped[0] === "default"
-          ? appSettings.theme.style.colors.foreground
-          : mapped[0];
-      }
-    };
-  }, [categories]);
-
-  // Find Category Icon Pack by Id
-  const findCategoryIconPackById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
-        return mapped[0];
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
-        return mapped[0];
-      }
-    };
-  }, [categories]);
-
-  const findCategoryTypeById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-
-      if (filteredExpenseCategory.length) {
-        return "expense";
-      } else {
-        return "income";
-      }
-    };
-  }, [categories]);
 
   return (
     <>

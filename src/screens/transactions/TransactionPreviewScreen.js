@@ -1,33 +1,34 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import Intl from "intl";
-import "intl/locale-data/jsonp/en";
+// import Intl from "intl";
+// import "intl/locale-data/jsonp/en";
 import { useEffect, useMemo, useState } from "react";
 import {
-    Alert,
-    Button,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Button,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
-    ButtonIconDanger,
-    ButtonPrimary,
-    ButtonSecondary,
-    ButtonSwitch
+  ButtonIconDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+  ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import {
-    useGlobalAppSettings,
-    useGlobalCategories,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalTransactions
+  useGlobalAppSettings,
+  useGlobalCategories,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
   // ! Global State Section //
@@ -68,9 +69,13 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // refresh
-    // console.log(transaction.details)
-    findCategoryById();
+    setSelectedCategory(
+      utils.FindById.findCategoryById({
+        id: transaction?.details.category_id,
+        categories: categories.categories,
+        transaction: transaction,
+      })
+    );
     // findLogbookNamebyId();
   }, [transaction]);
 
@@ -89,50 +94,28 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {}, [categories]);
 
   // ! Function Section //
-  // Find Category
-  const findCategoryById = () => {
-    if (transaction) {
-      const id = transaction.details.category_id;
-      const foundExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const foundIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
+  //   // Find Category
 
-      if (foundExpenseCategory.length) {
-        console.log(foundExpenseCategory[0]);
-        setSelectedCategory(foundExpenseCategory[0]);
-      } else {
-        setSelectedCategory(foundIncomeCategory[0]);
-      }
-    }
-  };
+  //   // Find Category Name by Id
+  //   const findCategoryNameById = useMemo(() => {
+  //     return () => {
+  //       if (transaction) {
+  //         const id = transaction.details.category_id;
+  //         const foundExpenseCategory = categories.expense.filter((category) => {
+  //           return category.id === id;
+  //         });
+  //         const foundIncomeCategory = categories.income.filter((category) => {
+  //           return category.id === id;
+  //         });
 
-  // Find Category Name by Id
-  const findCategoryNameById = useMemo(() => {
-    return () => {
-      if (transaction) {
-        const id = transaction.details.category_id;
-        const foundExpenseCategory = categories.expense.filter((category) => {
-          return category.id === id;
-        });
-        const foundIncomeCategory = categories.income.filter((category) => {
-          return category.id === id;
-        });
-
-        if (foundExpenseCategory.length) {
-          setSelectedCategory(foundExpenseCategory[0]);
-        } else {
-          setSelectedCategory(foundIncomeCategory[0]);
-        }
-      }
-    };
-  }, [transaction]);
+  //         if (foundExpenseCategory.length) {
+  //           setSelectedCategory(foundExpenseCategory[0]);
+  //         } else {
+  //           setSelectedCategory(foundIncomeCategory[0]);
+  //         }
+  //       }
+  //     };
+  //   }, [transaction]);
 
   // Find Category Icon Name by Id
   // const findCategoryIconNameById = useMemo(() => {
@@ -207,11 +190,10 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
                 <TextPrimary
-                  label={Intl.NumberFormat("en-US", {
-                    style: "decimal",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }).format(transaction.details.amount)}
+                  label={utils.GetFormattedNumber({
+                    value: transaction.details.amount,
+                    currency: appSettings.currency.name,
+                  })}
                   style={{
                     height: 36,
                     fontSize: 36,
@@ -500,7 +482,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             // navigation.navigate('Loading Screen', {
                             //     label: 'Deleting Transaction ...',
                             //     loadingType: 'deleteOneTransaction',
-                            //     transaction_id: transaction.transaction_id,
+                            //     transaction_id: transaction?.transaction_id,
                             //     initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
                             //     initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
                             // })

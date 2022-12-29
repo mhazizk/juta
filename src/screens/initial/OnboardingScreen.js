@@ -1,12 +1,11 @@
-import { Image, Text, View } from "react-native";
+import { Image } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import OnboardingImg1 from "../../../src/assets/icon.png";
-import OnboardingImg2 from "../../../src/assets/img/onboarding2.png";
-import OnboardingImg3 from "../../../src/assets/img/onboarding3.png";
-import OnboardingImg4 from "../../../src/assets/img/onboarding4.png";
-import OnboardingImg5 from "../../../src/assets/img/onboarding5.png";
-import { lightTheme } from "../../../src/assets/themes/lightTheme";
-import { globalStyles } from "../../assets/themes/globalStyles";
+import OnboardingImg1 from "../../assets/img/onboarding2.png";
+import OnboardingImg2 from "../../assets/img/onboarding2.png";
+import OnboardingImg3 from "../../assets/img/onboarding3.png";
+import OnboardingImg4 from "../../assets/img/onboarding4.png";
+import OnboardingImg5 from "../../assets/img/onboarding5.png";
+import { lightTheme } from "../../assets/themes/lightTheme";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
@@ -26,7 +25,7 @@ const OnboardingScreen = ({ navigation }) => {
               screenHidden: ["Onboarding Screen"],
               fontSize: "medium",
               language: "english",
-              locale: "us-EN",
+              locale: "en-US",
               currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
             },
           });

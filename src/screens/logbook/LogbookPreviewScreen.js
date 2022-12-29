@@ -1,36 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-    Alert,
-    Button,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from "react-native";
-// import formatCurrency from "../../../assets/formatCurrency";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import Intl from "intl";
-import "intl/locale-data/jsonp/en";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, View } from "react-native";
+// import "intl/locale-data/jsonp/en";
 import CountryFlag from "react-native-country-flag";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-    globalStyles,
-    globalTheme
-} from "../../../src/assets/themes/globalStyles";
-import {
-    ButtonPrimary,
-    ButtonSecondary,
-    ButtonSwitch
-} from "../../components/Button";
+import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
-import formatCurrency from "../../utils/formatCurrency";
+import * as utils from "../../utils";
 import {
     useGlobalAppSettings,
     useGlobalLogbooks,
     useGlobalSortedTransactions,
-    useGlobalTransactions
+    useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
@@ -247,7 +228,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 ]}
               >
                 <TextPrimary
-                  label={`${formatCurrency({
+                  label={`${utils.FormatCurrency({
                     amount: sumBalance(),
                     currency: appSettings.currency.name,
                   })}`}

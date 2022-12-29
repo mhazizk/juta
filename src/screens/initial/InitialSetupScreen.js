@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
-    FlatList,
-    Image,
-    Text,
-    TextInput,
-    TouchableNativeFeedback,
-    View
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableNativeFeedback,
+  View,
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -13,14 +13,16 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../../src/assets/themes/globalStyles";
 import APP_SETTINGS from "../../config/appSettings";
 import {
-    useGlobalAppSettings,
-    useGlobalCategories,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalCategories,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 
 // Image Import
 import Onboarding from "react-native-onboarding-swiper";
@@ -34,8 +36,7 @@ import medium from "../../../src/assets/img/medium.png";
 import small from "../../../src/assets/img/small.png";
 import { lightTheme } from "../../../src/assets/themes/lightTheme";
 import userCategories from "../../database/userCategories";
-import { asyncStorage, STORAGE_ACTIONS } from "../../utils/Storage";
-import initialCategories from "../../reducers/initial-state/initialCategories";
+import initialCategories from "../../reducers/initial-state/InitialCategories";
 import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 
 const InitialSetupScreen = ({ navigation }) => {
@@ -50,7 +51,7 @@ const InitialSetupScreen = ({ navigation }) => {
     theme: { name: "Light Theme", id: "light", style: lightTheme },
     fontSize: "medium",
     language: "english",
-    locale: "us-EN",
+    locale: "es-UN",
     currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
     screenHidden: ["Onboarding Screen", "Initial Setup Screen"],
   });
@@ -164,23 +165,23 @@ const InitialSetupScreen = ({ navigation }) => {
     // })
 
     // Save to storage
-    const saveTransaction = await asyncStorage({
-      action: STORAGE_ACTIONS.SET,
+    const saveTransaction = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.SET,
       key: "transactions",
       rawValue: [],
     });
-    const saveCategories = await asyncStorage({
-      action: STORAGE_ACTIONS.SET,
+    const saveCategories = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.SET,
       key: "categories",
       rawValue: initialCategories,
     });
-    const saveSortedTransactions = await asyncStorage({
-      action: STORAGE_ACTIONS.SET,
+    const saveSortedTransactions = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.SET,
       key: "sortedTrasactions",
       rawValue: InitialSortedTransactions,
     });
-    const saveAppSettings = await asyncStorage({
-      action: STORAGE_ACTIONS.SET,
+    const saveAppSettings = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.SET,
       key: "appSettings",
       rawValue: selectedAppSettings,
     });

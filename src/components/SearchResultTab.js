@@ -9,7 +9,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-} from "../utils/GlobalContext";
+} from "../reducers/GlobalContext";
 import CategorySearchScreen from "../screens/search/CategorySearchScreen";
 import LogBookSearchScreen from "../screens/search/LogBookSearchScreen";
 import TransactionSearchScreen from "../screens/search/TransactionSearchScreen";

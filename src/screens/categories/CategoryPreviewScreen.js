@@ -1,35 +1,22 @@
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useIsFocused } from "@react-navigation/native";
-import Intl from "intl";
-import "intl/locale-data/jsonp/en";
-import { useEffect, useMemo, useState } from "react";
+// import "intl/locale-data/jsonp/en";
+import { useEffect, useState } from "react";
 import {
-  Alert,
-  Button,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+  Alert, ScrollView, View
 } from "react-native";
-import CountryFlag from "react-native-country-flag";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalTransactions
-} from "../../../modules/GlobalContext";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
+  useGlobalTransactions,
+} from "../../reducers/GlobalContext";
 import {
-  ButtonPrimary,
-  ButtonSecondary,
-  ButtonSwitch
+  ButtonSecondary
 } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
-import formatCurrency from "../../utils/formatCurrency";
+import * as utils from "../../utils";
 
 const CategoryPreviewScreen = ({ route, navigation }) => {
   // ! Global State Section //
@@ -78,7 +65,12 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     // refresh
     // console.log(category);
     if (isFocused) {
-      findCategoryType();
+      setCategoryType(
+        utils.FindById.findCategoryTypeById({
+          id: category?.id,
+          categories: categories.categories,
+        })
+      );
     }
     // console.log(transaction.details)
     // findCategoryNameById();
@@ -100,21 +92,21 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {}, [sortedTransactions]);
 
   // ! Function Section //
-  const findCategoryType = () => {
-    const findExpenseCategory = categories.categories.expense.some(
-      (category) => category.id === route?.params?.category?.id
-    );
-    const findIncomeCategory = categories.categories.income.some(
-      (category) => category.id === route?.params?.category?.id
-    );
+  // const findCategoryType = () => {
+  //   const findExpenseCategory = categories.categories.expense.some(
+  //     (category) => category.id === route?.params?.category?.id
+  //   );
+  //   const findIncomeCategory = categories.categories.income.some(
+  //     (category) => category.id === route?.params?.category?.id
+  //   );
 
-    if (findExpenseCategory) {
-      setCategoryType("expense");
-    }
-    if (findIncomeCategory) {
-      setCategoryType("income");
-    }
-  };
+  //   if (findExpenseCategory) {
+  //     setCategoryType("expense");
+  //   }
+  //   if (findIncomeCategory) {
+  //     setCategoryType("income");
+  //   }
+  // };
 
   const countTransactions = () => {
     let array = [];

@@ -1,20 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-  Text,
-  View
-} from "react-native";
-import {
-  globalStyles,
-  globalTheme
-} from "../../../src/assets/themes/globalStyles";
-import {
-  ListItem,
-  SearchResultListItem,
-  TransactionListItem
-} from "../../components/List";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, ScrollView, View } from "react-native";
+import { SearchResultListItem } from "../../components/List";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import {
   useGlobalAppSettings,
@@ -22,9 +8,9 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 import Entypo from "react-native-vector-icons/Entypo";
-import IonIcons from "react-native-vector-icons/Ionicons";
 
 const GlobalSearchResultsScreen = ({
   route,
@@ -97,20 +83,27 @@ const GlobalSearchResultsScreen = ({
                 ?.toString()
                 .includes(searchQuery.toString())
             ) {
-              const iconColor = findCategoryColorById(
-                transaction.details.category_id
-              );
-              const iconName = findCategoryIconNameById(
-                transaction.details.category_id
-              );
-              const iconPack = findCategoryIconPackById(
-                transaction.details.category_id
-              );
-              const categoryName = findCategoryNameById(
-                transaction.details.category_id
-              );
+              const iconColor = utils.FindById.findCategoryColorById({
+                id: transaction?.details.category_id,
+                categories: categories.categories,
+              });
+              const iconName = utils.FindById.findCategoryIconNameById({
+                id: transaction?.details.category_id,
+                categories: categories.categories,
+              });
+              const iconPack = utils.FindById.findCategoryIconPackById({
+                id: transaction?.details.category_id,
+                categories: categories.categories,
+              });
+              const categoryName = utils.FindById.findCategoryNameById({
+                id: transaction?.details.category_id,
+                categories: categories.categories,
+              });
 
-              const foundLogbook = findLogbookById(logbook.logbook_id);
+              const foundLogbook = utils.FindById.findLogbookById({
+                id: logbook.logbook_id,
+                logbooks: logbooks.logbooks,
+              });
               finalArray.push({
                 transaction: transaction,
                 category: {
@@ -136,118 +129,118 @@ const GlobalSearchResultsScreen = ({
     }
   };
 
-  // Find Logbook By Id
-  const findLogbookById = useMemo(() => {
-    return (id) => {
-      const filteredLogbook = logbooks.logbooks.filter((logbook) => {
-        if (logbook.logbook_id === id) {
-          return logbook;
-        }
-      });
-      if (filteredLogbook.length) {
-        return filteredLogbook.map((item) => item)[0];
-      }
-    };
-  }, [searchQuery, logbooks]);
+  // // Find Logbook By Id
+  // const findLogbookById = useMemo(() => {
+  //   return (id) => {
+  //     const filteredLogbook = logbooks.logbooks.filter((logbook) => {
+  //       if (logbook.logbook_id === id) {
+  //         return logbook;
+  //       }
+  //     });
+  //     if (filteredLogbook.length) {
+  //       return filteredLogbook.map((item) => item)[0];
+  //     }
+  //   };
+  // }, [searchQuery, logbooks]);
 
-  // Find Category Icon Name by Id
-  const findCategoryIconNameById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
+  // // Find Category Icon Name by Id
+  // const findCategoryIconNameById = useMemo(() => {
+  //   return (id) => {
+  //     const filteredExpenseCategory = categories.categories.expense.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
+  //     const filteredIncomeCategory = categories.categories.income.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
 
-      if (filteredExpenseCategory.length) {
-        return filteredExpenseCategory.map((item) => item.icon.name)[0];
-      } else {
-        return filteredIncomeCategory.map((item) => item.icon.name)[0];
-      }
-    };
-  }, [searchQuery, categories]);
+  //     if (filteredExpenseCategory.length) {
+  //       return filteredExpenseCategory.map((item) => item.icon.name)[0];
+  //     } else {
+  //       return filteredIncomeCategory.map((item) => item.icon.name)[0];
+  //     }
+  //   };
+  // }, [searchQuery, categories]);
 
-  // Find Category Name by Id
-  const findCategoryNameById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
+  // // Find Category Name by Id
+  // const findCategoryNameById = useMemo(() => {
+  //   return (id) => {
+  //     const filteredExpenseCategory = categories.categories.expense.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
+  //     const filteredIncomeCategory = categories.categories.income.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
 
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.name);
-        // console.log(mapped[0])
-        return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.name);
-        return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-      }
-    };
-  }, [searchQuery, categories]);
+  //     if (filteredExpenseCategory.length) {
+  //       const mapped = filteredExpenseCategory.map((item) => item.name);
+  //       // console.log(mapped[0])
+  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
+  //     } else {
+  //       const mapped = filteredIncomeCategory.map((item) => item.name);
+  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
+  //     }
+  //   };
+  // }, [searchQuery, categories]);
 
-  // Find Category Color by Id
-  const findCategoryColorById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
+  // // Find Category Color by Id
+  // const findCategoryColorById = useMemo(() => {
+  //   return (id) => {
+  //     const filteredExpenseCategory = categories.categories.expense.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
+  //     const filteredIncomeCategory = categories.categories.income.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
 
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.icon.color);
-        return mapped[0] === "default"
-          ? appSettings.theme.style.colors.foreground
-          : mapped[0];
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.icon.color);
-        return mapped[0] === "default"
-          ? appSettings.theme.style.colors.foreground
-          : mapped[0];
-      }
-    };
-  }, [searchQuery, categories]);
+  //     if (filteredExpenseCategory.length) {
+  //       const mapped = filteredExpenseCategory.map((item) => item.icon.color);
+  //       return mapped[0] === "default"
+  //         ? appSettings.theme.style.colors.foreground
+  //         : mapped[0];
+  //     } else {
+  //       const mapped = filteredIncomeCategory.map((item) => item.icon.color);
+  //       return mapped[0] === "default"
+  //         ? appSettings.theme.style.colors.foreground
+  //         : mapped[0];
+  //     }
+  //   };
+  // }, [searchQuery, categories]);
 
-  // Find Category Icon Pack by Id
-  const findCategoryIconPackById = useMemo(() => {
-    return (id) => {
-      const filteredExpenseCategory = categories.categories.expense.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
-      const filteredIncomeCategory = categories.categories.income.filter(
-        (category) => {
-          return category.id === id;
-        }
-      );
+  // // Find Category Icon Pack by Id
+  // const findCategoryIconPackById = useMemo(() => {
+  //   return (id) => {
+  //     const filteredExpenseCategory = categories.categories.expense.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
+  //     const filteredIncomeCategory = categories.categories.income.filter(
+  //       (category) => {
+  //         return category.id === id;
+  //       }
+  //     );
 
-      if (filteredExpenseCategory.length) {
-        const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
-        return mapped[0];
-      } else {
-        const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
-        return mapped[0];
-      }
-    };
-  }, [searchQuery, categories]);
+  //     if (filteredExpenseCategory.length) {
+  //       const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
+  //       return mapped[0];
+  //     } else {
+  //       const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
+  //       return mapped[0];
+  //     }
+  //   };
+  // }, [searchQuery, categories]);
 
   return (
     <>

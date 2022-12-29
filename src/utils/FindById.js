@@ -2,99 +2,113 @@ import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 // Find Logbook By Id
 const findLogbookById = ({ id, logbooks }) => {
-  const filteredLogbook = logbooks.filter((logbook) => {
-    if (logbook.logbook_id === id) {
-      return logbook;
-    }
-  });
-  if (filteredLogbook.length) {
-    return filteredLogbook.map((item) => item)[0];
-  }
+  const findlogbook = logbooks.find((logbook) => logbook.logbook_id === id);
+  return findlogbook;
 };
 
 // Find Category Icon Name by Id
 const findCategoryIconNameById = ({ id, categories }) => {
-  const filteredExpenseCategory = categories.expense.filter((category) => {
+  if (!id || !categories) {
+    return;
+  }
+
+  const filteredExpenseCategory = categories.expense.find((category) => {
     return category.id === id;
   });
-  const filteredIncomeCategory = categories.income.filter((category) => {
+  const filteredIncomeCategory = categories.income.find((category) => {
     return category.id === id;
   });
 
-  if (filteredExpenseCategory.length) {
-    return filteredExpenseCategory.map((item) => item.icon.name)[0];
-  } else {
-    return filteredIncomeCategory.map((item) => item.icon.name)[0];
-  }
+  return (filteredExpenseCategory || filteredIncomeCategory)?.icon.name;
+  // filteredExpenseCategory.map((item) => item.icon.name)[0] ||
+  // filteredIncomeCategory.map((item) => item.icon.name)[0]
+  // );
 };
 
 // Find Category Name by Id
 const findCategoryNameById = ({ id, categories }) => {
-  const filteredExpenseCategory = categories.expense.filter((category) => {
+  if (!id || !categories) {
+    return;
+  }
+
+  const filteredExpenseCategory = categories.expense.find((category) => {
     return category.id === id;
   });
-  const filteredIncomeCategory = categories.income.filter((category) => {
+  const filteredIncomeCategory = categories.income.find((category) => {
     return category.id === id;
   });
 
-  if (filteredExpenseCategory.length) {
-    const mapped = filteredExpenseCategory.map((item) => item.name);
-    // console.log(mapped[0])
-    return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  } else {
-    const mapped = filteredIncomeCategory.map((item) => item.name);
-    return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  }
+  const categoryName = (filteredExpenseCategory || filteredIncomeCategory)
+    ?.name;
+  // filteredExpenseCategory.map((item) => item.name) ||
+  // filteredIncomeCategory.map((item) => item.name);
+  return categoryName[0]?.toUpperCase() + categoryName?.substring(1);
 };
 
 // Find Category Color by Id
 const findCategoryColorById = ({ id, categories, defaultColor }) => {
-  const filteredExpenseCategory = categories.expense.filter((category) => {
-    return category.id === id;
-  });
-  const filteredIncomeCategory = categories.income.filter((category) => {
-    return category.id === id;
-  });
-
-  if (filteredExpenseCategory.length) {
-    const mapped = filteredExpenseCategory.map((item) => item.icon.color);
-    return mapped[0] === "default" ? defaultColor : mapped[0];
-  } else {
-    const mapped = filteredIncomeCategory.map((item) => item.icon.color);
-    return mapped[0] === "default" ? defaultColor : mapped[0];
+  if (!id || !categories || !defaultColor) {
+    return;
   }
+
+  const filteredExpenseCategory = categories.expense.find((category) => {
+    return category.id === id;
+  });
+  const filteredIncomeCategory = categories.income.find((category) => {
+    return category.id === id;
+  });
+  const categoryColor = (filteredExpenseCategory || filteredIncomeCategory)
+    ?.icon.color;
+  // filteredExpenseCategory.map((item) => item.icon.color) ||
+  // filteredIncomeCategory.map((item) => item.icon.color);
+  return categoryColor === "default" ? defaultColor : categoryColor;
 };
 
 // Find Category Icon Pack by Id
 const findCategoryIconPackById = ({ id, categories }) => {
-  const filteredExpenseCategory = categories.expense.filter((category) => {
-    return category.id === id;
-  });
-  const filteredIncomeCategory = categories.income.filter((category) => {
-    return category.id === id;
-  });
-
-  if (filteredExpenseCategory.length) {
-    const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
-    return mapped[0];
-  } else {
-    const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
-    return mapped[0];
+  if (!id || !categories) {
+    return;
   }
+
+  const filteredExpenseCategory = categories.expense.find((category) => {
+    return category.id === id;
+  });
+  const filteredIncomeCategory = categories.income.find((category) => {
+    return category.id === id;
+  });
+  return (filteredExpenseCategory || filteredIncomeCategory)?.icon.pack;
 };
 
 const findCategoryTypeById = ({ id, categories }) => {
-  const filteredExpenseCategory = categories.expense.filter((category) => {
+  if (!id || !categories) {
+    return;
+  }
+
+  const filteredExpenseCategory = categories.expense.find((category) => {
     return category.id === id;
   });
-  const filteredIncomeCategory = categories.income.filter((category) => {
+  const filteredIncomeCategory = categories.income.find((category) => {
     return category.id === id;
   });
 
-  if (filteredExpenseCategory.length) {
-    return "expense";
-  } else {
-    return "income";
+  return filteredExpenseCategory ? "expense" : "income";
+};
+
+const findCategoryById = ({ id, categories, transaction, setState }) => {
+  if (!id || !categories || !transaction) {
+    return;
+  }
+
+  if (transaction) {
+    const foundExpenseCategory = categories.expense.find((category) => {
+      return category.id === id;
+    });
+    const foundIncomeCategory = categories.income.find((category) => {
+      return category.id === id;
+    });
+
+    return foundExpenseCategory || foundIncomeCategory;
+    // setState(foundExpenseCategory[0] || foundIncomeCategory[0]);
   }
 };
 
@@ -105,4 +119,5 @@ export default {
   findCategoryColorById,
   findCategoryIconPackById,
   findCategoryTypeById,
+  findCategoryById,
 };

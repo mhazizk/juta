@@ -1,20 +1,9 @@
-import {
-  Dimensions,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { ProgressChart } from "react-native-chart-kit";
-import TextTicker from "react-native-text-ticker";
+import { Dimensions, TouchableNativeFeedback, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { dailyLimit } from "../utils/DailyLimit";
-import formatCurrency from "../utils/FormatCurrency";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
-import { hexToRgb } from "../utils/HexToRgb";
-import { relativeDate } from "../utils/RelativeDate";
-import { RoundProgressBar } from "./charts/RoundProgressBar";
-import { TextButtonPrimary, TextPrimary, TextSecondary } from "./Text";
+import { TextPrimary, TextSecondary } from "./Text";
+import * as utils from "../utils";
 
 export const ListItem = ({
   leftLabel,
@@ -227,9 +216,13 @@ export const TransactionListItem = ({
                           ? appSettings.theme.style.colors.incomeAmount
                           : appSettings.theme.style.text.textPrimary.color,
                     }}
-                    label={formatCurrency({
-                      amount: transactionAmount,
-                      currency: currency.name,
+                    // label={utils.FormatCurrency({
+                    //   amount: transactionAmount,
+                    //   currency: currency.name,
+                    // })}
+                    label={utils.GetFormattedNumber({
+                      value: transactionAmount,
+                      currency: appSettings.currency.name,
                     })}
                   />
                 </View>
@@ -342,7 +335,7 @@ export const SearchResultListItem = ({
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
                       <TextSecondary
-                        label={relativeDate({
+                        label={utils.RelativeDate({
                           dateToCheck: transactionDate,
                           locale: appSettings.locale,
                           currentDate: new Date().toLocaleString(
@@ -412,7 +405,7 @@ export const SearchResultListItem = ({
                             ? appSettings.theme.style.colors.incomeAmount
                             : appSettings.theme.style.text.textPrimary.color,
                       }}
-                      label={formatCurrency({
+                      label={utils.FormatCurrency({
                         amount: transactionAmount,
                         currency: currency.name,
                       })}
@@ -546,7 +539,7 @@ export const CardList = ({
                   <IonIcons name="chevron-up" size={20} />
                   <TextPrimary label={`${(spent / limit) * 100}% spent`} />
                   <TextPrimary
-                    label={formatCurrency({
+                    label={utils.FormatCurrency({
                       amount: spent,
                       currency: appSettings.currency.name,
                     })}

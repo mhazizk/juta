@@ -11,7 +11,7 @@ import { TextPrimary } from "./Text";
 const UserHeaderComponent = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const checkmark = require("../src/assets/img/checkmark.png");
+  const checkmark = require("../assets/img/checkmark.png");
   return (
     <>
       {userAccount && (

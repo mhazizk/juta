@@ -3,11 +3,11 @@ import TextTicker from "react-native-text-ticker";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { dailyLimit } from "../utils/DailyLimit";
-import formatCurrency from "../utils/FormatCurrency";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 import { hexToRgb } from "../utils/HexToRGB";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
 import { TextButtonPrimary, TextPrimary, TextSecondary } from "./Text";
+import * as utils from "../utils";
 
 export const ActiveBudget = ({
   // Card Props
@@ -209,7 +209,7 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={formatCurrency({
+                      label={utils.FormatCurrency({
                         amount: limit,
                         currency: appSettings.currency.name,
                       })}
@@ -266,7 +266,7 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={formatCurrency({
+                      label={utils.FormatCurrency({
                         amount: spent,
                         currency: appSettings.currency.name,
                       })}
@@ -323,7 +323,7 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={formatCurrency({
+                      label={utils.FormatCurrency({
                         amount: limit - spent,
                         currency: appSettings.currency.name,
                       })}
@@ -389,7 +389,7 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.currency.symbol
-                    } ${formatCurrency({
+                    } ${utils.FormatCurrency({
                       amount: dailyLimit({
                         limit: limit,
                         spent: spent,
@@ -432,7 +432,7 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.currency.symbol
-                    } ${formatCurrency({
+                    } ${utils.FormatCurrency({
                       amount: dailyLimit({
                         limit: limit,
                         spent: spent,

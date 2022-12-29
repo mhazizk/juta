@@ -4,15 +4,9 @@ import {
   createStackNavigator,
 } from "@react-navigation/stack";
 import { useEffect, useMemo } from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-  getCategoriesFromStorage,
-  getLogbooksFromStorage,
-  getTransactionsFromStorage,
-  setSortedTransactions,
-} from "../utils/FetchData";
-import { asyncStorage, STORAGE_ACTIONS } from "../utils/Storage";
+import { setSortedTransactions } from "../utils/FetchData";
+import persistStorage from "../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -107,8 +101,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (sortedTransactions) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "sortedTransactions",
         rawValue: sortedTransactions,
       });
@@ -117,8 +111,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (appSettings) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "appSettings",
         rawValue: appSettings,
       });
@@ -127,8 +121,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (logbooks) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "logbooks",
         rawValue: logbooks,
       });
@@ -137,8 +131,8 @@ const RootStack = ({ navigation }) => {
 
   useEffect(() => {
     if (categories) {
-      asyncStorage({
-        action: STORAGE_ACTIONS.SET,
+      persistStorage.asyncStorage({
+        action: PERSIST_ACTIONS.SET,
         key: "categories",
         rawValue: categories,
       });

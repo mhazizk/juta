@@ -8,7 +8,7 @@ import {
   VictoryLine,
   VictoryScatter,
 } from "victory-native";
-import { useGlobalAppSettings } from "../modules/GlobalContext";
+import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import { hexToRgb } from "../../utils/HexToRGB";
 
 export const CustomBarChart = ({

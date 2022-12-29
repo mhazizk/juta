@@ -1,36 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Alert,
-  Button,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    TextInput,
+    TouchableNativeFeedback,
+    View,
 } from "react-native";
-// import formatCurrency from "../../../assets/formatCurrency";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import Intl from "intl";
-import "intl/locale-data/jsonp/en";
+// import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
+// import "intl/locale-data/jsonp/en";
 import CountryFlag from "react-native-country-flag";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
-  useGlobalAppSettings,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
+    useGlobalAppSettings,
+    useGlobalLogbooks,
+    useGlobalSortedTransactions,
+    useGlobalTransactions,
 } from "../../reducers/GlobalContext";
-import {
-  ButtonPrimary,
-  ButtonSecondary,
-  ButtonSwitch,
-} from "../../components/Button";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
-import categories from "../../database/userCategories";
-import formatCurrency from "../../utils/FormatCurrency";
+import * as utils from "../../utils";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // ! Global State Section //
@@ -94,66 +83,6 @@ const EditLogbookScreen = ({ route, navigation }) => {
   useEffect(() => {}, [logbookToOpen]);
 
   // ! Function Section //
-  // Find Category Name by Id
-  const findCategoryNameById = useMemo(() => {
-    return () => {
-      if (logbook) {
-        const id = logbook.details.category_id;
-        const foundExpenseCategory = categories.expense.filter((category) => {
-          return category.id === id;
-        });
-        const foundIncomeCategory = categories.income.filter((category) => {
-          return category.id === id;
-        });
-
-        if (foundExpenseCategory.length) {
-          setSelectedCategory(foundExpenseCategory[0]);
-        } else {
-          setSelectedCategory(foundIncomeCategory[0]);
-        }
-      }
-    };
-  }, [logbook]);
-
-  // Find Category Icon Name by Id
-  const findCategoryIconNameById = useMemo(() => {
-    return () => {
-      if (logbook) {
-        const filteredExpenseCategory = categories.expense.filter(
-          (category) => {
-            return category.id === logbook.details.category_id;
-          }
-        );
-        const filteredIncomeCategory = categories.income.filter((category) => {
-          return category.id === logbook.details.category_id;
-        });
-
-        if (filteredExpenseCategory.length) {
-          return setSelectedCategory(filteredExpenseCategory[0]);
-          // return filteredExpenseCategory.map((item => item.icon.name));
-        } else {
-          return setSelectedCategory(filteredIncomeCategory[0]);
-          // return filteredIncomeCategory.map((item) => item.icon.name);
-        }
-      }
-    };
-  }, [logbook]);
-
-  // Find Log Book Name by Id
-  const findLogbookNamebyId = useMemo(() => {
-    return () => {
-      if (logbook) {
-        const found = logbooks.filter((logbook) => {
-          return logbook.logbook_id === logbook.logbook_id;
-        });
-        setSelectedCurrency({
-          logbook_id: found[0].logbook_id,
-          name: found[0].logbook_name,
-        });
-        // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
-      }
-    };
-  });
 
   const countTransactions = () => {
     let array = [];
@@ -372,7 +301,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               >
                 {/* // ! Today Button */}
                 <TextPrimary
-                  label={`${formatCurrency({
+                  label={`${utils.FormatCurrency({
                     amount: sumBalance(),
                     currency: appSettings.currency.name,
                   })}`}

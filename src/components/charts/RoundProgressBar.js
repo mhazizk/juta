@@ -1,6 +1,6 @@
 import { Dimensions, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
-import { useGlobalAppSettings } from "../modules/GlobalContext";
+import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import { hexToRgb } from "../../utils/HexToRGB";
 import { TextPrimary } from "../Text";
 

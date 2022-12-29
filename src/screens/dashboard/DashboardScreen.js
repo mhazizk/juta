@@ -1,32 +1,23 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Dimensions,
-  FlatList, Image, ScrollView, StyleSheet, Text, TouchableHighlight, TouchableNativeFeedback, TouchableOpacity, View
-} from "react-native";
+import { Dimensions, Image, TouchableOpacity, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { findTransactionsToPlot } from "../../../modules/FindTransactionsToPlot";
 import CoinsImg from "../../../src/assets/img/coins.png";
 import { ImgButton } from "../../components/Button";
 import { CustomBarChart } from "../../components/charts/CustomBarChart";
 import Loading from "../../components/Loading";
 import { MyBudgetsPreview } from "../../components/MyBudgetsPreview";
 import RecentTransactions from "../../components/RecentTransactions";
-import {
-  TextButtonPrimary,
-  TextPrimary,
-  TextSecondary
-} from "../../components/Text";
-import formatCurrency from "../../utils/formatCurrency";
-import { hexToRgb } from "../../utils/HexToRGB";
+import { TextPrimary, TextSecondary } from "../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -62,7 +53,7 @@ const DashboardScreen = ({ navigation }) => {
   const findTransactions = useMemo(() => {
     return () => {
       // console.log("findTransactions");
-      findTransactionsToPlot({
+      utils.FindTransactionsToPlot({
         expenseOnly: true,
         appSettings: appSettings,
         groupSorted: sortedTransactions.groupSorted,
@@ -299,7 +290,7 @@ const DashboardScreen = ({ navigation }) => {
                                     fontWeight: "bold",
                                     color: appSettings.theme.style.colors.black,
                                   }}
-                                  label={formatCurrency({
+                                  label={utils.FormatCurrency({
                                     amount: activeBudget.spent,
                                     currency: appSettings.currency.name,
                                   })}
@@ -348,7 +339,7 @@ const DashboardScreen = ({ navigation }) => {
                                 successColor={
                                   appSettings.theme.style.colors.success
                                 }
-                                primaryColor={hexToRgb({
+                                primaryColor={utils.HexToRgb({
                                   hex: appSettings.theme.style.colors.white,
                                   opacity: 0.1,
                                 })}
@@ -358,7 +349,7 @@ const DashboardScreen = ({ navigation }) => {
                                 warnBudgetBarColor={
                                   appSettings.theme.style.colors.warn
                                 }
-                                shadowBarColor={hexToRgb({
+                                shadowBarColor={utils.HexToRgb({
                                   hex: appSettings.theme.style.colors.success,
                                   opacity: 0,
                                 })}

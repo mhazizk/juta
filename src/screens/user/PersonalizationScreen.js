@@ -1,9 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  Image, StyleSheet, Text,
-  TouchableNativeFeedback, View
-} from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 import APP_SETTINGS from "../../config/appSettings";
@@ -12,7 +8,6 @@ import {
   useGlobalTransactions
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
-import ModalScreen from "../ModalScreen";
 
 const PersonalizationScreen = ({ item, navigation }) => {
   const { state, dispatch } = useGlobalTransactions();

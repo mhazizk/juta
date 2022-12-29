@@ -1,16 +1,6 @@
 // import { useContext, useMemo } from "react";
-import userCategories from "../database/userCategories";
-import userLogBooks from "../database/userLogBooks";
-import {
-  GlobalSettingsContext,
-  useGlobalUserAccount,
-  useGlobalAppSettings,
-  useGlobalTransactions,
-} from "../reducers/GlobalContext";
-import { ACTIONS } from "../reducers/GlobalReducer";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
-import { asyncStorage, STORAGE_ACTIONS } from "./Storage";
+import persistStorage from "../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 
 // ! Convert and Save Transaction File
 export const convertAndSaveTransctions = async (sortedTransactions) => {
@@ -25,18 +15,21 @@ export const convertAndSaveTransctions = async (sortedTransactions) => {
           )
         )
     );
-    await AsyncStorage.setItem(
-      "transactions",
-      JSON.stringify(transactionsToBeSaved),
-      alert("saved")
-    );
+    await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.SET,
+      key: "transaction",
+      rawValue: JSON.stringify(transactionsToBeSaved),
+    });
   }
 };
 
 // ! Get Transaction File from storage
 export const getTransactionsFromStorage = async () => {
   try {
-    const json = await AsyncStorage.getItem("transactions");
+    const json = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "transaction",
+    });
     if (json != null) {
       const parsed = JSON.parse(json);
       return parsed;
@@ -49,7 +42,10 @@ export const getTransactionsFromStorage = async () => {
 // ! Get Categories File from Storage
 export const getCategoriesFromStorage = async () => {
   try {
-    const json = await AsyncStorage.getItem("categories");
+    const json = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "categories",
+    });
     if (json != null) {
       const parsed = JSON.parse(json);
       return parsed;
@@ -62,7 +58,11 @@ export const getCategoriesFromStorage = async () => {
 // ! Get Logbooks File from Storage
 export const getLogbooksFromStorage = async () => {
   try {
-    const json = await AsyncStorage.getItem("logbooks");
+    const json = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "logbooks",
+    });
+
     if (json != null) {
       const parsed = JSON.parse(json);
       return parsed;
@@ -87,7 +87,7 @@ const groupTransactionsByLogbook = (transactions) => {
   const grouped = Object.values(
     transactions.reduce((group, transaction) => {
       group[transaction.logbook_id] = group[transaction.logbook_id] || {
-        logbook_id: transaction.logbook_id,
+        logbook_id: transaction?.logbook_id,
         transactions: [],
       };
       group[transaction.logbook_id].transactions.push(transaction);
@@ -166,16 +166,16 @@ const groupByDate = (array) => {
 
 // ! New Sorted Transactions //
 export const initSortedTransactions = async () => {
-  const loadTransactions = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadTransactions = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "transactions",
   });
-  const loadLogbooks = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadLogbooks = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "logbooks",
   });
-  const loadCategories = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadCategories = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "categories",
   });
 
@@ -190,16 +190,16 @@ export const initSortedTransactions = async () => {
 // ! Set Sorted Transactions //
 export const setSortedTransactions = async (updatedTransactions = null) => {
   // try {
-  const loadTransactions = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadTransactions = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "transactions",
   });
-  const loadLogbooks = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadLogbooks = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "logbooks",
   });
-  const loadCategories = asyncStorage({
-    action: STORAGE_ACTIONS.GET,
+  const loadCategories = persistStorage.asyncStorage({
+    action: PERSIST_ACTIONS.GET,
     key: "categories",
   });
 

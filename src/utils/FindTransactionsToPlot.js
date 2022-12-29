@@ -1,13 +1,5 @@
-import {
-  findCategoryColorById,
-  findCategoryIconNameById,
-  findCategoryNameById,
-  findLogbookById,
-} from "./FindById";
-import {
-  useGlobalAppSettings,
-  useGlobalSortedTransactions,
-} from "../reducers/GlobalContext";
+// import * as utils from "../utils";
+import FindById from "../utils/FindById";
 
 const findTransactionsToPlot = ({
   groupSorted,
@@ -47,23 +39,23 @@ const findTransactionsToPlot = ({
               transaction.details.date >=
                 today - 1000 * 60 * 60 * 24 * graph.rangeDay
             ) {
-              const iconColor = findCategoryColorById({
-                id: transaction.details.category_id,
+              const iconColor = FindById.findCategoryColorById({
+                id: transaction?.details.category_id,
                 categories: categories.categories,
               });
-              const iconName = findCategoryIconNameById({
-                id: transaction.details.category_id,
+              const iconName = FindById.findCategoryIconNameById({
+                id: transaction?.details.category_id,
                 categories: categories.categories,
               });
-              const iconPack = findCategoryIconNameById({
-                id: transaction.details.category_id,
+              const iconPack = FindById.findCategoryIconNameById({
+                id: transaction?.details.category_id,
                 categories: categories.categories,
               });
-              const categoryName = findCategoryNameById({
-                id: transaction.details.category_id,
+              const categoryName = FindById.findCategoryNameById({
+                id: transaction?.details.category_id,
                 categories: categories.categories,
               });
-              const foundLogbook = findLogbookById({
+              const foundLogbook = FindById.findLogbookById({
                 id: logbook.logbook_id,
                 logbooks: logbooks.logbooks,
               });

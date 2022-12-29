@@ -1,23 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import {
-    Image, StyleSheet, Text,
+    StyleSheet, Text,
     TouchableNativeFeedback, View
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
-    globalStyles,
-    globalTheme
+    globalStyles
 } from "../../../src/assets/themes/globalStyles";
-import UserHeaderComponent from "../../components/UserHeader";
-import APP_SETTINGS from "../../config/appSettings";
 import LargeJSONTransactions from "../../database/largeTransactions.json";
 import userCategories from "../../database/userCategories";
 import userLogBooks from "../../database/userLogBooks";
 import userTransactions from "../../database/userTransactions";
 import { setSortedTransactions } from "../../utils/FetchData";
-import { asyncSecureStorage, STORAGE_ACTIONS } from "../../utils/Storage";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import {
     useGlobalAppSettings,
     useGlobalSortedTransactions,
@@ -25,7 +23,6 @@ import {
     useGlobalUserAccount
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
-import ModalScreen from "../ModalScreen";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -232,7 +229,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
-                action: STORAGE_ACTIONS.SET,
+                action: PERSIST_ACTIONS.SET,
                 key: "account",
                 rawValue: {
                   profile: {
@@ -267,7 +264,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
-                action: STORAGE_ACTIONS.GET,
+                action: PERSIST_ACTIONS.GET,
                 key: "account",
               }).then((item) => {
                 alert("account loaded");
@@ -380,7 +377,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
-                action: STORAGE_ACTIONS.GET,
+                action: PERSIST_ACTIONS.GET,
                 key: "token",
               }).then((item) => console.log(item))
             }
@@ -466,7 +463,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
-                action: STORAGE_ACTIONS.DELETE,
+                action: PERSIST_ACTIONS.DELETE,
                 key: "token",
               })
             }

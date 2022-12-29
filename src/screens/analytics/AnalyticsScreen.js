@@ -1,40 +1,12 @@
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  ScrollView,
-  Text,
-  TouchableHighlight,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import {
-  BarChart,
-  ContributionGraph,
-  LineChart,
-  PieChart,
-  ProgressChart,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { Dimensions, FlatList, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { ButtonSwitch, oldButtonSwitch } from "../../components/Button";
-import ChartComponent from "../../components/Chart";
+import { ButtonSwitch } from "../../components/Button";
 import { CustomBarChart } from "../../components/charts/CustomBarChart";
-import { ListItem, TransactionListItem } from "../../components/List";
+import { TransactionListItem } from "../../components/List";
 import Loading from "../../components/Loading";
 import { TextPrimary, TextSecondary } from "../../components/Text";
-import {
-  findCategoryColorById,
-  findCategoryIconNameById,
-  findCategoryNameById,
-  findLogbookById,
-} from "../../../modules/FindById";
-import { findTransactionsToPlot } from "../../../modules/FindTransactionsToPlot";
-import formatCurrency from "../../utils/formatCurrency";
-import { getSpentList } from "../../utils/GetSpentList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -42,7 +14,7 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
-import { hexToRgb } from "../../utils/HexToRgb";
+import * as utils from "../../utils";
 
 const AnalyticsScreen = () => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -75,7 +47,7 @@ const AnalyticsScreen = () => {
 
   const findTransactions = useMemo(() => {
     return () => {
-      findTransactionsToPlot({
+      utils.FindTransactionsToPlot({
         expenseOnly: true,
         appSettings: appSettings,
         groupSorted: sortedTransactions.groupSorted,
@@ -94,7 +66,7 @@ const AnalyticsScreen = () => {
 
   const categorizeSpentList = useMemo(() => {
     return () => {
-      getSpentList({
+      utils.GetSpentList({
         expenseOnly: true,
         groupSorted: sortedTransactions.groupSorted,
         categories: categories.categories,
@@ -223,7 +195,7 @@ const AnalyticsScreen = () => {
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
-                        label={formatCurrency({
+                        label={utils.FormatCurrency({
                           amount: activeBudget.spent,
                           currency: appSettings.currency.name,
                         })}
@@ -257,7 +229,7 @@ const AnalyticsScreen = () => {
                     primaryColor={appSettings.theme.style.colors.foreground}
                     overBudgetBarColor={appSettings.theme.style.colors.danger}
                     warnBudgetBarColor={appSettings.theme.style.colors.warn}
-                    shadowBarColor={hexToRgb({
+                    shadowBarColor={utils.HexToRgb({
                       hex: appSettings.theme.style.colors.secondary,
                       opacity: 0.5,
                     })}
@@ -350,7 +322,7 @@ const AnalyticsScreen = () => {
                       item?.category.name[0].toUpperCase() +
                       item?.category.name.slice(1)
                     }
-                    rightLabel={formatCurrency({
+                    rightLabel={utils.FormatCurrency({
                       amount: item?.totalSpent,
                       currency: appSettings.currency.name,
                     })}

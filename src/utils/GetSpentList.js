@@ -1,10 +1,3 @@
-import {
-  findCategoryColorById,
-  findCategoryIconNameById,
-  findCategoryIconPackById,
-  findCategoryNameById,
-  findCategoryTypeById,
-} from "./FindById";
 
 const getSpentList = ({
   groupSorted,

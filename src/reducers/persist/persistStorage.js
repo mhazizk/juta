@@ -1,16 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
-
-const STORAGE_ACTIONS = {
-  SET: "SET",
-  GET: "GET",
-  DELETE: "DELETE",
-};
+import PERSIST_ACTIONS from "./persist.actions";
 
 // ! Async Secure Storage
 const asyncSecureStorage = async ({ action, key, rawValue }) => {
   // Save Secure Data
-  if (action === STORAGE_ACTIONS.SET) {
+  if (action === PERSIST_ACTIONS.SET) {
     try {
       await SecureStore.setItemAsync(key, JSON.stringify(rawValue));
     } catch (error) {
@@ -19,7 +14,7 @@ const asyncSecureStorage = async ({ action, key, rawValue }) => {
   }
 
   // Get Secure Data
-  if (action === STORAGE_ACTIONS.GET) {
+  if (action === PERSIST_ACTIONS.GET) {
     try {
       const get = await SecureStore.getItemAsync(key);
       if (get) {
@@ -31,7 +26,7 @@ const asyncSecureStorage = async ({ action, key, rawValue }) => {
   }
 
   // Delete Secure Data
-  if (action === STORAGE_ACTIONS.DELETE) {
+  if (action === PERSIST_ACTIONS.DELETE) {
     try {
       await SecureStore.deleteItemAsync(key);
     } catch (error) {
@@ -43,7 +38,7 @@ const asyncSecureStorage = async ({ action, key, rawValue }) => {
 // ! Async Standard Storage
 const asyncStorage = async ({ action, key, rawValue }) => {
   // Save Data
-  if (action === STORAGE_ACTIONS.SET) {
+  if (action === PERSIST_ACTIONS.SET) {
     try {
       await AsyncStorage.setItem(
         key,
@@ -56,7 +51,7 @@ const asyncStorage = async ({ action, key, rawValue }) => {
   }
 
   // Get Data
-  if (action === STORAGE_ACTIONS.GET) {
+  if (action === PERSIST_ACTIONS.GET) {
     try {
       const get = await AsyncStorage.getItem(key);
       if (get) {
@@ -68,7 +63,7 @@ const asyncStorage = async ({ action, key, rawValue }) => {
   }
 
   // Delete Data
-  if (action === STORAGE_ACTIONS.DELETE) {
+  if (action === PERSIST_ACTIONS.DELETE) {
     try {
       await AsyncStorage.removeItem(key, alert("item deleted"));
     } catch (error) {
@@ -77,7 +72,7 @@ const asyncStorage = async ({ action, key, rawValue }) => {
   }
 };
 
-export const storage = {
+export default {
   asyncSecureStorage,
   asyncStorage,
 };

@@ -1,26 +1,18 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { lightTheme } from "../../assets/themes/lightTheme";
+import { setSortedTransactions } from "../../utils/FetchData";
 import {
-    getCategoriesFromStorage,
-    getLogbooksFromStorage,
-    getTransactionsFromStorage,
-    setSortedTransactions
-} from "../../utils/FetchData";
-import {
-    asyncSecureStorage,
-    asyncStorage,
-    STORAGE_ACTIONS
-} from "../../utils/Storage";
-import {
-    useGlobalAppSettings,
-    useGlobalLoading,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalLoading,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 
 const SplashScreen = ({ navigation }) => {
   const { isLoading, dispatchLoading } = useGlobalLoading();
@@ -58,8 +50,8 @@ const SplashScreen = ({ navigation }) => {
 
   const loadInitialState = async () => {
     // Initial load app settings
-    const loadAppSettings = await asyncStorage({
-      action: STORAGE_ACTIONS.GET,
+    const loadAppSettings = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
       key: "appSettings",
     });
 
@@ -70,7 +62,7 @@ const SplashScreen = ({ navigation }) => {
           theme: { name: "Light Theme", id: "light", style: lightTheme },
           fontSize: "medium",
           language: "english",
-          locale: "us-EN",
+          locale: "en-US",
           currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
           screenHidden: [],
         },
@@ -78,8 +70,8 @@ const SplashScreen = ({ navigation }) => {
     }
 
     // Load Account from Storage
-    const loadAccount = await asyncSecureStorage({
-      action: STORAGE_ACTIONS.GET,
+    const loadAccount = await persistStorage.asyncSecureStorage({
+      action: PERSIST_ACTIONS.GET,
       key: "account",
     });
 

@@ -5,11 +5,11 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
-import formatCurrency from "../../utils/formatCurrency";
 import {
   useGlobalAppSettings,
-  useGlobalBudgets
+  useGlobalBudgets,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -172,7 +172,7 @@ const NewBudgetScreen = ({ navigation }) => {
               inputType: "number",
               default: !newBudget.limit
                 ? null
-                : formatCurrency({
+                : utils.FormatCurrency({
                     amount: newBudget.limit,
                     currency: appSettings.currency.name,
                   }),
@@ -240,11 +240,13 @@ const NewBudgetScreen = ({ navigation }) => {
                 <TextPrimary
                   label={
                     newBudget.limit > 15
-                      ? formatCurrency({
-                          amount: newBudget.limit,
-                          currency: appSettings.currency.name,
-                        }).slice(0, 15) + "..."
-                      : formatCurrency({
+                      ? utils
+                          .FormatCurrency({
+                            amount: newBudget.limit,
+                            currency: appSettings.currency.name,
+                          })
+                          .slice(0, 15) + "..."
+                      : utils.FormatCurrency({
                           amount: newBudget.limit,
                           currency: appSettings.currency.name,
                         })

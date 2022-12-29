@@ -1,6 +1,7 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import Intl from "intl";
-import "intl/locale-data/jsonp/en";
+// import Intl from "intl";
+// import { getLocales } from 'expo-localization';
+// import "intl/locale-data/jsonp/en";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScrollView,
@@ -8,7 +9,7 @@ import {
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -17,7 +18,7 @@ import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
   ButtonPrimary,
   ButtonSecondary,
-  ButtonSwitch
+  ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import {
@@ -26,8 +27,9 @@ import {
   useGlobalLoading,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalTransactions
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // ! useContext Section //
@@ -96,7 +98,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     if (selectedLogbook) {
       setLogbookToOpen({
         name: selectedLogbook.name,
-        logbook_id: transaction.logbook_id,
+        logbook_id: transaction?.logbook_id,
         logbook_currency: selectedLogbook.logbook_currency,
         key: transaction.logbook_id,
       });
@@ -241,11 +243,18 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   textAlign="center"
                   returnKeyType="done"
                   keyboardType="number-pad"
-                  placeholder={Intl.NumberFormat("en-US", {
-                    style: "decimal",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }).format(transaction.details.amount)}
+                  // placeholder={Intl.NumberFormat("en-US", {
+                  //   style: "decimal",
+                  //   minimumFractionDigits: 2,
+                  //   maximumFractionDigits: 2,
+                  // }).format(transaction.details.amount)}
+                  // placeholderTextColor={
+                  //   appSettings.theme.style.text.textSecondary.color
+                  // }
+                  placeholder={utils.GetFormattedNumber({
+                    value: transaction.details.amount,
+                    currency: appSettings.currency.name,
+                  })}
                   placeholderTextColor={
                     appSettings.theme.style.text.textSecondary.color
                   }
@@ -280,16 +289,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     });
                   }}
                   clearButtonMode="while-editing"
-                  defaultValue={Intl.NumberFormat("en-US", {
-                    style: "decimal",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }).format(transaction.details.amount)}
-                  value={Intl.NumberFormat("en-US", {
-                    style: "decimal",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }).format(transaction.details.amount)}
+                  defaultValue={utils.GetFormattedNumber({
+                    value: transaction.details.amount,
+                    currency: appSettings.currency.name,
+                  })}
+                  value={utils.GetFormattedNumber({
+                    value: transaction.details.amount,
+                    currency: appSettings.currency.name,
+                  })}
                 />
               </View>
               {transaction?.details?.amount !== 0 && (
