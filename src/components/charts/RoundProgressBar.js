@@ -1,7 +1,7 @@
 import { Dimensions, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import { hexToRgb } from "../../utils/HexToRGB";
+import * as utils from "../../utils";
 import { TextPrimary } from "../Text";
 
 export const RoundProgressBar = ({
@@ -40,8 +40,8 @@ export const RoundProgressBar = ({
             decimalPlaces: 2, // optional, defaults to 2dp
             color: (opacity = 1) =>
               color
-                ? hexToRgb({ hex: color, opacity: opacity })
-                : hexToRgb({
+                ? utils.HexToRgb({ hex: color, opacity: opacity })
+                : utils.HexToRgb({
                     hex:
                       spent / limit >= 1
                         ? appSettings.theme.style.colors.danger
@@ -52,7 +52,7 @@ export const RoundProgressBar = ({
                   }),
             // color: (opacity = 1) =>appSettings.theme.style.colors.primary,
             labelColor: (opacity = 0.5) =>
-              hexToRgb({
+              utils.HexToRgb({
                 hex: appSettings.theme.style.colors.primary,
                 opacity: opacity,
               }),
@@ -83,7 +83,8 @@ export const RoundProgressBar = ({
             label={`${parseFloat((spent / limit) * 100).toFixed(0)}%`}
             style={{
               fontSize: fontSize || 34,
-              color: fontColor || appSettings.theme.style.text.textPrimary.color,
+              color:
+                fontColor || appSettings.theme.style.text.textPrimary.color,
             }}
           />
           {label && <TextPrimary label={label} />}

@@ -71,6 +71,7 @@ const MyLogbooksScreen = ({ navigation }) => {
                   }
                   iconLeftName="book"
                   iconRightName="chevron-forward"
+                  iconPack="IonIcons"
                   onPress={() => {
                     navigation.navigate("Logbook Preview Screen", {
                       logbook: item,
@@ -84,6 +85,7 @@ const MyLogbooksScreen = ({ navigation }) => {
                 <ListItem
                   pressable
                   leftLabel="Add New Logbook"
+                  iconPack="IonIcons"
                   iconLeftName="add-circle"
                   onPress={() =>
                     navigation.navigate("Modal Screen", {

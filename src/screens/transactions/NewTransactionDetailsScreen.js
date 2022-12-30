@@ -69,6 +69,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // ! useEffect Section //
 
   useEffect(() => {
+    getFirstLogbook();
+
     insertNameInUserLogBook();
 
     setTransaction({
@@ -109,7 +111,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // refresh
-    console.log(selectedLogbook);
+    console.log({ selectedLogbook });
   }, [selectedLogbook]);
 
   useEffect(() => {
@@ -204,6 +206,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     }
   };
 
+  const getFirstLogbook = () => {
+    if (logbooks.logbooks.length > 0) {
+      setSelectedLogbook({
+        name: logbooks.logbooks[0].logbook_name,
+        logbook_id: logbooks.logbooks[0].logbook_id,
+        logbook_currency: logbooks.logbooks[0].logbook_currency,
+      });
+
+      setTransaction({
+        ...transaction,
+        logbook_id: logbooks.logbooks[0].logbook_id,
+      });
+    }
+  };
+
   return (
     <>
       {!isLoading.status && transaction && (
@@ -257,10 +274,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   textAlign="center"
                   returnKeyType="done"
                   keyboardType="number-pad"
-                  placeholder={utils.GetFormattedNumber({
-                    value: transaction.details.amount,
-                    currency: appSettings.currency.name,
-                  })}
+                  // placeholder={utils.GetFormattedNumber({
+                  //   value: transaction.details.amount,
+                  //   currency: appSettings.currency.name,
+                  // })}
                   placeholderTextColor={
                     appSettings.theme.style.text.textSecondary.color
                   }
@@ -278,11 +295,14 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     },
                   ]}
                   onChangeText={(string) => {
-                    const float = string
-                      ? parseFloat(
-                          parseFloat(string.replace(/,/g, "")).toFixed(2)
-                        )
-                      : 0;
+                    let float = 0;
+                    if (string) {
+                      console.log({ string });
+                      float = utils.RemoveNumberSeparator({
+                        value: string,
+                        currency: selectedLogbook.logbook_currency.name,
+                      });
+                    }
                     setTransaction({
                       ...transaction,
                       details: {
@@ -294,13 +314,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   clearButtonMode="while-editing"
                   defaultValue={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-
-                    currency: appSettings.currency.name,
+                    currency: selectedLogbook.logbook_currency.name,
                   })}
                   value={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-
-                    currency: appSettings.currency.name,
+                    currency: selectedLogbook.logbook_currency.name,
                   })}
                 />
               </View>

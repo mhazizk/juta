@@ -183,8 +183,8 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 inputType: "number",
                 default: !patchBudget.limit
                   ? null
-                  : utils.FormatCurrency({
-                      amount: patchBudget.limit,
+                  : utils.GetFormattedNumber({
+                      value: patchBudget.limit,
                       currency: appSettings.currency.name,
                     }),
                 selected: (string) => {
@@ -254,13 +254,13 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     label={
                       patchBudget.limit > 15
                         ? utils
-                            .FormatCurrency({
-                              amount: patchBudget.limit,
+                            .GetFormattedNumber({
+                              value: patchBudget.limit,
                               currency: appSettings.currency.name,
                             })
                             .slice(0, 15) + "..."
-                        : utils.FormatCurrency({
-                            amount: patchBudget.limit,
+                        : utils.GetFormattedNumber({
+                            value: patchBudget.limit,
                             currency: appSettings.currency.name,
                           })
                     }

@@ -1,30 +1,18 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer, TabActions } from "@react-navigation/native";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
 // Screens
 import { useState } from "react";
-import LogBookTab from "../components/LogBookTab";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
-import DashboardScreen from "../screens/dashboard/DashboardScreen";
 import ActionScreen from "../screens/modal/ActionScreen";
-import SearchScreen from "../screens/search/SearchScreen";
 import UserScreen from "../screens/user/UserScreen";
-import DashboardStack from "./DashboardStack";
-import LogBooksStack from "./LogBookStack";
-import SearchStack from "./SearchStack";
-import UserStack from "./UserStack";
+import DashboardScreen from "../screens/dashboard/DashboardScreen";
+import LogBookScreen from "../screens/logbook/LogBookScreen";
+import SearchScreen from "../screens/search/SearchScreen";
+import screenList from "./ScreenList";
 
-// Screen names
-const stacks = {
-  dashboardStack: "Dashboard Stack",
-  logBookStack: "Log Book Stack",
-  actionStack: "Action Stack",
-  searchStack: "Search Stack",
-  userStack: "User Stack",
-};
 
 const Tab = createBottomTabNavigator();
 
@@ -35,19 +23,19 @@ const BottomTab = ({ route, navigation }) => {
   return (
     <>
       <Tab.Navigator
-        initialRouteName={stacks.dashboardStack}
+        initialRouteName={screenList.dashboardScreen}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             let rn = route.name;
 
-            if (rn === stacks.dashboardStack) {
+            if (rn === screenList.dashboardScreen) {
               iconName = focused ? "analytics" : "analytics-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
-            } else if (rn === stacks.logBookStack) {
+            } else if (rn === screenList.logBookScreen) {
               iconName = focused ? "book" : "book-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
-            } else if (rn === stacks.actionStack) {
+            } else if (rn === screenList.actionScreen) {
               iconName = focused ? "plus" : "plus";
               return (
                 <View
@@ -67,10 +55,10 @@ const BottomTab = ({ route, navigation }) => {
                   />
                 </View>
               );
-            } else if (rn === stacks.searchStack) {
+            } else if (rn === screenList.searchScreen) {
               iconName = focused ? "search" : "search-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
-            } else if (rn === stacks.userStack) {
+            } else if (rn === screenList.userScreen) {
               iconName = focused ? "person" : "person-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
             }
@@ -96,15 +84,25 @@ const BottomTab = ({ route, navigation }) => {
           tabBarHideOnKeyboard: true,
         })}
       >
+        {/* <Tab.Screen
+          options={{ title: "Dashboard" }}
+          name={screenList.dashboardStack}
+          component={DashboardStack}
+        /> */}
         <Tab.Screen
           options={{ title: "Dashboard" }}
-          name={stacks.dashboardStack}
-          component={DashboardStack}
+          name={screenList.dashboardScreen}
+          component={DashboardScreen}
         />
+        {/* <Tab.Screen
+          options={{ title: "Log Book" }}
+          name={screenList.logBookStack}
+          component={LogBooksStack}
+        /> */}
         <Tab.Screen
           options={{ title: "Log Book" }}
-          name={stacks.logBookStack}
-          component={LogBooksStack}
+          name={screenList.logBookScreen}
+          component={LogBookScreen}
         />
         <Tab.Screen
           options={{
@@ -115,7 +113,7 @@ const BottomTab = ({ route, navigation }) => {
             },
             tabBarActiveTintColor: appSettings.theme.style.colors.background,
           }}
-          name={stacks.actionStack}
+          name={screenList.actionScreen}
           component={ActionScreen}
           listeners={() => ({
             tabPress: (e) => {
@@ -124,16 +122,26 @@ const BottomTab = ({ route, navigation }) => {
             },
           })}
         />
+        {/* <Tab.Screen
+          options={{ title: "Search" }}
+          name={screenList.searchStack}
+          component={SearchStack}
+        /> */}
         <Tab.Screen
           options={{ title: "Search" }}
-          name={stacks.searchStack}
-          component={SearchStack}
+          name={screenList.searchScreen}
+          component={SearchScreen}
         />
         <Tab.Screen
           options={{ title: "Settings" }}
-          name={stacks.userStack}
-          component={UserStack}
+          name={screenList.userScreen}
+          component={UserScreen}
         />
+        {/* <Tab.Screen
+          options={{ title: "Settings" }}
+          name={screenList.userStack}
+          component={UserStack}
+        /> */}
       </Tab.Navigator>
     </>
   );

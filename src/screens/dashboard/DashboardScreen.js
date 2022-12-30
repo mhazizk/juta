@@ -290,8 +290,8 @@ const DashboardScreen = ({ navigation }) => {
                                     fontWeight: "bold",
                                     color: appSettings.theme.style.colors.black,
                                   }}
-                                  label={utils.FormatCurrency({
-                                    amount: activeBudget.spent,
+                                  label={utils.GetFormattedNumber({
+                                    value: activeBudget.spent,
                                     currency: appSettings.currency.name,
                                   })}
                                 />

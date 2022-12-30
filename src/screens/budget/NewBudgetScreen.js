@@ -172,8 +172,8 @@ const NewBudgetScreen = ({ navigation }) => {
               inputType: "number",
               default: !newBudget.limit
                 ? null
-                : utils.FormatCurrency({
-                    amount: newBudget.limit,
+                : utils.GetFormattedNumber({
+                    value: newBudget.limit,
                     currency: appSettings.currency.name,
                   }),
               selected: (string) => {
@@ -241,13 +241,13 @@ const NewBudgetScreen = ({ navigation }) => {
                   label={
                     newBudget.limit > 15
                       ? utils
-                          .FormatCurrency({
-                            amount: newBudget.limit,
+                          .GetFormattedNumber({
+                            value: newBudget.limit,
                             currency: appSettings.currency.name,
                           })
                           .slice(0, 15) + "..."
-                      : utils.FormatCurrency({
-                          amount: newBudget.limit,
+                      : utils.GetFormattedNumber({
+                          value: newBudget.limit,
                           currency: appSettings.currency.name,
                         })
                   }

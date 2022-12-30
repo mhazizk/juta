@@ -6,11 +6,11 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   globalStyles,
   globalTheme
-} from "../../../src/assets/themes/globalStyles";
+} from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 
-const DataScreen = ({ item, navigation }) => {
+const DataSettingsScreen = ({ item, navigation }) => {
   return (
     <>
       <View style={{ height: "100%", backgroundColor: "#fff" }}>
@@ -81,4 +81,4 @@ const styles = new StyleSheet.create({
   },
 });
 
-export default DataScreen;
+export default DataSettingsScreen;

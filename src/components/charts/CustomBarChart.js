@@ -9,7 +9,8 @@ import {
   VictoryScatter,
 } from "victory-native";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import { hexToRgb } from "../../utils/HexToRGB";
+import * as utils from "../../utils";
+// import {get} from 'date-fns'
 
 export const CustomBarChart = ({
   //   Graph Data
@@ -57,9 +58,10 @@ export const CustomBarChart = ({
     backgroundGradientToOpacity: 0,
     fillShadowGradientFrom: "#ff0000",
     fillShadowGradientTo: "#fff000",
-    color: (opacity = 1) => hexToRgb({ hex: successColor, opacity: opacity }),
+    color: (opacity = 1) =>
+      utils.HexToRgb({ hex: successColor, opacity: opacity }),
     labelColor: (opacity = 1) =>
-      hexToRgb({ hex: successColor, opacity: opacity }),
+      utils.HexToRgb({ hex: successColor, opacity: opacity }),
     strokeWidth: 2, // optional, default 3
     barPercentage: 1,
     useShadowColorFromDataset: false, // optional
@@ -122,17 +124,26 @@ export const CustomBarChart = ({
                 if (showAxisLabels) {
                   switch (rangeDay) {
                     case 7:
-                      return datum.x;
+                      return new Date(datum.epochDate)
+                        .toDateString()
+                        .slice(0, 3);
+                    // return datum.x;
                     case 30:
                       return [
                         new Date(datum.epochDate).getDate(),
-                        new Date(datum.epochDate).toLocaleDateString(
-                          appSettings.locale,
-                          { month: "short" }
-                        ),
+                        new Date(datum.epochDate).toDateString().slice(4, 7),
+                        // new Date(datum.epochDate).toDateString().split(" ")[0],
+                        // new Date(datum.epochDate).toLocaleDateString(
+                        //   appSettings.locale,
+                        //   { month: "short" }
+                        // ),
                       ];
                     case 365:
-                      return [datum.x, datum.year];
+                      return [
+                        new Date(datum.x).toDateString().slice(4, 7),
+                        datum.year,
+                      ];
+                    // return [datum.x, datum.year];
 
                     default:
                       return datum.x;
@@ -278,8 +289,8 @@ export const CustomBarChart = ({
                     strokeLinecap: "round",
                     strokeLinejoin: "round",
                     strokeWidth: 3,
-                    // stroke: hexToRgb({ hex: textColor, opacity: 0.5 }),
-                    stroke: hexToRgb({
+                    // stroke: utils.HexToRgb({ hex: textColor, opacity: 0.5 }),
+                    stroke: utils.HexToRgb({
                       hex: appSettings.theme.style.colors.foreground,
                       opacity: 1,
                     }),

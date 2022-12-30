@@ -2,9 +2,7 @@ import { Dimensions, TouchableOpacity, View } from "react-native";
 import TextTicker from "react-native-text-ticker";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { dailyLimit } from "../utils/DailyLimit";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
-import { hexToRgb } from "../utils/HexToRGB";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
 import { TextButtonPrimary, TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
@@ -183,7 +181,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: hexToRgb({
+                    backgroundColor: utils.HexToRgb({
                       hex: appSettings.theme.style.colors.foreground,
                     }),
                   }}
@@ -209,8 +207,8 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.FormatCurrency({
-                        amount: limit,
+                      label={utils.GetFormattedNumber({
+                        value: limit,
                         currency: appSettings.currency.name,
                       })}
                     />
@@ -235,7 +233,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: hexToRgb({
+                    backgroundColor: utils.HexToRgb({
                       hex:
                         spent / limit >= 1
                           ? appSettings.theme.style.colors.danger
@@ -266,8 +264,8 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.FormatCurrency({
-                        amount: spent,
+                      label={utils.GetFormattedNumber({
+                        value: spent,
                         currency: appSettings.currency.name,
                       })}
                     />
@@ -291,7 +289,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: hexToRgb({
+                    backgroundColor: utils.HexToRgb({
                       opacity: 0.4,
                       hex:
                         spent / limit >= 1
@@ -323,8 +321,8 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.FormatCurrency({
-                        amount: limit - spent,
+                      label={utils.GetFormattedNumber({
+                        value: limit - spent,
                         currency: appSettings.currency.name,
                       })}
                     />
@@ -389,8 +387,8 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.currency.symbol
-                    } ${utils.FormatCurrency({
-                      amount: dailyLimit({
+                    } ${utils.GetFormattedNumber({
+                      value: utils.DailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
@@ -432,8 +430,8 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.currency.symbol
-                    } ${utils.FormatCurrency({
-                      amount: dailyLimit({
+                    } ${utils.GetFormattedNumber({
+                      value: utils.DailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,

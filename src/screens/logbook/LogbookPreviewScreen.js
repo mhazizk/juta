@@ -228,8 +228,8 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 ]}
               >
                 <TextPrimary
-                  label={`${utils.FormatCurrency({
-                    amount: sumBalance(),
+                  label={`${utils.GetFormattedNumber({
+                    value: sumBalance(),
                     currency: appSettings.currency.name,
                   })}`}
                   style={{ paddingLeft: 8 }}

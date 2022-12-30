@@ -275,11 +275,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     },
                   ]}
                   onChangeText={(string) => {
-                    const float = string
-                      ? parseFloat(
-                          parseFloat(string.replace(/,/g, "")).toFixed(2)
-                        )
-                      : 0;
+                    let float = 0;
+                    if (string) {
+                      console.log({ string });
+                      float = utils.RemoveNumberSeparator({
+                        value: string,
+                        currency: selectedLogbook.logbook_currency.name,
+                      });
+                    }
                     setTransaction({
                       ...transaction,
                       details: {
@@ -291,11 +294,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   clearButtonMode="while-editing"
                   defaultValue={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-                    currency: appSettings.currency.name,
+                    currency: selectedLogbook.logbook_currency.name,
                   })}
                   value={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-                    currency: appSettings.currency.name,
+                    currency: selectedLogbook.logbook_currency.name,
                   })}
                 />
               </View>

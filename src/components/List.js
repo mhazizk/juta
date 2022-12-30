@@ -169,10 +169,16 @@ export const TransactionListItem = ({
                       style={{ paddingHorizontal: 8 }}
                     />
                     <TextSecondary
-                      label={new Date(transactionHour).toLocaleTimeString(
-                        appSettings.locale,
-                        { hour: "2-digit", minute: "2-digit" }
-                      )}
+                      // label={new Date(transactionHour).toLocaleTimeString(
+                      //   appSettings.locale,
+                      //   { hour: "2-digit", minute: "2-digit" }
+                      // )}
+                      label={
+                        new Date(transactionHour).getHours() +
+                        ":" +
+                        new Date(transactionHour).getMinutes()
+                      }
+                      // label={getTime(transactionHour)}
                       style={{ fontSize: 14 }}
                     />
                   </>
@@ -222,7 +228,7 @@ export const TransactionListItem = ({
                     // })}
                     label={utils.GetFormattedNumber({
                       value: transactionAmount,
-                      currency: appSettings.currency.name,
+                      currency: currency.name,
                     })}
                   />
                 </View>
@@ -338,10 +344,7 @@ export const SearchResultListItem = ({
                         label={utils.RelativeDate({
                           dateToCheck: transactionDate,
                           locale: appSettings.locale,
-                          currentDate: new Date().toLocaleString(
-                            appSettings.locale,
-                            { timeZone: appSettings.timeZone }
-                          ),
+                          currentDate: Date.now(),
                         })}
                         style={{ fontSize: 14 }}
                       />
@@ -352,10 +355,11 @@ export const SearchResultListItem = ({
                         style={{ paddingHorizontal: 8 }}
                       />
                       <TextSecondary
-                        label={new Date(transactionDate).toLocaleTimeString(
-                          appSettings.locale,
-                          { hour: "2-digit", minute: "2-digit" }
-                        )}
+                        label={
+                          new Date(transactionDate).getHours() +
+                          ":" +
+                          new Date(transactionDate).getMinutes()
+                        }
                         style={{ fontSize: 14 }}
                       />
                     </View>
@@ -405,8 +409,8 @@ export const SearchResultListItem = ({
                             ? appSettings.theme.style.colors.incomeAmount
                             : appSettings.theme.style.text.textPrimary.color,
                       }}
-                      label={utils.FormatCurrency({
-                        amount: transactionAmount,
+                      label={utils.GetFormattedNumber({
+                        value: transactionAmount,
                         currency: currency.name,
                       })}
                     />
@@ -539,8 +543,8 @@ export const CardList = ({
                   <IonIcons name="chevron-up" size={20} />
                   <TextPrimary label={`${(spent / limit) * 100}% spent`} />
                   <TextPrimary
-                    label={utils.FormatCurrency({
-                      amount: spent,
+                    label={utils.GetFormattedNumber({
+                      value: spent,
                       currency: appSettings.currency.name,
                     })}
                   />

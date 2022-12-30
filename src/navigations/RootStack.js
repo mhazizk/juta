@@ -39,47 +39,21 @@ import CategoryPreviewScreen from "../screens/categories/CategoryPreviewScreen";
 import EditCategoryScreen from "../screens/categories/EditCategoryScreen";
 import LogbookPreviewScren from "../screens/logbook/LogbookPreviewScreen";
 import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
+import CurrencySettingsScreen from "../screens/settings/CurrencySettingsScreen";
+import PersonalizationSettingsScreen from "../screens/settings/PersonalizationSettingsScreen";
+import AccountSettingsScreen from "../screens/settings/AccountSettingsScreen";
+import UserScreen from "../screens/user/UserScreen";
+import ProfileSettingsScreen from "../screens/settings/ProfileSettingsScreen";
+import DeveloperScreen from "../screens/user/DeveloperScreen";
+import DashboardScreen from "../screens/dashboard/DashboardScreen";
+import SearchScreen from "../screens/search/SearchScreen";
+import SettingsScreen from "../screens/settings/SettingsScreen";
+import AboutScreen from "../screens/settings/AboutScreen";
+import screenList from "./ScreenList";
+import LogBookScreen from "../screens/logbook/LogBookScreen";
 
 const Stack = createStackNavigator();
 
-const screens = {
-  // Main tab navigator
-  bottomTab: "Bottom Tab",
-
-  // First Screen to show
-  initialSplashScreen: "Initial Splash Screen",
-  initialSetupScreen: "Initial Setup Screen",
-  splashScreen: "Splash Screen",
-  onboardingScreen: "Onboarding Screen",
-
-  // Transactions Screen
-  transactionDetailsScreen: "Transaction Details Screen",
-  newTransactionDetailsScreen: "New Transaction Details Screen",
-  transactionPreviewScreen: "Transaction Preview Screen",
-
-  // User Screen
-  newCategoryScreen: "New Category Screen",
-  myCategoriesScreen: "My Categories Screen",
-  categoryPreviewScreen: "Category Preview Screen",
-  editCategoryScreen: "Edit Category Screen",
-  myLogbooksScreen: "My Logbooks Screen",
-  logbookPreviewScreen: "Logbook Preview Screen",
-  editLogbookScreen: "Edit Logbook Screen",
-
-  // Budget Screen
-  myBudgetsScreen: "My Budgets Screen",
-  newBudgetScreen: "New Budget Screen",
-  editBudgetScreen: "Edit Budget Screen",
-  budgetPreviewScreen: "Budget Preview Screen",
-
-  // Analytics Screen
-  analyticsScreen: "Analytics Screen",
-
-  // Modal Screen
-  modalScreen: "Modal Screen",
-  actionScreen: "Action Screen",
-  loadingScreen: "Loading Screen",
-};
 
 const RootStack = ({ navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -170,27 +144,110 @@ const RootStack = ({ navigation }) => {
     }
   };
 
+  const noHeader = {
+    headerShown: false,
+    title: "",
+  };
+
+  const showHeader = {
+    headerShown: true,
+    headerStyle: {
+      backgroundColor: appSettings?.theme?.style?.colors?.header,
+    },
+  };
+
+  const showHeaderNoBack = {
+    headerShown: true,
+    headerLeft: (leftHeader) => <></>,
+    headerStyle: {
+      backgroundColor: appSettings?.theme?.style?.colors?.header,
+    },
+  };
+
   return (
     <Stack.Navigator
-      initialRouteName={screens.onboardingScreen}
+      initialRouteName={screenList.onboardingScreen}
       screenOptions={{
         headerShown: false,
       }}
     >
+      {/* // ! Bottom Tab */}
+      <Stack.Screen
+        name={screenList.bottomTab}
+        options={{
+          ...noHeader,
+        }}
+        component={BottomTab}
+      />
+
+      {/* // ! MODAL SECTION // */}
+      {/* // ! Modal Screen */}
+      <Stack.Screen
+        options={{
+          presentation: "transparentModal",
+          headerShown: false,
+          cardOverlayEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+        }}
+        name={screenList.modalScreen}
+        component={ModalScreen}
+      />
+
+      {/* // ! Action Screen */}
+      <Stack.Screen
+        options={{
+          presentation: "transparentModal",
+          headerShown: false,
+          cardOverlayEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+        }}
+        name={screenList.actionScreen}
+        component={ActionScreen}
+      />
+
+      {/* // ! Loading Screen */}
+      <Stack.Screen
+        options={{
+          gestureEnabled: false,
+          presentation: "transparentModal",
+          headerShown: false,
+          cardOverlayEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+        }}
+        name={screenList.loadingScreen}
+        component={LoadingScreen}
+      />
+
+      {/* // ! DASHBOARD SECTION */}
+      {/* // ! Dashboard Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          headerTitle: "Dashboard",
+        }}
+        name={screenList.dashboardScreen}
+        component={DashboardScreen}
+      />
+
+      {/* // ! ANALYTICS SECTION */}
+      {/* // ! Analytics Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Analytics",
+        }}
+        name={screenList.analyticsScreen}
+        component={AnalyticsScreen}
+      />
+
+      {/* // ! INITIAL SECTION */}
       {/* // ! Onboarding Screen */}
       {!appSettings?.screenHidden?.some(
         (screen) => screen === "Onboarding Screen"
       ) && (
         <Stack.Screen
-          options={{
-            headerShown: false,
-            title: "",
-            // headerLeft: (leftHeader) => (
-            //     <>
-            //     </>
-            // )
-          }}
-          name={screens.onboardingScreen}
+          options={noHeader}
+          name={screenList.onboardingScreen}
           component={OnboardingScreen}
         />
       )}
@@ -200,15 +257,8 @@ const RootStack = ({ navigation }) => {
         (screen) => screen === "Initial Setup Screen"
       ) && (
         <Stack.Screen
-          options={{
-            headerShown: false,
-            title: "",
-            // headerLeft: (leftHeader) => (
-            //     <>
-            //     </>
-            // )
-          }}
-          name={screens.initialSetupScreen}
+          options={noHeader}
+          name={screenList.initialSetupScreen}
           component={InitialSetupScreen}
         />
       )}
@@ -225,97 +275,49 @@ const RootStack = ({ navigation }) => {
             cardOverlayEnabled: true,
             cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
           }}
-          name={screens.splashScreen}
+          name={screenList.splashScreen}
           component={SplashScreen}
         />
       )}
 
-      {/* // ! Bottom Tab */}
-      <Stack.Screen
-        name={screens.bottomTab}
-        options={{
-          title: "New Transaction",
-          headerLeft: (leftHeader) => <></>,
-        }}
-        component={BottomTab}
-      />
-
-      {/* // ! Modal Screen */}
-      <Stack.Screen
-        options={{
-          presentation: "transparentModal",
-          headerShown: false,
-          cardOverlayEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
-        }}
-        name={screens.modalScreen}
-        component={ModalScreen}
-      />
-
-      {/* // ! Action Screen */}
-      <Stack.Screen
-        options={{
-          presentation: "transparentModal",
-          headerShown: false,
-          cardOverlayEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
-        }}
-        name={screens.actionScreen}
-        component={ActionScreen}
-      />
-
+      {/* // ! TRANSACTION SECTION */}
       {/* // ! Transaction Preview Screen */}
       <Stack.Screen
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // title:'New Transaction',
-          // headerLeft: (leftHeader) => (
-          //     <>
-          // {/* <TouchableOpacity onPress={()=>navigation.pop(1)} style={{paddingHorizontal:11}}>
-          //     <IonIcons name='close' size={24} style={{ margin: 3 }} />
-          // </TouchableOpacity> */}
-          // </>)
-        }}
-        name={screens.transactionPreviewScreen}
+        options={showHeader}
+        name={screenList.transactionPreviewScreen}
         component={TransactionPreviewScreen}
       />
 
       {/* // ! Transaction Details Screen */}
       <Stack.Screen
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // title:'New Transaction',
-          // headerLeft: (leftHeader) => (
-          //     <>
-          // {/* <TouchableOpacity onPress={()=>navigation.pop(1)} style={{paddingHorizontal:11}}>
-          //     <IonIcons name='close' size={24} style={{ margin: 3 }} />
-          // </TouchableOpacity> */}
-          // </>)
-        }}
-        name={screens.transactionDetailsScreen}
+        options={showHeader}
+        name={screenList.transactionDetailsScreen}
         component={EditTransactionDetailsScreen}
       />
 
       {/* // ! New Transaction Details Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeaderNoBack,
           title: "New Transaction",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          headerLeft: (leftHeader) => <></>,
         }}
-        name={screens.newTransactionDetailsScreen}
+        name={screenList.newTransactionDetailsScreen}
         component={NewTransactionDetailsScreen}
       />
 
+      {/* // ! LOGBOOKS SECTION */}
+      {/* // ! Logbook Screen */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Logbooks",
+          headerStyle: {
+            backgroundColor: appSettings?.theme?.style?.colors?.header,
+          },
+        }}
+        name={screenList.logbookScreen}
+        component={LogBookScreen}
+      />
       {/* // ! My Logbooks Screen */}
       <Stack.Screen
         options={{
@@ -324,209 +326,178 @@ const RootStack = ({ navigation }) => {
           headerStyle: {
             backgroundColor: appSettings?.theme?.style?.colors?.header,
           },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.myLogbooksScreen}
+        name={screenList.myLogbooksScreen}
         component={MyLogbooksScreen}
       />
 
       {/* // ! Edit Logbook Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Logbook Preview",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.logbookPreviewScreen}
+        name={screenList.logbookPreviewScreen}
         component={LogbookPreviewScren}
       />
 
       {/* // ! Edit Logbook Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Edit Logbook",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.editLogbookScreen}
+        name={screenList.editLogbookScreen}
         component={EditLogbookScreen}
       />
 
+      {/* // ! CATEGORIES SECTION */}
       {/* // ! My Categories Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "My Categories",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.myCategoriesScreen}
+        name={screenList.myCategoriesScreen}
         component={MyCategoriesScreen}
       />
 
       {/* // ! Category Preview Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Category Preview",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.categoryPreviewScreen}
+        name={screenList.categoryPreviewScreen}
         component={CategoryPreviewScreen}
       />
 
       {/* // ! Edit Category Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Edit Category",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.editCategoryScreen}
+        name={screenList.editCategoryScreen}
         component={EditCategoryScreen}
       />
 
       {/* // ! New Category Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "New Category",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
         }}
-        name={screens.newCategoryScreen}
+        name={screenList.newCategoryScreen}
         component={NewCategoryScreen}
       />
 
+      {/* // ! BUDGETS SECTION */}
       {/* // ! My Budgets Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "My Budgets",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.myBudgetsScreen}
+        name={screenList.myBudgetsScreen}
         component={MyBudgetsScreen}
       />
 
       {/* // ! My Budgets Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "New Budget",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.newBudgetScreen}
+        name={screenList.newBudgetScreen}
         component={NewBudgetScreen}
       />
 
       {/* // ! Budget Preview Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Budget Preview",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.budgetPreviewScreen}
+        name={screenList.budgetPreviewScreen}
         component={BudgetPreviewScreen}
-      />
-
-      {/* // ! Analytics Screen */}
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          title: "Analytics",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
-        }}
-        name={screens.analyticsScreen}
-        component={AnalyticsScreen}
       />
 
       {/* // ! Edit Budget Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Edit Budget",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
-          // headerLeft: (leftHeader) => (
-          //     <>
-          //     </>
-          // )
         }}
-        name={screens.editBudgetScreen}
+        name={screenList.editBudgetScreen}
         component={EditBudgetScreen}
       />
 
-      {/* // ! Action Screen */}
+      {/* // ! SEARCH SECTION */}
+      {/* // ! Search Screen */}
       <Stack.Screen
         options={{
-          gestureEnabled: false,
-          presentation: "transparentModal",
-          headerShown: false,
-          cardOverlayEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+          ...noHeader,
         }}
-        name={screens.loadingScreen}
-        component={LoadingScreen}
+        name={screenList.searchScreen}
+        component={SearchScreen}
+      />
+
+      {/* // ! USER SECTION */}
+      {/* // ! User Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "User" }}
+        name={screenList.userScreen}
+        component={UserScreen}
+      />
+
+      {/* // ! Profile Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Profile Settings" }}
+        name={screenList.profileSettingsScreen}
+        component={ProfileSettingsScreen}
+      />
+
+      {/* // ! SETTINGS SECTION */}
+      {/* // ! Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Settings" }}
+        name={screenList.settingsScreen}
+        component={SettingsScreen}
+      />
+      {/* // ! Currency Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Currency Settings" }}
+        name={screenList.currencySettingsScreen}
+        component={CurrencySettingsScreen}
+      />
+
+      {/* // ! Personalization Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Personalization Settings" }}
+        name={screenList.personalizationSettingsScreen}
+        component={PersonalizationSettingsScreen}
+      />
+
+      {/* // ! Account Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Account Settings" }}
+        name={screenList.accountSettingsScreen}
+        component={AccountSettingsScreen}
+      />
+
+      {/* // ! Developer Settings Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Developer Settings" }}
+        name={screenList.developerSettingsScreen}
+        component={DeveloperScreen}
+      />
+
+      {/* // ! About Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "About" }}
+        name={screenList.aboutScreen}
+        component={AboutScreen}
       />
     </Stack.Navigator>
   );

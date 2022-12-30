@@ -6,7 +6,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   globalStyles,
   globalTheme
-} from "../../../src/assets/themes/globalStyles";
+} from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";

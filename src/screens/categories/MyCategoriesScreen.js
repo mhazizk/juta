@@ -72,6 +72,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                           ? appSettings.theme.style.colors.primary
                           : item.icon.color
                       }
+                      iconPack={item.icon.pack}
                       iconRightName="chevron-forward"
                       onPress={() =>
                         navigation.navigate("Category Preview Screen", {

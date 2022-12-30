@@ -15,56 +15,31 @@ const relativeDate = ({ dateToCheck, currentDate, locale }) => {
       todayMonth === transactionMonth &&
       todayDate - transactionDate === 1:
       return "Yesterday";
-    case todayYear === transactionsYear &&
+    case (todayYear === transactionsYear &&
       todayMonth === transactionMonth &&
-      todayDate - transactionDate === 2:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
-    case todayYear === transactionsYear &&
-      todayMonth === transactionMonth &&
-      todayDate - transactionDate === 3:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
-    case todayYear === transactionsYear &&
-      todayMonth === transactionMonth &&
-      todayDate - transactionDate === 4:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
-    case todayYear === transactionsYear &&
-      todayMonth === transactionMonth &&
-      todayDate - transactionDate === 5:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
-    case todayYear === transactionsYear &&
-      todayMonth === transactionMonth &&
-      todayDate - transactionDate === 6:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
-    case todayYear === transactionsYear &&
-      todayMonth === transactionMonth &&
-      todayDate - transactionDate === 7:
-      return new Date(dateToCheck).toLocaleDateString(locale, {
-        weekday: "long",
-      });
+      todayDate - transactionDate > 2) ||
+      todayDate - transactionDate <= 7:
+      return new Date(dateToCheck).toDateString();
+    // return new Date(dateToCheck).toLocaleDateString(locale, {
+    //   weekday: "long",
+    // });
     case todayYear === transactionsYear &&
       todayMonth === transactionMonth &&
       todayDate - transactionDate > 7 &&
       todayDate - transactionDate <= 31:
-      return `${new Date(dateToCheck).toLocaleDateString(locale, {
-        month: "long",
-      })} ${new Date(dateToCheck).getDate()}`;
+      return new Date(dateToCheck).toDateString();
+    // return `${new Date(dateToCheck).toLocaleDateString(locale, {
+    //   month: "long",
+    // })} ${new Date(dateToCheck).getDate()}`;
     default:
-      return `${new Date(dateToCheck).toLocaleDateString(locale, {
-        month: "long",
-      })}, ${new Date(dateToCheck).toLocaleDateString(locale, {
-        day: "2-digit",
-        year: "numeric",
-      })}`;
+      return new Date(dateToCheck).toDateString();
+    // TODO FIX DATE FORMAT
+    // return `${new Date(dateToCheck).toLocaleDateString(locale, {
+    //   month: "long",
+    // })}, ${new Date(dateToCheck).toLocaleDateString(locale, {
+    //   day: "2-digit",
+    //   year: "numeric",
+    // })}`;
   }
 };
 

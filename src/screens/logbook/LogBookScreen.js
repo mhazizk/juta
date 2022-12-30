@@ -24,7 +24,7 @@ import * as utils from "../../utils";
 const { width, height } = Dimensions.get("screen");
 
 const Transactions = ({
-  logbook,
+  selectedLogbook,
   transactions,
   categories,
   onPress,
@@ -63,7 +63,7 @@ const Transactions = ({
 
   useEffect(() => {
     // refresh
-  }, [transactionsDate]);
+  }, [selectedLogbook]);
 
   useEffect(() => {
     // refresh
@@ -409,13 +409,13 @@ const Transactions = ({
                     ]}
                   >
                     <TextButtonPrimary
-                      label={logbook.logbook_currency.symbol}
+                      label={selectedLogbook.logbook_currency.symbol}
                       style={{ paddingRight: 8 }}
                     />
                     <TextButtonPrimary
                       label={utils.GetFormattedNumber({
                         value: sumAmount(section.data),
-                        currency: appSettings.currency.name,
+                        currency: selectedLogbook.logbook_currency.name,
                       })}
                     />
                   </View>
@@ -448,7 +448,7 @@ const Transactions = ({
                       categories: categories,
                       defaultColor: appSettings.theme.style.colors.foreground,
                     })}
-                    currency={logbook.logbook_currency}
+                    currency={selectedLogbook.logbook_currency}
                     transactionAmount={item.details.amount}
                     onPress={() => onPress(item)}
                   />
@@ -527,50 +527,55 @@ const LogBookScreen = ({ route, navigation }) => {
   }, [screenLoading]);
 
   // ! Function Section //
-  const logbooksToBeSelected = useMemo(() => {
-    return () => {
-      try {
-        if (categories.categories && sortedTransactions && logbooks.logbooks) {
-          if (!selectedLogbook) {
-            !sortedTransactions?.logbookToOpen
-              ? setSelectedLogbooks({
-                  name: logbooks.logbooks[0].logbook_name,
-                  logbook_id: logbooks.logbooks[0].logbook_id,
-                  logbook_currency: logbooks.logbooks[0].logbook_currency,
-                  key: logbooks.logbooks[0].logbook_id,
-                })
-              : // set initial selected logbook
-                setSelectedLogbooks(sortedTransactions.logbookToOpen);
-          }
-          if (
-            selectedLogbook.logbook_id ===
-            sortedTransactions.logbookToOpen.logbook_id
-          ) {
-            setSelectedLogbooks(sortedTransactions.logbookToOpen);
-          }
-
-          // set data to be passed in modal
-          setData(
-            logbooks.logbooks.map((logbook) => ({
-              name: logbook.logbook_name,
-              logbook_id: logbook.logbook_id,
-              logbook_currency: logbook.logbook_currency,
-              key: logbook.logbook_id,
-            }))
-          );
-
-          setCounter({
-            logbookDeleteCounter: logbooks.logbookDeleteCounter,
-            logbookPatchCounter: logbooks.logbookPatchCounter,
-          });
-
-          // set initial selected logbook
+  // const logbooksToBeSelected = useMemo(() => {
+  // return
+  const logbooksToBeSelected = () => {
+    try {
+      if (
+        categories.categories &&
+        sortedTransactions.groupSorted &&
+        logbooks.logbooks
+      ) {
+        if (!selectedLogbook) {
+          !sortedTransactions?.logbookToOpen
+            ? setSelectedLogbooks({
+                name: logbooks.logbooks[0].logbook_name,
+                logbook_id: logbooks.logbooks[0].logbook_id,
+                logbook_currency: logbooks.logbooks[0].logbook_currency,
+                key: logbooks.logbooks[0].logbook_id,
+              })
+            : // set initial selected logbook
+              setSelectedLogbooks(sortedTransactions.logbookToOpen);
         }
-      } catch (error) {
-        console.log(error);
+        if (
+          selectedLogbook.logbook_id ===
+          sortedTransactions.logbookToOpen.logbook_id
+        ) {
+          setSelectedLogbooks(sortedTransactions.logbookToOpen);
+        }
+
+        // set data to be passed in modal
+        setData(
+          logbooks.logbooks.map((logbook) => ({
+            name: logbook.logbook_name,
+            logbook_id: logbook.logbook_id,
+            logbook_currency: logbook.logbook_currency,
+            key: logbook.logbook_id,
+          }))
+        );
+
+        setCounter({
+          logbookDeleteCounter: logbooks.logbookDeleteCounter,
+          logbookPatchCounter: logbooks.logbookPatchCounter,
+        });
+
+        // set initial selected logbook
       }
-    };
-  });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // });
 
   const filterTransactions = useMemo(() => {
     return () => {
@@ -700,7 +705,7 @@ const LogBookScreen = ({ route, navigation }) => {
           {/* {!isLoading.status && filteredTransactions && ( */}
           {!screenLoading && !componentLoading && filteredTransactions && (
             <Transactions
-              logbook={selectedLogbook}
+              selectedLogbook={selectedLogbook}
               transactions={filteredTransactions}
               categories={categories.categories}
               onPress={(item) =>

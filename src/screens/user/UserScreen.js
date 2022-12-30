@@ -32,7 +32,7 @@ const UserScreen = ({ navigation }) => {
         {/* // ! My Profile */}
         <ListItem
           pressable
-          leftLabel="Profile"
+          leftLabel="My Profile"
           iconLeftName="person"
           iconPack="IonIcons"
           onPress={() => navigation.navigate("Profile Screen")}
@@ -59,6 +59,16 @@ const UserScreen = ({ navigation }) => {
           iconLeftName="pricetags"
           iconPack="IonIcons"
           onPress={() => navigation.navigate("My Categories Screen")}
+        />
+
+        {/* // ! My Budget */}
+        <ListItem
+          pressable
+          leftLabel="My Budgets"
+          // rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
+          iconLeftName="piggy-bank"
+          iconPack="FontAwesome5"
+          onPress={() => navigation.navigate("My Budgets Screen")}
         />
 
         {/* // ! Settings */}

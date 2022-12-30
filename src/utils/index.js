@@ -6,3 +6,4 @@ export { default as RelativeDate } from "./RelativeDate";
 export { default as GetSpentList } from "./GetSpentList";
 export { default as FindTransactionsToPlot } from "./FindTransactionsToPlot";
 export { default as GetFormattedNumber } from "./FormatNumber";
+export { default as RemoveNumberSeparator } from "./RemoveNumberSeparator";

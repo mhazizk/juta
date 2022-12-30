@@ -16,7 +16,7 @@ const getFormattedNumber = ({
   thousandSeparator,
   decimalSeparator,
   significantDigits,
-  showTrailingZeros = false,
+  showTrailingZeros,
   currency,
   symbol,
   showSymbol,
@@ -24,22 +24,25 @@ const getFormattedNumber = ({
   showSymbolSpace = true,
 }) => {
   switch (true) {
-    case currency === "en-US":
+    case currency === "USD":
       symbol = "$";
       thousandSeparator = ",";
       decimalSeparator = ".";
       significantDigits = 2;
+      showTrailingZeros = true;
       break;
-    case currency === "id-ID":
+    case currency === "IDR":
       symbol = "Rp";
       thousandSeparator = ".";
       significantDigits = 0;
+      showTrailingZeros = false;
       decimalSeparator = ",";
       break;
     default:
       symbol = "Rp";
       thousandSeparator = ".";
       significantDigits = 0;
+      showTrailingZeros = false;
       decimalSeparator = ",";
       break;
   }

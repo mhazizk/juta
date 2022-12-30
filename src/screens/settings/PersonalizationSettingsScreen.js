@@ -3,13 +3,14 @@ import { StyleSheet, View } from "react-native";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 import APP_SETTINGS from "../../config/appSettings";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalTransactions
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
-const PersonalizationScreen = ({ item, navigation }) => {
+const PersonalizationSettingsScreen = ({ item, navigation }) => {
   const { state, dispatch } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -41,7 +42,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
             iconLeftName="contrast"
             iconPack="IonIcons"
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 title: "Theme",
                 modalType: "list",
                 props: APP_SETTINGS.THEME.OPTIONS.map((theme) => theme),
@@ -65,7 +66,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
             iconLeftName="text"
             iconPack="IonIcons"
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 title: "Font Size",
                 modalType: "list",
                 props: APP_SETTINGS.FONT_SIZE.OPTIONS.map((option) => {
@@ -91,7 +92,7 @@ const PersonalizationScreen = ({ item, navigation }) => {
             iconLeftName="language"
             iconPack="IonIcons"
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 title: "Language",
                 modalType: "list",
                 props: APP_SETTINGS.LANGUAGE.OPTIONS.map((option) => {
@@ -155,4 +156,4 @@ const styles = new StyleSheet.create({
   },
 });
 
-export default PersonalizationScreen;
+export default PersonalizationSettingsScreen;

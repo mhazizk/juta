@@ -1,9 +1,7 @@
 import { useIsFocused } from "@react-navigation/native";
 // import "intl/locale-data/jsonp/en";
 import { useEffect, useState } from "react";
-import {
-  Alert, ScrollView, View
-} from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
@@ -12,9 +10,7 @@ import {
   useGlobalSortedTransactions,
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
-import {
-  ButtonSecondary
-} from "../../components/Button";
+import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
 
@@ -67,7 +63,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     if (isFocused) {
       setCategoryType(
         utils.FindById.findCategoryTypeById({
-          id: category?.id,
+          id: route?.params.category.id,
           categories: categories.categories,
         })
       );

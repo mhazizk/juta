@@ -3,7 +3,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   globalStyles,
   globalTheme
-} from "../../../src/assets/themes/globalStyles";
+} from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 import {
@@ -12,7 +12,7 @@ import {
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
-const ProfileScreen = ({ item, navigation }) => {
+const ProfileSettingsScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchSettings } = useGlobalAppSettings();
 
@@ -66,4 +66,4 @@ const ProfileScreen = ({ item, navigation }) => {
   );
 };
 
-export default ProfileScreen;
+export default ProfileSettingsScreen;

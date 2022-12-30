@@ -66,6 +66,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setTransaction(route?.params?.transaction);
+    setSelectedLogbook(route?.params?.selectedLogbook);
   }, []);
 
   useEffect(() => {
@@ -192,7 +193,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 <TextPrimary
                   label={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-                    currency: appSettings.currency.name,
+                    currency: selectedLogbook.logbook_currency.name,
                   })}
                   style={{
                     height: 36,

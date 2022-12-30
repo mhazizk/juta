@@ -6,7 +6,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   globalStyles,
   globalTheme
-} from "../../../src/assets/themes/globalStyles";
+} from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
@@ -15,7 +15,7 @@ import {
   useGlobalUserAccount
 } from "../../reducers/GlobalContext";
 
-const AccountScreen = ({ item, navigation }) => {
+const AccountSettingsScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -126,4 +126,4 @@ const styles = new StyleSheet.create({
   },
 });
 
-export default AccountScreen;
+export default AccountSettingsScreen;

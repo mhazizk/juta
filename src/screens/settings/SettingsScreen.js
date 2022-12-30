@@ -7,6 +7,7 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
+import screenList from "../../navigations/ScreenList";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 
 const SettingsScreen = ({ navigation }) => {
@@ -31,7 +32,16 @@ const SettingsScreen = ({ navigation }) => {
           leftLabel="Account"
           iconLeftName="key"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("Account Screen")}
+          onPress={() => navigation.navigate(screenList.accountSettingsScreen)}
+        />
+
+        {/* // ! Currency */}
+        <ListItem
+          pressable
+          leftLabel="Currency"
+          iconLeftName="cash"
+          iconPack="IonIcons"
+          onPress={() => navigation.navigate(screenList.currencySettingsScreen)}
         />
 
         {/* // ! Personalization */}
@@ -40,7 +50,7 @@ const SettingsScreen = ({ navigation }) => {
           leftLabel="Personalization"
           iconLeftName="brush"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("Personalization Screen")}
+          onPress={() => navigation.navigate(screenList.personalizationSettingsScreen)}
         />
 
         {/* // ! Developer */}
@@ -49,7 +59,7 @@ const SettingsScreen = ({ navigation }) => {
           leftLabel="Developer"
           iconLeftName="cog"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("Developer Screen")}
+          onPress={() => navigation.navigate(screenList.developerSettingsScreen)}
         />
       </View>
     </>

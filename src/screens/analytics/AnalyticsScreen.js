@@ -195,8 +195,8 @@ const AnalyticsScreen = () => {
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
-                        label={utils.FormatCurrency({
-                          amount: activeBudget.spent,
+                        label={utils.GetFormattedNumber({
+                          value: activeBudget.spent,
                           currency: appSettings.currency.name,
                         })}
                       />
@@ -322,8 +322,8 @@ const AnalyticsScreen = () => {
                       item?.category.name[0].toUpperCase() +
                       item?.category.name.slice(1)
                     }
-                    rightLabel={utils.FormatCurrency({
-                      amount: item?.totalSpent,
+                    rightLabel={utils.GetFormattedNumber({
+                      value: item?.totalSpent,
                       currency: appSettings.currency.name,
                     })}
                     iconLeftColor={
