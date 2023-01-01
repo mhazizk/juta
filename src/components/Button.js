@@ -12,9 +12,9 @@ import {
   TextSecondary,
 } from "./Text";
 
-// ! BUTTON COMPONENT //
+// TAG : BUTTON COMPONENT //
 
-// ! Button Primary
+// TAG : Button Primary
 export const ButtonPrimary = ({
   label,
   props,
@@ -53,7 +53,7 @@ export const ButtonPrimary = ({
   );
 };
 
-// ! Button Secondary
+// TAG : Button Secondary
 export const ButtonSecondary = ({
   label,
   props,
@@ -92,7 +92,7 @@ export const ButtonSecondary = ({
   );
 };
 
-// ! Button Icon Danger
+// TAG : Button Icon Danger
 export const ButtonIconDanger = ({
   label,
   props,
@@ -149,7 +149,7 @@ export const ButtonIconDanger = ({
   );
 };
 
-// ! Button Icon Success
+// TAG : Button Icon Success
 export const ButtonIconSuccess = ({
   label,
   props,
@@ -280,7 +280,7 @@ export const ImgButton = ({
     </>
   );
 };
-// ! Button Primary //
+// TAG : Button Primary //
 // export const ButtonPrimary = ({ label, props, onPress, condition, theme, width }) => {
 
 //     let buttonStyle;
@@ -328,7 +328,7 @@ export const ImgButton = ({
 //     )
 // }
 
-// ! Button Secondary //
+// TAG : Button Secondary //
 // export const ButtonSecondary = ({ label, props, type, onPress, condition, theme, width }) => {
 
 //     let buttonStyle;
@@ -376,7 +376,7 @@ export const ImgButton = ({
 //     )
 // }
 
-// ! Button Primary
+// TAG : Button Primary
 export const ButtonSwitch = ({
   label,
   props,
@@ -421,7 +421,7 @@ export const ButtonSwitch = ({
   );
 };
 
-// ! Button Switch //
+// TAG : Button Switch //
 export const oldButtonSwitch = ({
   label,
   condition,

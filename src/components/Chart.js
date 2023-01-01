@@ -143,7 +143,7 @@ const ChartComponent = () => {
           </VictoryChart>
         </View>
 
-        {/* // ! Chart Filter Section */}
+        {/* // TAG : Chart Filter Section */}
         <View
           style={{
             alignItems: "center",

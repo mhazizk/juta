@@ -13,9 +13,10 @@ import {
 import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
+import screenList from "../../navigations/ScreenList";
 
 const CategoryPreviewScreen = ({ route, navigation }) => {
-  // ! Global State Section //
+  // TAG : Global State Section //
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -23,7 +24,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Theme State
   const [theme, setTheme] = useState({
@@ -47,7 +48,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
   const isFocused = useIsFocused();
 
-  // ! UseEffect Section //
+  // TAG : UseEffect Section //
 
   useEffect(() => {
     setCategory(route?.params?.category);
@@ -87,7 +88,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
   useEffect(() => {}, [sortedTransactions]);
 
-  // ! Function Section //
+  // TAG : Function Section //
   // const findCategoryType = () => {
   //   const findExpenseCategory = categories.categories.expense.some(
   //     (category) => category.id === route?.params?.category?.id
@@ -132,7 +133,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Category Name Section */}
+            {/* // TAG : Category Name Section */}
             <View
               style={{
                 flex: 1,
@@ -161,12 +162,12 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               />
             </View>
 
-            {/* // ! Category Details */}
+            {/* // TAG : Category Details */}
             <View style={{ paddingHorizontal: 16 }}>
               <TextPrimary label="Category Details" style={{ fontSize: 24 }} />
             </View>
 
-            {/* // ! Category Type Section */}
+            {/* // TAG : Category Type Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -185,10 +186,10 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Type" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: appSettings.theme.style.colors.secondary }]}> */}
 
-              {/* // ! Transaction Picker */}
+              {/* // TAG : Transaction Picker */}
               <TextPrimary
                 label={
                   categoryType[0].toUpperCase() + categoryType.substring(1)
@@ -199,7 +200,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               {/* </View> */}
             </View>
 
-            {/* // ! Color Section */}
+            {/* // TAG : Color Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -217,7 +218,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Icon Color" style={{ flex: 1 }} />
 
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -246,7 +247,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Count Transactions Section */}
+            {/* // TAG : Count Transactions Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -265,17 +266,17 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Total Transactions" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8 }, { backgroundColor: appSettings.theme.style.colors.secondary }]}> */}
 
-              {/* // ! Transaction Picker */}
+              {/* // TAG : Transaction Picker */}
               <TextPrimary label={countTransactions()} />
 
               {/* </View> */}
               {/* </View> */}
             </View>
 
-            {/* // ! Balance Section */}
+            {/* // TAG : Balance Section */}
             {/* <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                             <IonIcons name='cash' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                             <TextPrimary
@@ -283,17 +284,17 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                 style={{ flex: 1 }}
                             /> */}
 
-            {/* // ! Right Side */}
+            {/* // TAG : Right Side */}
             {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                                 <TextPrimary
-                                    label={`${formatCurrency({ amount: sumBalance(), currency: appSettings.currency.name })}`}
+                                    label={`${formatCurrency({ amount: sumBalance(), currency: appSettings.logbookSettings.defaultCurrency.name })}`}
                                     style={{ paddingLeft: 8 }}
                                 />
                             </View>
                         </View> */}
 
-            {/* // ! Total Transactions Section */}
+            {/* // TAG : Total Transactions Section */}
             {/* <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                             <IonIcons name='book' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                             <TextPrimary
@@ -301,7 +302,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                 style={{ flex: 1 }}
                             /> */}
 
-            {/* // ! Right Side */}
+            {/* // TAG : Right Side */}
             {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                                 <TextPrimary
@@ -313,7 +314,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                             </View>
                         </View> */}
 
-            {/* // ! Line Separator */}
+            {/* // TAG : Line Separator */}
             <View
               style={{
                 borderColor: appSettings.theme.style.colors.secondary,
@@ -325,7 +326,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               }}
             ></View>
 
-            {/* // ! Action Button */}
+            {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
@@ -334,13 +335,13 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                 padding: 16,
               }}
             >
-              {/* // ! Edit Button */}
+              {/* // TAG : Edit Button */}
               <View style={{ paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Edit"
                   width={150}
                   onPress={() =>
-                    navigation.navigate("Edit Category Screen", {
+                    navigation.navigate(screenList.editCategoryScreen, {
                       category: category,
                       categoryType: categoryType,
                     })
@@ -359,7 +360,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                 /> */}
               </View>
 
-              {/* // ! Delete Button */}
+              {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
                 <ButtonSecondary
                   label="Delete"
@@ -392,7 +393,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                           {
                             text: "Yes",
                             onPress: () => {
-                              navigation.navigate("Loading Screen", {
+                              navigation.navigate(screenList.loadingScreen, {
                                 label: "Deleting Category ...",
                                 loadingType: "deleteCategory",
                                 deleteCategory: category,

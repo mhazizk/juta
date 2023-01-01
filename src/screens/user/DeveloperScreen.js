@@ -161,7 +161,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             <Text style={{ fontSize: 32, color: "#bbb" }}>Developer</Text>
           </View>
 
-          {/* // ! Save Large Transactions to Storage */}
+          {/* // TAG : Save Large Transactions to Storage */}
           <TouchableNativeFeedback onPress={() => saveLargeJSONTransactions()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -177,7 +177,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Save Transactions to Storage */}
+          {/* // TAG : Save Transactions to Storage */}
           <TouchableNativeFeedback onPress={() => saveTransactions()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -193,7 +193,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Save Logbooks to Storage */}
+          {/* // TAG : Save Logbooks to Storage */}
           <TouchableNativeFeedback onPress={() => saveLogbooks()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -209,7 +209,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Save Categories to Storage */}
+          {/* // TAG : Save Categories to Storage */}
           <TouchableNativeFeedback onPress={() => saveCategories()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -225,7 +225,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Save Account to Storage */}
+          {/* // TAG : Save Account to Storage */}
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
@@ -260,7 +260,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Get Account from Storage */}
+          {/* // TAG : Get Account from Storage */}
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
@@ -289,7 +289,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Get Transactions from Storage */}
+          {/* // TAG : Get Transactions from Storage */}
           <TouchableNativeFeedback onPress={() => getTransactionsFromStorage()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -305,7 +305,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Get Logbooks from Storage */}
+          {/* // TAG : Get Logbooks from Storage */}
           <TouchableNativeFeedback onPress={() => getLogbooksFromStorage()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -321,7 +321,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Get Logbooks from Storage */}
+          {/* // TAG : Get Logbooks from Storage */}
           <TouchableNativeFeedback onPress={() => getCategoriesFromStorage()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -337,7 +337,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log global raw transactions */}
+          {/* // TAG : Log global raw transactions */}
           <TouchableNativeFeedback onPress={() => console.log(rawTransactions)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
@@ -349,7 +349,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log global raw transactions length */}
+          {/* // TAG : Log global raw transactions length */}
           {/* <TouchableNativeFeedback
                         onPress={() => console.log(rawTransactions.transactions.length)}>
                         <View style={styles.flatListView}>
@@ -361,7 +361,7 @@ const DeveloperScreen = ({ item, navigation }) => {
                         </View>
                     </TouchableNativeFeedback> */}
 
-          {/* // ! Log app settings */}
+          {/* // TAG : Log app settings */}
           <TouchableNativeFeedback onPress={() => console.log(appSettings)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
@@ -373,7 +373,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Load storage account */}
+          {/* // TAG : Load storage account */}
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
@@ -392,7 +392,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log user account */}
+          {/* // TAG : Log user account */}
           <TouchableNativeFeedback onPress={() => console.log(userAccount)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
@@ -404,7 +404,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log global sorted transactions */}
+          {/* // TAG : Log global sorted transactions */}
           <TouchableNativeFeedback
             onPress={() => console.log(sortedTransactions)}
           >
@@ -421,7 +421,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log global app settings */}
+          {/* // TAG : Log global app settings */}
           <TouchableNativeFeedback onPress={() => console.log(appSettings)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
@@ -433,7 +433,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Log sortedTransactions settings */}
+          {/* // TAG : Log sortedTransactions settings */}
           <TouchableNativeFeedback
             onPress={async () => console.log(await setSortedTransactions())}
           >
@@ -447,7 +447,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Delete All from Storage */}
+          {/* // TAG : Delete All from Storage */}
           <TouchableNativeFeedback onPress={() => deleteAll()}>
             <View style={styles.flatListView}>
               <IonIcons name="trash" size={18} style={{ paddingRight: 16 }} />
@@ -459,7 +459,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Delete Key from Secure Storage */}
+          {/* // TAG : Delete Key from Secure Storage */}
           <TouchableNativeFeedback
             onPress={() =>
               asyncSecureStorage({
@@ -478,7 +478,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Clear All Loaded State */}
+          {/* // TAG : Clear All Loaded State */}
           <TouchableNativeFeedback onPress={() => setLoaded(null)}>
             <View style={styles.flatListView}>
               <IonIcons name="trash" size={18} style={{ paddingRight: 16 }} />

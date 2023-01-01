@@ -7,6 +7,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ActiveBudget } from "../../components/ActiveBudget";
 import RecentTransactions from "../../components/RecentTransactions";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -47,7 +48,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
     console.log(activeBudget);
   }, [activeBudget]);
 
-  // ! Function Section
+  // TAG : Function Section
   const findActiveBudget = () => {
     let spentList = [];
     let transactionList = [];
@@ -108,7 +109,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
             <ActiveBudget
               // Card Props
               onPress={() => {
-                navigation.navigate("Edit Budget Screen", {
+                navigation.navigate(screenList.editBudgetScreen, {
                   budget: activeBudget.budget,
                 });
               }}
@@ -143,7 +144,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
               finishDate={activeBudget.budget?.finish_date || null}
               expenseOnly
               onPress={({ transaction, selectedLogbook }) => {
-                navigation.navigate("Transaction Preview Screen", {
+                navigation.navigate(screenList.transactionPreviewScreen, {
                   transaction: transaction,
                   selectedLogbook: selectedLogbook,
                 });
@@ -176,7 +177,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
         /> */}
         {!budgets.budgets.length && (
           <TouchableOpacity
-            onPress={() => navigation.navigate("New Budget Screen")}
+            onPress={() => navigation.navigate(screenList.newBudgetScreen)}
           >
             <View
               style={{

@@ -118,7 +118,7 @@ const BottomTab = ({ route, navigation }) => {
           listeners={() => ({
             tabPress: (e) => {
               e.preventDefault();
-              navigation.navigate("Action Screen");
+              navigation.navigate(screenList.actionScreen);
             },
           })}
         />

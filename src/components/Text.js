@@ -3,10 +3,10 @@ import { lightTheme } from "../assets/themes/lightTheme";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 
-// ! TEXT COMPONENT //
+// TAG : TEXT COMPONENT //
 
 
-// ! Text Primary //
+// TAG : Text Primary //
 export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -21,7 +21,7 @@ export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
 }
 
 
-// ! Text Button Primary //
+// TAG : Text Button Primary //
 export const TextButtonPrimary = ({ label, props, numberOfLines, style }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -37,7 +37,7 @@ export const TextButtonPrimary = ({ label, props, numberOfLines, style }) => {
     )
 }
 
-// ! Text Button Secondary //
+// TAG : Text Button Secondary //
 export const TextButtonSecondary = ({ label, props, theme, style }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -51,7 +51,7 @@ export const TextButtonSecondary = ({ label, props, theme, style }) => {
     )
 }
 
-// ! Text Secondary //
+// TAG : Text Secondary //
 export const TextSecondary = ({ label, props, theme, style }) => {
     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
@@ -64,7 +64,7 @@ export const TextSecondary = ({ label, props, theme, style }) => {
     )
 }
 
-// ! Text Disabled //
+// TAG : Text Disabled //
 export const TextDisabled = ({ label, props, theme, style }) => {
 
     return (
@@ -77,7 +77,7 @@ export const TextDisabled = ({ label, props, theme, style }) => {
 }
 
 
-// ! Text Success //
+// TAG : Text Success //
 export const TextSuccess = ({ label, props, theme, style }) => {
 
     return (
@@ -90,7 +90,7 @@ export const TextSuccess = ({ label, props, theme, style }) => {
 }
 
 
-// ! Text Warn //
+// TAG : Text Warn //
 export const TextWarn = ({ label, props, theme, style }) => {
 
     return (
@@ -103,7 +103,7 @@ export const TextWarn = ({ label, props, theme, style }) => {
 }
 
 
-// ! Text Failure //
+// TAG : Text Failure //
 export const TextDanger = ({ label, props, theme, style }) => {
 
     return (

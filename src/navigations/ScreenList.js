@@ -1,6 +1,6 @@
 const screenList = {
   // Main tab navigator
-  bottomTab: "Bottom Tab",
+  bottomTabNavigator: "Bottom Tab Navigator",
 
   // Modal Screen
   modalScreen: "Modal Screen",

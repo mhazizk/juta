@@ -46,7 +46,7 @@ const GlobalSearchResultsScreen = ({
     // console.log(JSON.stringify(searchResult));
   }, [searchResult]);
 
-  // ! Function Section
+  // TAG : Function Section
   const search = () => {
     let finalArray = [];
     let categoryId = [];

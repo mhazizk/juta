@@ -5,6 +5,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
     useGlobalAppSettings,
     useGlobalCategories,
@@ -75,7 +76,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                       iconPack={item.icon.pack}
                       iconRightName="chevron-forward"
                       onPress={() =>
-                        navigation.navigate("Category Preview Screen", {
+                        navigation.navigate(screenList.categoryPreviewScreen, {
                           category: item,
                         })
                       }
@@ -90,7 +91,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                       pressable
                       rightLabel="Add New Category"
                       iconRightName="add"
-                      onPress={() => navigation.navigate("New Category Screen")}
+                      onPress={() => navigation.navigate(screenList.newCategoryScreen)}
                     />
                   </>
                 );

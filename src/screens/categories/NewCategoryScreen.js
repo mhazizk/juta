@@ -6,6 +6,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ionIcons } from "../../../src/assets/iconPack/ionIcons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -48,7 +49,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Category Name Section */}
+            {/* // TAG : Category Name Section */}
             <View
               style={{
                 flex: 1,
@@ -60,7 +61,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
             >
               <TouchableNativeFeedback
                 onPress={() =>
-                  navigation.navigate("Modal Screen", {
+                  navigation.navigate(screenList.modalScreen, {
                     title: "Pick Icon",
                     modalType: "iconPicker",
                     props: ionIcons,
@@ -141,15 +142,15 @@ const NewCategoryScreen = ({ route, navigation }) => {
               )}
             </View>
 
-            {/* // ! Category Details */}
+            {/* // TAG : Category Details */}
             <View style={{ paddingHorizontal: 16 }}>
               <TextPrimary label="Category Details" style={{ fontSize: 24 }} />
             </View>
 
-            {/* // ! Category Type Section */}
+            {/* // TAG : Category Type Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Category Type",
                   props: [{ name: "expense" }, { name: "income" }],
                   modalType: "list",
@@ -179,7 +180,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Type" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -196,7 +197,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Transaction Picker */}
+                    {/* // TAG : Transaction Picker */}
                     <TextPrimary
                       label={
                         category.type[0].toUpperCase() +
@@ -214,10 +215,10 @@ const NewCategoryScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Color Section */}
+            {/* // TAG : Color Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Pick Icon Color",
                   modalType: "colorPicker",
                   selected: (item) => {
@@ -258,7 +259,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Icon Color" style={{ flex: 1 }} />
 
-                  {/* // ! Right Side */}
+                  {/* // TAG : Right Side */}
                   <View
                     style={[
                       {
@@ -291,7 +292,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Balance Section */}
+            {/* // TAG : Balance Section */}
             {/* <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                             <IonIcons name='cash' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                             <TextPrimary
@@ -299,17 +300,17 @@ const NewCategoryScreen = ({ route, navigation }) => {
                                 style={{ flex: 1 }}
                             /> */}
 
-            {/* // ! Right Side */}
+            {/* // TAG : Right Side */}
             {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                                 <TextPrimary
-                                    label={`${formatCurrency({ amount: sumBalance(), currency: appSettings.currency.name })}`}
+                                    label={`${formatCurrency({ amount: sumBalance(), currency: appSettings.logbookSettings.defaultCurrency.name })}`}
                                     style={{ paddingLeft: 8 }}
                                 />
                             </View>
                         </View> */}
 
-            {/* // ! Total Transactions Section */}
+            {/* // TAG : Total Transactions Section */}
             {/* <View style={{ flexDirection: 'row', alignItems: 'center', height: 36, paddingTop: 8, paddingHorizontal: 16 }}>
                             <IonIcons name='book' size={18} style={{ paddingRight: 16 }} color={appSettings.theme.style.colors.foreground} />
                             <TextPrimary
@@ -317,7 +318,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                                 style={{ flex: 1 }}
                             /> */}
 
-            {/* // ! Right Side */}
+            {/* // TAG : Right Side */}
             {/* <View style={[{ flexDirection: 'row', flex: 0, alignItems: 'center', justifyContent: 'center' }]}>
 
                                 <TextPrimary
@@ -329,7 +330,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                             </View>
                         </View> */}
 
-            {/* // ! Line Separator */}
+            {/* // TAG : Line Separator */}
             <View
               style={{
                 borderColor: appSettings.theme.style.colors.secondary,
@@ -341,7 +342,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
               }}
             ></View>
 
-            {/* // ! Action Button */}
+            {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
@@ -350,7 +351,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                 padding: 16,
               }}
             >
-              {/* // ! Cancel Button */}
+              {/* // TAG : Cancel Button */}
               <View style={{ paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Cancel"
@@ -359,7 +360,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* // ! Delete Button */}
+              {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
                 <ButtonPrimary
                   label="Save"
@@ -381,7 +382,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                         { cancelable: true }
                       );
                     } else {
-                      navigation.navigate("Loading Screen", {
+                      navigation.navigate(screenList.loadingScreen, {
                         label: "Saving Category ...",
                         loadingType: "insertCategory",
                         categoryType: category.type,

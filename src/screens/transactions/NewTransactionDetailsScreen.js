@@ -23,6 +23,7 @@ import {
   ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -35,7 +36,7 @@ import { ACTIONS } from "../../reducers/GlobalReducer";
 import * as utils from "../../utils";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
-  // ! useContext Section //
+  // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -44,7 +45,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { categories, dispathCategories } = useGlobalCategories();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Loading State
 
@@ -66,7 +67,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // Transactions Length State
   // const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
 
-  // ! useEffect Section //
+  // TAG : useEffect Section //
 
   useEffect(() => {
     getFirstLogbook();
@@ -138,11 +139,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   // }, [rawTransactions.transactions])
 
-  // ! useRef State //
+  // TAG : useRef State //
   const inputNotes = useRef(null);
   const inputAmount = useRef(null);
 
-  // ! Function Section //
+  // TAG : Function Section //
 
   // Set Date in Date Picker
   const onChange = (event, selectedDate) => {
@@ -195,7 +196,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       case !transaction.details.category_id:
         return alert("Please select transaction category");
       default:
-        return navigation.navigate("Loading Screen", {
+        return navigation.navigate(screenList.loadingScreen, {
           label: "Saving ...",
           loadingType: "insertTransaction",
           transaction: transaction,
@@ -235,7 +236,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Amount Section */}
+            {/* // TAG : Amount Section */}
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
               style={{
@@ -255,7 +256,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 <TextPrimary
                   label={
                     selectedLogbook?.logbook_currency?.symbol ||
-                    appSettings.currency.symbol
+                    appSettings.logbookSettings.defaultCurrency.symbol
                   }
                   style={{
                     paddingRight: 8,
@@ -276,7 +277,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   keyboardType="number-pad"
                   // placeholder={utils.GetFormattedNumber({
                   //   value: transaction.details.amount,
-                  //   currency: appSettings.currency.name,
+                  //   currency: appSettings.logbookSettings.defaultCurrency.name,
                   // })}
                   placeholderTextColor={
                     appSettings.theme.style.text.textSecondary.color
@@ -339,7 +340,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             {/* </ScrollView> */}
 
-            {/* // ! Details Section */}
+            {/* // TAG : Details Section */}
             <View
               style={[
                 {
@@ -357,10 +358,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               />
             </View>
 
-            {/* // ! Transaction Type Section */}
+            {/* // TAG : Transaction Type Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Transaction",
                   props: [{ name: "expense" }, { name: "income" }],
                   modalType: "list",
@@ -395,7 +396,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Transaction" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -414,7 +415,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Transaction Picker */}
+                    {/* // TAG : Transaction Picker */}
                     <TextPrimary
                       label={
                         transaction.details.in_out[0].toUpperCase() +
@@ -438,10 +439,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Type Section */}
+            {/* // TAG : Type Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Type",
                   modalType: "list",
                   props:
@@ -474,7 +475,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Type" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -493,7 +494,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Type Picker */}
+                    {/* // TAG : Type Picker */}
                     <TextPrimary
                       label={
                         !transaction?.details?.type
@@ -519,7 +520,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Date Section */}
+            {/* // TAG : Date Section */}
             <TouchableNativeFeedback onPress={showDatePicker}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
@@ -538,7 +539,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                   <TextPrimary label="Date" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -557,7 +558,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Date Picker */}
+                    {/* // TAG : Date Picker */}
                     <TextPrimary
                       label={
                         !transaction?.details?.date
@@ -582,10 +583,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Log Book Section */}
+            {/* // TAG : Log Book Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Logbooks",
                   modalType: "list",
                   props: loadedLogbooks,
@@ -624,7 +625,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="From Book" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -643,7 +644,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Book Picker */}
+                    {/* // TAG : Book Picker */}
                     <TextPrimary
                       label={
                         !selectedLogbook?.name
@@ -670,10 +671,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Category Section */}
+            {/* // TAG : Category Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Category",
                   modalType: "list",
                   props:
@@ -710,7 +711,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Category" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -729,7 +730,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Category Picker */}
+                    {/* // TAG : Category Picker */}
                     <IonIcons
                       name={selectedCategory?.icon?.name}
                       size={18}
@@ -773,7 +774,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Notes Section */}
+            {/* // TAG : Notes Section */}
             <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
@@ -791,11 +792,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Notes" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
 
                   {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
-                  {/* // ! Notes Input */}
+                  {/* // TAG : Notes Input */}
                   <TextInput
                     ref={inputNotes}
                     textAlign="right"
@@ -850,7 +851,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableNativeFeedback>
           </ScrollView>
 
-          {/* // ! Line Separator */}
+          {/* // TAG : Line Separator */}
           <View
             style={{
               borderColor: "#bbb",
@@ -862,7 +863,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             }}
           ></View>
 
-          {/* // ! Action Button */}
+          {/* // TAG : Action Button */}
           <View
             style={{
               flexDirection: "row",
@@ -871,7 +872,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               padding: 16,
             }}
           >
-            {/* // ! Cancel Button */}
+            {/* // TAG : Cancel Button */}
             <View style={{ paddingRight: 8 }}>
               <ButtonSecondary
                 label="Cancel"
@@ -879,12 +880,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 theme={appSettings.theme}
                 onPress={() => {
                   // setRawTransactionsLength(null)
-                  navigation.navigate("Bottom Tab");
+                  navigation.navigate(screenList.bottomTabNavigator);
                 }}
               />
             </View>
 
-            {/* // ! Save Button */}
+            {/* // TAG : Save Button */}
             <View style={{ paddingLeft: 8 }}>
               <ButtonPrimary
                 label="Save"

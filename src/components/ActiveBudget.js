@@ -192,7 +192,7 @@ export const ActiveBudget = ({
                 />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
-                    label={appSettings.currency.symbol}
+                    label={appSettings.logbookSettings.defaultCurrency.symbol}
                     style={{ paddingRight: 4 }}
                   />
                   <TextTicker
@@ -209,7 +209,7 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: limit,
-                        currency: appSettings.currency.name,
+                        currency: appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -249,7 +249,7 @@ export const ActiveBudget = ({
                 />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
-                    label={appSettings.currency.symbol}
+                    label={appSettings.logbookSettings.defaultCurrency.symbol}
                     style={{ paddingRight: 4 }}
                   />
                   <TextTicker
@@ -266,7 +266,7 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: spent,
-                        currency: appSettings.currency.name,
+                        currency: appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -306,7 +306,7 @@ export const ActiveBudget = ({
                 />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
-                    label={appSettings.currency.symbol}
+                    label={appSettings.logbookSettings.defaultCurrency.symbol}
                     style={{ paddingRight: 4 }}
                   />
                   <TextTicker
@@ -323,7 +323,7 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: limit - spent,
-                        currency: appSettings.currency.name,
+                        currency: appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -386,7 +386,7 @@ export const ActiveBudget = ({
                   />
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
-                      appSettings.currency.symbol
+                      appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.GetFormattedNumber({
                       value: utils.DailyLimit({
                         limit: limit,
@@ -394,7 +394,7 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency: appSettings.currency.name,
+                      currency: appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
@@ -429,7 +429,7 @@ export const ActiveBudget = ({
                   />
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
-                      appSettings.currency.symbol
+                      appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.GetFormattedNumber({
                       value: utils.DailyLimit({
                         limit: limit,
@@ -437,7 +437,7 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency: appSettings.currency.name,
+                      currency: appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />

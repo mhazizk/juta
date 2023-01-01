@@ -77,7 +77,7 @@ const ModalScreen = ({ route, navigation }) => {
 
   return (
     <>
-      {/* // ! Transparent Overlay */}
+      {/* // TAG : Transparent Overlay */}
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={{ flex: 1, backgroundColor: "transparent" }}
@@ -85,7 +85,7 @@ const ModalScreen = ({ route, navigation }) => {
         <View style={{ flex: 1, backgroundColor: "transparent" }}></View>
       </TouchableOpacity>
 
-      {/* // ! Content card */}
+      {/* // TAG : Content card */}
       <View
         style={[
           {
@@ -105,7 +105,7 @@ const ModalScreen = ({ route, navigation }) => {
           <TextPrimary label={route?.params?.title} style={{ fontSize: 24 }} />
         </View>
 
-        {/* // ! Flatlist Category Props */}
+        {/* // TAG : Flatlist Category Props */}
         {route.params?.modalType === "list" && (
           <FlatList
             data={route?.params?.props}
@@ -138,7 +138,7 @@ const ModalScreen = ({ route, navigation }) => {
           />
         )}
 
-        {/* // ! Flatlist Params Currency */}
+        {/* // TAG : Flatlist Params Currency */}
         {route.params?.modalType === "currencyList" && (
           <FlatList
             data={route?.params?.props}
@@ -180,7 +180,7 @@ const ModalScreen = ({ route, navigation }) => {
           />
         )}
 
-        {/* // ! Text Input Params */}
+        {/* // TAG : Text Input Params */}
         {route.params?.modalType === "textInput" && (
           <View
             style={{
@@ -231,12 +231,12 @@ const ModalScreen = ({ route, navigation }) => {
           </View>
         )}
 
-        {/* // ! Option Flatlist Params */}
+        {/* // TAG : Option Flatlist Params */}
         {route.params?.modalType === "action" && (
           <>
             {/* <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'center', padding: 16 }}> */}
 
-            {/* // ! Delete Action */}
+            {/* // TAG : Delete Action */}
             <TouchableNativeFeedback onPress={() => {}}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <IonIcons
@@ -256,7 +256,7 @@ const ModalScreen = ({ route, navigation }) => {
           </>
         )}
 
-        {/* // ! Pick Color */}
+        {/* // TAG : Pick Color */}
         {route.params?.modalType === "colorPicker" && (
           <FlatList
             horizontal
@@ -310,7 +310,7 @@ const ModalScreen = ({ route, navigation }) => {
           />
         )}
 
-        {/* // ! Pick Icon */}
+        {/* // TAG : Pick Icon */}
         {route.params?.modalType === "iconPicker" && (
           <FlatList
             numColumns={6}
@@ -371,7 +371,7 @@ const ModalScreen = ({ route, navigation }) => {
           />
         )}
 
-        {/* // ! Action Button */}
+        {/* // TAG : Action Button */}
         <View
           style={{
             flexDirection: "row",
@@ -380,7 +380,7 @@ const ModalScreen = ({ route, navigation }) => {
             padding: 16,
           }}
         >
-          {/* // ! Cancel Button */}
+          {/* // TAG : Cancel Button */}
           <View style={{ paddingRight: 8 }}>
             <ButtonSecondary
               label="Cancel"
@@ -388,7 +388,7 @@ const ModalScreen = ({ route, navigation }) => {
               theme={appSettings.theme.style}
             />
           </View>
-          {/* // ! Save Button */}
+          {/* // TAG : Save Button */}
           <View style={{ paddingLeft: 8 }}>
             {/* {localLoading && */}
             {/* <ActivityIndicator

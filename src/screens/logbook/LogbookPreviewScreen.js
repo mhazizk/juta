@@ -13,16 +13,17 @@ import {
     useGlobalSortedTransactions,
     useGlobalTransactions,
 } from "../../reducers/GlobalContext";
+import screenList from "../../navigations/ScreenList";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
-  // ! Global State Section //
+  // TAG : Global State Section //
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Theme State
   const [theme, setTheme] = useState({
@@ -44,7 +45,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   // Selected Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // ! UseEffect Section //
+  // TAG : UseEffect Section //
 
   useEffect(() => {
     setLogbook(route?.params?.logbook);
@@ -74,7 +75,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
 
   useEffect(() => {}, [sortedTransactions]);
 
-  // ! Function Section //
+  // TAG : Function Section //
 
   const countTransactions = () => {
     let array = [];
@@ -124,7 +125,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Logbook Name Section */}
+            {/* // TAG : Logbook Name Section */}
             <View
               style={{
                 flex: 1,
@@ -152,12 +153,12 @@ const LogbookPreviewScren = ({ route, navigation }) => {
             </View>
             {/* </ScrollView> */}
 
-            {/* // ! Logbook Details */}
+            {/* // TAG : Logbook Details */}
             <View style={{ paddingHorizontal: 16 }}>
               <TextPrimary label="Logbook Details" style={{ fontSize: 24 }} />
             </View>
 
-            {/* // ! Currency Section */}
+            {/* // TAG : Currency Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -175,7 +176,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               />
               <TextPrimary label="Main Currency" style={{ flex: 1 }} />
 
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -197,7 +198,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Balance Section */}
+            {/* // TAG : Balance Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -216,7 +217,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Total Balance" style={{ flex: 1 }} />
 
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -230,14 +231,14 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 <TextPrimary
                   label={`${utils.GetFormattedNumber({
                     value: sumBalance(),
-                    currency: appSettings.currency.name,
+                    currency: appSettings.logbookSettings.defaultCurrency.name,
                   })}`}
                   style={{ paddingLeft: 8 }}
                 />
               </View>
             </View>
 
-            {/* // ! Total Transactions Section */}
+            {/* // TAG : Total Transactions Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -255,7 +256,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               />
               <TextPrimary label="Total Transactions" style={{ flex: 1 }} />
 
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -274,7 +275,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Line Separator */}
+            {/* // TAG : Line Separator */}
             <View
               style={{
                 borderColor: appSettings.theme.style.colors.secondary,
@@ -286,7 +287,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               }}
             ></View>
 
-            {/* // ! Action Button */}
+            {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
@@ -295,13 +296,13 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 padding: 16,
               }}
             >
-              {/* // ! Edit Button */}
+              {/* // TAG : Edit Button */}
               <View style={{ paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Edit"
                   width={150}
                   onPress={() =>
-                    navigation.navigate("Edit Logbook Screen", {
+                    navigation.navigate(screenList.editLogbookScreen, {
                       logbook: logbook,
                       selectedLogbook: selectedLogbook,
                       selectedCategory: selectedCategory,
@@ -311,7 +312,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* // ! Delete Button */}
+              {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
                 <ButtonSecondary
                   label="Delete"
@@ -331,7 +332,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                         {
                           text: "Yes",
                           onPress: () => {
-                            navigation.navigate("Loading Screen", {
+                            navigation.navigate(screenList.loadingScreen, {
                               label: "Deleting Logbook ...",
                               loadingType: "deleteOneLogbook",
                               deleteLogbook: logbook,

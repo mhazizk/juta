@@ -1,14 +1,12 @@
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-  globalStyles,
-  globalTheme
-} from "../../assets/themes/globalStyles";
+import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
@@ -30,7 +28,7 @@ const ProfileSettingsScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
 
-          {/* // ! Profile */}
+          {/* // TAG : Profile */}
           <ListItem
             pressable
             leftLabel="Change Avatar"
@@ -39,7 +37,7 @@ const ProfileSettingsScreen = ({ item, navigation }) => {
             onPress={() => alert("Coming soon")}
           />
 
-          {/* // ! Change Nick Name */}
+          {/* // TAG : Change Nick Name */}
           <ListItem
             pressable
             leftLabel="Change Nick Name"
@@ -47,7 +45,7 @@ const ProfileSettingsScreen = ({ item, navigation }) => {
             iconLeftName="create"
             iconPack="IonIcons"
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 title: "Change Nick Name",
                 modalType: "textInput",
                 default: userAccount.profile.nickname,

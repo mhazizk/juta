@@ -23,7 +23,7 @@ const TransactionSearchScreen = ({ route, navigation }) => {
 
   useEffect(() => {}, [searchResult]);
 
-  // ! Function Section
+  // TAG : Function Section
   const search = () => {
     // Search by Transaction Notes
     if (route.params.searchQuery) {

@@ -8,6 +8,7 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -29,26 +30,26 @@ const UserScreen = ({ navigation }) => {
       >
         <UserHeaderComponent />
 
-        {/* // ! My Profile */}
+        {/* // TAG : My Profile */}
         <ListItem
           pressable
           leftLabel="My Profile"
           iconLeftName="person"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("Profile Screen")}
+          onPress={() => navigation.navigate(screenList.profileSettingsScreen)}
         />
 
-        {/* // ! My Logbooks */}
+        {/* // TAG : My Logbooks */}
         <ListItem
           pressable
           leftLabel="My Logbooks"
           rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
           iconLeftName="book"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("My Logbooks Screen")}
+          onPress={() => navigation.navigate(screenList.myLogbooksScreen)}
         />
 
-        {/* // ! My Categories */}
+        {/* // TAG : My Categories */}
         <ListItem
           pressable
           leftLabel="My Categories"
@@ -58,35 +59,35 @@ const UserScreen = ({ navigation }) => {
           } categories`}
           iconLeftName="pricetags"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("My Categories Screen")}
+          onPress={() => navigation.navigate(screenList.myCategoriesScreen)}
         />
 
-        {/* // ! My Budget */}
+        {/* // TAG : My Budget */}
         <ListItem
           pressable
           leftLabel="My Budgets"
           // rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
           iconLeftName="piggy-bank"
           iconPack="FontAwesome5"
-          onPress={() => navigation.navigate("My Budgets Screen")}
+          onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
         />
 
-        {/* // ! Settings */}
+        {/* // TAG : Settings */}
         <ListItem
           pressable
           leftLabel="Settings"
           iconLeftName="build"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("Settings Screen")}
+          onPress={() => navigation.navigate(screenList.settingsScreen)}
         />
 
-        {/* // ! About */}
+        {/* // TAG : About */}
         <ListItem
           pressable
           leftLabel="About"
           iconLeftName="information-circle"
           iconPack="IonIcons"
-          onPress={() => navigation.navigate("About Screen")}
+          onPress={() => navigation.navigate(screenList.aboutScreen)}
         />
       </View>
     </>

@@ -27,7 +27,7 @@ const AboutScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
                 </View> */}
 
-        {/* // ! Made by */}
+        {/* // TAG : Made by */}
         <ListItem
           leftLabel="Made by"
           rightLabel="Haziz"
@@ -40,7 +40,7 @@ const AboutScreen = ({ item, navigation }) => {
           }
         />
 
-        {/* // ! Contact */}
+        {/* // TAG : Contact */}
         <ListItem
           leftLabel="Contact Me"
           iconLeftName="mail"
@@ -48,7 +48,7 @@ const AboutScreen = ({ item, navigation }) => {
           onPress={() => alert("OTW")}
         />
 
-        {/* // ! App Version */}
+        {/* // TAG : App Version */}
         <ListItem
           leftLabel="App Version"
           rightLabel="v.1.0.0"

@@ -38,6 +38,8 @@ import { lightTheme } from "../../../src/assets/themes/lightTheme";
 import userCategories from "../../database/userCategories";
 import initialCategories from "../../reducers/initial-state/InitialCategories";
 import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
+import screenList from "../../navigations/ScreenList";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const InitialSetupScreen = ({ navigation }) => {
   const { transactions, dispatchTransactions } = useGlobalTransactions();
@@ -53,7 +55,7 @@ const InitialSetupScreen = ({ navigation }) => {
     language: "english",
     locale: "es-UN",
     currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    screenHidden: ["Onboarding Screen", "Initial Setup Screen"],
+    screenHidden: [screenList.onboardingScreen, screenList.initialSetupScreen],
   });
   const [newLogbook, setNewLogbook] = useState({
     _timestamps: {
@@ -137,7 +139,7 @@ const InitialSetupScreen = ({ navigation }) => {
     };
 
     dispatchAppSettings({
-      type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
+      type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
       payload: selectedAppSettings,
     });
 
@@ -153,6 +155,7 @@ const InitialSetupScreen = ({ navigation }) => {
 
     dispatchSortedTransactions({
       type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
+      // type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET_MULTI_ACTIONS,
       payload: [
         {
           logbook_id: newLogbook.logbook_id,
@@ -192,12 +195,12 @@ const InitialSetupScreen = ({ navigation }) => {
       saveSortedTransactions,
       saveAppSettings,
     ]).then(() => {
-      return navigation.navigate("Bottom Tab");
+      return navigation.navigate(screenList.bottomTabNavigator);
     });
   };
 
   const pages = [
-    // ! Select Theme
+    // TAG : Select Theme
     {
       backgroundColor:
         selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
@@ -294,7 +297,7 @@ const InitialSetupScreen = ({ navigation }) => {
       subtitle: "",
     },
 
-    // ! Select Font Size
+    // TAG : Select Font Size
     {
       backgroundColor:
         selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
@@ -399,7 +402,7 @@ const InitialSetupScreen = ({ navigation }) => {
       subtitle: "",
     },
 
-    // ! Select Currency
+    // TAG : Select Currency
     {
       backgroundColor:
         selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
@@ -496,7 +499,7 @@ const InitialSetupScreen = ({ navigation }) => {
       subtitle: "",
     },
 
-    // ! Create First Logbook
+    // TAG : Create First Logbook
     {
       backgroundColor:
         selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
@@ -540,7 +543,7 @@ const InitialSetupScreen = ({ navigation }) => {
           </Text>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 title: "New Logbook",
                 modalType: "textInput",
                 placeholder: "Enter new logbook name ...",

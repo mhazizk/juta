@@ -19,7 +19,7 @@ const DataSettingsScreen = ({ item, navigation }) => {
           <Text style={{ fontSize: 32, color: "#bbb" }}>Data</Text>
         </View>
 
-        {/* // ! Sync */}
+        {/* // TAG : Sync */}
         <ListItem
           onPress={() => alert("Feature in progress ...")}
           iconPack="IonIcons"
@@ -28,7 +28,7 @@ const DataSettingsScreen = ({ item, navigation }) => {
           rightLabel="Last sync : 17 Nov 2022"
         />
 
-        {/* // ! Export */}
+        {/* // TAG : Export */}
         <ListItem
           onPress={() => alert("Feature in progress ...")}
           iconPack="IonIcons"

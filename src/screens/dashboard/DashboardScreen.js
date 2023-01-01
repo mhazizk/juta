@@ -9,6 +9,7 @@ import Loading from "../../components/Loading";
 import { MyBudgetsPreview } from "../../components/MyBudgetsPreview";
 import RecentTransactions from "../../components/RecentTransactions";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -202,7 +203,7 @@ const DashboardScreen = ({ navigation }) => {
                 <>
                   {/* Container */}
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("Analytics Screen")}
+                    onPress={() => navigation.navigate(screenList.analyticsScreen)}
                     style={{
                       shadowColor: appSettings.theme.style.colors.foreground,
                       shadowOffset: {
@@ -278,7 +279,7 @@ const DashboardScreen = ({ navigation }) => {
                                 }}
                               >
                                 <TextSecondary
-                                  label={appSettings.currency.symbol}
+                                  label={appSettings.logbookSettings.defaultCurrency.symbol}
                                   style={{
                                     paddingRight: 4,
                                     color: appSettings.theme.style.colors.black,
@@ -292,7 +293,7 @@ const DashboardScreen = ({ navigation }) => {
                                   }}
                                   label={utils.GetFormattedNumber({
                                     value: activeBudget.spent,
-                                    currency: appSettings.currency.name,
+                                    currency: appSettings.logbookSettings.defaultCurrency.name,
                                   })}
                                 />
                               </View>
@@ -333,7 +334,7 @@ const DashboardScreen = ({ navigation }) => {
                                     ? graph.graphData.limitLine
                                     : null
                                 }
-                                symbol={appSettings.currency.symbol}
+                                symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                                 rangeDay={graph.rangeDay}
                                 //  Graph Style
                                 successColor={
@@ -424,31 +425,17 @@ const DashboardScreen = ({ navigation }) => {
               boxColor="#90CEFF"
               boxHeight={150}
               boxWidth={screenWidth / 2 - 24}
-              onPress={() => navigation.navigate("My Logbooks Screen")}
+              onPress={() => navigation.navigate(screenList.myLogbooksScreen)}
             />
             <MyBudgetsPreview
               isFocused={isFocus}
               boxWidth={screenWidth / 2 - 24}
-              onPress={() => navigation.navigate("My Budgets Screen")}
+              onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
             />
           </View>
-          {/* <MyBudget
-            onPress={(item) => {
-              navigation.navigate("Logbook Preview Screen", {
-                logbook: item,
-              });
-            }}
-          /> */}
-          {/* <MyLogbooks
-            onPress={(item) => {
-              navigation.navigate("Logbook Preview Screen", {
-                logbook: item,
-              });
-            }}
-          /> */}
           <RecentTransactions
             onPress={({ transaction, selectedLogbook }) => {
-              navigation.navigate("Transaction Preview Screen", {
+              navigation.navigate(screenList.transactionPreviewScreen, {
                 transaction: transaction,
                 selectedLogbook: selectedLogbook,
               });

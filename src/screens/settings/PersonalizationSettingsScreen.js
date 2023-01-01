@@ -6,9 +6,10 @@ import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalTransactions
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const PersonalizationSettingsScreen = ({ item, navigation }) => {
   const { state, dispatch } = useGlobalTransactions();
@@ -34,7 +35,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
                         <Text style={{ fontSize: 32, color: '#bbb' }}>Personalization</Text>
                     </View> */}
 
-          {/* // ! App Theme */}
+          {/* // TAG : App Theme */}
           <ListItem
             pressable
             leftLabel="Theme"
@@ -56,7 +57,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
             }
           />
 
-          {/* // ! Font Size */}
+          {/* // TAG : Font Size */}
           <ListItem
             leftLabel="Font Size"
             rightLabel={
@@ -82,7 +83,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
             }
           />
 
-          {/* // ! Language */}
+          {/* // TAG : Language */}
           <ListItem
             leftLabel="Language"
             rightLabel={
@@ -100,7 +101,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
                 }),
                 selected: (item) =>
                   dispatchAppSettings({
-                    type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
+                    type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
                     payload: {
                       language: item.name,
                       locale: item.locale,

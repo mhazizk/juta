@@ -545,7 +545,7 @@ export const CardList = ({
                   <TextPrimary
                     label={utils.GetFormattedNumber({
                       value: spent,
-                      currency: appSettings.currency.name,
+                      currency: appSettings.logbookSettings.defaultCurrency.name,
                     })}
                   />
                 </View>

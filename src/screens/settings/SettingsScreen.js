@@ -26,7 +26,7 @@ const SettingsScreen = ({ navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Cash Log Settings</Text>
                 </View> */}
 
-        {/* // ! Account */}
+        {/* // TAG : Account */}
         <ListItem
           pressable
           leftLabel="Account"
@@ -35,7 +35,7 @@ const SettingsScreen = ({ navigation }) => {
           onPress={() => navigation.navigate(screenList.accountSettingsScreen)}
         />
 
-        {/* // ! Currency */}
+        {/* // TAG : Currency */}
         <ListItem
           pressable
           leftLabel="Currency"
@@ -44,7 +44,7 @@ const SettingsScreen = ({ navigation }) => {
           onPress={() => navigation.navigate(screenList.currencySettingsScreen)}
         />
 
-        {/* // ! Personalization */}
+        {/* // TAG : Personalization */}
         <ListItem
           pressable
           leftLabel="Personalization"
@@ -53,7 +53,7 @@ const SettingsScreen = ({ navigation }) => {
           onPress={() => navigation.navigate(screenList.personalizationSettingsScreen)}
         />
 
-        {/* // ! Developer */}
+        {/* // TAG : Developer */}
         <ListItem
           pressable
           leftLabel="Developer"

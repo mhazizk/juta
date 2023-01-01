@@ -18,7 +18,7 @@ import initialCategories from "./initial-state/InitialCategories";
 import initialLogbooks from "./initial-state/InitialLogbooks";
 import InitialSortedTransactions from "./initial-state/InitialSortedTransactions";
 
-// ! Create Context //
+// TAG : Create Context //
 const GlobalTransactionsContext = createContext();
 const GlobalBudgetsContext = createContext();
 const GlobalSortedTransactionsContext = createContext();
@@ -28,7 +28,7 @@ const GlobalLoadingContext = createContext();
 const GlobalLogbooksContext = createContext();
 const GlobalCategoriesContext = createContext();
 
-// ! useContext //
+// TAG : useContext //
 export const useGlobalTransactions = () => {
   return useContext(GlobalTransactionsContext);
 };
@@ -61,7 +61,7 @@ export const useGlobalLoading = () => {
   return useContext(GlobalLoadingContext);
 };
 
-// ! Context Provider //
+// TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
     globalUserAccount,

@@ -46,7 +46,7 @@ const APP_SETTINGS = {
     OPTIONS: [false, true],
   },
   LOGBOOKS: {
-    DAILY_CALCULATE: {
+    DAILY_SUMMARY: {
       DEFAULT: "expense-income",
       USER: "expense-income",
       OPTIONS: [
@@ -56,15 +56,15 @@ const APP_SETTINGS = {
         "income-expense",
       ],
     },
-    SHOW_TIME: {
-      DEFAULT: 1,
-      USER: 1,
-      OPTIONS: [1, 0],
+    SHOW_TRANSACTION_TIME: {
+      DEFAULT: TRUE,
+      USER: TRUE,
+      OPTIONS: [TRUE, FALSE],
     },
-    SHOW_NOTES: {
-      DEFAULT: 1,
-      USER: 1,
-      OPTIONS: [1, 0],
+    SHOW_TRANSACTION_NOTES: {
+      DEFAULT: TRUE,
+      USER: TRUE,
+      OPTIONS: [TRUE, FALSE],
     },
   },
 };

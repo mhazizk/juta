@@ -11,6 +11,7 @@ import {
   TextPrimary,
   TextSecondary,
 } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -30,17 +31,17 @@ const Transactions = ({
   onPress,
   checkListMode,
 }) => {
-  // ! useState Section //
+  // TAG : useState Section //
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { appSettings, setAppSettings } = useGlobalAppSettings();
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const [transactionsDate, setTransactionsDate] = useState(null);
   const [groupSortedTransactions, setGroupSortedTransactions] = useState(null);
   const [date, setDate] = useState(null);
   const [checkList, setCheckList] = useState(null);
   const [enableChecklistMode, setEnableCheckListMode] = useState(false);
 
-  // ! useEffect Section //
+  // TAG : useEffect Section //
   useEffect(() => {
     // if (transactions) {
     // }
@@ -85,7 +86,7 @@ const Transactions = ({
     // }
   }, [checkList]);
 
-  // ! Function Section //
+  // TAG : Function Section //
 
   // // Find Category Icon Name by Id
   // const findCategoryIconNameById = useMemo(() => {
@@ -308,7 +309,7 @@ const Transactions = ({
               justifyContent: "center",
             }}
           >
-            {/* // ! Clear Selection */}
+            {/* // TAG : Clear Selection */}
             <TouchableOpacity
               onPress={() => setEnableCheckListMode(!enableChecklistMode)}
             >
@@ -330,7 +331,7 @@ const Transactions = ({
               </View>
             </TouchableOpacity>
 
-            {/* // ! Delete Selection */}
+            {/* // TAG : Delete Selection */}
             {/* <TouchableOpacity
                             onPress={() => setEnableCheckListMode(!enableChecklistMode)}
                         >
@@ -340,7 +341,7 @@ const Transactions = ({
                             </View>
                         </TouchableOpacity> */}
 
-            {/* // ! Move Selection */}
+            {/* // TAG : Move Selection */}
             {/* <TouchableOpacity
                             onPress={() => setEnableCheckListMode(!enableChecklistMode)}
                         >
@@ -481,7 +482,7 @@ const Transactions = ({
 };
 
 const LogBookScreen = ({ route, navigation }) => {
-  // ! useState Section //
+  // TAG : useState Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -509,7 +510,7 @@ const LogBookScreen = ({ route, navigation }) => {
   const [componentLoading, setComponentLoading] = useState(false);
   const isFocused = useIsFocused();
 
-  // ! useEffect Section //
+  // TAG : useEffect Section //
   useEffect(() => {
     if (isFocused) {
       setScreenLoading(true);
@@ -526,7 +527,7 @@ const LogBookScreen = ({ route, navigation }) => {
     }
   }, [screenLoading]);
 
-  // ! Function Section //
+  // TAG : Function Section //
   // const logbooksToBeSelected = useMemo(() => {
   // return
   const logbooksToBeSelected = () => {
@@ -627,7 +628,7 @@ const LogBookScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 style={{ flexShrink: 1, flexGrow: 1, maxWidth: "70%" }}
                 onPress={() =>
-                  navigation.navigate("Modal Screen", {
+                  navigation.navigate(screenList.modalScreen, {
                     title: "Log Books",
                     props: data,
                     modalType: "list",
@@ -709,7 +710,7 @@ const LogBookScreen = ({ route, navigation }) => {
               transactions={filteredTransactions}
               categories={categories.categories}
               onPress={(item) =>
-                navigation.navigate("Transaction Preview Screen", {
+                navigation.navigate(screenList.transactionPreviewScreen, {
                   transaction: item,
                   selectedLogbook: selectedLogbook,
                 })

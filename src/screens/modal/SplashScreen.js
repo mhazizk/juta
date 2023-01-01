@@ -13,6 +13,8 @@ import {
 import { ACTIONS } from "../../reducers/GlobalReducer";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+import screenList from "../../navigations/ScreenList";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const SplashScreen = ({ navigation }) => {
   const { isLoading, dispatchLoading } = useGlobalLoading();
@@ -27,10 +29,10 @@ const SplashScreen = ({ navigation }) => {
       loadInitialState().then(() => {
         dispatchAppSettings({
           type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-          payload: "Splash Screen",
+          payload: screenList.splashScreen,
         });
 
-        navigation.navigate("Bottom Tab");
+        navigation.navigate(screenList.bottomTabNavigator);
       });
     }, 100);
   }, []);
@@ -41,10 +43,10 @@ const SplashScreen = ({ navigation }) => {
     if (sortedTransactions.sortedTransactionsInitCounter) {
       dispatchAppSettings({
         type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-        payload: "Splash Screen",
+        payload: screenList.splashScreen,
       });
 
-      navigation.navigate("Bottom Tab");
+      navigation.navigate(screenList.bottomTabNavigator);
     }
   }, [sortedTransactions.sortedTransactionsInitCounter]);
 
@@ -57,7 +59,7 @@ const SplashScreen = ({ navigation }) => {
 
     if (!loadAppSettings) {
       dispatchAppSettings({
-        type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
         payload: {
           theme: { name: "Light Theme", id: "light", style: lightTheme },
           fontSize: "medium",
@@ -77,7 +79,7 @@ const SplashScreen = ({ navigation }) => {
 
     if (loadAccount) {
       dispatchUserAccount({
-        type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
+        type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
         payload: loadAccount,
       });
     }

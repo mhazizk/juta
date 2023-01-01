@@ -2,7 +2,7 @@
 import persistStorage from "../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 
-// ! Convert and Save Transaction File
+// TAG : Convert and Save Transaction File
 export const convertAndSaveTransctions = async (sortedTransactions) => {
   if (sortedTransactions) {
     // Get all transactions
@@ -23,7 +23,7 @@ export const convertAndSaveTransctions = async (sortedTransactions) => {
   }
 };
 
-// ! Get Transaction File from storage
+// TAG : Get Transaction File from storage
 export const getTransactionsFromStorage = async () => {
   try {
     const json = await persistStorage.asyncStorage({
@@ -39,7 +39,7 @@ export const getTransactionsFromStorage = async () => {
   }
 };
 
-// ! Get Categories File from Storage
+// TAG : Get Categories File from Storage
 export const getCategoriesFromStorage = async () => {
   try {
     const json = await persistStorage.asyncStorage({
@@ -55,7 +55,7 @@ export const getCategoriesFromStorage = async () => {
   }
 };
 
-// ! Get Logbooks File from Storage
+// TAG : Get Logbooks File from Storage
 export const getLogbooksFromStorage = async () => {
   try {
     const json = await persistStorage.asyncStorage({
@@ -72,7 +72,7 @@ export const getLogbooksFromStorage = async () => {
   }
 };
 
-// ! Create new array group of logbook
+// TAG : Create new array group of logbook
 const groupByLogbook = (logbooks) => {
   const grouped = Object.values(
     logbooks.map((logbook) => {
@@ -82,7 +82,7 @@ const groupByLogbook = (logbooks) => {
   return grouped;
 };
 
-// ! Group transactions array by logbook id
+// TAG : Group transactions array by logbook id
 const groupTransactionsByLogbook = (transactions) => {
   const grouped = Object.values(
     transactions.reduce((group, transaction) => {
@@ -97,7 +97,7 @@ const groupTransactionsByLogbook = (transactions) => {
   return grouped;
 };
 
-// ! Sort transactions array from transactions
+// TAG : Sort transactions array from transactions
 const sortTransactions = (prevTransaction, currentTransaction) => {
   if (prevTransaction.details.date < currentTransaction.details.date) {
     return 1;
@@ -108,7 +108,7 @@ const sortTransactions = (prevTransaction, currentTransaction) => {
   return 0;
 };
 
-// ! Merge grouped logbooks and group sorted transactions by date
+// TAG : Merge grouped logbooks and group sorted transactions by date
 const mergeTransactionsByLogbook = ({
   groupedByLogbook,
   groupedTransactionsByDate,
@@ -137,7 +137,7 @@ const mergeTransactionsByLogbook = ({
   return merged;
 };
 
-// ! Group transactions array by date
+// TAG : Group transactions array by date
 const groupByDate = (array) => {
   if (array) {
     const grouped = Object.values(
@@ -164,7 +164,7 @@ const groupByDate = (array) => {
   }
 };
 
-// ! New Sorted Transactions //
+// TAG : New Sorted Transactions //
 export const initSortedTransactions = async () => {
   const loadTransactions = persistStorage.asyncStorage({
     action: PERSIST_ACTIONS.GET,
@@ -187,7 +187,7 @@ export const initSortedTransactions = async () => {
   );
 };
 
-// ! Set Sorted Transactions //
+// TAG : Set Sorted Transactions //
 export const setSortedTransactions = async (updatedTransactions = null) => {
   // try {
   const loadTransactions = persistStorage.asyncStorage({
@@ -288,7 +288,7 @@ export const setSortedTransactions = async (updatedTransactions = null) => {
     .catch((error) => console.log(error));
 };
 
-// ! Modify Sorted Transactions Data //
+// TAG : Modify Sorted Transactions Data //
 const modifySortedTransactions = async ({
   newTransaction,
   patchTransaction,
@@ -301,7 +301,7 @@ const modifySortedTransactions = async ({
   // New Transactions
 };
 
-// ! Set Initial App Settings //
+// TAG : Set Initial App Settings //
 // export const SetInitialAppSettings = () => {
 
 //     const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -320,7 +320,7 @@ const modifySortedTransactions = async ({
 //     })
 
 // }
-// ! Set Initial User Account //
+// TAG : Set Initial User Account //
 // export const SetInitialUserAccount = () => {
 //     const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
 
@@ -342,7 +342,7 @@ const modifySortedTransactions = async ({
 //     })
 // }
 
-// ! Set Initial Transactions
+// TAG : Set Initial Transactions
 // export const SetInitialTransactions = () => {
 //     const { state, dispatch } = useGlobalTransactions();
 

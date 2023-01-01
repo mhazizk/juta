@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
@@ -18,7 +18,7 @@ import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import {
   convertAndSaveTransctions,
-  setSortedTransactions
+  setSortedTransactions,
 } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
@@ -27,9 +27,10 @@ import {
   useGlobalLoading,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalTransactions
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import screenList from "../../navigations/ScreenList";
 
 const LoadingScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -47,10 +48,10 @@ const LoadingScreen = ({ route, navigation }) => {
     // console.log({ onLoad: route.params.initialRawTransactionsLength })
     console.log(route?.params);
 
-    // ! Transaction Timeout
+    // TAG : Transaction Timeout
     setTimeout(
       () => {
-        // ! New Insert Transaction Method
+        // TAG : New Insert Transaction Method
         if (
           route?.params?.transaction &&
           route?.params?.loadingType === "insertTransaction"
@@ -64,7 +65,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Patch Transaction Method
+        // TAG : New Patch Transaction Method
         if (
           route?.params?.patchTransaction &&
           route?.params?.prevTransaction &&
@@ -80,7 +81,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Delete One Transaction Method
+        // TAG : New Delete One Transaction Method
         if (
           route?.params?.deleteTransaction &&
           route?.params?.loadingType === "deleteOneTransaction"
@@ -95,7 +96,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Patch Logbook Method
+        // TAG : New Patch Logbook Method
         if (
           route?.params?.patchLogbook &&
           logbooks.logbookPatchCounter ===
@@ -109,7 +110,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Delete One Logbook Method
+        // TAG : New Delete One Logbook Method
         if (
           route?.params?.deleteLogbook &&
           logbooks.logbookDeleteCounter ===
@@ -123,7 +124,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Patch One Category Method
+        // TAG : New Patch One Category Method
         if (
           route?.params?.patchCategory &&
           categories.categoryPatchCounter ===
@@ -140,7 +141,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Insert Category Method
+        // TAG : New Insert Category Method
         if (
           route?.params?.insertCategory &&
           categories.categoryInsertCounter ===
@@ -157,7 +158,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Delete One Category Method
+        // TAG : New Delete One Category Method
         if (
           route?.params?.deleteCategory &&
           categories.categoryDeleteCounter ===
@@ -170,7 +171,7 @@ const LoadingScreen = ({ route, navigation }) => {
             payload: route?.params?.deleteCategory,
           });
         }
-        // ! New Insert Budget Method
+        // TAG : New Insert Budget Method
         if (
           budgets.budgetInsertCounter ===
             route?.params?.initialBudgetInsertCounter &&
@@ -183,7 +184,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Patch One Budget Method
+        // TAG : New Patch One Budget Method
         if (
           route?.params?.patchBudget &&
           budgets.budgetPatchCounter ===
@@ -197,7 +198,7 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! New Delete One Budget Method
+        // TAG : New Delete One Budget Method
         if (
           route?.params?.deleteBudget &&
           budgets.budgetDeleteCounter ===
@@ -211,10 +212,10 @@ const LoadingScreen = ({ route, navigation }) => {
           });
         }
 
-        // ! Switch LogBook Timeout
+        // TAG : Switch LogBook Timeout
         if (route?.params?.loadingType === "switchLogBook") {
           setTimeout(() => {
-            navigation.navigate("Bottom Tab");
+            navigation.navigate(screenList.bottomTabNavigator);
           }, 1000);
         }
       },
@@ -229,19 +230,19 @@ const LoadingScreen = ({ route, navigation }) => {
   //     }
   // }, [isLoading.status])
 
-  // ! New Insert Transaction Method
+  // TAG : New Insert Transaction Method
   useEffect(() => {
     if (
       sortedTransactions.sortedTransactionsInsertCounter >
         route?.params?.initialSortedTransactionsInsertCounter &&
       route?.params?.loadingType === "insertTransaction"
     ) {
-      navigation.navigate("Bottom Tab");
+      navigation.navigate(screenList.bottomTabNavigator);
       // convertAndSaveTransctions(sortedTransactions);
     }
   }, [sortedTransactions.sortedTransactionsInsertCounter]);
 
-  // ! New Patch Sorted Transaction Method
+  // TAG : New Patch Sorted Transaction Method
   useEffect(() => {
     // console.log(rawTransactions.transactionsPatchedInSession > route?.params?.initialTransactionsPatchedLength)
     // Patch Transaction
@@ -251,7 +252,7 @@ const LoadingScreen = ({ route, navigation }) => {
       route?.params?.loadingType === "patchTransaction"
     ) {
       // console.log(route?.params?.logbookToOpen)
-      navigation.navigate("Bottom Tab");
+      navigation.navigate(screenList.bottomTabNavigator);
     }
     // Patch Category
     if (
@@ -259,7 +260,7 @@ const LoadingScreen = ({ route, navigation }) => {
         route?.params?.initialSortedTransactionsPatchCounter &&
       route?.params?.loadingType === "patchCategory"
     ) {
-      navigation.navigate("Category Preview Screen", {
+      navigation.navigate(screenList.categoryPreviewScreen, {
         prevCategoryType: route?.params?.prevCategoryType,
         targetCategoryType: route?.params?.targetCategoryType,
         category: route?.params?.patchCategory,
@@ -267,7 +268,7 @@ const LoadingScreen = ({ route, navigation }) => {
     }
   }, [sortedTransactions.sortedTransactionsPatchCounter]);
 
-  // ! New Patch Logbook Method
+  // TAG : New Patch Logbook Method
   useEffect(() => {
     // console.log({ counter: logbooks.logbookPatchCounter })
     if (
@@ -275,13 +276,13 @@ const LoadingScreen = ({ route, navigation }) => {
         route?.params?.initialLogbookPatchCounter &&
       route?.params?.loadingType === "patchLogbook"
     ) {
-      navigation.navigate("Logbook Preview Screen", {
+      navigation.navigate(screenList.logbookPreviewScreen, {
         logbook: route?.params?.patchLogbook,
       });
     }
   }, [logbooks.logbookPatchCounter]);
 
-  // ! New Patch One Category Method
+  // TAG : New Patch One Category Method
   useEffect(() => {
     if (
       categories.categoryPatchCounter >
@@ -297,65 +298,62 @@ const LoadingScreen = ({ route, navigation }) => {
             route?.params?.initialSortedTransactionsPatchCounter,
         },
       });
-      // navigation.navigate("Category Preview Screen", {
-      //   category: route?.params?.patchCategory,
-      // });
     }
   }, [categories.categoryPatchCounter]);
 
-  // ! New Insert Category Method
+  // TAG : New Insert Category Method
   useEffect(() => {
     if (
       categories.categoryInsertCounter >
         route?.params?.initialCategoryInsertCounter &&
       route?.params?.loadingType === "insertCategory"
     ) {
-      navigation.navigate("My Categories Screen");
+      navigation.navigate(screenList.myCategoriesScreen);
     }
   }, [categories.categoryInsertCounter]);
 
-  // ! New Insert Budget Method
+  // TAG : New Insert Budget Method
   useEffect(() => {
     if (
       budgets.budgetInsertCounter > route?.params?.initialBudgetInsertCounter &&
       route?.params?.loadingType === "insertBudget"
     ) {
-      navigation.navigate("My Budgets Screen");
+      navigation.navigate(screenList.myBudgetsScreen);
     }
   }, [budgets.budgetInsertCounter]);
 
-  // ! New Patch Budget Method
+  // TAG : New Patch Budget Method
   useEffect(() => {
     if (
       budgets.budgetPatchCounter > route?.params?.initialBudgetPatchCounter &&
       route?.params?.loadingType === "patchBudget"
     ) {
-      navigation.navigate("My Budgets Screen");
+      navigation.navigate(screenList.myBudgetsScreen);
     }
   }, [budgets.budgetPatchCounter]);
 
-  // ! New Delete One Budget Method
+  // TAG : New Delete One Budget Method
   useEffect(() => {
     if (
       budgets.budgetDeleteCounter > route?.params?.initialBudgetDeleteCounter &&
       route?.params?.loadingType === "deleteBudget"
     ) {
-      navigation.navigate("My Budgets Screen");
+      navigation.navigate(screenList.myBudgetsScreen);
     }
   }, [budgets.budgetDeleteCounter]);
 
-  // ! New Delete One Category Method
+  // TAG : New Delete One Category Method
   useEffect(() => {
     if (
       categories.categoryDeleteCounter >
         route?.params?.initialCategoryDeleteCounter &&
       route?.params?.loadingType === "deleteCategory"
     ) {
-      navigation.navigate("My Categories Screen");
+      navigation.navigate(screenList.myCategoriesScreen);
     }
   }, [categories.categoryDeleteCounter]);
 
-  // ! New Delete One Transaction Method
+  // TAG : New Delete One Transaction Method
   useEffect(() => {
     if (
       sortedTransactions.sortedTransactionsDeleteCounter >
@@ -367,11 +365,11 @@ const LoadingScreen = ({ route, navigation }) => {
       //     type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION,
       //     payload: { deleteTransaction: route?.params?.deleteTransaction }
       // })
-      navigation.navigate("Bottom Tab");
+      navigation.navigate(screenList.bottomTabNavigator);
     }
   }, [sortedTransactions.sortedTransactionsDeleteCounter]);
 
-  // ! New Delete One Logbook Method (Logbook Reducer)
+  // TAG : New Delete One Logbook Method (Logbook Reducer)
   useEffect(() => {
     // console.log({ counter: logbooks.logbookPatchCounter })
     if (
@@ -386,18 +384,18 @@ const LoadingScreen = ({ route, navigation }) => {
     }
   }, [logbooks.logbookDeleteCounter]);
 
-  // ! New Delete One Logbook Method (Sorted Transactions Reducer)
+  // TAG : New Delete One Logbook Method (Sorted Transactions Reducer)
   useEffect(() => {
     if (
       sortedTransactions.sortedLogbookDeleteCounter >
         route?.params?.initialSortedLogbookDeleteCounter &&
       route?.params?.loadingType === "deleteOneLogbook"
     ) {
-      navigation.navigate("My Logbooks Screen");
+      navigation.navigate(screenList.myLogbooksScreen);
     }
   }, [sortedTransactions.sortedLogbookDeleteCounter]);
 
-  // ! Save Async Storage && dispatch Sorted Transactions
+  // TAG : Save Async Storage && dispatch Sorted Transactions
   const saveAndLoad = async () => {
     console.log("render 3");
     dispatchSortedTransactions({
@@ -412,14 +410,14 @@ const LoadingScreen = ({ route, navigation }) => {
 
   return (
     <>
-      {/* // ! Transparent Overlay */}
+      {/* // TAG : Transparent Overlay */}
       {/* <TouchableOpacity onPress={() => navigation.pop(1)} style={{ flex: 1, backgroundColor: 'transparent' }}> */}
       {/* {isLoading && */}
       <View style={{ flex: 1, backgroundColor: "transparent" }} />
       {/* } */}
       {/* </TouchableOpacity> */}
 
-      {/* // ! Content card */}
+      {/* // TAG : Content card */}
       {/* {isLoading && */}
       <View
         style={{

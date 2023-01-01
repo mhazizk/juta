@@ -6,8 +6,10 @@ import OnboardingImg3 from "../../assets/img/onboarding3.png";
 import OnboardingImg4 from "../../assets/img/onboarding4.png";
 import OnboardingImg5 from "../../assets/img/onboarding5.png";
 import { lightTheme } from "../../assets/themes/lightTheme";
+import screenList from "../../navigations/ScreenList";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const OnboardingScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -19,18 +21,25 @@ const OnboardingScreen = ({ navigation }) => {
         showSkip={false}
         onDone={() => {
           dispatchAppSettings({
-            type: ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS,
+            type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
             payload: {
               theme: { name: "Light Theme", id: "light", style: lightTheme },
-              screenHidden: ["Onboarding Screen"],
+              screenHidden: [screenList.onboardingScreen],
               fontSize: "medium",
               language: "english",
+              logbookSettings: {
+                defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+                showSecondaryCurrency: false,
+                dailySummary: "expense-only",
+                showTransactionTime: true,
+                showTransactionNotes: true,
+              },
               locale: "en-US",
-              currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+              // currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
             },
           });
 
-          navigation.navigate("Initial Setup Screen");
+          navigation.navigate(screenList.initialSetupScreen);
         }}
         pages={[
           {

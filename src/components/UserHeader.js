@@ -1,10 +1,8 @@
-import {
-    Image, StyleSheet, Text, TouchableNativeFeedback, View
-} from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
-    useGlobalAppSettings,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import { TextPrimary } from "./Text";
 
@@ -67,16 +65,5 @@ const UserHeaderComponent = ({ navigation }) => {
     </>
   );
 };
-
-const styles = new StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    height: "40%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default UserHeaderComponent;

@@ -21,6 +21,7 @@ import {
   ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -31,7 +32,7 @@ import {
 import * as utils from "../../utils";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
-  // ! Global State Section //
+  // TAG : Global State Section //
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -40,7 +41,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const [category, setCategory] = useState();
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Theme State
   const [theme, setTheme] = useState({
@@ -62,7 +63,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   // Selected Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // ! UseEffect Section //
+  // TAG : UseEffect Section //
 
   useEffect(() => {
     setTransaction(route?.params?.transaction);
@@ -94,7 +95,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
   useEffect(() => {}, [categories]);
 
-  // ! Function Section //
+  // TAG : Function Section //
   //   // Find Category
 
   //   // Find Category Name by Id
@@ -161,7 +162,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Amount Section */}
+            {/* // TAG : Amount Section */}
             <View
               style={{
                 flex: 1,
@@ -214,7 +215,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
             </View>
             {/* </ScrollView> */}
 
-            {/* // ! Details */}
+            {/* // TAG : Details */}
             <View style={{ paddingHorizontal: 16 }}>
               <TextPrimary
                 label={`${
@@ -225,7 +226,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
             </View>
 
-            {/* // ! Type Section */}
+            {/* // TAG : Type Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -243,7 +244,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Type" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -254,7 +255,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   },
                 ]}
               >
-                {/* // ! Type State */}
+                {/* // TAG : Type State */}
                 <TextPrimary
                   label={
                     transaction.details.type[0].toUpperCase() +
@@ -264,7 +265,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Date Section */}
+            {/* // TAG : Date Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -283,7 +284,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Date" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -294,14 +295,14 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   },
                 ]}
               >
-                {/* // ! Today Button */}
+                {/* // TAG : Today Button */}
                 <TextPrimary
                   label={new Date(transaction.details.date).toDateString()}
                 />
               </View>
             </View>
 
-            {/* // ! Log Book Section */}
+            {/* // TAG : Log Book Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -319,10 +320,10 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="From Book" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 2, alignItems: 'center', justifyContent: 'center' }]}> */}
 
-              {/* // ! Book Picker */}
+              {/* // TAG : Book Picker */}
               <TextPrimary
                 label={
                   route?.params?.selectedLogbook?.name[0]?.toUpperCase() +
@@ -334,7 +335,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               {/* </View> */}
             </View>
 
-            {/* // ! Category Section */}
+            {/* // TAG : Category Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -352,7 +353,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Category" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -363,7 +364,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   },
                 ]}
               >
-                {/* // ! Category Picker */}
+                {/* // TAG : Category Picker */}
                 <IonIcons
                   name={selectedCategory?.icon?.name}
                   size={18}
@@ -389,7 +390,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Notes Section */}
+            {/* // TAG : Notes Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -407,11 +408,11 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Notes" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
 
               {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
-              {/* // ! Notes Input */}
+              {/* // TAG : Notes Input */}
               <TextPrimary
                 label={
                   transaction.details.notes
@@ -423,7 +424,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               {/* </View> */}
             </View>
 
-            {/* // ! Line Separator */}
+            {/* // TAG : Line Separator */}
             <View
               style={{
                 borderColor: "#bbb",
@@ -435,7 +436,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               }}
             ></View>
 
-            {/* // ! Action Button */}
+            {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
@@ -444,13 +445,13 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 padding: 16,
               }}
             >
-              {/* // ! Edit Button */}
+              {/* // TAG : Edit Button */}
               <View style={{ paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Edit"
                   width={150}
                   onPress={() =>
-                    navigation.navigate("Transaction Details Screen", {
+                    navigation.navigate(screenList.transactionDetailsScreen, {
                       transaction: transaction,
                       selectedLogbook: route?.params?.selectedLogbook,
                       selectedCategory: selectedCategory,
@@ -460,7 +461,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* // ! Delete Button */}
+              {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
                 <ButtonSecondary
                   label="Delete"
@@ -487,7 +488,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             //     initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
                             //     initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
                             // })
-                            navigation.navigate("Loading Screen", {
+                            navigation.navigate(screenList.loadingScreen, {
                               label: "Deleting Transaction ...",
                               loadingType: "deleteOneTransaction",
                               deleteTransaction: transaction,
@@ -504,7 +505,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* // ! Save Button */}
+              {/* // TAG : Save Button */}
               {/* <View style={{ paddingLeft: 8 }}>
                             <ButtonPrimary label='Save' width={150} onPress={() => navigation.goBack()} theme={theme.theme} />
                         </View> */}

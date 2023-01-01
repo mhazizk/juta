@@ -20,16 +20,17 @@ import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import * as utils from "../../utils";
+import screenList from "../../navigations/ScreenList";
 
 const EditLogbookScreen = ({ route, navigation }) => {
-  // ! Global State Section //
+  // TAG : Global State Section //
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Theme State
   const [theme, setTheme] = useState({
@@ -51,7 +52,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
   // Selected Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // ! UseEffect Section //
+  // TAG : UseEffect Section //
 
   useEffect(() => {
     setLogbook(route?.params?.logbook);
@@ -82,7 +83,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
 
   useEffect(() => {}, [logbookToOpen]);
 
-  // ! Function Section //
+  // TAG : Function Section //
 
   const countTransactions = () => {
     let array = [];
@@ -132,7 +133,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Logbook Name Section */}
+            {/* // TAG : Logbook Name Section */}
             <View
               style={{
                 flex: 1,
@@ -191,15 +192,15 @@ const EditLogbookScreen = ({ route, navigation }) => {
             </View>
             {/* </ScrollView> */}
 
-            {/* // ! Logbook Details */}
+            {/* // TAG : Logbook Details */}
             <View style={{ paddingHorizontal: 16 }}>
               <TextPrimary label="Logbook Details" style={{ fontSize: 24 }} />
             </View>
 
-            {/* // ! Main Currency Section */}
+            {/* // TAG : Main Currency Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Main Currency",
                   modalType: "currencyList",
                   props: APP_SETTINGS.CURRENCY.OPTIONS,
@@ -235,7 +236,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Main Currency" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -252,7 +253,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Type State */}
+                    {/* // TAG : Type State */}
                     <CountryFlag isoCode={selectedCurrency.isoCode} size={18} />
                     <TextPrimary
                       label={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
@@ -269,7 +270,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Balance Section */}
+            {/* // TAG : Balance Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -288,7 +289,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Total Balance" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -299,17 +300,17 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   },
                 ]}
               >
-                {/* // ! Today Button */}
+                {/* // TAG : Today Button */}
                 <TextPrimary
                   label={`${utils.GetFormattedNumber({
                     value: sumBalance(),
-                    currency: appSettings.currency.name,
+                    currency: appSettings.logbookSettings.defaultCurrency.name,
                   })}`}
                 />
               </View>
             </View>
 
-            {/* // ! Total Transactions Section */}
+            {/* // TAG : Total Transactions Section */}
             <View
               style={{
                 flexDirection: "row",
@@ -327,7 +328,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               />
               <TextPrimary label="Total Transactions" style={{ flex: 1 }} />
 
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -348,7 +349,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               </View>
             </View>
 
-            {/* // ! Line Separator */}
+            {/* // TAG : Line Separator */}
             <View
               style={{
                 borderColor: appSettings.theme.style.colors.secondary,
@@ -360,7 +361,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               }}
             ></View>
 
-            {/* // ! Action Button */}
+            {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
@@ -369,7 +370,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 padding: 16,
               }}
             >
-              {/* // ! cancel Button */}
+              {/* // TAG : cancel Button */}
               <View style={{ paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Cancel"
@@ -378,7 +379,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 />
               </View>
 
-              {/* // ! Save Button */}
+              {/* // TAG : Save Button */}
               <View style={{ paddingLeft: 8 }}>
                 <ButtonPrimary
                   label="Save"
@@ -392,7 +393,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                       },
                     });
 
-                    navigation.navigate("Loading Screen", {
+                    navigation.navigate(screenList.loadingScreen, {
                       label: "Saving Logbook ...",
                       loadingType: "patchLogbook",
                       logbookToOpen: logbookToOpen,

@@ -145,7 +145,7 @@ const AnalyticsScreen = () => {
     console.log(JSON.stringify(spentList));
   }, [spentList]);
 
-  // ! Function Section
+  // TAG : Function Section
 
   return (
     <>
@@ -190,14 +190,14 @@ const AnalyticsScreen = () => {
                       }}
                     >
                       <TextSecondary
-                        label={appSettings.currency.symbol}
+                        label={appSettings.logbookSettings.defaultCurrency.symbol}
                         style={{ paddingRight: 8 }}
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
                         label={utils.GetFormattedNumber({
                           value: activeBudget.spent,
-                          currency: appSettings.currency.name,
+                          currency: appSettings.logbookSettings.defaultCurrency.name,
                         })}
                       />
                     </View>
@@ -222,7 +222,7 @@ const AnalyticsScreen = () => {
                         ? graph.graphData.limitLine
                         : null
                     }
-                    symbol={appSettings.currency.symbol}
+                    symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                     rangeDay={graph.rangeDay}
                     //  Graph Style
                     successColor={appSettings.theme.style.colors.success}
@@ -324,7 +324,7 @@ const AnalyticsScreen = () => {
                     }
                     rightLabel={utils.GetFormattedNumber({
                       value: item?.totalSpent,
-                      currency: appSettings.currency.name,
+                      currency: appSettings.logbookSettings.defaultCurrency.name,
                     })}
                     iconLeftColor={
                       item?.category.icon.color === "default"
@@ -333,7 +333,7 @@ const AnalyticsScreen = () => {
                     }
                     iconLeftName={item?.category.icon.name}
                     // iconLeftColor={item?.category.icon.color}
-                    currency={appSettings.currency}
+                    currency={appSettings.logbookSettings.defaultCurrency}
                     transactionAmount={item?.totalSpent}
                   />
                 )}

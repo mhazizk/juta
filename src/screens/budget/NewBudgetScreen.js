@@ -5,6 +5,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -29,7 +30,7 @@ const NewBudgetScreen = ({ navigation }) => {
     console.log(newBudget);
   }, [newBudget]);
 
-  // ! Function Section
+  // TAG : Function Section
 
   // Set Date in Date Picker
   const onChangeStart = (event, selectedDate) => {
@@ -83,7 +84,7 @@ const NewBudgetScreen = ({ navigation }) => {
         return alert("Please select a budget finish date");
 
       default:
-        return navigation.navigate("Loading Screen", {
+        return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Budget ...",
           loadingType: "insertBudget",
           insertBudget: newBudget,
@@ -156,15 +157,15 @@ const NewBudgetScreen = ({ navigation }) => {
             />
           )}
         </View>
-        {/* // ! Budget Details */}
+        {/* // TAG : Budget Details */}
         <View style={{ paddingHorizontal: 16 }}>
           <TextPrimary label="Budget Details" style={{ fontSize: 24 }} />
         </View>
 
-        {/* // ! Limit Section */}
+        {/* // TAG : Limit Section */}
         <TouchableNativeFeedback
           onPress={() =>
-            navigation.navigate("Modal Screen", {
+            navigation.navigate(screenList.modalScreen, {
               modalType: "textInput",
               title: "Budget Limit",
               placeholder: "Enter budget limit ...",
@@ -174,7 +175,7 @@ const NewBudgetScreen = ({ navigation }) => {
                 ? null
                 : utils.GetFormattedNumber({
                     value: newBudget.limit,
-                    currency: appSettings.currency.name,
+                    currency: appSettings.logbookSettings.defaultCurrency.name,
                   }),
               selected: (string) => {
                 const removedThousands = string
@@ -208,7 +209,7 @@ const NewBudgetScreen = ({ navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Budget Limit" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -219,7 +220,7 @@ const NewBudgetScreen = ({ navigation }) => {
                   },
                 ]}
               ></View>
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -234,7 +235,7 @@ const NewBudgetScreen = ({ navigation }) => {
                 ]}
               >
                 <TextSecondary
-                  label={appSettings.currency.symbol}
+                  label={appSettings.logbookSettings.defaultCurrency.symbol}
                   style={{ paddingRight: 8 }}
                 />
                 <TextPrimary
@@ -243,12 +244,12 @@ const NewBudgetScreen = ({ navigation }) => {
                       ? utils
                           .GetFormattedNumber({
                             value: newBudget.limit,
-                            currency: appSettings.currency.name,
+                            currency: appSettings.logbookSettings.defaultCurrency.name,
                           })
                           .slice(0, 15) + "..."
                       : utils.GetFormattedNumber({
                           value: newBudget.limit,
-                          currency: appSettings.currency.name,
+                          currency: appSettings.logbookSettings.defaultCurrency.name,
                         })
                   }
                   numberOfLines={1}
@@ -264,7 +265,7 @@ const NewBudgetScreen = ({ navigation }) => {
           </View>
         </TouchableNativeFeedback>
 
-        {/* // ! Start Date Section */}
+        {/* // TAG : Start Date Section */}
         <TouchableNativeFeedback
           onPress={() => showDatePicker({ mode: "start" })}
         >
@@ -285,7 +286,7 @@ const NewBudgetScreen = ({ navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Start Date" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -296,7 +297,7 @@ const NewBudgetScreen = ({ navigation }) => {
                   },
                 ]}
               ></View>
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -324,7 +325,7 @@ const NewBudgetScreen = ({ navigation }) => {
             </View>
           </View>
         </TouchableNativeFeedback>
-        {/* // ! Finish Date Section */}
+        {/* // TAG : Finish Date Section */}
         <TouchableNativeFeedback
           onPress={() => showDatePicker({ mode: "finish" })}
         >
@@ -345,7 +346,7 @@ const NewBudgetScreen = ({ navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Finish Date" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -356,7 +357,7 @@ const NewBudgetScreen = ({ navigation }) => {
                   },
                 ]}
               ></View>
-              {/* // ! Right Side */}
+              {/* // TAG : Right Side */}
               <View
                 style={[
                   {
@@ -384,7 +385,7 @@ const NewBudgetScreen = ({ navigation }) => {
             </View>
           </View>
         </TouchableNativeFeedback>
-        {/* // ! Repeat Section */}
+        {/* // TAG : Repeat Section */}
         <TouchableNativeFeedback
           onPress={() =>
             setNewBudget({ ...newBudget, repeat: !newBudget.repeat })
@@ -407,7 +408,7 @@ const NewBudgetScreen = ({ navigation }) => {
               {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
               <TextPrimary label="Repeat after finish" style={{ flex: 1 }} />
 
-              {/* // ! Container */}
+              {/* // TAG : Container */}
               <View
                 style={[
                   {
@@ -418,7 +419,7 @@ const NewBudgetScreen = ({ navigation }) => {
                   },
                 ]}
               >
-                {/* // ! Right Side */}
+                {/* // TAG : Right Side */}
                 <View
                   style={{
                     backgroundColor: newBudget.repeat
@@ -447,7 +448,7 @@ const NewBudgetScreen = ({ navigation }) => {
           </View>
         </TouchableNativeFeedback>
 
-        {/* // ! Line Separator */}
+        {/* // TAG : Line Separator */}
         <View
           style={{
             borderColor: appSettings.theme.style.colors.secondary,
@@ -459,7 +460,7 @@ const NewBudgetScreen = ({ navigation }) => {
           }}
         ></View>
 
-        {/* // ! Action Button */}
+        {/* // TAG : Action Button */}
         <View
           style={{
             flexDirection: "row",
@@ -468,7 +469,7 @@ const NewBudgetScreen = ({ navigation }) => {
             padding: 16,
           }}
         >
-          {/* // ! cancel Button */}
+          {/* // TAG : cancel Button */}
           <View style={{ paddingRight: 8 }}>
             <ButtonSecondary
               label="Cancel"
@@ -477,7 +478,7 @@ const NewBudgetScreen = ({ navigation }) => {
             />
           </View>
 
-          {/* // ! Save Button */}
+          {/* // TAG : Save Button */}
           <View style={{ paddingLeft: 8 }}>
             <ButtonPrimary
               label="Save"

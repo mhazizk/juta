@@ -21,6 +21,7 @@ import {
   ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -32,7 +33,7 @@ import {
 import * as utils from "../../utils";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
-  // ! useContext Section //
+  // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -42,7 +43,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const [logbookToOpen, setLogbookToOpen] = useState(null);
 
-  // ! useState Section //
+  // TAG : useState Section //
 
   // Loading State
 
@@ -64,7 +65,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // Date State for Date Picker
   const [date, setDate] = useState(new Date());
 
-  // ! useEffect Section //
+  // TAG : useEffect Section //
 
   useEffect(() => {
     // setLoading(true);
@@ -113,11 +114,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     console.log(logbookToOpen);
   }, [logbookToOpen]);
 
-  // ! useRef State //
+  // TAG : useRef State //
   const inputNotes = useRef(null);
   const inputAmount = useRef(null);
 
-  // ! Function Section //
+  // TAG : Function Section //
 
   // Set Date in Date Picker
   const onChange = (event, selectedDate) => {
@@ -180,7 +181,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       case !transaction.details.category_id:
         return alert("Please select transaction category");
       default:
-        return navigation.navigate("Loading Screen", {
+        return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Transction ...",
           loadingType: "patchTransaction",
           logbookToOpen: logbookToOpen,
@@ -210,7 +211,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           <ScrollView
             contentContainerStyle={{ flex: 1, justifyContent: "center" }}
           >
-            {/* // ! Amount Section */}
+            {/* // TAG : Amount Section */}
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
               style={{
@@ -253,7 +254,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   // }
                   placeholder={utils.GetFormattedNumber({
                     value: transaction.details.amount,
-                    currency: appSettings.currency.name,
+                    currency: appSettings.logbookSettings.defaultCurrency.name,
                   })}
                   placeholderTextColor={
                     appSettings.theme.style.text.textSecondary.color
@@ -319,7 +320,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             {/* </ScrollView> */}
 
-            {/* // ! Details Section */}
+            {/* // TAG : Details Section */}
             <View
               style={[
                 {
@@ -337,10 +338,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               />
             </View>
 
-            {/* // ! Transaction Type Section */}
+            {/* // TAG : Transaction Type Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Transaction",
                   props: [{ name: "expense" }, { name: "income" }],
                   modalType: "list",
@@ -375,7 +376,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Transaction" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -394,7 +395,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Transaction Picker */}
+                    {/* // TAG : Transaction Picker */}
                     <TextPrimary
                       label={
                         transaction.details.in_out[0].toUpperCase() +
@@ -418,10 +419,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Type Section */}
+            {/* // TAG : Type Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Type",
                   modalType: "list",
                   props:
@@ -454,7 +455,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Type" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -473,7 +474,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Type Picker */}
+                    {/* // TAG : Type Picker */}
                     <TextPrimary
                       label={
                         !transaction?.details?.type
@@ -499,7 +500,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Date Section */}
+            {/* // TAG : Date Section */}
             <TouchableNativeFeedback onPress={showDatepicker}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
@@ -518,7 +519,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                   <TextPrimary label="Date" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -537,7 +538,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Date Picker */}
+                    {/* // TAG : Date Picker */}
                     <TextPrimary
                       label={
                         !transaction?.details?.date
@@ -562,10 +563,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Log Book Section */}
+            {/* // TAG : Log Book Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Log Books",
                   modalType: "list",
                   props: loadedLogbooks,
@@ -600,7 +601,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="From Book" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -619,7 +620,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Book Picker */}
+                    {/* // TAG : Book Picker */}
                     <TextPrimary
                       label={
                         !selectedLogbook?.name
@@ -645,10 +646,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Category Section */}
+            {/* // TAG : Category Section */}
             <TouchableNativeFeedback
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   title: "Category",
                   modalType: "list",
                   props:
@@ -685,7 +686,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Category" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   <View
                     style={[
                       {
@@ -704,7 +705,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     ]}
                   >
-                    {/* // ! Category Picker */}
+                    {/* // TAG : Category Picker */}
                     <IonIcons
                       name={selectedCategory?.icon?.name}
                       size={18}
@@ -746,7 +747,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // ! Notes Section */}
+            {/* // TAG : Notes Section */}
             <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
@@ -764,11 +765,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   />
                   <TextPrimary label="Notes" style={{ flex: 1 }} />
 
-                  {/* // ! Container */}
+                  {/* // TAG : Container */}
                   {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
 
                   {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
-                  {/* // ! Notes Input */}
+                  {/* // TAG : Notes Input */}
                   <TextInput
                     ref={inputNotes}
                     textAlign="right"
@@ -823,7 +824,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableNativeFeedback>
           </ScrollView>
 
-          {/* // ! Line Separator */}
+          {/* // TAG : Line Separator */}
           <View
             style={{
               borderColor: "#bbb",
@@ -835,7 +836,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             }}
           ></View>
 
-          {/* // ! Action Button */}
+          {/* // TAG : Action Button */}
           <View
             style={{
               flexDirection: "row",
@@ -844,7 +845,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               padding: 16,
             }}
           >
-            {/* // ! Cancel Button */}
+            {/* // TAG : Cancel Button */}
             <View style={{ paddingRight: 8 }}>
               <ButtonSecondary
                 label="Cancel"
@@ -857,7 +858,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               />
             </View>
 
-            {/* // ! Save Button */}
+            {/* // TAG : Save Button */}
             <View style={{ paddingLeft: 8 }}>
               <ButtonPrimary
                 label="Save"

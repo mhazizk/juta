@@ -1,4 +1,4 @@
-// ! Format Currency
+// TAG : Format Currency
 const formatCurrency = ({ amount, currency }) => {
   // let checkAmount = String(amount).replace(/[^a-zA-Z0-9 ]/g, '');
   // let checkAmount = String(amount).replace(/[^, ]/g, '');

@@ -13,6 +13,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import SearchResultTab from "../../components/SearchResultTab";
 import { TextSecondary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
@@ -129,7 +130,7 @@ const SearchScreen = ({ navigation }) => {
             searchQuery={searchQuery}
             onPress={({ transaction, selectedLogbook }) => {
               console.log(selectedLogbook);
-              navigation.navigate("Transaction Preview Screen", {
+              navigation.navigate(screenList.transactionPreviewScreen, {
                 transaction: transaction,
                 selectedLogbook: selectedLogbook,
               });

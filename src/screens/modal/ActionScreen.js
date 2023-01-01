@@ -11,6 +11,7 @@ import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextButtonPrimary, TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
+import screenList from "../../navigations/ScreenList";
 import {
     useGlobalAppSettings,
     useGlobalLogbooks,
@@ -43,7 +44,7 @@ const ActionScreen = ({ route, navigation }) => {
 
   return (
     <>
-      {/* // ! Transparent Overlay */}
+      {/* // TAG : Transparent Overlay */}
       <TouchableOpacity
         onPress={() => navigation.pop(1)}
         style={{ flex: 1, backgroundColor: "transparent" }}
@@ -51,7 +52,7 @@ const ActionScreen = ({ route, navigation }) => {
         <View style={{ flex: 1, backgroundColor: "transparent" }}></View>
       </TouchableOpacity>
 
-      {/* // ! Content card */}
+      {/* // TAG : Content card */}
       <View
         style={{
           backgroundColor: appSettings.theme.style.colors.background,
@@ -72,7 +73,7 @@ const ActionScreen = ({ route, navigation }) => {
         <View
           style={{ flexDirection: "row", alignItems: "center", width: 300 }}
         >
-          {/* // ! New Transaction */}
+          {/* // TAG : New Transaction */}
           <View
             style={{
               flex: 1,
@@ -86,7 +87,7 @@ const ActionScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={{ flex: 1 }}
               onPress={() =>
-                navigation.navigate("New Transaction Details Screen")
+                navigation.navigate(screenList.newTransactionDetailsScreen)
               }
             >
               <View
@@ -112,7 +113,7 @@ const ActionScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* // ! New LogBook */}
+          {/* // TAG : New LogBook */}
           <View
             style={{
               flex: 1,
@@ -126,7 +127,7 @@ const ActionScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={{ flex: 1 }}
               onPress={() =>
-                navigation.navigate("Modal Screen", {
+                navigation.navigate(screenList.modalScreen, {
                   modalType: "textInput",
                   title: "Create New Log Book",
                   placeholder: "Enter new log book name ...",
@@ -139,7 +140,7 @@ const ActionScreen = ({ route, navigation }) => {
                       _id: Math.random * 10000,
                       user_id: userAccount.account.user_id,
                       username: null,
-                      logbook_currency: appSettings.currency,
+                      logbook_currency: appSettings.logbookSettings.defaultCurrency,
                       logbook_type: "basic",
                       logbook_id: Math.random() * 10000,
                       logbook_name: item,
@@ -202,7 +203,7 @@ const ActionScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* // ! Action Button */}
+        {/* // TAG : Action Button */}
         <View
           style={{
             flexDirection: "row",
@@ -211,7 +212,7 @@ const ActionScreen = ({ route, navigation }) => {
             padding: 16,
           }}
         >
-          {/* // ! Cancel Button */}
+          {/* // TAG : Cancel Button */}
           <View style={{ paddingRight: 0 }}>
             <ButtonSecondary
               label="Cancel"

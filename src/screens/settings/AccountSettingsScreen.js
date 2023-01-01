@@ -1,18 +1,19 @@
 import {
-  Image, StyleSheet, Text,
-  TouchableNativeFeedback, View
+  Image,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-  globalStyles,
-  globalTheme
-} from "../../assets/themes/globalStyles";
+import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 
 const AccountSettingsScreen = ({ item, navigation }) => {
@@ -35,7 +36,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                         <Text style={{ fontSize: 32, color: '#bbb' }}>Account</Text>
                     </View> */}
 
-          {/* // ! Change Email */}
+          {/* // TAG : Change Email */}
           <ListItem
             leftLabel="Change Email"
             rightLabel={userAccount.account.email}
@@ -44,7 +45,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
             onPress={() => alert("Feature in progress ...")}
           />
 
-          {/* // ! Change Password */}
+          {/* // TAG : Change Password */}
           <ListItem
             leftLabel="Change Password"
             iconLeftName="key"
@@ -52,15 +53,15 @@ const AccountSettingsScreen = ({ item, navigation }) => {
             onPress={() => alert("Feature in progress ...")}
           />
 
-          {/* // ! Data */}
+          {/* // TAG : Data */}
           <ListItem
             leftLabel="Data"
             iconLeftName="cube"
             iconPack="IonIcons"
-            onPress={() => navigation.push("Data Screen")}
+            onPress={() => navigation.navigate(screenList.dataSettingsScreen)}
           />
 
-          {/* // ! Verification */}
+          {/* // TAG : Verification */}
           <TouchableNativeFeedback
             onPress={() => alert("Feature in progress ...")}
           >

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import REDUCER_ACTIONS from "./reducer.action";
 
 const sortTransactions = (prevTransaction, currentTransaction) => {
   if (prevTransaction.details.date < currentTransaction.details.date) {
@@ -28,10 +29,13 @@ export const ACTIONS = {
     SET_INIT_TRANSACTIONS: "SET_INIT_TRANSACTIONS",
     SET_INIT_APP_SETTINGS: "SET_INIT_APP_SETTINGS",
     SET_INIT_USER_ACCOUNT: "SET_INIT_USER_ACCCOUNT",
+    SET_MULTI_APP_SETTINGS: "SET_MULTI_APP_SETTINGS",
+    SET_MULTI_USER_ACCOUNT: "SET_MULTI_USER_ACCOUNT",
   },
   SORTED_TRANSACTIONS: {
     GROUP_SORTED: {
       INIT_SETUP: "INIT_SETUP_SORTED_TRANSACTIONS",
+      SET_MULTI_ACTIONS: "SET_MULTI_ACTIONS_SORTED_TRANSACTIONS",
       SET: "SET_SORTED_TRANSACTIONS",
       INSERT_TRANSACTION: "INSERT_SORTED_TRANSACTIONS",
       PATCH_TRANSACTION: "PATCH_SORTED_TRANSACTIONS",
@@ -584,7 +588,13 @@ export const globalCategories = (state, action) => {
 
 export const globalSortedTransactions = (state, action) => {
   switch (action.type) {
-    // ! Init Group Sorted
+    // TAG : Multi Actions
+    case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET_MULTI_ACTIONS:
+      return {
+        ...state,
+        groupSorted: action.payload,
+      };
+
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP:
       return {
         ...state,
@@ -592,7 +602,7 @@ export const globalSortedTransactions = (state, action) => {
         groupSorted: action.payload,
       };
 
-    // ! Patch Category
+    // TAG : Patch Category
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_CATEGORY:
       const patchCategory = action.payload.patchCategory;
       const targetCategoryType = action.payload.targetCategoryType;
@@ -764,7 +774,7 @@ export const globalSortedTransactions = (state, action) => {
           state.sortedTransactionsPatchCounter + 1,
       };
 
-    // ! Delete One Logbook
+    // TAG : Delete One Logbook
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_LOGBOOK:
       const deleteLogbook = action.payload;
       let filterOtherLogbooks = state.groupSorted.filter(
@@ -778,7 +788,7 @@ export const globalSortedTransactions = (state, action) => {
         sortedLogbookDeleteCounter: state.sortedLogbookDeleteCounter + 1,
       };
 
-    // ! Insert New Logbook
+    // TAG : Insert New Logbook
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_LOGBOOK:
       let newLogbook = action.payload.newLogbook;
 
@@ -791,7 +801,7 @@ export const globalSortedTransactions = (state, action) => {
         logbookToOpen: action.payload.logbookToOpen,
       };
 
-    // ! Set Initial Sorted Transactions
+    // TAG : Set Initial Sorted Transactions
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET:
       let array = [];
       let insert;
@@ -842,7 +852,7 @@ export const globalSortedTransactions = (state, action) => {
         sortedLogbookDeleteCounter: state.sortedLogbookDeleteCounter || 0,
       };
 
-    // ! Insert New Transaction Method
+    // TAG : Insert New Transaction Method
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_TRANSACTION:
       const newTransaction = action.payload.transaction;
       const customDate = `${new Date(
@@ -855,7 +865,7 @@ export const globalSortedTransactions = (state, action) => {
       ).slice(-2)}`;
       let groupSortedToBeReplaced;
 
-      // ! Check logbook
+      // TAG : Check logbook
       if (
         state.groupSorted.some(
           (logbooks) => logbooks.logbook_id === newTransaction.logbook_id
@@ -879,7 +889,7 @@ export const globalSortedTransactions = (state, action) => {
         );
         console.log("second");
 
-        // !  If transaction has new date
+        // TAG :  If transaction has new date
         if (!foundDateSection.length) {
           // Create new date section
           const newDateSection = {
@@ -920,7 +930,7 @@ export const globalSortedTransactions = (state, action) => {
           console.log(groupSortedToBeReplaced);
         }
 
-        // ! If transaction has same date
+        // TAG : If transaction has same date
         if (foundDateSection.length) {
           // Insert new transaction
           const insertedTransactions = [
@@ -974,7 +984,7 @@ export const globalSortedTransactions = (state, action) => {
           state.sortedTransactionsInsertCounter + 1,
       };
 
-    // ! Patch Transaction Method
+    // TAG : Patch Transaction Method
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:
       const newPatchTransaction = action.payload.patchTransaction;
       const prevTransaction = action.payload.prevTransaction;
@@ -1000,7 +1010,7 @@ export const globalSortedTransactions = (state, action) => {
       let prevLogbookToBeReplaced;
       let targetLogbookToBeReplaced;
 
-      // ! Create new date section
+      // TAG : Create new date section
       const newDateSection = {
         title: new Date(newPatchTransaction.details.date).toLocaleDateString(),
         customDate: customPatchDate,
@@ -1050,7 +1060,7 @@ export const globalSortedTransactions = (state, action) => {
             transaction.transaction_id !== newPatchTransaction.transaction_id
         );
 
-      // ! OPTION 11
+      // TAG : OPTION 11
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1060,7 +1070,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 11");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
         console.log("first");
@@ -1068,7 +1078,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
         console.log("second");
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
         // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
@@ -1079,7 +1089,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         const getTargetTransactionsData = [
           ...foundTargetDateSection[0].data,
@@ -1096,7 +1106,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 1 date section and sort it
         const removeTargetDateSections = foundTargetOtherDateSection.filter(
           (section) => section.customDate !== customPatchDate
@@ -1121,7 +1131,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1137,7 +1147,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 10
+      // TAG : OPTION 10
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1147,7 +1157,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 10");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
         console.log("first");
@@ -1155,7 +1165,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
         console.log("second");
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
         // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
@@ -1166,7 +1176,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
         // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
@@ -1176,7 +1186,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 2 date section and sort it
         // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
         const overrideTargetDateSections = [
@@ -1199,7 +1209,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1215,7 +1225,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 9
+      // TAG : OPTION 9
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1225,7 +1235,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 9");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
           foundPrevOtherTransactionsData.sort(sortTransactions);
@@ -1237,7 +1247,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("second");
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
         sortedLogbookTransactions = foundPrevOtherDateSection.sort(
@@ -1253,7 +1263,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
         // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
@@ -1263,7 +1273,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 2 date section and sort it
         // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
         const overrideTargetDateSections = [
@@ -1286,7 +1296,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1302,7 +1312,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 8
+      // TAG : OPTION 8
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1312,7 +1322,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 8");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
           foundPrevOtherTransactionsData.sort(sortTransactions);
@@ -1324,7 +1334,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("second");
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         const overridePrevDateSections = [
           ...foundPrevOtherDateSection,
@@ -1343,7 +1353,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
         // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
@@ -1353,7 +1363,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 2 date section and sort it
         // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
         const overrideTargetDateSections = [
@@ -1376,7 +1386,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1392,7 +1402,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 7
+      // TAG : OPTION 7
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1402,7 +1412,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 7");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
         // console.log('first')
@@ -1410,7 +1420,7 @@ export const globalSortedTransactions = (state, action) => {
         // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
         // console.log('second')
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
         sortedLogbookTransactions = foundPrevOtherDateSection.sort(
@@ -1426,7 +1436,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         const getTargetTransactionsData = [
           ...foundTargetDateSection[0].data,
@@ -1443,7 +1453,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 2 date section and sort it
         const removeTargetDateSections = foundTargetOtherDateSection.filter(
           (section) => section.customDate !== customPatchDate
@@ -1468,7 +1478,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1484,7 +1494,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 6
+      // TAG : OPTION 6
       if (
         !isLogbookIdSame &&
         // isTransactionDateSame &&
@@ -1494,7 +1504,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 6");
 
-        // ! [A] HANDLING PREVIOUS DATE SECTION
+        // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
           foundPrevOtherTransactionsData.sort(sortTransactions);
@@ -1506,7 +1516,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("second");
 
-        // ! [B] JOIN [A] IN PREVIOUS LOGBOOK
+        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
         // 3. Get previous section date, override date section and sort it
         const overridePrevDateSections = [
           ...foundPrevOtherDateSection,
@@ -1525,7 +1535,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("forth");
         // console.log(logbookToBeReplaced)
 
-        // ! [C] HANDLING TARGET DATE SECTION
+        // TAG : [C] HANDLING TARGET DATE SECTION
         // 5. Get transactions from target date section and sort it
         const getTargetTransactionsData = [
           ...foundTargetDateSection[0].data,
@@ -1542,7 +1552,7 @@ export const globalSortedTransactions = (state, action) => {
         };
         console.log("sixth");
 
-        // ! [D] JOIN [C] IN TARGET LOGBOOK
+        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
         // 7. Get previous section date, override 2 date section and sort it
         const removeTargetDateSections = foundTargetOtherDateSection.filter(
           (section) => section.customDate !== customPatchDate
@@ -1567,7 +1577,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log("ninth");
         // console.log(logbookToBeReplaced)
 
-        // ! [E] JOINING [A] AND [D]
+        // TAG : [E] JOINING [A] AND [D]
 
         // 10. Final Override
         const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
@@ -1583,7 +1593,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 5
+      // TAG : OPTION 5
       if (
         isLogbookIdSame &&
         isTransactionDateSame &&
@@ -1637,7 +1647,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 4
+      // TAG : OPTION 4
       if (
         isLogbookIdSame &&
         !isTransactionDateSame &&
@@ -1705,7 +1715,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 3
+      // TAG : OPTION 3
       if (
         isLogbookIdSame &&
         !isTransactionDateSame &&
@@ -1778,7 +1788,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 2
+      // TAG : OPTION 2
       if (
         isLogbookIdSame &&
         !isTransactionDateSame &&
@@ -1811,7 +1821,7 @@ export const globalSortedTransactions = (state, action) => {
         console.log(groupSortedToBeReplaced);
       }
 
-      // ! OPTION 1
+      // TAG : OPTION 1
       if (
         isLogbookIdSame &&
         !isTransactionDateSame &&
@@ -1820,7 +1830,7 @@ export const globalSortedTransactions = (state, action) => {
       ) {
         console.log("OPT 1");
 
-        // ! New date && same logbook && has prevTransactionsData remains
+        // TAG : New date && same logbook && has prevTransactionsData remains
         // Sort new inserted transactions
         const prevSortedDateSectionTransactions =
           foundPrevOtherTransactionsData.sort(sortTransactions);
@@ -1973,7 +1983,7 @@ export const globalSortedTransactions = (state, action) => {
 
 export const globalTransactions = (state, action) => {
   switch (action.type) {
-    // ! Transactions
+    // TAG : Transactions
     // Set Transactions
     case ACTIONS.TRANSACTIONS.SET:
       return {
@@ -1982,7 +1992,7 @@ export const globalTransactions = (state, action) => {
         transactionsPatchCounter: 0,
         transactionsInsertCounter: 0,
       };
-    // ! Insert New Transaction
+    // TAG : Insert New Transaction
     case ACTIONS.TRANSACTIONS.INSERT:
       let insertedArray = [...state.transactions, action.payload];
       let count;
@@ -1998,7 +2008,7 @@ export const globalTransactions = (state, action) => {
         transactionsInsertCounter: count,
       };
 
-    // ! Patch Transaction
+    // TAG : Patch Transaction
     case ACTIONS.TRANSACTIONS.PATCH:
       const filter = state.transactions.filter((transaction) => {
         return transaction.transaction_id !== action.payload.transaction_id;
@@ -2016,7 +2026,7 @@ export const globalTransactions = (state, action) => {
         transactionsPatchCounter: patched,
       };
 
-    // ! Delete One Transaction
+    // TAG : Delete One Transaction
     case ACTIONS.TRANSACTIONS.DELETE_ONE:
       const deleteFiltered = state.transactions.filter((transaction) => {
         return transaction.transaction_id !== action.payload;
@@ -2034,16 +2044,16 @@ export const globalTransactions = (state, action) => {
         transactionsDeleteCounter: deleted,
       };
 
-    // ! Clear Transactions
+    // TAG : Clear Transactions
     case ACTIONS.TRANSACTIONS.CLEAR:
       return { ...state, transactions: null };
 
-    // ! Sorted Transactions
+    // TAG : Sorted Transactions
     // Set Transactions
     case ACTIONS.GROUPED_TRANSACTIONS.SET:
       return { ...state, groupedTransactions: action.payload };
 
-    // ! Logbooks
+    // TAG : Logbooks
     // // Set Logbooks
     // case ACTIONS.LOGBOOKS.SET:
     //     return {
@@ -2060,7 +2070,7 @@ export const globalTransactions = (state, action) => {
     // case ACTIONS.LOGBOOKS.SET:
     //     return { ...state, logbooks: null }
 
-    // ! Categories
+    // TAG : Categories
     // Set Categories
     // case ACTIONS.CATEGORIES.SET:
     //     return { ...state, categories: action.payload }
@@ -2069,7 +2079,7 @@ export const globalTransactions = (state, action) => {
     // case ACTIONS.CATEGORIES.SET:
     //     return { ...state, categories: null }
 
-    // ! Multiple Actions
+    // TAG : Multiple Actions
     // Set Initial Transactions, Logbooks, and Catogories
     case ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS:
       return {
@@ -2092,19 +2102,19 @@ export const globalTransactions = (state, action) => {
 export const globalAppSettings = (state, action) => {
   switch (action.type) {
     // Set App Theme
-    case ACTIONS.APP_SETTINGS.THEME.SET:
+    case REDUCER_ACTIONS.APP_SETTINGS.THEME.SET:
       return {
         ...state,
         theme: action.payload,
       };
     // Set App Font Size
-    case ACTIONS.APP_SETTINGS.FONT_SIZE.SET:
+    case REDUCER_ACTIONS.APP_SETTINGS.FONT_SIZE.SET:
       return {
         ...state,
         fontSize: action.payload,
       };
     // Set App Language
-    case ACTIONS.APP_SETTINGS.LANGUAGE.SET:
+    case REDUCER_ACTIONS.APP_SETTINGS.LANGUAGE.SET:
       return {
         ...state,
         language: action.payload.language,
@@ -2112,22 +2122,21 @@ export const globalAppSettings = (state, action) => {
       };
 
     // Set App Currency
-    case ACTIONS.APP_SETTINGS.CURRENCY.SET:
+    case REDUCER_ACTIONS.APP_SETTINGS.CURRENCY.SET:
       return {
         ...state,
         currency: action.payload,
       };
 
     // Push Screen Hidden
-    case ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH:
+    case REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH:
       return {
         ...state,
         screenHidden: [...state.screenHidden, action.payload],
       };
 
-    // ! Multiple Actions
-    // Set Initial App Settings
-    case ACTIONS.MULTI_ACTIONS.SET_INIT_APP_SETTINGS:
+    // TAG : Multiple Actions
+    case REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS:
       return { ...state, ...action.payload };
 
     default:
@@ -2178,9 +2187,8 @@ export const globalUserAccount = (state, action) => {
         },
       };
 
-    // ! Multiple Actions
-    // Set Initial User Account
-    case ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT:
+    // TAG : Multiple Actions
+    case REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS:
       return { ...state, ...action.payload };
 
     default:

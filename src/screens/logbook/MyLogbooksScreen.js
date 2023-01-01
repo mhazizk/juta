@@ -4,6 +4,7 @@ import { FlatList } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../../src/assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
+import screenList from "../../navigations/ScreenList";
 import {
     useGlobalAppSettings,
     useGlobalLogbooks,
@@ -73,7 +74,7 @@ const MyLogbooksScreen = ({ navigation }) => {
                   iconRightName="chevron-forward"
                   iconPack="IonIcons"
                   onPress={() => {
-                    navigation.navigate("Logbook Preview Screen", {
+                    navigation.navigate(screenList.logbookPreviewScreen, {
                       logbook: item,
                     });
                   }}
@@ -88,7 +89,7 @@ const MyLogbooksScreen = ({ navigation }) => {
                   iconPack="IonIcons"
                   iconLeftName="add-circle"
                   onPress={() =>
-                    navigation.navigate("Modal Screen", {
+                    navigation.navigate(screenList.modalScreen, {
                       modalType: "textInput",
                       title: "Create New Log Book",
                       placeholder: "Enter new log book name ...",

@@ -5,6 +5,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -37,7 +38,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
 
   useEffect(() => {}, [budgets]);
 
-  // ! Function Section
+  // TAG : Function Section
 
   // Set Date in Date Picker
   const onChangeStart = (event, selectedDate) => {
@@ -91,7 +92,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
         return alert("Please select a budget finish date");
 
       default:
-        return navigation.navigate("Loading Screen", {
+        return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Budget ...",
           loadingType: "patchBudget",
           patchBudget: patchBudget,
@@ -167,15 +168,15 @@ const EditBudgetScreen = ({ navigation, route }) => {
               />
             )}
           </View>
-          {/* // ! Budget Details */}
+          {/* // TAG : Budget Details */}
           <View style={{ paddingHorizontal: 16 }}>
             <TextPrimary label="Budget Details" style={{ fontSize: 24 }} />
           </View>
 
-          {/* // ! Limit Section */}
+          {/* // TAG : Limit Section */}
           <TouchableNativeFeedback
             onPress={() =>
-              navigation.navigate("Modal Screen", {
+              navigation.navigate(screenList.modalScreen, {
                 modalType: "textInput",
                 title: "Budget Limit",
                 placeholder: "Enter budget limit ...",
@@ -185,7 +186,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   ? null
                   : utils.GetFormattedNumber({
                       value: patchBudget.limit,
-                      currency: appSettings.currency.name,
+                      currency: appSettings.logbookSettings.defaultCurrency.name,
                     }),
                 selected: (string) => {
                   const removedThousands = string
@@ -219,7 +220,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                 <TextPrimary label="Budget Limit" style={{ flex: 1 }} />
 
-                {/* // ! Container */}
+                {/* // TAG : Container */}
                 <View
                   style={[
                     {
@@ -230,7 +231,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     },
                   ]}
                 ></View>
-                {/* // ! Right Side */}
+                {/* // TAG : Right Side */}
                 <View
                   style={[
                     {
@@ -247,7 +248,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   ]}
                 >
                   <TextSecondary
-                    label={appSettings.currency.symbol}
+                    label={appSettings.logbookSettings.defaultCurrency.symbol}
                     style={{ paddingRight: 8 }}
                   />
                   <TextPrimary
@@ -256,12 +257,12 @@ const EditBudgetScreen = ({ navigation, route }) => {
                         ? utils
                             .GetFormattedNumber({
                               value: patchBudget.limit,
-                              currency: appSettings.currency.name,
+                              currency: appSettings.logbookSettings.defaultCurrency.name,
                             })
                             .slice(0, 15) + "..."
                         : utils.GetFormattedNumber({
                             value: patchBudget.limit,
-                            currency: appSettings.currency.name,
+                            currency: appSettings.logbookSettings.defaultCurrency.name,
                           })
                     }
                     numberOfLines={1}
@@ -277,7 +278,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Start Date Section */}
+          {/* // TAG : Start Date Section */}
           <TouchableNativeFeedback
             onPress={() => showDatePicker({ mode: "start" })}
           >
@@ -298,7 +299,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                 <TextPrimary label="Start Date" style={{ flex: 1 }} />
 
-                {/* // ! Container */}
+                {/* // TAG : Container */}
                 <View
                   style={[
                     {
@@ -309,7 +310,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     },
                   ]}
                 ></View>
-                {/* // ! Right Side */}
+                {/* // TAG : Right Side */}
                 <View
                   style={[
                     {
@@ -339,7 +340,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               </View>
             </View>
           </TouchableNativeFeedback>
-          {/* // ! Finish Date Section */}
+          {/* // TAG : Finish Date Section */}
           <TouchableNativeFeedback
             onPress={() => showDatePicker({ mode: "finish" })}
           >
@@ -360,7 +361,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                 <TextPrimary label="Finish Date" style={{ flex: 1 }} />
 
-                {/* // ! Container */}
+                {/* // TAG : Container */}
                 <View
                   style={[
                     {
@@ -371,7 +372,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     },
                   ]}
                 ></View>
-                {/* // ! Right Side */}
+                {/* // TAG : Right Side */}
                 <View
                   style={[
                     {
@@ -401,7 +402,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               </View>
             </View>
           </TouchableNativeFeedback>
-          {/* // ! Repeat Section */}
+          {/* // TAG : Repeat Section */}
           <TouchableNativeFeedback
             onPress={() =>
               setPatchBudget({ ...patchBudget, repeat: !patchBudget.repeat })
@@ -424,7 +425,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
                 <TextPrimary label="Repeat after finish" style={{ flex: 1 }} />
 
-                {/* // ! Container */}
+                {/* // TAG : Container */}
                 <View
                   style={[
                     {
@@ -435,7 +436,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     },
                   ]}
                 >
-                  {/* // ! Right Side */}
+                  {/* // TAG : Right Side */}
                   <View
                     style={{
                       backgroundColor: patchBudget.repeat
@@ -464,7 +465,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // ! Line Separator */}
+          {/* // TAG : Line Separator */}
           <View
             style={{
               borderColor: appSettings.theme.style.colors.secondary,
@@ -476,7 +477,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             }}
           ></View>
 
-          {/* // ! Action Button */}
+          {/* // TAG : Action Button */}
           <View
             style={{
               flexDirection: "row",
@@ -485,7 +486,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               padding: 16,
             }}
           >
-            {/* // ! Cancel Button */}
+            {/* // TAG : Cancel Button */}
             <View style={{ paddingRight: 8 }}>
               <ButtonSecondary
                 label="Cancel"
@@ -494,7 +495,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               />
             </View>
 
-            {/* // ! Delete Button */}
+            {/* // TAG : Delete Button */}
             <View style={{}}>
               <ButtonSecondary
                 label="Delete"
@@ -512,7 +513,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                       {
                         text: "YES",
                         onPress: () =>
-                          navigation.navigate("Loading Screen", {
+                          navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting Budget...",
                             loadingType: "deleteBudget",
                             deleteBudget: patchBudget,
@@ -527,7 +528,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               />
             </View>
 
-            {/* // ! Save Button */}
+            {/* // TAG : Save Button */}
             <View style={{ paddingLeft: 8 }}>
               <ButtonPrimary
                 label="Save"

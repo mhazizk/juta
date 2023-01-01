@@ -54,7 +54,6 @@ import LogBookScreen from "../screens/logbook/LogBookScreen";
 
 const Stack = createStackNavigator();
 
-
 const RootStack = ({ navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { isLoading, dispatchLoading } = useGlobalLoading();
@@ -65,7 +64,7 @@ const RootStack = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
 
-  // ! useEffect for state
+  // TAG : useEffect for state
   useEffect(() => {
     dispatchLoading({
       type: ACTIONS.LOADING.SET,
@@ -132,7 +131,7 @@ const RootStack = ({ navigation }) => {
   const getFileFromStorage = async () => {
     try {
       const json = await AsyncStorage.getItem("trx");
-      if (json != null) {
+      if (json !== null) {
         const parsed = JSON.parse(json);
         dispatchRawTransactions({
           type: ACTIONS.TRANSACTIONS.SET,
@@ -171,17 +170,17 @@ const RootStack = ({ navigation }) => {
         headerShown: false,
       }}
     >
-      {/* // ! Bottom Tab */}
+      {/* // TAG : Bottom Tab */}
       <Stack.Screen
-        name={screenList.bottomTab}
+        name={screenList.bottomTabNavigator}
         options={{
           ...noHeader,
         }}
         component={BottomTab}
       />
 
-      {/* // ! MODAL SECTION // */}
-      {/* // ! Modal Screen */}
+      {/* // SECTION : MODAL // */}
+      {/* // TAG : Modal Screen */}
       <Stack.Screen
         options={{
           presentation: "transparentModal",
@@ -193,7 +192,7 @@ const RootStack = ({ navigation }) => {
         component={ModalScreen}
       />
 
-      {/* // ! Action Screen */}
+      {/* // TAG : Action Screen */}
       <Stack.Screen
         options={{
           presentation: "transparentModal",
@@ -205,7 +204,7 @@ const RootStack = ({ navigation }) => {
         component={ActionScreen}
       />
 
-      {/* // ! Loading Screen */}
+      {/* // TAG : Loading Screen */}
       <Stack.Screen
         options={{
           gestureEnabled: false,
@@ -218,8 +217,8 @@ const RootStack = ({ navigation }) => {
         component={LoadingScreen}
       />
 
-      {/* // ! DASHBOARD SECTION */}
-      {/* // ! Dashboard Screen */}
+      {/* // SECTION : DASHBOARD */}
+      {/* // TAG : Dashboard Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -229,8 +228,8 @@ const RootStack = ({ navigation }) => {
         component={DashboardScreen}
       />
 
-      {/* // ! ANALYTICS SECTION */}
-      {/* // ! Analytics Screen */}
+      {/* // SECTION : ANALYTICS */}
+      {/* // TAG : Analytics Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -240,10 +239,10 @@ const RootStack = ({ navigation }) => {
         component={AnalyticsScreen}
       />
 
-      {/* // ! INITIAL SECTION */}
-      {/* // ! Onboarding Screen */}
+      {/* // SECTION : INITIAL */}
+      {/* // TAG : Onboarding Screen */}
       {!appSettings?.screenHidden?.some(
-        (screen) => screen === "Onboarding Screen"
+        (screen) => screen === screenList.onboardingScreen
       ) && (
         <Stack.Screen
           options={noHeader}
@@ -252,9 +251,9 @@ const RootStack = ({ navigation }) => {
         />
       )}
 
-      {/* // ! Initial Setup Screen */}
+      {/* // TAG : Initial Setup Screen */}
       {!appSettings?.screenHidden?.some(
-        (screen) => screen === "Initial Setup Screen"
+        (screen) => screen === screenList.initialSetupScreen
       ) && (
         <Stack.Screen
           options={noHeader}
@@ -263,9 +262,9 @@ const RootStack = ({ navigation }) => {
         />
       )}
 
-      {/* // ! Splash Screen */}
+      {/* // TAG : Splash Screen */}
       {!appSettings?.screenHidden?.some(
-        (screen) => screen === "Splash Screen"
+        (screen) => screen === screenList.splashScreen
       ) && (
         <Stack.Screen
           options={{
@@ -280,22 +279,22 @@ const RootStack = ({ navigation }) => {
         />
       )}
 
-      {/* // ! TRANSACTION SECTION */}
-      {/* // ! Transaction Preview Screen */}
+      {/* // SECTION : TRANSACTION SECTION : */}
+      {/* // TAG : Transaction Preview Screen */}
       <Stack.Screen
         options={showHeader}
         name={screenList.transactionPreviewScreen}
         component={TransactionPreviewScreen}
       />
 
-      {/* // ! Transaction Details Screen */}
+      {/* // TAG : Transaction Details Screen */}
       <Stack.Screen
         options={showHeader}
         name={screenList.transactionDetailsScreen}
         component={EditTransactionDetailsScreen}
       />
 
-      {/* // ! New Transaction Details Screen */}
+      {/* // TAG : New Transaction Details Screen */}
       <Stack.Screen
         options={{
           ...showHeaderNoBack,
@@ -305,8 +304,8 @@ const RootStack = ({ navigation }) => {
         component={NewTransactionDetailsScreen}
       />
 
-      {/* // ! LOGBOOKS SECTION */}
-      {/* // ! Logbook Screen */}
+      {/* // SECTION : LOGBOOKS */}
+      {/* // TAG : Logbook Screen */}
       <Stack.Screen
         options={{
           headerShown: true,
@@ -318,7 +317,7 @@ const RootStack = ({ navigation }) => {
         name={screenList.logbookScreen}
         component={LogBookScreen}
       />
-      {/* // ! My Logbooks Screen */}
+      {/* // TAG : My Logbooks Screen */}
       <Stack.Screen
         options={{
           headerShown: true,
@@ -331,7 +330,7 @@ const RootStack = ({ navigation }) => {
         component={MyLogbooksScreen}
       />
 
-      {/* // ! Edit Logbook Screen */}
+      {/* // TAG : Edit Logbook Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -341,7 +340,7 @@ const RootStack = ({ navigation }) => {
         component={LogbookPreviewScren}
       />
 
-      {/* // ! Edit Logbook Screen */}
+      {/* // TAG : Edit Logbook Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -351,8 +350,8 @@ const RootStack = ({ navigation }) => {
         component={EditLogbookScreen}
       />
 
-      {/* // ! CATEGORIES SECTION */}
-      {/* // ! My Categories Screen */}
+      {/* // SECTION : CA SECTION : */}
+      {/* // TAG : My Categories Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -362,7 +361,7 @@ const RootStack = ({ navigation }) => {
         component={MyCategoriesScreen}
       />
 
-      {/* // ! Category Preview Screen */}
+      {/* // TAG : Category Preview Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -372,7 +371,7 @@ const RootStack = ({ navigation }) => {
         component={CategoryPreviewScreen}
       />
 
-      {/* // ! Edit Category Screen */}
+      {/* // TAG : Edit Category Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -382,7 +381,7 @@ const RootStack = ({ navigation }) => {
         component={EditCategoryScreen}
       />
 
-      {/* // ! New Category Screen */}
+      {/* // TAG : New Category Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -392,8 +391,8 @@ const RootStack = ({ navigation }) => {
         component={NewCategoryScreen}
       />
 
-      {/* // ! BUDGETS SECTION */}
-      {/* // ! My Budgets Screen */}
+      {/* // SECTION : BUDGETS */}
+      {/* // TAG : My Budgets Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -403,7 +402,7 @@ const RootStack = ({ navigation }) => {
         component={MyBudgetsScreen}
       />
 
-      {/* // ! My Budgets Screen */}
+      {/* // TAG : My Budgets Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -413,7 +412,7 @@ const RootStack = ({ navigation }) => {
         component={NewBudgetScreen}
       />
 
-      {/* // ! Budget Preview Screen */}
+      {/* // TAG : Budget Preview Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -423,7 +422,7 @@ const RootStack = ({ navigation }) => {
         component={BudgetPreviewScreen}
       />
 
-      {/* // ! Edit Budget Screen */}
+      {/* // TAG : Edit Budget Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -433,8 +432,8 @@ const RootStack = ({ navigation }) => {
         component={EditBudgetScreen}
       />
 
-      {/* // ! SEARCH SECTION */}
-      {/* // ! Search Screen */}
+      {/* // SECTION : SEARCH */}
+      {/* // TAG : Search Screen */}
       <Stack.Screen
         options={{
           ...noHeader,
@@ -443,57 +442,57 @@ const RootStack = ({ navigation }) => {
         component={SearchScreen}
       />
 
-      {/* // ! USER SECTION */}
-      {/* // ! User Settings Screen */}
+      {/* // SECTION : USER */}
+      {/* // TAG : User Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "User" }}
         name={screenList.userScreen}
         component={UserScreen}
       />
 
-      {/* // ! Profile Settings Screen */}
+      {/* // TAG : Profile Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Profile Settings" }}
         name={screenList.profileSettingsScreen}
         component={ProfileSettingsScreen}
       />
 
-      {/* // ! SETTINGS SECTION */}
-      {/* // ! Settings Screen */}
+      {/* // SECTION : SETTINGS */}
+      {/* // TAG : Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Settings" }}
         name={screenList.settingsScreen}
         component={SettingsScreen}
       />
-      {/* // ! Currency Settings Screen */}
+      {/* // TAG : Currency Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Currency Settings" }}
         name={screenList.currencySettingsScreen}
         component={CurrencySettingsScreen}
       />
 
-      {/* // ! Personalization Settings Screen */}
+      {/* // TAG : Personalization Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Personalization Settings" }}
         name={screenList.personalizationSettingsScreen}
         component={PersonalizationSettingsScreen}
       />
 
-      {/* // ! Account Settings Screen */}
+      {/* // TAG : Account Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Account Settings" }}
         name={screenList.accountSettingsScreen}
         component={AccountSettingsScreen}
       />
 
-      {/* // ! Developer Settings Screen */}
+      {/* // TAG : Developer Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Developer Settings" }}
         name={screenList.developerSettingsScreen}
         component={DeveloperScreen}
       />
 
-      {/* // ! About Screen */}
+      {/* // TAG : About Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "About" }}
         name={screenList.aboutScreen}

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import PERSIST_ACTIONS from "./persist.actions";
 
-// ! Async Secure Storage
+// TAG : Async Secure Storage
 const asyncSecureStorage = async ({ action, key, rawValue }) => {
   // Save Secure Data
   if (action === PERSIST_ACTIONS.SET) {
@@ -35,7 +35,7 @@ const asyncSecureStorage = async ({ action, key, rawValue }) => {
   }
 };
 
-// ! Async Standard Storage
+// TAG : Async Standard Storage
 const asyncStorage = async ({ action, key, rawValue }) => {
   // Save Data
   if (action === PERSIST_ACTIONS.SET) {
