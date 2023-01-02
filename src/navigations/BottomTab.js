@@ -13,7 +13,6 @@ import LogBookScreen from "../screens/logbook/LogBookScreen";
 import SearchScreen from "../screens/search/SearchScreen";
 import screenList from "./ScreenList";
 
-
 const Tab = createBottomTabNavigator();
 
 const BottomTab = ({ route, navigation }) => {
@@ -32,7 +31,7 @@ const BottomTab = ({ route, navigation }) => {
             if (rn === screenList.dashboardScreen) {
               iconName = focused ? "analytics" : "analytics-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
-            } else if (rn === screenList.logBookScreen) {
+            } else if (rn === screenList.logbookScreen) {
               iconName = focused ? "book" : "book-outline";
               return <IonIcons name={iconName} color={color} size={size} />;
             } else if (rn === screenList.actionScreen) {
@@ -76,7 +75,7 @@ const BottomTab = ({ route, navigation }) => {
             backgroundColor: appSettings.theme.style.colors.background,
           },
           headerShown: false,
-          // tabBarBadge: '!',
+          headerShadowVisible: false,
           tabBarBadgeStyle: {
             textAlign: "center",
             textAlignVertical: "center",
@@ -84,24 +83,19 @@ const BottomTab = ({ route, navigation }) => {
           tabBarHideOnKeyboard: true,
         })}
       >
-        {/* <Tab.Screen
-          options={{ title: "Dashboard" }}
-          name={screenList.dashboardStack}
-          component={DashboardStack}
-        /> */}
         <Tab.Screen
-          options={{ title: "Dashboard" }}
+          options={{
+            title: "Dashboard",
+            tabBarBadge: 3,
+          }}
           name={screenList.dashboardScreen}
           component={DashboardScreen}
         />
-        {/* <Tab.Screen
-          options={{ title: "Log Book" }}
-          name={screenList.logBookStack}
-          component={LogBooksStack}
-        /> */}
         <Tab.Screen
-          options={{ title: "Log Book" }}
-          name={screenList.logBookScreen}
+          options={{
+            title: "Logbook",
+          }}
+          name={screenList.logbookScreen}
           component={LogBookScreen}
         />
         <Tab.Screen
@@ -122,11 +116,6 @@ const BottomTab = ({ route, navigation }) => {
             },
           })}
         />
-        {/* <Tab.Screen
-          options={{ title: "Search" }}
-          name={screenList.searchStack}
-          component={SearchStack}
-        /> */}
         <Tab.Screen
           options={{ title: "Search" }}
           name={screenList.searchScreen}
@@ -137,11 +126,6 @@ const BottomTab = ({ route, navigation }) => {
           name={screenList.userScreen}
           component={UserScreen}
         />
-        {/* <Tab.Screen
-          options={{ title: "Settings" }}
-          name={screenList.userStack}
-          component={UserStack}
-        /> */}
       </Tab.Navigator>
     </>
   );

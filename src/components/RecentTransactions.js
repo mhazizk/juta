@@ -186,6 +186,7 @@ const RecentTransactions = ({
           keyExtractor={(item) => item.transaction.transaction_id}
           renderItem={({ item }) => (
             <>
+              {/* // TODO : Add Secondary Currency */}
               {recentTransactions.status === "done" &&
                 recentTransactions.result.length && (
                   <SearchResultListItem

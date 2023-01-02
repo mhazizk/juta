@@ -166,9 +166,9 @@ const RootStack = ({ navigation }) => {
   return (
     <Stack.Navigator
       initialRouteName={screenList.onboardingScreen}
-      screenOptions={{
-        headerShown: false,
-      }}
+      // screenOptions={{
+      //   headerShown: true,
+      // }}
     >
       {/* // TAG : Bottom Tab */}
       <Stack.Screen
@@ -308,11 +308,8 @@ const RootStack = ({ navigation }) => {
       {/* // TAG : Logbook Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "Logbooks",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
         }}
         name={screenList.logbookScreen}
         component={LogBookScreen}
@@ -320,11 +317,8 @@ const RootStack = ({ navigation }) => {
       {/* // TAG : My Logbooks Screen */}
       <Stack.Screen
         options={{
-          headerShown: true,
+          ...showHeader,
           title: "My Logbooks",
-          headerStyle: {
-            backgroundColor: appSettings?.theme?.style?.colors?.header,
-          },
         }}
         name={screenList.myLogbooksScreen}
         component={MyLogbooksScreen}

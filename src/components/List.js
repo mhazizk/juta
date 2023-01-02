@@ -53,15 +53,17 @@ export const ListItem = ({
               {rightLabel && <TextSecondary label={rightLabel} />}
             </View>
             {/* {iconPack === "IonIcons" && ( */}
-            <IonIcons
-              name={iconRightName}
-              size={iconRightName === "checkmark-circle" ? 22 : 18}
-              color={
-                appSettings.theme.style.colors.foreground ||
-                lightTheme.colors.foreground
-              }
-              style={{ paddingLeft: 16 }}
-            />
+            {iconRightName && (
+              <IonIcons
+                name={iconRightName}
+                size={iconRightName === "checkmark-circle" ? 22 : 18}
+                color={
+                  appSettings.theme.style.colors.foreground ||
+                  lightTheme.colors.foreground
+                }
+                style={{ paddingLeft: 16 }}
+              />
+            )}
             {/* )} */}
           </View>
         </TouchableNativeFeedback>
@@ -110,6 +112,8 @@ export const TransactionListItem = ({
   transactionNotes,
   transactionAmount,
   currency,
+  secondaryCurrency,
+  showSecondaryCurrency,
   categoryName,
   categoryType,
   leftLabel,
@@ -194,46 +198,96 @@ export const TransactionListItem = ({
               )}
             </View>
 
-            {/* Right Side */}
-            {transactionAmount && (
-              <>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <TextSecondary
-                    label={currency.symbol}
+            {/* // SECTION : Right Side */}
+            {/* // TAG : Main Currency */}
+            <View style={{ flexDirection: "column", justifyContent: "center" }}>
+              {transactionAmount && (
+                <>
+                  <View
                     style={{
-                      paddingRight: 8,
-                      color:
-                        transactionType === "income"
-                          ? appSettings.theme.style.colors.incomeSymbol
-                          : appSettings.theme.style.text.textSecondary.color,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
                     }}
-                  />
-                  <TextPrimary
+                  >
+                    <TextSecondary
+                      label={currency.symbol}
+                      style={{
+                        fontSize: 14,
+                        paddingRight: 8,
+                        color:
+                          transactionType === "income"
+                            ? appSettings.theme.style.colors.incomeSymbol
+                            : appSettings.theme.style.text.textSecondary.color,
+                      }}
+                    />
+                    <TextPrimary
+                      style={{
+                        fontSize: 18,
+                        color:
+                          transactionType === "income"
+                            ? appSettings.theme.style.colors.incomeAmount
+                            : appSettings.theme.style.text.textPrimary.color,
+                      }}
+                      // label={utils.FormatCurrency({
+                      //   amount: transactionAmount,
+                      //   currency: currency.name,
+                      // })}
+                      label={utils.GetFormattedNumber({
+                        value: transactionAmount,
+                        currency: currency.name,
+                      })}
+                    />
+                  </View>
+                </>
+              )}
+              {/* // TAG : Secondary Currency */}
+              {showSecondaryCurrency && (
+                <>
+                  <View
                     style={{
-                      fontSize: 18,
-                      color:
-                        transactionType === "income"
-                          ? appSettings.theme.style.colors.incomeAmount
-                          : appSettings.theme.style.text.textPrimary.color,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
                     }}
-                    // label={utils.FormatCurrency({
-                    //   amount: transactionAmount,
-                    //   currency: currency.name,
-                    // })}
-                    label={utils.GetFormattedNumber({
-                      value: transactionAmount,
-                      currency: currency.name,
-                    })}
-                  />
-                </View>
-              </>
-            )}
+                  >
+                    <TextSecondary
+                      label={secondaryCurrency.symbol}
+                      style={{
+                        fontSize: 14,
+                        paddingRight: 8,
+                        color:
+                          transactionType === "income"
+                            ? appSettings.theme.style.colors.incomeSymbol
+                            : appSettings.theme.style.text.textSecondary.color,
+                      }}
+                    />
+                    <TextPrimary
+                      style={{
+                        fontSize: 14,
+                        color:
+                          transactionType === "income"
+                            ? appSettings.theme.style.colors.incomeAmount
+                            : appSettings.theme.style.text.textPrimary.color,
+                      }}
+                      // label={utils.FormatCurrency({
+                      //   amount: transactionAmount,
+                      //   currency: currency.name,
+                      // })}
+                      // TODO : Create a function to convert currency
+                      label={utils.GetFormattedNumber({
+                        value: utils.ConvertCurrency({
+                          amount: transactionAmount,
+                          from: currency.name,
+                          target: secondaryCurrency.name,
+                        }),
+                        currency: secondaryCurrency.name,
+                      })}
+                    />
+                  </View>
+                </>
+              )}
+            </View>
           </View>
 
           {/* Right Side */}
@@ -545,7 +599,8 @@ export const CardList = ({
                   <TextPrimary
                     label={utils.GetFormattedNumber({
                       value: spent,
-                      currency: appSettings.logbookSettings.defaultCurrency.name,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}
                   />
                 </View>

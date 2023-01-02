@@ -28,7 +28,7 @@ const SplashScreen = ({ navigation }) => {
     setTimeout(() => {
       loadInitialState().then(() => {
         dispatchAppSettings({
-          type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
+          type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
           payload: screenList.splashScreen,
         });
 
@@ -65,6 +65,17 @@ const SplashScreen = ({ navigation }) => {
           fontSize: "medium",
           language: "english",
           locale: "en-US",
+          currencyRate: [
+            { name: "USD", rate: 1 },
+            { name: "IDR", rate: 14000 },
+          ],
+          logbookSettings: {
+            defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+            showSecondaryCurrency: true,
+            showTransactionNotes: true,
+            showTransactionTime: true,
+            dailySummary: "expense-only",
+          },
           currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
           screenHidden: [],
         },
@@ -72,35 +83,44 @@ const SplashScreen = ({ navigation }) => {
     }
 
     // Load Account from Storage
-    const loadAccount = await persistStorage.asyncSecureStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "account",
-    });
+    // const loadAccount = await persistStorage.asyncSecureStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "account",
+    // });
 
-    if (loadAccount) {
-      dispatchUserAccount({
-        type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-        payload: loadAccount,
-      });
+    // TAG : Load Account from Storage
+    try {
+      persistStorage
+        .asyncSecureStorage({
+          action: PERSIST_ACTIONS.GET,
+          key: "account",
+        })
+        .then((loadedAccount) => {
+          if (loadedAccount) {
+            console.log(loadedAccount);
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+              payload: loadedAccount,
+            });
+          } else {
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+              payload: {
+                profile: {
+                  nickname: "haziz",
+                  avatar: null,
+                },
+                account: {
+                  premium: true,
+                  user_id: "637208d545",
+                },
+              },
+            });
+          }
+        });
+    } catch (error) {
+      throw new Error(error);
     }
-
-    // .then((item) => {
-    //         dispatchUserAccount({
-    //             type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-    //             payload: {
-    //                 profile: {
-    //                     nickname: 'haziz',
-    //                     avatar: null
-    //                 },
-    //                 account: {
-    //                     verification: true,
-    //                     user_id: '637208d545a0d121607a402e',
-    //                     token: item,
-    //                     email: 'jack@gmail.com'
-    //                 }
-    //             }
-    //         })
-    //     })
 
     // Initial load raw transactions
     // if (!rawTransactions) {

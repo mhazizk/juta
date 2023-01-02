@@ -2167,7 +2167,7 @@ export const globalUserAccount = (state, action) => {
         ...state,
         account: {
           ...state.account,
-          verification: action.payload,
+          premium: action.payload,
         },
       };
     case ACTIONS.USER_ACCOUNT.EMAIL.SET:

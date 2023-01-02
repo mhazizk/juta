@@ -57,14 +57,14 @@ const APP_SETTINGS = {
       ],
     },
     SHOW_TRANSACTION_TIME: {
-      DEFAULT: TRUE,
-      USER: TRUE,
-      OPTIONS: [TRUE, FALSE],
+      DEFAULT: 1,
+      USER: 1,
+      OPTIONS: [1, 0],
     },
     SHOW_TRANSACTION_NOTES: {
-      DEFAULT: TRUE,
-      USER: TRUE,
-      OPTIONS: [TRUE, FALSE],
+      DEFAULT: 1,
+      USER: 1,
+      OPTIONS: [1, 0],
     },
   },
 };

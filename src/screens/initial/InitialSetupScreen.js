@@ -53,7 +53,18 @@ const InitialSetupScreen = ({ navigation }) => {
     theme: { name: "Light Theme", id: "light", style: lightTheme },
     fontSize: "medium",
     language: "english",
-    locale: "es-UN",
+    locale: "en-US",
+    logbookSettings: {
+      defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+      showSecondaryCurrency: true,
+      showTransactionNotes: true,
+      showTransactionTime: true,
+      dailySummary: "expense-only",
+    },
+    currencyRate: [
+      { name: "USD", rate: 1 },
+      { name: "IDR", rate: 14000 },
+    ],
     currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
     screenHidden: [screenList.onboardingScreen, screenList.initialSetupScreen],
   });
@@ -195,7 +206,7 @@ const InitialSetupScreen = ({ navigation }) => {
       saveSortedTransactions,
       saveAppSettings,
     ]).then(() => {
-      return navigation.navigate(screenList.bottomTabNavigator);
+      return navigation.navigate(screenList.splashScreen);
     });
   };
 

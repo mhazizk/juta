@@ -6,7 +6,7 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
-  useGlobalSortedTransactions
+  useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
@@ -86,6 +86,7 @@ const GlobalSearchResultsScreen = ({
               const iconColor = utils.FindById.findCategoryColorById({
                 id: transaction?.details.category_id,
                 categories: categories.categories,
+                defaultColor: appSettings.theme.style.colors.foreground,
               });
               const iconName = utils.FindById.findCategoryIconNameById({
                 id: transaction?.details.category_id,

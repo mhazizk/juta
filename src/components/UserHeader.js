@@ -48,13 +48,10 @@ const UserHeaderComponent = ({ navigation }) => {
               label={userAccount.profile.nickname}
               style={{ fontSize: 32, fontWeight: "bold", marginRight: 4 }}
             />
-            {/* <Text style={{ fontSize: 32, fontWeight: 'bold', marginRight: 4 }}>
-                            {userAccount.profile.nickname}
-                        </Text> */}
             <Image
               source={checkmark}
               style={{
-                display: userAccount.account.verification ? "flex" : "none",
+                display: userAccount.account.premium ? "flex" : "none",
                 height: 22,
                 width: 22,
               }}

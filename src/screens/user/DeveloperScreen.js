@@ -1,28 +1,25 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-import {
-    StyleSheet, Text,
-    TouchableNativeFeedback, View
-} from "react-native";
+import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-    globalStyles
-} from "../../../src/assets/themes/globalStyles";
+import { globalStyles } from "../../../src/assets/themes/globalStyles";
 import LargeJSONTransactions from "../../database/largeTransactions.json";
 import userCategories from "../../database/userCategories";
 import userLogBooks from "../../database/userLogBooks";
 import userTransactions from "../../database/userTransactions";
 import { setSortedTransactions } from "../../utils/FetchData";
-import persistStorage from "../../reducers/persist/persistStorage";
-import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import {
-    useGlobalAppSettings,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import * as utils from "../../utils";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -228,22 +225,24 @@ const DeveloperScreen = ({ item, navigation }) => {
           {/* // TAG : Save Account to Storage */}
           <TouchableNativeFeedback
             onPress={() =>
-              asyncSecureStorage({
-                action: PERSIST_ACTIONS.SET,
-                key: "account",
-                rawValue: {
-                  profile: {
-                    nickname: "Haziz",
-                    avatar: null,
+              persistStorage
+                .asyncSecureStorage({
+                  action: PERSIST_ACTIONS.SET,
+                  key: "account",
+                  rawValue: {
+                    profile: {
+                      nickname: "Haziz",
+                      avatar: null,
+                    },
+                    account: {
+                      premium: true,
+                      user_id: "637208d545a0d121607a402e",
+                      token: "token123",
+                      email: "mhazizk@gmail.com",
+                    },
                   },
-                  account: {
-                    verification: true,
-                    user_id: "637208d545a0d121607a402e",
-                    token: "token123",
-                    email: "mhazizk@gmail.com",
-                  },
-                },
-              }).then(() => alert("account saved"))
+                })
+                .then(() => alert("account saved"))
             }
           >
             <View style={styles.flatListView}>
@@ -263,16 +262,18 @@ const DeveloperScreen = ({ item, navigation }) => {
           {/* // TAG : Get Account from Storage */}
           <TouchableNativeFeedback
             onPress={() =>
-              asyncSecureStorage({
-                action: PERSIST_ACTIONS.GET,
-                key: "account",
-              }).then((item) => {
-                alert("account loaded");
-                dispatchUserAccount({
-                  type: ACTIONS.MULTI_ACTIONS.SET_INIT_USER_ACCOUNT,
-                  payload: item,
-                });
-              })
+              persistStorage
+                .asyncSecureStorage({
+                  action: PERSIST_ACTIONS.GET,
+                  key: "account",
+                })
+                .then((item) => {
+                  alert("account loaded");
+                  dispatchUserAccount({
+                    type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+                    payload: item,
+                  });
+                })
             }
           >
             <View style={styles.flatListView}>
@@ -376,10 +377,12 @@ const DeveloperScreen = ({ item, navigation }) => {
           {/* // TAG : Load storage account */}
           <TouchableNativeFeedback
             onPress={() =>
-              asyncSecureStorage({
-                action: PERSIST_ACTIONS.GET,
-                key: "token",
-              }).then((item) => console.log(item))
+              persistStorage
+                .asyncSecureStorage({
+                  action: PERSIST_ACTIONS.GET,
+                  key: "token",
+                })
+                .then((item) => console.log(item))
             }
           >
             <View style={styles.flatListView}>
@@ -462,7 +465,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           {/* // TAG : Delete Key from Secure Storage */}
           <TouchableNativeFeedback
             onPress={() =>
-              asyncSecureStorage({
+              persistStorage.asyncSecureStorage({
                 action: PERSIST_ACTIONS.DELETE,
                 key: "token",
               })

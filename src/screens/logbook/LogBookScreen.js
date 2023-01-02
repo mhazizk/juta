@@ -88,191 +88,59 @@ const Transactions = ({
 
   // TAG : Function Section //
 
-  // // Find Category Icon Name by Id
-  // const findCategoryIconNameById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.expense.filter((category) => {
-  //       return category.id === id;
-  //     });
-  //     const filteredIncomeCategory = categories.income.filter((category) => {
-  //       return category.id === id;
-  //     });
-
-  //     if (filteredExpenseCategory.length) {
-  //       return filteredExpenseCategory.map((item) => item.icon.name);
-  //     } else {
-  //       return filteredIncomeCategory.map((item) => item.icon.name);
-  //     }
-  //   };
-  // }, [categories, transactions]);
-
-  // // Find Category Name by Id
-  // const findCategoryNameById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.expense.filter((category) => {
-  //       return category.id === id;
-  //     });
-  //     const filteredIncomeCategory = categories.income.filter((category) => {
-  //       return category.id === id;
-  //     });
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.name);
-  //       // console.log(mapped[0])
-  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.name);
-  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  //     }
-  //   };
-  // }, [categories, transactions]);
-
-  // // Find Category Color by Id
-  // const findCategoryColorById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.expense.filter((category) => {
-  //       return category.id === id;
-  //     });
-  //     const filteredIncomeCategory = categories.income.filter((category) => {
-  //       return category.id === id;
-  //     });
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.icon.color);
-  //       return mapped[0] === "default"
-  //         ? appSettings.theme.style.colors.foreground
-  //         : mapped[0];
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.icon.color);
-  //       return mapped[0] === "default"
-  //         ? appSettings.theme.style.colors.foreground
-  //         : mapped[0];
-  //     }
-  //   };
-  // }, [categories, transactions]);
-
-  // // Find Category Icon Pack by Id
-  // const findCategoryIconPackById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.expense.filter((category) => {
-  //       return category.id === id;
-  //     });
-  //     const filteredIncomeCategory = categories.income.filter((category) => {
-  //       return category.id === id;
-  //     });
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
-  //       return mapped[0];
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
-  //       return mapped[0];
-  //     }
-  //   };
-  // }, [categories, transactions]);
-
-  // const findCategoryTypeById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.expense.filter((category) => {
-  //       return category.id === id;
-  //     });
-  //     const filteredIncomeCategory = categories.income.filter((category) => {
-  //       return category.id === id;
-  //     });
-
-  //     if (filteredExpenseCategory.length) {
-  //       return "expense";
-  //     } else {
-  //       return "income";
-  //     }
-  //   };
-  // }, [categories, transactions]);
-
   // Sum Amount in Section
   const sumAmount = useMemo(() => {
     return (data) => {
       if (data) {
         let sum = [];
-        data.forEach((transaction) => sum.push(transaction.details.amount));
+        switch (appSettings.logbookSettings.dailySummary) {
+          case "expense-only":
+            data.forEach((transaction) => {
+              if (transaction.details.in_out === "expense") {
+                sum.push(transaction.details.amount);
+              }
+            });
+            break;
+          case "income-only":
+            data.forEach((transaction) => {
+              if (transaction.details.in_out === "income") {
+                sum.push(transaction.details.amount);
+              }
+            });
+            break;
+          case "expense-income":
+            data.forEach((transaction) => {
+              if (transaction.details.in_out === "expense") {
+                sum.push(+transaction.details.amount);
+              }
+              if (transaction.details.in_out === "income") {
+                sum.push(-transaction.details.amount);
+              }
+            });
+            break;
+          case "income-expense":
+            data.forEach((transaction) => {
+              if (transaction.details.in_out === "expense") {
+                sum.push(-transaction.details.amount);
+              }
+              if (transaction.details.in_out === "income") {
+                sum.push(+transaction.details.amount);
+              }
+            });
+            break;
+
+          default:
+            data.forEach((transaction) => {
+              if (transaction.details.in_out === "expense") {
+                sum.push(transaction.details.amount);
+              }
+            });
+            break;
+        }
         return sum.reduce((prev, curr) => prev + curr, 0);
       }
     };
-  }, [transactions]);
-
-  // Relative Date
-  // const checkDate = useMemo(() => {
-  //   return (data) => {
-  //     const todayYear = new Date(date).getFullYear();
-  //     const transactionsYear = new Date(data).getFullYear();
-  //     const todayDate = new Date(date).getDate();
-  //     const todayMonth = new Date(date).getMonth();
-  //     const transactionDate = new Date(data).getDate();
-  //     const transactionMonth = new Date(data).getMonth();
-
-  //     switch (true) {
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 0:
-  //         return "Today";
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 1:
-  //         return "Yesterday";
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 2:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 3:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 4:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 5:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 6:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate === 7:
-  //         return new Date(data).toLocaleDateString(appSettings.locale, {
-  //           weekday: "long",
-  //         });
-  //       case todayYear === transactionsYear &&
-  //         todayMonth === transactionMonth &&
-  //         todayDate - transactionDate > 7 &&
-  //         todayDate - transactionDate <= 31:
-  //         return `${new Date(data).toLocaleDateString(appSettings.locale, {
-  //           month: "long",
-  //         })} ${new Date(data).getDate()}`;
-  //       default:
-  //         return `${new Date(data).toLocaleDateString(appSettings.locale, {
-  //           month: "long",
-  //         })}, ${new Date(data).toLocaleDateString(appSettings.locale, {
-  //           day: "2-digit",
-  //           year: "numeric",
-  //         })}`;
-  //     }
-  //   };
-  // }, [date, transactions]);
-
-  // console.log(groupByCategory)
+  }, [sortedTransactions.groupSorted]);
 
   return (
     <>
@@ -437,9 +305,15 @@ const Transactions = ({
                     // categoryType={findCategoryTypeById(
                     //   item.details.category_id
                     // )}
-                    transactionHour={item.details.date}
+                    transactionHour={
+                      appSettings.logbookSettings.showTransactionTime &&
+                      item.details.date
+                    }
                     transactionType={item.details.in_out}
-                    transactionNotes={item.details.notes}
+                    transactionNotes={
+                      appSettings.logbookSettings.showTransactionNotes &&
+                      item.details.notes
+                    }
                     iconLeftName={utils.FindById.findCategoryIconNameById({
                       id: item.details.category_id,
                       categories: categories,
@@ -450,6 +324,12 @@ const Transactions = ({
                       defaultColor: appSettings.theme.style.colors.foreground,
                     })}
                     currency={selectedLogbook.logbook_currency}
+                    secondaryCurrency={
+                      appSettings.logbookSettings.defaultCurrency
+                    }
+                    showSecondaryCurrency={
+                      appSettings.logbookSettings.showSecondaryCurrency
+                    }
                     transactionAmount={item.details.amount}
                     onPress={() => onPress(item)}
                   />
@@ -550,7 +430,7 @@ const LogBookScreen = ({ route, navigation }) => {
         }
         if (
           selectedLogbook.logbook_id ===
-          sortedTransactions.logbookToOpen.logbook_id
+          sortedTransactions?.logbookToOpen?.logbook_id
         ) {
           setSelectedLogbooks(sortedTransactions.logbookToOpen);
         }
@@ -620,8 +500,7 @@ const LogBookScreen = ({ route, navigation }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  paddingHorizontal: 16,
-                  paddingBottom: 8,
+                  padding: 16,
                 },
               ]}
             >

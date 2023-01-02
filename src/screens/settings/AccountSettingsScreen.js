@@ -73,7 +73,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                 <TextPrimary label="Verification" />
                 <TextSecondary
                   label={
-                    userAccount.account.verification
+                    userAccount.account.premium
                       ? "Verified"
                       : "Not Verified"
                   }

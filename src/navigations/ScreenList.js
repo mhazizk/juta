@@ -31,7 +31,7 @@ const screenList = {
   editCategoryScreen: "Edit Category Screen",
 
   // Logbook Screen
-  logBookScreen: "Logbook Screen",
+  logbookScreen: "Logbook Screen",
   myLogbooksScreen: "My Logbooks Screen",
   logbookPreviewScreen: "Logbook Preview Screen",
   editLogbookScreen: "Edit Logbook Screen",
