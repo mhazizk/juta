@@ -20,7 +20,7 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
-import GlobalSearchResultsScreen from "./GlobalSearchResultsScreen";
+import TransactionsSearchResults from "./TransactionsSearchResults";
 
 const SearchScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -126,7 +126,7 @@ const SearchScreen = ({ navigation }) => {
         </View>
         {/* {searchQuery && <SearchResultTab />} */}
         {searchQuery && (
-          <GlobalSearchResultsScreen
+          <TransactionsSearchResults
             searchQuery={searchQuery}
             onPress={({ transaction, selectedLogbook }) => {
               console.log(selectedLogbook);
@@ -137,6 +137,7 @@ const SearchScreen = ({ navigation }) => {
             }}
           />
         )}
+        {/* // TODO : Create settings search result */}
         {/* {console.log(searchQuery)} */}
 
         {!searchQuery && (

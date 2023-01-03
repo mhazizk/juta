@@ -216,7 +216,13 @@ const RecentTransactions = ({
                     // transactionDate={item.transaction.details.date}
                     // transactionNotes={item.transaction.details.notes}
                     //   Right
-                    currency={item.logbook.logbookCurrency}
+                    logbookCurrency={item.logbook.logbookCurrency}
+                    secondaryCurrency={
+                      appSettings.logbookSettings.secondaryCurrency
+                    }
+                    showSecondaryCurrency={
+                      appSettings.logbookSettings.showSecondaryCurrency
+                    }
                     transactionAmount={
                       item.transaction.details.amount ||
                       item.transaction.details.amount.toString()

@@ -14,27 +14,43 @@ import {
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import * as utils from "../../utils";
-import hexToRgb from "../../utils/HexToRGB";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import SettingsHeaderList from "../../components/List/SettingsHeaderList";
+import SettingsSection from "../../components/List/SettingsSection";
+import Animated, { useSharedValue } from "react-native-reanimated";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const [dashboardSettings, setDashboardSettings] = useState(
+    appSettings.dashboardSettings
+  );
+  const [searchSettings, setSearchSettings] = useState(
+    appSettings.searchSettings
+  );
   const [logbookSettings, setLogbookSettings] = useState(
     appSettings.logbookSettings
   );
   useEffect(() => {
-    console.log(logbookSettings);
-  }, [logbookSettings]);
+    // console.log(JSON.stringify(appSettings));
+  }, [appSettings]);
 
   useEffect(() => {
-    setLogbookSettings(appSettings.logbookSettings);
-  }, [appSettings.logbookSettings]);
+    setTimeout(() => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        payload: {
+          dashboardSettings: dashboardSettings,
+          searchSettings: searchSettings,
+          logbookSettings: logbookSettings,
+        },
+      });
+    }, 1);
+  }, [dashboardSettings, searchSettings, logbookSettings]);
 
   return (
     <>
-      <ScrollView
+      <Animated.ScrollView
         style={{
           height: "100%",
           backgroundColor: appSettings.theme.style.colors.background,
@@ -48,17 +64,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               iconName="color-palette"
             />
             {/* // TAG : Other */}
-            <View
-              style={{
-                marginBottom: 16,
-                overflow: "hidden",
-                borderRadius: 16,
-                backgroundColor: hexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <SettingsSection>
               {/* // TAG : App Theme */}
               <ListItem
                 pressable
@@ -137,7 +143,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   })
                 }
               />
-            </View>
+            </SettingsSection>
           </>
         )}
 
@@ -149,17 +155,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               iconName="person-circle"
             />
             {/* // TAG : Other */}
-            <View
-              style={{
-                marginBottom: 16,
-                overflow: "hidden",
-                borderRadius: 16,
-                backgroundColor: hexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <SettingsSection>
               {/* // TAG : Change Email */}
               <ListItem
                 pressable
@@ -192,11 +188,134 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
               />
-            </View>
+            </SettingsSection>
           </>
         )}
         {/* // TODO : Dashboard Section */}
+        {/* // SECTION : Dashboard Section */}
+        {dashboardSettings && (
+          <>
+            <SettingsHeaderList
+              label="Dashboard Settings"
+              iconName="analytics"
+            />
+            <SettingsSection>
+              {/* // TAG : Show Recent Transactions */}
+              <CheckList
+                primaryLabel="Show Recent Transactions"
+                item={true}
+                selected={dashboardSettings.showRecentTransactions}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showRecentTransactions:
+                      !dashboardSettings.showRecentTransactions,
+                  });
+                }}
+              />
+              {/* // TAG : Show Total Expense Widget  */}
+              <CheckList
+                primaryLabel="Show Total Expense Widget"
+                item={true}
+                selected={dashboardSettings.showTotalExpenseWidget}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showTotalExpenseWidget:
+                      !dashboardSettings.showTotalExpenseWidget,
+                  });
+                }}
+              />
+              {/* // TAG : Show Total Income Widget  */}
+              <CheckList
+                primaryLabel="Show Total Income Widget"
+                item={true}
+                selected={dashboardSettings.showTotalIncomeWidget}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showTotalIncomeWidget:
+                      !dashboardSettings.showTotalIncomeWidget,
+                  });
+                }}
+              />
+              {/* // TAG : Show Total Balance Widget  */}
+              <CheckList
+                primaryLabel="Show Total Balance Widget"
+                item={true}
+                selected={dashboardSettings.showTotalBalanceWidget}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showTotalBalanceWidget:
+                      !dashboardSettings.showTotalBalanceWidget,
+                  });
+                }}
+              />
+              {/* // TAG : Show My Budgets Widget  */}
+              <CheckList
+                primaryLabel="Show My Budgets Widget"
+                item={true}
+                selected={dashboardSettings.showMyBudgetsWidget}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showMyBudgetsWidget: !dashboardSettings.showMyBudgetsWidget,
+                  });
+                }}
+              />
+              {/* // TAG : Show My Logbooks Widget  */}
+              <CheckList
+                primaryLabel="Show My Logbooks Widget"
+                item={true}
+                selected={dashboardSettings.showMyLogbooksWidget}
+                onPress={() => {
+                  setDashboardSettings({
+                    ...dashboardSettings,
+                    showMyLogbooksWidget:
+                      !dashboardSettings.showMyLogbooksWidget,
+                  });
+                }}
+              />
+            </SettingsSection>
+          </>
+        )}
+
         {/* // TODO : Search Section */}
+        {/* // SECTION : Search Section */}
+        {searchSettings && (
+          <>
+            <SettingsHeaderList label="Search Settings" iconName="search" />
+            <SettingsSection>
+              {/* // TAG : Transactions Search*/}
+              <CheckList
+                primaryLabel="Transactions"
+                item={true}
+                selected={searchSettings.showTransactionsResult}
+                onPress={() => {
+                  setSearchSettings({
+                    ...searchSettings,
+                    showTransactionsResult:
+                      !searchSettings.showTransactionsResult,
+                  });
+                }}
+              />
+              {/* // TAG : Settings Search */}
+              <CheckList
+                primaryLabel="Settings"
+                item={true}
+                selected={searchSettings.showSettingsResult}
+                onPress={() => {
+                  setSearchSettings({
+                    ...searchSettings,
+                    showSettingsResult: !searchSettings.showSettingsResult,
+                  });
+                }}
+              />
+            </SettingsSection>
+          </>
+        )}
+
         {/* // SECTION : Logbook Section */}
         {logbookSettings && (
           <>
@@ -210,17 +329,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 color: appSettings.theme.style.colors.primary,
               }}
             />
-            <View
-              style={{
-                marginBottom: 16,
-                overflow: "hidden",
-                borderRadius: 16,
-                backgroundColor: hexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <SettingsSection>
               <ListItem
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
@@ -228,14 +337,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                     modalType: "list",
                     props: APP_SETTINGS.CURRENCY.OPTIONS,
                     selected: (item) => {
-                      dispatchAppSettings({
-                        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                        payload: {
-                          logbookSettings: {
-                            ...logbookSettings,
-                            defaultCurrency: item,
-                          },
-                        },
+                      setLogbookSettings({
+                        ...logbookSettings,
+                        defaultCurrency: item,
                       });
                     },
                     default: logbookSettings.defaultCurrency,
@@ -247,14 +351,26 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 rightLabel={logbookSettings.defaultCurrency.name}
               />
 
-              {/* // TAG : Premium */}
+              {/* // TAG : Secondary Currency */}
               <ListItem
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set secondary currency",
+                    modalType: "list",
+                    props: APP_SETTINGS.CURRENCY.OPTIONS,
+                    selected: (item) => {
+                      setLogbookSettings({
+                        ...logbookSettings,
+                        secondaryCurrency: item,
+                      });
+                    },
+                    default: logbookSettings.secondaryCurrency,
+                  });
+                }}
                 pressable
-                leftLabel="Currency rate"
-                // iconLeftName="checkmark"
-                // iconPack="IonIcons"
-                onPress={() => alert("TODO : Add currency rate")}
-                // TODO : Add currency rate screen
+                iconLeftName="usd"
+                leftLabel="Set secondary currency"
+                rightLabel={logbookSettings.secondaryCurrency.name}
               />
 
               {/* // TAG : Show secondary currency */}
@@ -263,21 +379,25 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
                 item={true}
                 selected={logbookSettings.showSecondaryCurrency}
-                // TODO : fix this check list
                 onPress={() => {
-                  dispatchAppSettings({
-                    type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                    payload: {
-                      logbookSettings: {
-                        ...logbookSettings,
-                        showSecondaryCurrency:
-                          !logbookSettings.showSecondaryCurrency,
-                      },
-                    },
+                  setLogbookSettings({
+                    ...logbookSettings,
+                    showSecondaryCurrency:
+                      !logbookSettings.showSecondaryCurrency,
                   });
                 }}
               />
-            </View>
+
+              {/* // TAG : Currency Rate */}
+              <ListItem
+                pressable
+                leftLabel="Currency rate"
+                // iconLeftName="checkmark"
+                // iconPack="IonIcons"
+                onPress={() => alert("TODO : Add currency rate")}
+                // TODO : Add currency rate screen
+              />
+            </SettingsSection>
 
             {/* // TAG : Daily Summary */}
             <TextPrimary
@@ -293,7 +413,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 overflow: "hidden",
                 borderRadius: 16,
                 marginBottom: 16,
-                backgroundColor: hexToRgb({
+                backgroundColor: utils.HexToRgb({
                   hex: appSettings.theme.style.colors.foreground,
                   opacity: 0.07,
                 }),
@@ -310,45 +430,24 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 )}
                 selected={logbookSettings.dailySummary}
                 onChange={(item) => {
-                  dispatchAppSettings({
-                    type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                    payload: {
-                      logbookSettings: {
-                        ...logbookSettings,
-                        dailySummary: item.value,
-                      },
-                    },
+                  setLogbookSettings({
+                    ...logbookSettings,
+                    dailySummary: item.value,
                   });
                 }}
               />
             </View>
             {/* // TAG : Other */}
-            <View
-              style={{
-                marginBottom: 16,
-                overflow: "hidden",
-                borderRadius: 16,
-                backgroundColor: hexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <SettingsSection>
               {/* // TAG : Show Transaction Time */}
               <CheckList
                 primaryLabel="Show Transaction Time"
                 item={true}
                 selected={logbookSettings.showTransactionTime}
                 onPress={() => {
-                  dispatchAppSettings({
-                    type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                    payload: {
-                      logbookSettings: {
-                        ...logbookSettings,
-                        showTransactionTime:
-                          !logbookSettings.showTransactionTime,
-                      },
-                    },
+                  setLogbookSettings({
+                    ...logbookSettings,
+                    showTransactionTime: !logbookSettings.showTransactionTime,
                   });
                 }}
               />
@@ -358,19 +457,13 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 primaryLabel="Show Transaction Notes"
                 selected={logbookSettings.showTransactionNotes}
                 onPress={() => {
-                  dispatchAppSettings({
-                    type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                    payload: {
-                      logbookSettings: {
-                        ...logbookSettings,
-                        showTransactionNotes:
-                          !logbookSettings.showTransactionNotes,
-                      },
-                    },
+                  setLogbookSettings({
+                    ...logbookSettings,
+                    showTransactionNotes: !logbookSettings.showTransactionNotes,
                   });
                 }}
               />
-            </View>
+            </SettingsSection>
           </>
         )}
         {/* // SECTION : Data Section */}
@@ -383,7 +476,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 marginBottom: 16,
                 overflow: "hidden",
                 borderRadius: 16,
-                backgroundColor: hexToRgb({
+                backgroundColor: utils.HexToRgb({
                   hex: appSettings.theme.style.colors.foreground,
                   opacity: 0.07,
                 }),
@@ -411,7 +504,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
             </View>
           </>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
     </>
   );
 };

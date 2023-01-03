@@ -54,9 +54,22 @@ const InitialSetupScreen = ({ navigation }) => {
     fontSize: "medium",
     language: "english",
     locale: "en-US",
+    dashboardSettings: {
+      showRecentTransactions: true,
+      showTotalBalanceWidget: true,
+      showTotalExpenseWidget: true,
+      showTotalIncomeWidget: true,
+      showMyBudgetsWidget: true,
+      showMyLogbooksWidget: true,
+    },
+    searchSettings: {
+      showTransactionsResult: true,
+      showSettingsResult: true,
+    },
     logbookSettings: {
       defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-      showSecondaryCurrency: true,
+      secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
+      showSecondaryCurrency: false,
       showTransactionNotes: true,
       showTransactionTime: true,
       dailySummary: "expense-only",

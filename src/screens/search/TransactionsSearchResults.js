@@ -12,7 +12,7 @@ import * as utils from "../../utils";
 
 import Entypo from "react-native-vector-icons/Entypo";
 
-const GlobalSearchResultsScreen = ({
+const TransactionsSearchResults = ({
   route,
   navigation,
   searchQuery,
@@ -30,7 +30,9 @@ const GlobalSearchResultsScreen = ({
   });
 
   useEffect(() => {
-    search();
+    setTimeout(() => {
+      search();
+    }, 500);
   }, []);
 
   useEffect(() => {
@@ -38,8 +40,9 @@ const GlobalSearchResultsScreen = ({
       status: "loading",
       result: [],
     });
-
-    search();
+    setTimeout(() => {
+      search();
+    }, 500);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -130,119 +133,6 @@ const GlobalSearchResultsScreen = ({
     }
   };
 
-  // // Find Logbook By Id
-  // const findLogbookById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredLogbook = logbooks.logbooks.filter((logbook) => {
-  //       if (logbook.logbook_id === id) {
-  //         return logbook;
-  //       }
-  //     });
-  //     if (filteredLogbook.length) {
-  //       return filteredLogbook.map((item) => item)[0];
-  //     }
-  //   };
-  // }, [searchQuery, logbooks]);
-
-  // // Find Category Icon Name by Id
-  // const findCategoryIconNameById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.categories.expense.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-  //     const filteredIncomeCategory = categories.categories.income.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-
-  //     if (filteredExpenseCategory.length) {
-  //       return filteredExpenseCategory.map((item) => item.icon.name)[0];
-  //     } else {
-  //       return filteredIncomeCategory.map((item) => item.icon.name)[0];
-  //     }
-  //   };
-  // }, [searchQuery, categories]);
-
-  // // Find Category Name by Id
-  // const findCategoryNameById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.categories.expense.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-  //     const filteredIncomeCategory = categories.categories.income.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.name);
-  //       // console.log(mapped[0])
-  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.name);
-  //       return mapped[0][0].toUpperCase() + mapped[0].substring(1);
-  //     }
-  //   };
-  // }, [searchQuery, categories]);
-
-  // // Find Category Color by Id
-  // const findCategoryColorById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.categories.expense.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-  //     const filteredIncomeCategory = categories.categories.income.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.icon.color);
-  //       return mapped[0] === "default"
-  //         ? appSettings.theme.style.colors.foreground
-  //         : mapped[0];
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.icon.color);
-  //       return mapped[0] === "default"
-  //         ? appSettings.theme.style.colors.foreground
-  //         : mapped[0];
-  //     }
-  //   };
-  // }, [searchQuery, categories]);
-
-  // // Find Category Icon Pack by Id
-  // const findCategoryIconPackById = useMemo(() => {
-  //   return (id) => {
-  //     const filteredExpenseCategory = categories.categories.expense.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-  //     const filteredIncomeCategory = categories.categories.income.filter(
-  //       (category) => {
-  //         return category.id === id;
-  //       }
-  //     );
-
-  //     if (filteredExpenseCategory.length) {
-  //       const mapped = filteredExpenseCategory.map((item) => item.icon.pack);
-  //       return mapped[0];
-  //     } else {
-  //       const mapped = filteredIncomeCategory.map((item) => item.icon.pack);
-  //       return mapped[0];
-  //     }
-  //   };
-  // }, [searchQuery, categories]);
-
   return (
     <>
       <View
@@ -251,6 +141,7 @@ const GlobalSearchResultsScreen = ({
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
+        {/* // TAG : Loading */}
         {searchResult.status === "loading" && (
           <>
             <View
@@ -273,6 +164,7 @@ const GlobalSearchResultsScreen = ({
           </>
         )}
 
+        {/* // TAG : No result */}
         {searchResult.status === "done" && !searchResult.result.length && (
           <>
             <ScrollView
@@ -336,7 +228,13 @@ const GlobalSearchResultsScreen = ({
                   transactionDate={item.transaction.details.date}
                   transactionNotes={item.transaction.details.notes}
                   //   Right
-                  currency={item.logbook.logbookCurrency}
+                  logbookCurrency={item.logbook.logbookCurrency}
+                  showSecondaryCurrency={
+                    appSettings.logbookSettings.showSecondaryCurrency
+                  }
+                  secondaryCurrency={
+                    appSettings.logbookSettings.secondaryCurrency
+                  }
                   transactionAmount={
                     item.transaction.details.amount ||
                     item.transaction.details.amount.toString()
@@ -351,4 +249,4 @@ const GlobalSearchResultsScreen = ({
   );
 };
 
-export default GlobalSearchResultsScreen;
+export default TransactionsSearchResults;

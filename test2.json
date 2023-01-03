@@ -1,594 +1,111 @@
-[
-    {
-        "date": [
-            {
-                "transactions": "details"
-            },
-            {
-                "transactions": "details"
-            }
-        ]
-    },
-    {
-        "date": [
-            {
-                "transactions": "details"
-            },
-            {
-                "transactions": "details"
-            }
-        ]
-    }
-]
-
-[
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 10000,
-            "category_id": "1",
-            "date": 1669917842650,
-            "in_out": "expense",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "63720932e2f8048280ea8a5d"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 20000,
-            "category_id": "3",
-            "date": 1669917842643,
-            "in_out": "expense",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "63720932e2f8048280ea8a00"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 30000,
-            "category_id": "7",
-            "date": 1666617842643,
-            "in_out": "expense",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook2",
-        "transaction_id": "63720932e2f8048280ea8a11"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 40000,
-            "category_id": "14",
-            "date": 1663317842643,
-            "in_out": "income",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook2",
-        "transaction_id": "63720932e2f8048280ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 50000,
-            "category_id": "14",
-            "date": 1609417002643,
-            "in_out": "expense",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook2",
-        "transaction_id": "63720932e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 60000,
-            "category_id": "1",
-            "date": 1611417002643,
-            "in_out": "expense",
-            "notes": null,
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "63120932e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 70000,
-            "category_id": "15",
-            "date": 1669994641000,
-            "in_out": "income",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "33770932e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 80000,
-            "category_id": "15",
-            "date": 1669821841000,
-            "in_out": "income",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "3398732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 90000,
-            "category_id": "11",
-            "date": 1669994641000,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "33008732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 100000,
-            "category_id": "8",
-            "date": 1669908241000,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "330878008732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 110000,
-            "category_id": "9",
-            "date": 1613417002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "33087808732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 120000,
-            "category_id": "3",
-            "date": 1649417002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "3301313187808732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 130000,
-            "category_id": "5",
-            "date": 1643417002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "33111201313187808732e2f8048111ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 140000,
-            "category_id": "6",
-            "date": 1647417002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "31ea8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 150000,
-            "category_id": "7",
-            "date": 1669647099000,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "31e222a8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 160000,
-            "category_id": "1",
-            "date": 1645417002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "31e3222a8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 170000,
-            "category_id": "9",
-            "date": 1644400002643,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "31e324422a8a67"
-    },
-    {
-        "_id": "63720ad4e2f8048280ea8b00",
-        "_timestamps": {
-            "created_at": 1668417842641,
-            "updated_at": 1668417842641
-        },
-        "details": {
-            "amount": 180000,
-            "category_id": "2",
-            "date": 1669389841000,
-            "in_out": "expense",
-            "notes": "coba dulu aaah",
-            "type": "cash"
-        },
-        "logbook_id": "logbook1",
-        "transaction_id": "31e311124422a8a67"
-    }
-]
-
 {
-    "categories": {
-        "expense": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ],
-        "income": [
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ],
-            [Object
-            ]
-        ]
-    },
-    "logbooks": [
-        {
-            "__v": 0,
-            "_id": "637209c4e2f8048280ea8af9",
-            "_timestamps": [Object
-            ],
-            "logbook_categories": [Array
-            ],
-            "logbook_id": "logbook1",
-            "logbook_name": "private",
-            "logbook_records": [Array
-            ],
-            "user_id": "637208d545a0d121607a402e",
-            "username": "haziz"
+  "fontSize": "medium",
+  "language": "english",
+  "locale": "en-US",
+  "theme": {
+    "name": "Light Theme",
+    "id": "light",
+    "style": {
+      "colors": {
+        "background": "#F5F5F5",
+        "foreground": "#151515",
+        "primary": "#151515",
+        "secondary": "#D5D5D5",
+        "header": "#F5F5F5",
+        "incomeAmount": "#008888",
+        "incomeSymbol": "#00B19B",
+        "success": "#0ECD9D",
+        "warn": "#F49D1A",
+        "danger": "#CD0E61",
+        "failure": "#CD0E61"
+      },
+      "text": {
+        "textPrimary": { "fontSize": 16, "color": "#252525" },
+        "textSecondary": { "fontSize": 16, "color": "#B5B5B5" },
+        "textDisabled": { "fontSize": 16, "color": "#B5B5B5" },
+        "textSuccess": { "fontSize": 16, "color": "#0ECD9D" },
+        "textWarn": { "fontSize": 16, "color": "#F49D1A" },
+        "textDanger": { "fontSize": 16, "color": "#CD0E61" },
+        "textFailure": { "fontSize": 16, "color": "#CD0E61" }
+      },
+      "button": {
+        "buttonPrimary": {
+          "buttonStyle": { "backgroundColor": "#151515", "borderRadius": 8 },
+          "textStyle": { "color": "#F5F5F5", "fontSize": 16 }
         },
-        {
-            "__v": 0,
-            "_id": "637209c4e2f8048280ea8af9",
-            "_timestamps": [Object
-            ],
-            "logbook_categories": [Array
-            ],
-            "logbook_id": "logbook2",
-            "logbook_name": "logbook that has long name lol hahahaa",
-            "logbook_records": [Array
-            ],
-            "user_id": "637208d545a0d121607a402e",
-            "username": "haziz"
+        "buttonSecondary": {
+          "buttonStyle": {
+            "backgroundColor": "transparent",
+            "borderColor": "#151515",
+            "borderRadius": 8,
+            "borderWidth": 1
+          },
+          "textStyle": { "color": "#151515", "fontSize": 16 }
         },
-        {
-            "__v": 0,
-            "_id": "637209c4e2f8048280ea8af9",
-            "_timestamps": [Object
-            ],
-            "logbook_categories": [Array
-            ],
-            "logbook_id": "logbook3",
-            "logbook_name": "another logbook that also has long name but this one surely is longer",
-            "logbook_records": [Array
-            ],
-            "user_id": "637208d545a0d121607a402e",
-            "username": "haziz"
+        "buttonDisabled": { "backgroundColor": "#B5B5B5", "borderRadius": 8 },
+        "buttonSuccess": { "backgroundColor": "#0ECD9D", "borderRadius": 8 },
+        "buttonWarn": { "backgroundColor": "#F49D1A", "borderRadius": 8 },
+        "buttonDanger": {
+          "backgroundColor": "transparent",
+          "borderColor": "#CD0E61",
+          "borderRadius": 8,
+          "borderWidth": 1
+        },
+        "buttonFailure": { "backgroundColor": "#CD0E61", "borderRadius": 8 }
+      },
+      "list": {
+        "listContainer": {
+          "display": "flex",
+          "flexDirection": "row",
+          "justifyContent": "flex-start",
+          "alignItems": "center",
+          "backgroundColor": "transparent",
+          "paddingHorizontal": 16,
+          "minHeight": 48
+        },
+        "listItem": {
+          "borderColor": "#D5D5D5",
+          "display": "flex",
+          "flex": 1,
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "paddingVertical": 0,
+          "borderBottomWidth": 0.5,
+          "minHeight": 46,
+          "textAlignVertical": "center"
         }
-    ],
-    "transactions": [
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "63720932e2f8048280ea8a5d"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "63720932e2f8048280ea8a00"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook2",
-            "transaction_id": "63720932e2f8048280ea8a11"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook2",
-            "transaction_id": "63720932e2f8048280ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook2",
-            "transaction_id": "63720932e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "63120932e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "33770932e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "3398732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "33008732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "330878008732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "33087808732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "3301313187808732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "33111201313187808732e2f8048111ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "31ea8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "31e222a8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "31e3222a8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "31e324422a8a67"
-        },
-        {
-            "_id": "63720ad4e2f8048280ea8b00",
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook1",
-            "transaction_id": "31e311124422a8a67"
-        },
-        {
-            "details": [Object
-            ],
-            "logbook_id": "logbook1"
-        },
-        {
-            "_id": 1669882962215,
-            "_timestamps": [Object
-            ],
-            "details": [Object
-            ],
-            "logbook_id": "logbook2",
-            "transaction_id": "470547617708.23737"
-        }
-    ]
+      }
+    }
+  },
+  "dashboardSettings": {
+    "showRecentTransactions": true,
+    "showTotalBalanceWidget": true,
+    "showTotalExpenseWidget": true,
+    "showTotalIncomeWidget": true,
+    "showMyBudgetsWidget": true,
+    "showMyLogbooksWidget": true
+  },
+  "searchSettings": {
+    "showTransactionsResult": true,
+    "showSettingsResult": true
+  },
+  "logbookSettings": {
+    "defaultCurrency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" },
+    "showSecondaryCurrency": true,
+    "showTransactionNotes": true,
+    "showTransactionTime": true,
+    "dailySummary": "expense-only"
+  },
+  "currencyRate": [
+    { "name": "USD", "rate": 1 },
+    { "name": "IDR", "rate": 14000 }
+  ],
+  "currency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" },
+  "screenHidden": [
+    "Onboarding Screen",
+    "Initial Setup Screen",
+    "Splash Screen",
+    "Splash Screen"
+  ]
 }

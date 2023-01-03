@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import REDUCER_ACTIONS from "./reducer.action";
 
-const sortTransactions = (prevTransaction, currentTransaction) => {
+const sortTransactionsDate = (prevTransaction, currentTransaction) => {
   if (prevTransaction.details.date < currentTransaction.details.date) {
     return 1;
   }
@@ -678,9 +678,9 @@ export const globalSortedTransactions = (state, action) => {
                   data: [
                     ...findOtherTransaction,
                     patchedTransaction.transaction,
-                  ],
+                  ].sort(sortTransactionsDate),
                 },
-              ],
+              ].sort(sortLogbookTransactions),
             },
           ];
         }
@@ -941,7 +941,7 @@ export const globalSortedTransactions = (state, action) => {
 
           // Sort new inserted transactions
           const sortedDateSectionTransactions =
-            insertedTransactions.sort(sortTransactions);
+            insertedTransactions.sort(sortTransactionsDate);
           console.log("forth");
 
           // Replace initial transactions data with sorted transactions
@@ -1096,7 +1096,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("fifth");
 
         // 6. Replace target date section data with no 5
@@ -1238,7 +1238,7 @@ export const globalSortedTransactions = (state, action) => {
         // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactions);
+          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
         console.log("first");
         // 2. Replace previous date section data with no 1
         const replacedPrevDateSection = {
@@ -1325,7 +1325,7 @@ export const globalSortedTransactions = (state, action) => {
         // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactions);
+          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
         console.log("first");
         // 2. Replace previous date section data with no 1
         const replacedPrevDateSection = {
@@ -1443,7 +1443,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("fifth");
 
         // 6. Replace target date section data with no 5
@@ -1507,7 +1507,7 @@ export const globalSortedTransactions = (state, action) => {
         // TAG : [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactions);
+          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
         console.log("first");
         // 2. Replace previous date section data with no 1
         const replacedPrevDateSection = {
@@ -1542,7 +1542,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("fifth");
 
         // 6. Replace target date section data with no 5
@@ -1608,7 +1608,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("third");
 
         // 4. Replace target date section data with no 3
@@ -1671,7 +1671,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("third");
 
         // 4. Replace target date section data with no 3
@@ -1727,7 +1727,7 @@ export const globalSortedTransactions = (state, action) => {
         // [A] HANDLING PREVIOUS DATE SECTION
         // 1. Remove transaction from previous date section and sort it
         const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactions);
+          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
         console.log("first");
         // 2. Replace previous date section data with no 1
         const replacedPrevDateSection = {
@@ -1743,7 +1743,7 @@ export const globalSortedTransactions = (state, action) => {
           newPatchTransaction,
         ];
         const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactions);
+          getTargetTransactionsData.sort(sortTransactionsDate);
         console.log("third");
 
         // 4. Replace target date section data with no 3
@@ -1833,7 +1833,7 @@ export const globalSortedTransactions = (state, action) => {
         // TAG : New date && same logbook && has prevTransactionsData remains
         // Sort new inserted transactions
         const prevSortedDateSectionTransactions =
-          foundPrevOtherTransactionsData.sort(sortTransactions);
+          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
         console.log("forth");
 
         // Replace initial transactions data with sorted transactions
@@ -1919,7 +1919,7 @@ export const globalSortedTransactions = (state, action) => {
         // [A] HANDLING PREVIOUS DATA
         // 1. Remove transaction from previous date section, sort it, and put it back in date section
         const sortedDelTransactionsData =
-          foundPrevDelOtherTransactionsData.sort(sortTransactions);
+          foundPrevDelOtherTransactionsData.sort(sortTransactionsDate);
         const newDateSection = {
           ...foundPrevDelDateSection[0],
           data: sortedDelTransactionsData,

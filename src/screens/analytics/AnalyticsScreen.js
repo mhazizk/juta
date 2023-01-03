@@ -333,7 +333,7 @@ const AnalyticsScreen = () => {
                     }
                     iconLeftName={item?.category.icon.name}
                     // iconLeftColor={item?.category.icon.color}
-                    currency={appSettings.logbookSettings.defaultCurrency}
+                    logbookCurrency={appSettings.logbookSettings.defaultCurrency}
                     transactionAmount={item?.totalSpent}
                   />
                 )}
