@@ -20,6 +20,7 @@ import {
   ButtonSecondary,
   ButtonSwitch,
 } from "../../components/Button";
+import DatePicker from "../../components/DatePicker";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -62,8 +63,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // Loaded User Logbooks
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
 
-  // Date State for Date Picker
-  const [date, setDate] = useState(new Date());
 
   // TAG : useEffect Section //
 
@@ -121,30 +120,49 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : Function Section //
 
   // Set Date in Date Picker
-  const onChange = (event, selectedDate) => {
+  const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate;
-    setTransaction({
-      ...transaction,
-      details: {
-        ...transaction.details,
-        date: new Date(currentDate).getTime(),
-      },
-    });
+    event.type === "set" && showMode("time", currentDate);
+    event.type === "dismissed";
+  };
+  const onChangeTime = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    event.type === "dismissed";
+    event.type === "set" &&
+      setTransaction({
+        ...transaction,
+        details: {
+          ...transaction.details,
+          date: new Date(currentDate).getTime(),
+        },
+      });
   };
 
   // Date Picker
-  const showMode = (currentMode) => {
-    DateTimePickerAndroid.open({
-      value: date,
-      onChange,
-      mode: currentMode,
-      is24Hour: true,
-    });
+  const showMode = (currentMode, selectedDate) => {
+    if (currentMode === "date") {
+      DateTimePickerAndroid.open({
+        positiveButtonLabel: "Set",
+        value: selectedDate,
+        onChange: onChangeDate,
+        mode: currentMode,
+        is24Hour: true,
+      });
+    }
+    if (currentMode === "time") {
+      DateTimePickerAndroid.open({
+        positiveButtonLabel: "Set",
+        value: selectedDate,
+        onChange: onChangeTime,
+        mode: currentMode,
+        is24Hour: true,
+      });
+    }
   };
 
   // Date Picker
-  const showDatepicker = () => {
-    showMode("date");
+  const showDatePicker = () => {
+    showMode("date", new Date(transaction.details.date));
   };
 
   // Insert 'name' variable into User Logbooks
@@ -501,7 +519,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             </TouchableNativeFeedback>
 
             {/* // TAG : Date Section */}
-            <TouchableNativeFeedback onPress={showDatepicker}>
+            <TouchableNativeFeedback onPress={showDatePicker}>
               <View style={appSettings.theme.style.list.listContainer}>
                 <View
                   style={{
@@ -553,6 +571,43 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       }}
                     />
                   </View>
+                  {transaction.details.date && (
+                    <View
+                      style={[
+                        {
+                          flexDirection: "row",
+                          flex: 0,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: 8,
+                          marginLeft: 8,
+                          borderRadius: 8,
+                        },
+                        {
+                          backgroundColor:
+                            transaction.details.in_out === "income"
+                              ? "#c3f4f4"
+                              : appSettings.theme.style.colors.secondary,
+                        },
+                      ]}
+                    >
+                      <TextPrimary
+                        label={
+                          !transaction?.details?.date
+                            ? "Pick date"
+                            : new Date(transaction.details.date).getHours() +
+                              ":" +
+                              new Date(transaction.details.date).getMinutes()
+                        }
+                        style={{
+                          color:
+                            transaction.details.in_out === "income"
+                              ? "#00695c"
+                              : appSettings.theme.style.text.textPrimary.color,
+                        }}
+                      />
+                    </View>
+                  )}
                   <IonIcons
                     name="chevron-forward"
                     size={18}

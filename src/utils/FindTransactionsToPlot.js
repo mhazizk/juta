@@ -26,7 +26,7 @@ const findTransactionsToPlot = ({
   let year = new Date(today).getFullYear();
   let day = new Date(today).getDate();
 
-  if (groupSorted.length) {
+  if (groupSorted?.length) {
     if (groupSorted.some((logbook) => logbook.transactions.length)) {
       //  if (expenseOnly) {
       groupSorted.forEach((logbook) => {

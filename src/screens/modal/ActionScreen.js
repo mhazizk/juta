@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-    Text,
-    TouchableHighlight,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View
+  Text,
+  TouchableHighlight,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
@@ -13,11 +13,11 @@ import { TextButtonPrimary, TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
-    useGlobalAppSettings,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
@@ -66,18 +66,23 @@ const ActionScreen = ({ route, navigation }) => {
           // flex:1
         }}
       >
-        <View style={{ padding: 16 }}>
+        <View style={{ paddingTop: 16 }}>
           <TextPrimary label="New" style={{ fontSize: 24 }} />
         </View>
 
         <View
-          style={{ flexDirection: "row", alignItems: "center", width: 300 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            width: 300,
+            paddingBottom: 16,
+         }}
         >
           {/* // TAG : New Transaction */}
           <View
             style={{
               flex: 1,
-              borderRadius: 8,
+              borderRadius: 16,
               borderWidth: 0,
               height: 150,
               margin: 8,
@@ -96,7 +101,7 @@ const ActionScreen = ({ route, navigation }) => {
                   flexDirection: "column",
                   padding: 16,
                   margin: 0,
-                  backgroundColor: appSettings.theme.style.colors.primary,
+                  // backgroundColor: appSettings.theme.style.colors.primary,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -105,10 +110,10 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="pencil"
                     size={48}
-                    color={appSettings.theme.style.colors.background}
+                    color={appSettings.theme.style.colors.primary}
                   />
                 </View>
-                <TextButtonPrimary label="Transaction" />
+                <TextPrimary label="Transaction" />
               </View>
             </TouchableOpacity>
           </View>
@@ -117,7 +122,7 @@ const ActionScreen = ({ route, navigation }) => {
           <View
             style={{
               flex: 1,
-              borderRadius: 8,
+              borderRadius: 16,
               borderWidth: 0,
               height: 150,
               margin: 8,
@@ -140,7 +145,8 @@ const ActionScreen = ({ route, navigation }) => {
                       _id: Math.random * 10000,
                       user_id: userAccount.account.user_id,
                       username: null,
-                      logbook_currency: appSettings.logbookSettings.defaultCurrency,
+                      logbook_currency:
+                        appSettings.logbookSettings.defaultCurrency,
                       logbook_type: "basic",
                       logbook_id: Math.random() * 10000,
                       logbook_name: item,
@@ -185,7 +191,7 @@ const ActionScreen = ({ route, navigation }) => {
                   flexDirection: "column",
                   padding: 16,
                   margin: 0,
-                  backgroundColor: appSettings.theme.style.colors.primary,
+                  // backgroundColor: appSettings.theme.style.colors.primary,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -194,10 +200,10 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="book"
                     size={48}
-                    color={appSettings.theme.style.colors.background}
+                    color={appSettings.theme.style.colors.primary}
                   />
                 </View>
-                <TextButtonPrimary label="LogBook" />
+                <TextPrimary label="LogBook" />
               </View>
             </TouchableOpacity>
           </View>

@@ -17,7 +17,7 @@ import * as utils from "../../utils";
 
 const TransactionList = ({
   selectedLogbook,
-  transactions,
+  // transactions,
   categories,
   onPress,
   checkListMode,
@@ -28,6 +28,7 @@ const TransactionList = ({
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const [transactionsDate, setTransactionsDate] = useState(null);
   const [groupSortedTransactions, setGroupSortedTransactions] = useState(null);
+  const [mappedTransactions, setMappedTransactions] = useState([]);
   const [date, setDate] = useState(null);
   const [checkList, setCheckList] = useState(null);
   const [enableChecklistMode, setEnableCheckListMode] = useState(false);
@@ -37,25 +38,28 @@ const TransactionList = ({
     // if (transactions) {
     // }
     setDate(new Date().toLocaleDateString());
+    mapTransactions();
     // console.log(sortedTransactions)
   }, []);
 
   useEffect(() => {
+    setMappedTransactions(null);
+    mapTransactions();
     // if (transactions) {
     //     setSortedTransactions(transactions.sort(sortTransactions))
     // }
-  }, [transactions]);
+  }, [selectedLogbook]);
 
   useEffect(() => {
     // if (sortedTransactions) {
     //     groupSorted()
     // }
-    // console.log(sortedTransactions)
-  }, [sortedTransactions]);
+    console.log(mappedTransactions);
+  }, [mappedTransactions]);
 
-  useEffect(() => {
-    // refresh
-  }, [selectedLogbook]);
+  // useEffect(() => {
+  //   // refresh
+  // }, [selectedLogbook]);
 
   useEffect(() => {
     // refresh
@@ -132,6 +136,17 @@ const TransactionList = ({
       }
     };
   }, [sortedTransactions.groupSorted]);
+
+  const mapTransactions = () => {
+    if (selectedLogbook) {
+      const filtered = sortedTransactions.groupSorted.find((logbook) => {
+        return logbook.logbook_id === selectedLogbook.logbook_id;
+      });
+      setMappedTransactions(
+        filtered.transactions.map((transaction) => transaction)
+      );
+    }
+  };
 
   return (
     <>
@@ -213,7 +228,7 @@ const TransactionList = ({
         </View>
       )}
       {/* // TAG : Transaction List */}
-      {transactions && (
+      {mappedTransactions && (
         <SectionList
           initialNumToRender={20}
           maxToRenderPerBatch={20}
@@ -221,12 +236,12 @@ const TransactionList = ({
           updateCellsBatchingPeriod={1000}
           contentContainerStyle={{ paddingBottom: 16 }}
           // removeClippedSubviews
-          sections={transactions}
+          sections={mappedTransactions}
           keyExtractor={(item, index) => index.toString()}
           stickySectionHeadersEnabled
           renderSectionHeader={({ section }) => (
             <>
-              {transactions && (
+              {mappedTransactions && (
                 <View
                   style={[
                     {
@@ -291,7 +306,7 @@ const TransactionList = ({
             return (
               <>
                 {/* <Text>{item.details.amount}</Text> */}
-                {transactions && (
+                {mappedTransactions && (
                   <TransactionListItem
                     categoryName={utils.FindById.findCategoryNameById({
                       id: item.details.category_id,
@@ -335,10 +350,11 @@ const TransactionList = ({
         />
       )}
 
-      {!transactions.length && (
+      {!mappedTransactions.length && (
         <View
           style={{
             height: "100%",
+            top: -48,
             alignItems: "center",
             justifyContent: "center",
           }}

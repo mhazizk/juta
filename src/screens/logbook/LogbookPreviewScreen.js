@@ -8,10 +8,10 @@ import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
 import {
-    useGlobalAppSettings,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
+  useGlobalAppSettings,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
 
@@ -89,7 +89,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
         )
       );
     }
-    return !array.length ? "No Transactions" : `${array.length} Transactions`;
+    return array.length;
   };
 
   const sumBalance = () => {
@@ -111,6 +111,71 @@ const LogbookPreviewScren = ({ route, navigation }) => {
       );
     }
     return sum.reduce((prev, curr) => prev + curr, 0);
+  };
+
+  const deleteLogbook = () => {
+    switch (true) {
+      case countTransactions() > 0:
+        Alert.alert(
+          "Delete This Logbook ?",
+          'Cannot delete logbook with transactions. Please delete all transactions in this logbook first. You can delete all transactions by clicking "Delete All Transactions" button in "Logbook Details" screen',
+          [
+            {
+              text: "OK",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+
+      case logbooks.logbooks.length === 1:
+        Alert.alert(
+          "Delete This Logbook ?",
+          "Cannot delete last logbook. Please create a new logbook first.",
+          [
+            {
+              text: "OK",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+
+      case logbooks.logbooks.length > 1 && countTransactions() === 0:
+        Alert.alert(
+          "Delete This Logbook ?",
+          "This action cannot be undone. All transactions in this logbook will be deleted.",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {},
+              style: "cancel",
+            },
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate(screenList.loadingScreen, {
+                  label: "Deleting Logbook ...",
+                  loadingType: "deleteOneLogbook",
+                  deleteLogbook: logbook,
+                  logbookToOpen: null,
+                  initialLogbookDeleteCounter: logbooks.logbookDeleteCounter,
+                  initialSortedLogbookDeleteCounter:
+                    sortedTransactions.sortedLogbookDeleteCounter,
+                });
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+      default:
+        break;
+    }
   };
 
   return (
@@ -268,7 +333,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 ]}
               >
                 <TextPrimary
-                  label={countTransactions()}
+                  label={(countTransactions() || "No") + " Transactions"}
                   style={{ flex: 0 }}
                   numberOfLines={1}
                 />
@@ -319,35 +384,9 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                   type="danger"
                   width={150}
                   theme={theme.theme}
-                  onPress={() =>
-                    Alert.alert(
-                      "Delete This Logbook ?",
-                      "All transactions in this logbook will also be deleted. Deleted logbook and transactions can not be restored",
-                      [
-                        {
-                          text: "No",
-                          onPress: () => {},
-                          style: "cancel",
-                        },
-                        {
-                          text: "Yes",
-                          onPress: () => {
-                            navigation.navigate(screenList.loadingScreen, {
-                              label: "Deleting Logbook ...",
-                              loadingType: "deleteOneLogbook",
-                              deleteLogbook: logbook,
-                              logbookToOpen: null,
-                              initialLogbookDeleteCounter:
-                                logbooks.logbookDeleteCounter,
-                              initialSortedLogbookDeleteCounter:
-                                sortedTransactions.sortedLogbookDeleteCounter,
-                            });
-                          },
-                        },
-                      ],
-                      { cancelable: false }
-                    )
-                  }
+                  onPress={() => {
+                    deleteLogbook();
+                  }}
                 />
               </View>
             </View>

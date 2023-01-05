@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Linking, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { lightTheme } from "../../assets/themes/lightTheme";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalCategories,
   useGlobalLoading,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -15,40 +17,47 @@ import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import uuid from "react-native-uuid";
+import Loading from "../../components/Loading";
 
 const SplashScreen = ({ navigation }) => {
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { categories, dispatchCategories } = useGlobalCategories();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
 
   useEffect(() => {
     setTimeout(() => {
-      loadInitialState().then(() => {
-        dispatchAppSettings({
-          type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-          payload: screenList.splashScreen,
-        });
-
-        navigation.navigate(screenList.bottomTabNavigator);
-      });
-    }, 100);
+      loadInitialState();
+    }, 1);
   }, []);
+
+  useEffect(() => {
+    // refresh state
+  }, [appSettings, userAccount, sortedTransactions, logbooks, categories]);
 
   useEffect(() => {}, [isLoading]);
 
-  useEffect(() => {
-    if (sortedTransactions.sortedTransactionsInitCounter) {
-      dispatchAppSettings({
-        type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-        payload: screenList.splashScreen,
-      });
+  // useEffect(() => {
+  //   if (sortedTransactions.sortedTransactionsInitCounter) {
+  //     dispatchAppSettings({
+  //       type: ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
+  //       payload: screenList.splashScreen,
+  //     });
 
-      navigation.navigate(screenList.bottomTabNavigator);
+  //     navigation.navigate(screenList.bottomTabNavigator);
+  //   }
+  // }, [sortedTransactions.sortedTransactionsInitCounter]);
+  const isUserAccountEmpty = (userAccount) => {
+    for (let i in userAccount) {
+      return false;
     }
-  }, [sortedTransactions.sortedTransactionsInitCounter]);
+    return true;
+  };
 
   const loadInitialState = async () => {
     // Initial load app settings
@@ -57,107 +66,84 @@ const SplashScreen = ({ navigation }) => {
       key: "appSettings",
     });
 
-    if (!loadAppSettings) {
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: {
-          theme: { name: "Light Theme", id: "light", style: lightTheme },
-          fontSize: "medium",
-          language: "english",
-          locale: "en-US",
-          dashboardSettings: {
-            showRecentTransactions: true,
-            showTotalBalanceWidget: true,
-            showTotalExpenseWidget: true,
-            showTotalIncomeWidget: true,
-            showMyBudgetsWidget: true,
-            showMyLogbooksWidget: true,
-          },
-          searchSettings: {
-            showTransactionsResult: true,
-            showSettingsResult: true,
-          },
-          logbookSettings: {
-            defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-            secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
-            showSecondaryCurrency: false,
-            showTransactionNotes: true,
-            showTransactionTime: true,
-            dailySummary: "expense-only",
-          },
-          currencyRate: [
-            { name: "USD", rate: 1 },
-            { name: "IDR", rate: 14000 },
-          ],
-          currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-          screenHidden: [],
-        },
+    const loadUserAccount = await persistStorage.asyncSecureStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "account",
+    });
+
+    const loadSortedTransactions = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "sortedTransactions",
+    });
+
+    const loadCategories = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "categories",
+    });
+
+    const loadLogbooks = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "logbooks",
+    });
+
+    Promise.all([
+      loadUserAccount,
+      loadAppSettings,
+      loadSortedTransactions,
+      loadLogbooks,
+      loadCategories,
+    ])
+      .then((data) => {
+        console.log(data[0]);
+        switch (true) {
+          case !data[0] || isUserAccountEmpty(data[0]):
+            console.log("No account");
+            dispatchAppSettings({
+              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+              payload: data[1],
+            });
+            navigation.navigate(screenList.loginScreen);
+
+          default:
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+              payload: data[0],
+            });
+            dispatchAppSettings({
+              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+              payload: data[1],
+            });
+            dispatchSortedTransactions({
+              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                .SET_MULTI_ACTIONS,
+              payload: data[2],
+            });
+            dispatchLogbooks({
+              type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
+              payload: data[3],
+            });
+            dispatchCategories({
+              type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
+              payload: data[4],
+            });
+            //  Hide splash screen
+            if (
+              !data[0].hiddenScreens?.some(
+                (screen) => screen === screenList.splashScreen
+              )
+            ) {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
+                payload: screenList.splashScreen,
+              });
+            } else {
+            }
+            return;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    }
-
-    // Load Account from Storage
-    // const loadAccount = await persistStorage.asyncSecureStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "account",
-    // });
-
-    // TAG : Load Account from Storage
-    try {
-      persistStorage
-        .asyncSecureStorage({
-          action: PERSIST_ACTIONS.GET,
-          key: "account",
-        })
-        .then((loadedAccount) => {
-          if (loadedAccount) {
-            console.log(loadedAccount);
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-              payload: loadedAccount,
-            });
-          } else {
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-              payload: {
-                profile: {
-                  nickname: "haziz",
-                  avatar: null,
-                },
-                account: {
-                  premium: true,
-                  user_id: "637208d545",
-                },
-              },
-            });
-          }
-        });
-    } catch (error) {
-      throw new Error(error);
-    }
-
-    // Initial load raw transactions
-    // if (!rawTransactions) {
-    //     Promise.all([getTransactionsFromStorage(), getCategoriesFromStorage(), getLogbooksFromStorage()])
-    //         .then((array) => {
-    //             console.log('loaded')
-    //             return (
-    //                 dispatchRawTransactions({
-    //                     type: ACTIONS.MULTI_ACTIONS.SET_INIT_TRANSACTIONS,
-    //                     payload: {
-    //                         transactions: array[0],
-    //                         categories: array[1],
-    //                         logbooks: array[2]
-    //                     }
-    //                 })
-    //             )
-    //         }
-    //         )
-    // }
-    // console.log(sortedTransactions)
-    // Initial load sorted Transactions
-    if (!sortedTransactions.groupSorted) {
-      await getSortedTransactions();
-    }
   };
 
   // const dispatchInitSortedTransactions = () => {

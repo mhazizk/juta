@@ -94,7 +94,7 @@
     { "name": "IDR", "rate": 14000 }
   ],
   "currency": { "name": "IDR", "symbol": "Rp", "isoCode": "id" },
-  "screenHidden": [
+  "hiddenScreens": [
     "Onboarding Screen",
     "Initial Setup Screen",
     "Splash Screen",

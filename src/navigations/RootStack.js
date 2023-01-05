@@ -51,6 +51,10 @@ import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogBookScreen from "../screens/logbook/LogBookScreen";
+import { Alert, BackHandler } from "react-native";
+import REDUCER_ACTIONS from "../reducers/reducer.action";
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
 
 const Stack = createStackNavigator();
 
@@ -66,12 +70,28 @@ const RootStack = ({ navigation }) => {
 
   // TAG : useEffect for state
   useEffect(() => {
-    dispatchLoading({
-      type: ACTIONS.LOADING.SET,
-      payload: true,
-    });
+    // BackHandler.addEventListener("hardwareBackPress", exitPrompt);
+    // dispatchLoading({
+    //   type: ACTIONS.LOADING.SET,
+    //   payload: true,
+    // });
+    // return () => {
+    //   BackHandler.removeEventListener("hardwareBackPress", exitPrompt);
+    // };
   }, []);
 
+  // Save Sorted Transactions to storage
+  useEffect(() => {
+    if (userAccount) {
+      persistStorage.asyncSecureStorage({
+        action: PERSIST_ACTIONS.SET,
+        key: "account",
+        rawValue: userAccount,
+      });
+    }
+  }, [userAccount]);
+
+  // Save Sorted Transactions to storage
   useEffect(() => {
     if (sortedTransactions) {
       persistStorage.asyncStorage({
@@ -82,6 +102,7 @@ const RootStack = ({ navigation }) => {
     }
   }, [sortedTransactions]);
 
+  // Save App Settings to storage
   useEffect(() => {
     if (appSettings) {
       persistStorage.asyncStorage({
@@ -92,6 +113,7 @@ const RootStack = ({ navigation }) => {
     }
   }, [appSettings]);
 
+  // Save Logbooks to storage
   useEffect(() => {
     if (logbooks) {
       persistStorage.asyncStorage({
@@ -102,6 +124,7 @@ const RootStack = ({ navigation }) => {
     }
   }, [logbooks]);
 
+  // Save Categories to storage
   useEffect(() => {
     if (categories) {
       persistStorage.asyncStorage({
@@ -143,6 +166,27 @@ const RootStack = ({ navigation }) => {
     }
   };
 
+  // function exitPrompt() {
+  //   Alert.alert("Are you sure you want to exit?", [
+  //     { text: "Cancel", onPress: () => null, style: "cancel" },
+  //     {
+  //       text: "Yes",
+  //       onPress: () => {
+  //         dispatchAppSettings({
+  //           type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+  //           payload: {
+  //             ...appSettings,
+  //             hiddenScreens: appSettings.hiddenScreens.filter((screen) => {
+  //               screen !== screenList.splashScreen;
+  //             }),
+  //           },
+  //         });
+  //         BackHandler.exitApp();
+  //       },
+  //     },
+  //   ]);
+  // }
+
   const noHeader = {
     headerShown: false,
     title: "",
@@ -165,11 +209,51 @@ const RootStack = ({ navigation }) => {
 
   return (
     <Stack.Navigator
-      initialRouteName={screenList.onboardingScreen}
+      initialRouteName={screenList.splashScreen}
       // screenOptions={{
       //   headerShown: true,
       // }}
     >
+      {/* // SECTION : INITIAL */}
+      {/* // TAG : Splash Screen */}
+      {!appSettings?.hiddenScreens?.some(
+        (screen) => screen === screenList.splashScreen
+      ) && (
+        <Stack.Screen
+          options={{
+            gestureEnabled: false,
+            presentation: "transparentModal",
+            headerShown: false,
+            cardOverlayEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+          }}
+          name={screenList.splashScreen}
+          component={SplashScreen}
+        />
+      )}
+
+      {/* // TAG : Onboarding Screen */}
+      {!appSettings?.hiddenScreens?.some(
+        (screen) => screen === screenList.onboardingScreen
+      ) && (
+        <Stack.Screen
+          options={noHeader}
+          name={screenList.onboardingScreen}
+          component={OnboardingScreen}
+        />
+      )}
+
+      {/* // TAG : Initial Setup Screen */}
+      {!appSettings?.hiddenScreens?.some(
+        (screen) => screen === screenList.initialSetupScreen
+      ) && (
+        <Stack.Screen
+          options={noHeader}
+          name={screenList.initialSetupScreen}
+          component={InitialSetupScreen}
+        />
+      )}
+
       {/* // TAG : Bottom Tab */}
       <Stack.Screen
         name={screenList.bottomTabNavigator}
@@ -217,6 +301,24 @@ const RootStack = ({ navigation }) => {
         component={LoadingScreen}
       />
 
+      {/* // SECTION : AUTH */}
+      {/* // TAG : Login Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.loginScreen}
+        component={LoginScreen}
+      />
+      {/* // TAG : Register Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.registerScreen}
+        component={RegisterScreen}
+      />
+
       {/* // SECTION : DASHBOARD */}
       {/* // TAG : Dashboard Screen */}
       <Stack.Screen
@@ -238,46 +340,6 @@ const RootStack = ({ navigation }) => {
         name={screenList.analyticsScreen}
         component={AnalyticsScreen}
       />
-
-      {/* // SECTION : INITIAL */}
-      {/* // TAG : Onboarding Screen */}
-      {!appSettings?.screenHidden?.some(
-        (screen) => screen === screenList.onboardingScreen
-      ) && (
-        <Stack.Screen
-          options={noHeader}
-          name={screenList.onboardingScreen}
-          component={OnboardingScreen}
-        />
-      )}
-
-      {/* // TAG : Initial Setup Screen */}
-      {!appSettings?.screenHidden?.some(
-        (screen) => screen === screenList.initialSetupScreen
-      ) && (
-        <Stack.Screen
-          options={noHeader}
-          name={screenList.initialSetupScreen}
-          component={InitialSetupScreen}
-        />
-      )}
-
-      {/* // TAG : Splash Screen */}
-      {!appSettings?.screenHidden?.some(
-        (screen) => screen === screenList.splashScreen
-      ) && (
-        <Stack.Screen
-          options={{
-            gestureEnabled: false,
-            presentation: "transparentModal",
-            headerShown: false,
-            cardOverlayEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
-          }}
-          name={screenList.splashScreen}
-          component={SplashScreen}
-        />
-      )}
 
       {/* // SECTION : TRANSACTION SECTION : */}
       {/* // TAG : Transaction Preview Screen */}

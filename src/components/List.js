@@ -4,11 +4,13 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
+import Loading from "./Loading";
 
 export const ListItem = ({
   leftLabel,
   rightLabel,
   iconPack,
+  isLoading = false,
   props,
   theme,
   symbol,
@@ -53,7 +55,7 @@ export const ListItem = ({
               {rightLabel && <TextSecondary label={rightLabel} />}
             </View>
             {/* {iconPack === "IonIcons" && ( */}
-            {iconRightName && (
+            {iconRightName && !isLoading && (
               <IonIcons
                 name={iconRightName}
                 size={iconRightName === "checkmark-circle" ? 22 : 18}
@@ -64,6 +66,7 @@ export const ListItem = ({
                 style={{ paddingLeft: 16 }}
               />
             )}
+            {isLoading && <Loading size={18} />}
             {/* )} */}
           </View>
         </TouchableNativeFeedback>

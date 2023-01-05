@@ -5,7 +5,7 @@ const initialAppSettings = null
 //     language: null,
 //     locale: null,
 //     currency: null,
-//     screenHidden: []
+//     hiddenScreens: []
 // }
 
 export default initialAppSettings;

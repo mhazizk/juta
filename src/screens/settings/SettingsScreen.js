@@ -18,6 +18,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import SettingsHeaderList from "../../components/List/SettingsHeaderList";
 import SettingsSection from "../../components/List/SettingsSection";
 import Animated, { useSharedValue } from "react-native-reanimated";
+import getCurrencyRate from "../../api/GetCurrencyRate";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -31,9 +32,12 @@ const CurrencySettingsScreen = ({ navigation }) => {
   const [logbookSettings, setLogbookSettings] = useState(
     appSettings.logbookSettings
   );
+  const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
   useEffect(() => {
     // console.log(JSON.stringify(appSettings));
   }, [appSettings]);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,11 +47,19 @@ const CurrencySettingsScreen = ({ navigation }) => {
           dashboardSettings: dashboardSettings,
           searchSettings: searchSettings,
           logbookSettings: logbookSettings,
+          currencyRate: currencyRate,
         },
       });
     }, 1);
-  }, [dashboardSettings, searchSettings, logbookSettings]);
+  }, [dashboardSettings, searchSettings, logbookSettings, currencyRate]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(appSettings));
+  }, [appSettings]);
+
+  useEffect(() => {
+    console.log(currencyRate);
+  }, [currencyRate]);
   return (
     <>
       <Animated.ScrollView
@@ -88,7 +100,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               />
 
               {/* // TAG : Font Size */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Font Size"
                 rightLabel={
@@ -112,7 +124,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                     default: { name: appSettings.fontSize },
                   })
                 }
-              />
+              /> */}
 
               {/* // TAG : Language */}
               <ListItem
@@ -150,33 +162,33 @@ const CurrencySettingsScreen = ({ navigation }) => {
         {/* // SECTION : Account Section */}
         {userAccount && (
           <>
-            <SettingsHeaderList
+            {/* <SettingsHeaderList
               label="Account Settings"
               iconName="person-circle"
-            />
+            /> */}
             {/* // TAG : Other */}
             <SettingsSection>
               {/* // TAG : Change Email */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Change Email"
                 rightLabel={userAccount.account.email}
                 iconLeftName="mail"
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
-              />
+              /> */}
 
               {/* // TAG : Change Password */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Change Password"
                 iconLeftName="key"
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
-              />
+              /> */}
 
               {/* // TAG : Premium */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Account Type"
                 rightLabel={
@@ -187,21 +199,21 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 iconLeftName="checkmark"
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
-              />
+              /> */}
             </SettingsSection>
           </>
         )}
-        {/* // TODO : Dashboard Section */}
+        {/* // TODO : Hide Dashboard Section for next release */}
         {/* // SECTION : Dashboard Section */}
         {dashboardSettings && (
           <>
-            <SettingsHeaderList
+            {/* <SettingsHeaderList
               label="Dashboard Settings"
               iconName="analytics"
             />
-            <SettingsSection>
-              {/* // TAG : Show Recent Transactions */}
-              <CheckList
+            <SettingsSection> */}
+            {/* // TAG : Show Recent Transactions */}
+            {/* <CheckList
                 primaryLabel="Show Recent Transactions"
                 item={true}
                 selected={dashboardSettings.showRecentTransactions}
@@ -212,9 +224,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       !dashboardSettings.showRecentTransactions,
                   });
                 }}
-              />
-              {/* // TAG : Show Total Expense Widget  */}
-              <CheckList
+              /> */}
+            {/* // TAG : Show Total Expense Widget  */}
+            {/* <CheckList
                 primaryLabel="Show Total Expense Widget"
                 item={true}
                 selected={dashboardSettings.showTotalExpenseWidget}
@@ -225,9 +237,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       !dashboardSettings.showTotalExpenseWidget,
                   });
                 }}
-              />
-              {/* // TAG : Show Total Income Widget  */}
-              <CheckList
+              /> */}
+            {/* // TAG : Show Total Income Widget  */}
+            {/* <CheckList
                 primaryLabel="Show Total Income Widget"
                 item={true}
                 selected={dashboardSettings.showTotalIncomeWidget}
@@ -238,9 +250,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       !dashboardSettings.showTotalIncomeWidget,
                   });
                 }}
-              />
-              {/* // TAG : Show Total Balance Widget  */}
-              <CheckList
+              /> */}
+            {/* // TAG : Show Total Balance Widget  */}
+            {/* <CheckList
                 primaryLabel="Show Total Balance Widget"
                 item={true}
                 selected={dashboardSettings.showTotalBalanceWidget}
@@ -251,9 +263,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       !dashboardSettings.showTotalBalanceWidget,
                   });
                 }}
-              />
-              {/* // TAG : Show My Budgets Widget  */}
-              <CheckList
+              /> */}
+            {/* // TAG : Show My Budgets Widget  */}
+            {/* <CheckList
                 primaryLabel="Show My Budgets Widget"
                 item={true}
                 selected={dashboardSettings.showMyBudgetsWidget}
@@ -263,9 +275,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                     showMyBudgetsWidget: !dashboardSettings.showMyBudgetsWidget,
                   });
                 }}
-              />
-              {/* // TAG : Show My Logbooks Widget  */}
-              <CheckList
+              /> */}
+            {/* // TAG : Show My Logbooks Widget  */}
+            {/* <CheckList
                 primaryLabel="Show My Logbooks Widget"
                 item={true}
                 selected={dashboardSettings.showMyLogbooksWidget}
@@ -277,18 +289,18 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </SettingsSection>
+            </SettingsSection> */}
           </>
         )}
 
-        {/* // TODO : Search Section */}
+        {/* // TODO : Hide Search Section for next release */}
         {/* // SECTION : Search Section */}
         {searchSettings && (
           <>
-            <SettingsHeaderList label="Search Settings" iconName="search" />
-            <SettingsSection>
-              {/* // TAG : Transactions Search*/}
-              <CheckList
+            {/* <SettingsHeaderList label="Search Settings" iconName="search" />
+            <SettingsSection> */}
+            {/* // TAG : Transactions Search*/}
+            {/* <CheckList
                 primaryLabel="Transactions"
                 item={true}
                 selected={searchSettings.showTransactionsResult}
@@ -299,9 +311,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       !searchSettings.showTransactionsResult,
                   });
                 }}
-              />
-              {/* // TAG : Settings Search */}
-              <CheckList
+              /> */}
+            {/* // TAG : Settings Search */}
+            {/* <CheckList
                 primaryLabel="Settings"
                 item={true}
                 selected={searchSettings.showSettingsResult}
@@ -312,7 +324,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </SettingsSection>
+            </SettingsSection> */}
           </>
         )}
 
@@ -334,7 +346,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
-                    modalType: "list",
+                    modalType: "currencyList",
                     props: APP_SETTINGS.CURRENCY.OPTIONS,
                     selected: (item) => {
                       setLogbookSettings({
@@ -348,7 +360,11 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 pressable
                 iconLeftName="usd"
                 leftLabel="Set default currency"
-                rightLabel={logbookSettings.defaultCurrency.name}
+                rightLabel={
+                  logbookSettings.defaultCurrency.name +
+                  " / " +
+                  logbookSettings.defaultCurrency.symbol
+                }
               />
 
               {/* // TAG : Secondary Currency */}
@@ -356,7 +372,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
-                    modalType: "list",
+                    modalType: "currencyList",
                     props: APP_SETTINGS.CURRENCY.OPTIONS,
                     selected: (item) => {
                       setLogbookSettings({
@@ -370,7 +386,11 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 pressable
                 iconLeftName="usd"
                 leftLabel="Set secondary currency"
-                rightLabel={logbookSettings.secondaryCurrency.name}
+                rightLabel={
+                  logbookSettings.secondaryCurrency.name +
+                  " / " +
+                  logbookSettings.secondaryCurrency.symbol
+                }
               />
 
               {/* // TAG : Show secondary currency */}
@@ -388,13 +408,44 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 }}
               />
 
-              {/* // TAG : Currency Rate */}
+              {/* // TAG : Update Currency Rate */}
               <ListItem
                 pressable
-                leftLabel="Currency rate"
+                leftLabel="Update currency rate"
+                rightLabel={
+                  isLoading
+                    ? "Updating... "
+                    : "Last updated at : " +
+                      new Date(currencyRate.updatedAt).getDate() +
+                      "/" +
+                      (new Date(currencyRate.updatedAt).getMonth() + 1) +
+                      "/" +
+                      new Date(currencyRate.updatedAt).getFullYear()
+                }
+                isLoading={isLoading}
                 // iconLeftName="checkmark"
                 // iconPack="IonIcons"
-                onPress={() => alert("TODO : Add currency rate")}
+                // onPress={() => alert("TODO : Add currency rate")}
+                // onPress={() =>
+                //   getCurrencyRate(appSettings.currencyRate).then((data) => {
+                //     setCurrencyRate({ data: data, updatedAt: new Date() });
+                //   })
+                // }
+                onPress={() => {
+                  setIsLoading(true);
+                  getCurrencyRate(appSettings.currencyRate.data).then(
+                    (data) => {
+                      setCurrencyRate({ data: data, updatedAt: Date.now() });
+                      setIsLoading(false);
+                    }
+                  );
+                  // TODO : FIX THIS ASYNC FUNCTION
+                  // setCurrencyRate({
+                  //   data: getCurrencyRate(appSettings.currencyRate.data),
+                  //   updatedAt: Date.now(),
+                  // });
+                }}
+
                 // TODO : Add currency rate screen
               />
             </SettingsSection>

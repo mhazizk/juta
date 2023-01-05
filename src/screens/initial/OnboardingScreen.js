@@ -24,7 +24,7 @@ const OnboardingScreen = ({ navigation }) => {
             type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
             payload: {
               theme: { name: "Light Theme", id: "light", style: lightTheme },
-              screenHidden: [screenList.onboardingScreen],
+              hiddenScreens: [screenList.onboardingScreen],
               fontSize: "medium",
               language: "english",
               logbookSettings: {

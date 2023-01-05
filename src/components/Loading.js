@@ -2,7 +2,7 @@ import { ActivityIndicator, View } from "react-native";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 import { TextPrimary } from "./Text";
 
-const Loading = () => {
+const Loading = ({ size }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
   return (
@@ -14,7 +14,7 @@ const Loading = () => {
         }}
       >
         <ActivityIndicator
-          size={48}
+          size={size || 48}
           color={appSettings.theme.style.colors.primary}
         />
         {/* <TextPrimary label="Loading..." /> */}

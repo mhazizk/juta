@@ -275,6 +275,12 @@ export const globalBudgets = (state, action) => {
 
 export const globalLogbooks = (state, action) => {
   switch (action.type) {
+    case REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS:
+      return {
+        ...state,
+        ...action.payload,
+      };
+
     case ACTIONS.LOGBOOKS.SET:
       return {
         ...state,
@@ -326,6 +332,12 @@ export const globalLogbooks = (state, action) => {
 
 export const globalCategories = (state, action) => {
   switch (action.type) {
+    case REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS:
+      return {
+        ...state,
+        ...action.payload,
+      };
+
     case ACTIONS.CATEGORIES.SET:
       return {
         ...state,
@@ -592,7 +604,7 @@ export const globalSortedTransactions = (state, action) => {
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET_MULTI_ACTIONS:
       return {
         ...state,
-        groupSorted: action.payload,
+        ...action.payload,
       };
 
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP:
@@ -685,87 +697,6 @@ export const globalSortedTransactions = (state, action) => {
           ];
         }
       );
-      // Find transaction with the same category id in group sorted and save it to foundTransactions
-      // console.log("start", JSON.stringify(groupSorted));
-      // groupSorted.forEach((logbook) => {
-      //   logbook.transactions.forEach((section) => {
-      //     section.data.forEach((transaction) => {
-      //       if (transaction.details.category_id === patchCategory.id) {
-      //         let otherLogbook = state.groupSorted.filter((otherLogbook) => {
-      //           otherLogbook.logbook_id !== logbook.logbook_id;
-      //         });
-      //         let otherSection = state.groupSorted.filter((otherLogbook) => {
-      //           if (otherLogbook.logbook_id === logbook.logbook_id) {
-      //             otherLogbook.transactions.filter((otherSection) => {
-      //               otherSection.title !== section.title;
-      //             });
-      //           }
-      //         });
-      //         let otherTransaction = state.groupSorted.filter(
-      //           (otherLogbook) => {
-      //             if (otherLogbook.logbook_id === logbook.logbook_id) {
-      //               otherLogbook.transactions.filter((otherSection) => {
-      //                 if (otherSection.title === section.title) {
-      //                   otherSection.data.filter(
-      //                     (otherTransaction) =>
-      //                       otherTransaction.details.category_id !==
-      //                       transaction.details.category_id
-      //                   );
-      //                 }
-      //               });
-      //             }
-      //           }
-      //         );
-
-      //         let patchedTransaction = {
-      //           ...transaction,
-      //           details: {
-      //             ...transaction.details,
-      //             in_out: targetCategoryType,
-      //           },
-      //         };
-      //         // console.log(transaction);
-      //         // console.log(patchedTransaction);
-      //         let patchedSection = {
-      //           ...section,
-      //           data: [
-      //             otherTransaction,
-      //             //   section.data.filter((otherTransaction) => {
-      //             //   otherTransaction.details.category_id !== patchCategory.id;
-      //             // }),
-      //             patchedTransaction,
-      //           ],
-      //         };
-
-      //         let patchedLogbook = {
-      //           ...logbook,
-      //           transactions: [
-      //             // ...logbook.transactions.filter((otherSection) => {
-      //             //   otherSection.title !== patchedSection.title;
-      //             // }),
-
-      //             otherSection,
-      //             patchedSection,
-      //           ],
-      //         };
-
-      //         groupSorted = [
-      //           // ...state.groupSorted.filter((otherLogbook) => {
-      //           //   otherLogbook.logbook_id !== logbook.logbook_id;
-      //           // }),
-
-      //           otherLogbook,
-      //           patchedLogbook,
-      //         ];
-
-      //         // patchedGroupSorted.push(transaction);
-      //         // console.log(JSON.stringify(groupSorted));
-      //       }
-      //     });
-      //   });
-      // });
-      console.log("reducer");
-      console.log("final", JSON.stringify(groupSorted));
 
       return {
         ...state,
@@ -2122,22 +2053,27 @@ export const globalAppSettings = (state, action) => {
       };
 
     // Set App Currency
-    case REDUCER_ACTIONS.APP_SETTINGS.CURRENCY.SET:
+    case REDUCER_ACTIONS.APP_SETTINGS.CURRENCY_RATE.SET:
       return {
         ...state,
-        currency: action.payload,
+        currencyRate: action.payload,
       };
 
     // Push Screen Hidden
     case REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH:
       return {
         ...state,
-        screenHidden: [...state.screenHidden, action.payload],
+        hiddenScreens: [...state.hiddenScreens, action.payload],
       };
 
     // TAG : Multiple Actions
     case REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS:
       return { ...state, ...action.payload };
+
+    case REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET:
+      return {
+        ...action.payload,
+      };
 
     default:
       return state;
@@ -2190,6 +2126,11 @@ export const globalUserAccount = (state, action) => {
     // TAG : Multiple Actions
     case REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS:
       return { ...state, ...action.payload };
+
+    case REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET:
+      return {
+        ...action.payload,
+      };
 
     default:
       return state;

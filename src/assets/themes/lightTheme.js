@@ -69,7 +69,7 @@ export const lightTheme = {
         buttonPrimary: {
             buttonStyle: {
                 backgroundColor: palette.black[600],
-                borderRadius: 8,
+                borderRadius: 16,
             },
             textStyle: {
                 color: palette.white[600],
@@ -80,7 +80,7 @@ export const lightTheme = {
             buttonStyle: {
                 backgroundColor: 'transparent',
                 borderColor: palette.black[600],
-                borderRadius: 8,
+                borderRadius: 16,
                 borderWidth: 1,
             },
             textStyle: {
@@ -90,26 +90,26 @@ export const lightTheme = {
         },
         buttonDisabled: {
             backgroundColor: palette.white[200],
-            borderRadius: 8,
+            borderRadius: 16,
         },
         buttonSuccess: {
             backgroundColor: palette.green,
-            borderRadius: 8,
+            borderRadius: 16,
         },
         buttonWarn: {
             backgroundColor: palette.orange,
-            borderRadius: 8,
+            borderRadius: 16,
         },
         buttonDanger: {
             backgroundColor: 'transparent',
             borderColor: palette.red,
-            borderRadius: 8,
+            borderRadius: 16,
             borderWidth: 1
 
         },
         buttonFailure: {
             backgroundColor: palette.red,
-            borderRadius: 8,
+            borderRadius: 16,
         }
     },
     list: {

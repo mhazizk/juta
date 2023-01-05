@@ -38,7 +38,6 @@ const UserScreen = ({ navigation }) => {
           iconPack="IonIcons"
           onPress={() => navigation.navigate(screenList.profileSettingsScreen)}
         />
-
         {/* // TAG : My Logbooks */}
         <ListItem
           pressable
@@ -48,7 +47,6 @@ const UserScreen = ({ navigation }) => {
           iconPack="IonIcons"
           onPress={() => navigation.navigate(screenList.myLogbooksScreen)}
         />
-
         {/* // TAG : My Categories */}
         <ListItem
           pressable
@@ -61,7 +59,6 @@ const UserScreen = ({ navigation }) => {
           iconPack="IonIcons"
           onPress={() => navigation.navigate(screenList.myCategoriesScreen)}
         />
-
         {/* // TAG : My Budget */}
         <ListItem
           pressable
@@ -71,7 +68,6 @@ const UserScreen = ({ navigation }) => {
           iconPack="FontAwesome5"
           onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
         />
-
         {/* // TAG : Settings */}
         <ListItem
           pressable
@@ -80,7 +76,6 @@ const UserScreen = ({ navigation }) => {
           iconPack="IonIcons"
           onPress={() => navigation.navigate(screenList.settingsScreen)}
         />
-
         {/* // TAG : About */}
         <ListItem
           pressable
@@ -88,6 +83,16 @@ const UserScreen = ({ navigation }) => {
           iconLeftName="information-circle"
           iconPack="IonIcons"
           onPress={() => navigation.navigate(screenList.aboutScreen)}
+        />
+        {/* // TAG : Developer*/}
+        <ListItem
+          pressable
+          leftLabel="Developer"
+          iconLeftName="code"
+          iconPack="IonIcons"
+          onPress={() =>
+            navigation.navigate(screenList.developerSettingsScreen)
+          }
         />
       </View>
     </>

@@ -70,7 +70,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                       iconLeftName={item.icon.name}
                       iconLeftColor={
                         item.icon.color === "default"
-                          ? appSettings.theme.style.colors.primary
+                          ? appSettings.theme.style.colors.foreground
                           : item.icon.color
                       }
                       iconPack={item.icon.pack}

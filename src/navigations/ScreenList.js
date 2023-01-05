@@ -13,6 +13,10 @@ const screenList = {
   splashScreen: "Splash Screen",
   onboardingScreen: "Onboarding Screen",
 
+  // Auth Screen
+  loginScreen: "Login Screen",
+  registerScreen: "Register Screen",
+
   // Dashboard Screen
   dashboardScreen: "Dashboard Screen",
 

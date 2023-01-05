@@ -83,6 +83,7 @@ const LogBookScreen = ({ route, navigation }) => {
   }, [screenLoading]);
 
   const logbookToBeSelected = (logbook) => {
+    setFilteredTransactions(null);
     if (
       categories.categories &&
       sortedTransactions.groupSorted &&
@@ -106,17 +107,10 @@ const LogBookScreen = ({ route, navigation }) => {
             });
             break;
 
-          case selectedLogbook?.logbook_id ===
-            sortedTransactions?.logbookToOpen?.logbook_id:
-            setSelectedLogbooks(sortedTransactions.logbookToOpen);
+          case selectedLogbook:
             break;
 
-          case !selectedLogbook && sortedTransactions?.logbookToOpen:
-            setSelectedLogbooks(sortedTransactions.logbookToOpen);
-            break;
-
-          case selectedLogbook?.logbook_id !==
-            sortedTransactions?.logbookToOpen?.logbook_id:
+          case sortedTransactions?.logbookToOpen:
             setSelectedLogbooks(sortedTransactions.logbookToOpen);
             break;
 
@@ -148,14 +142,22 @@ const LogBookScreen = ({ route, navigation }) => {
   };
 
   const filterTransactions = () => {
-    if (selectedLogbook && sortedTransactions) {
-      const filtered = sortedTransactions.groupSorted.filter((logbook) => {
+    if (selectedLogbook) {
+      const filtered = sortedTransactions.groupSorted.find((logbook) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
       setFilteredTransactions(
-        filtered[0].transactions.map((transaction) => transaction)
+        filtered.transactions.map((transaction) => transaction)
       );
     }
+    // if (selectedLogbook && sortedTransactions) {
+    //   const filtered = sortedTransactions.groupSorted.filter((logbook) => {
+    //     return logbook.logbook_id === selectedLogbook.logbook_id;
+    //   });
+    //   setFilteredTransactions(
+    //     filtered[0].transactions.map((transaction) => transaction)
+    //   );
+    // }
   };
 
   // const filterTransactions = useMemo(() => {
@@ -171,14 +173,19 @@ const LogBookScreen = ({ route, navigation }) => {
   //   };
   // }, [selectedLogbook, sortedTransactions.logbookToOpen]);
 
-  const countTransactions = (filtered) => {
-    let array = [];
-    filtered.forEach((section) =>
-      section.data.forEach((transaction) =>
-        array.push(transaction.transaction_id)
-      )
-    );
-    return array.length;
+  const countTransactions = () => {
+    if (selectedLogbook) {
+      const filtered = sortedTransactions.groupSorted.find((logbook) => {
+        return logbook.logbook_id === selectedLogbook.logbook_id;
+      });
+      let array = [];
+      filtered.transactions.forEach((section) =>
+        section.data.forEach((transaction) =>
+          array.push(transaction.transaction_id)
+        )
+      );
+      return array.length;
+    }
   };
 
   return (
@@ -192,7 +199,7 @@ const LogBookScreen = ({ route, navigation }) => {
         >
           {/* Header */}
           {/* {!isLoading.status && filteredTransactions && ( */}
-          {!screenLoading && !componentLoading && filteredTransactions && (
+          {!screenLoading && !componentLoading && selectedLogbook && (
             <View
               style={[
                 {
@@ -258,11 +265,7 @@ const LogBookScreen = ({ route, navigation }) => {
               {/* Number of Transactions */}
               <View style={{ flex: 1, alignItems: "flex-end" }}>
                 <TextSecondary
-                  label={`${
-                    !filteredTransactions.length
-                      ? "No"
-                      : countTransactions(filteredTransactions)
-                  } Transactions`}
+                  label={(countTransactions() || "No") + " Transactions"}
                 />
                 {/* <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary }}>
                                 {!filteredTransactions.length ? 'No' : countTransactions(filteredTransactions)} Transactions
@@ -279,11 +282,11 @@ const LogBookScreen = ({ route, navigation }) => {
 
           {/* Transaction Render */}
           {/* {!isLoading.status && filteredTransactions && ( */}
-          {!screenLoading && !componentLoading && filteredTransactions && (
+          {!screenLoading && !componentLoading && selectedLogbook && (
             // TODO Fix transaction out of sync with logbook
             <TransactionList
               selectedLogbook={selectedLogbook}
-              transactions={filteredTransactions}
+              // transactions={filteredTransactions}
               categories={categories.categories}
               onPress={(item) =>
                 navigation.navigate(screenList.transactionPreviewScreen, {

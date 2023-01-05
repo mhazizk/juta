@@ -2,8 +2,8 @@ import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 const convertCurrency = ({ amount, from, target }) => {
   const { appSettings } = useGlobalAppSettings();
-  const dollarRate = appSettings.currencyRate.find((c) => c.name === from).rate;
-  const targetRate = appSettings.currencyRate.find(
+  const dollarRate = appSettings.currencyRate.data.find((c) => c.name === from).rate;
+  const targetRate = appSettings.currencyRate.data.find(
     (c) => c.name === target
   ).rate;
   const amountInDollar = amount / dollarRate;

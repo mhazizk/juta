@@ -20,6 +20,10 @@ import * as utils from "../../utils";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import { ListItem } from "../../components/List";
+import { TextPrimary } from "../../components/Text";
+import devAppSettings from "../../dev/devAppSettings";
+import devUserAccount from "../../dev/devUserAccount";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -152,11 +156,13 @@ const DeveloperScreen = ({ item, navigation }) => {
   return (
     <>
       {appSettings && (
-        <ScrollView style={{ height: "100%", backgroundColor: "#fff" }}>
+        <ScrollView
+          style={{
+            height: "100%",
+            backgroundColor: appSettings.theme.style.colors.background,
+          }}
+        >
           {/* <UserHeaderComponent /> */}
-          <View style={{ backgroundColor: "#fff", padding: 16 }}>
-            <Text style={{ fontSize: 32, color: "#bbb" }}>Developer</Text>
-          </View>
 
           {/* // TAG : Save Large Transactions to Storage */}
           <TouchableNativeFeedback onPress={() => saveLargeJSONTransactions()}>
@@ -223,7 +229,11 @@ const DeveloperScreen = ({ item, navigation }) => {
           </TouchableNativeFeedback>
 
           {/* // TAG : Save Account to Storage */}
-          <TouchableNativeFeedback
+          <ListItem
+            pressable
+            leftLabel="Save Account to Device"
+            iconLeftName="download"
+            iconPack="IonIcons"
             onPress={() =>
               persistStorage
                 .asyncSecureStorage({
@@ -244,23 +254,13 @@ const DeveloperScreen = ({ item, navigation }) => {
                 })
                 .then(() => alert("account saved"))
             }
-          >
-            <View style={styles.flatListView}>
-              <IonIcons
-                name="download"
-                size={18}
-                style={{ paddingRight: 16 }}
-              />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
-                  Save Account to Device
-                </Text>
-              </View>
-            </View>
-          </TouchableNativeFeedback>
-
+          />
           {/* // TAG : Get Account from Storage */}
-          <TouchableNativeFeedback
+          <ListItem
+            pressable
+            leftLabel="Get Account from Device"
+            iconLeftName="document"
+            iconPack="IonIcons"
             onPress={() =>
               persistStorage
                 .asyncSecureStorage({
@@ -275,20 +275,7 @@ const DeveloperScreen = ({ item, navigation }) => {
                   });
                 })
             }
-          >
-            <View style={styles.flatListView}>
-              <IonIcons
-                name="document"
-                size={18}
-                style={{ paddingRight: 16 }}
-              />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
-                  Load Account from Device and Dispatch
-                </Text>
-              </View>
-            </View>
-          </TouchableNativeFeedback>
+          />
 
           {/* // TAG : Get Transactions from Storage */}
           <TouchableNativeFeedback onPress={() => getTransactionsFromStorage()}>
@@ -322,7 +309,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
-          {/* // TAG : Get Logbooks from Storage */}
+          {/* // TAG : Get Categories from Storage */}
           <TouchableNativeFeedback onPress={() => getCategoriesFromStorage()}>
             <View style={styles.flatListView}>
               <IonIcons
@@ -337,6 +324,99 @@ const DeveloperScreen = ({ item, navigation }) => {
               </View>
             </View>
           </TouchableNativeFeedback>
+
+          <TextPrimary label="User account" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Force set new user account to Reducer and Storage"
+            iconLeftName="download"
+            iconPack="IonIcons"
+            onPress={() => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+                payload: devUserAccount,
+              });
+              alert("user account has been forced set");
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Remove user account from Storage"
+            iconLeftName="trash"
+            iconPack="IonIcons"
+            onPress={() => {
+              persistStorage
+                .asyncSecureStorage({
+                  action: PERSIST_ACTIONS.DELETE,
+                  key: "account",
+                })
+                .then(() => {
+                  alert("user account has been forced set");
+                });
+            }}
+          />
+
+          <TextPrimary label="App Settings" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Remove all app settings from Reducer"
+            iconLeftName="trash"
+            iconPack="IonIcons"
+            onPress={() => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+                payload: null,
+              });
+              alert("all app settings removed");
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Remove all app settings from storage"
+            iconLeftName="trash"
+            iconPack="IonIcons"
+            onPress={() => {
+              persistStorage
+                .asyncStorage({
+                  action: PERSIST_ACTIONS.DELETE,
+                  key: "appSettings",
+                })
+                .then(() => {
+                  alert("all app settings removed");
+                });
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Force set new app settings to Reducer and storage"
+            iconLeftName="download"
+            iconPack="IonIcons"
+            onPress={() => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+                payload: devAppSettings,
+              });
+              alert("app settings has been forced set");
+            }}
+          />
+
+          <TextPrimary label="Screens" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Remove all hidden screens from Reducer"
+            iconLeftName="trash"
+            iconPack="IonIcons"
+            onPress={() => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+                payload: {
+                  ...appSettings,
+                  hiddenScreenss: [],
+                },
+              });
+              alert("all hidden screens removed");
+            }}
+          />
 
           {/* // TAG : Log global raw transactions */}
           <TouchableNativeFeedback onPress={() => console.log(rawTransactions)}>

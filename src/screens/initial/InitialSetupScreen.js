@@ -40,6 +40,7 @@ import initialCategories from "../../reducers/initial-state/InitialCategories";
 import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import uuid from "react-native-uuid";
 
 const InitialSetupScreen = ({ navigation }) => {
   const { transactions, dispatchTransactions } = useGlobalTransactions();
@@ -74,12 +75,25 @@ const InitialSetupScreen = ({ navigation }) => {
       showTransactionTime: true,
       dailySummary: "expense-only",
     },
-    currencyRate: [
-      { name: "USD", rate: 1 },
-      { name: "IDR", rate: 14000 },
-    ],
+    currencyRate: {
+      data: [
+        { name: "USD", rate: 1 },
+        { name: "IDR", rate: 14000 },
+      ],
+      updatedAt: Date.now(),
+    },
     currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    screenHidden: [screenList.onboardingScreen, screenList.initialSetupScreen],
+    hiddenScreens: [screenList.onboardingScreen, screenList.initialSetupScreen],
+  });
+  const [newUserAccount, setNewUserAccount] = useState({
+    profile: {
+      nickname: "",
+      avatar: null,
+    },
+    account: {
+      premium: false,
+      user_id: userId,
+    },
   });
   const [newLogbook, setNewLogbook] = useState({
     _timestamps: {
@@ -87,17 +101,18 @@ const InitialSetupScreen = ({ navigation }) => {
       updated_at: null,
     },
     _id: "12234",
-    user_id: "haziz1",
+    user_id: userId,
     username: "mhazizk",
-    logbook_currency: selectedAppSettings.currency,
+    logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
     logbook_type: "basic",
-    logbook_id: "logbook1",
+    logbook_id: uuid.v4(),
     logbook_name: "",
     logbook_records: [],
     logbook_categories: [],
     __v: 0,
   });
 
+  const userId = uuid.v4();
   const onboardingRef = useRef(null);
 
   useEffect(() => {}, [appSettings, newLogbook]);
@@ -322,111 +337,111 @@ const InitialSetupScreen = ({ navigation }) => {
     },
 
     // TAG : Select Font Size
-    {
-      backgroundColor:
-        selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
-      image: <Image />,
-      title: (
-        <>
-          <Text
-            style={{
-              position: "absolute",
-              top: "5%",
-              color: selectedColor(selectedAppSettings.theme.id),
-              fontSize: 30,
-            }}
-          >
-            Select Font Size
-          </Text>
-          <View
-            style={{ flexDirection: "row", alignItems: "center", width: 200 }}
-          >
-            <FlatList
-              data={APP_SETTINGS.FONT_SIZE.OPTIONS}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => {
-                return (
-                  <>
-                    <TouchableOpacity
-                      style={{ flex: 1 }}
-                      onPress={() => {
-                        setSelectedAppSettings({
-                          ...selectedAppSettings,
-                          fontSize: item,
-                        });
-                        setTimeout(() => onboardingRef.current.goNext(), 1000);
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          borderRadius: 8,
-                          borderWidth: 0,
-                          minHeight: 100,
-                          margin: 8,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: "column",
-                            padding: 0,
-                            margin: 0,
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <View
-                            style={{
-                              flex: 1,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderWidth: 4,
-                              borderColor:
-                                selectedAppSettings.fontSize === item
-                                  ? selectedColor(selectedAppSettings.theme.id)
-                                  : "transparent",
-                              borderRadius: 18,
-                              padding: 0,
-                              margin: 0,
-                            }}
-                          >
-                            <Image
-                              source={findImage(item)}
-                              style={{ width: 80, height: 80 }}
-                            />
-                          </View>
-                          <Text
-                            style={[
-                              globalStyles.lightTheme.textPrimary,
-                              {
-                                color: "#000",
-                                fontSize:
-                                  item === "small"
-                                    ? 12
-                                    : item === "medium"
-                                    ? 16
-                                    : 32,
-                              },
-                            ]}
-                          >
-                            {item[0].toUpperCase() + item.substring(1)}
-                          </Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  </>
-                );
-              }}
-            />
-          </View>
-        </>
-      ),
-      subtitle: "",
-    },
+    // {
+    //   backgroundColor:
+    //     selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+    //   image: <Image />,
+    //   title: (
+    //     <>
+    //       <Text
+    //         style={{
+    //           position: "absolute",
+    //           top: "5%",
+    //           color: selectedColor(selectedAppSettings.theme.id),
+    //           fontSize: 30,
+    //         }}
+    //       >
+    //         Select Font Size
+    //       </Text>
+    //       <View
+    //         style={{ flexDirection: "row", alignItems: "center", width: 200 }}
+    //       >
+    //         <FlatList
+    //           data={APP_SETTINGS.FONT_SIZE.OPTIONS}
+    //           keyExtractor={(item) => item}
+    //           renderItem={({ item }) => {
+    //             return (
+    //               <>
+    //                 <TouchableOpacity
+    //                   style={{ flex: 1 }}
+    //                   onPress={() => {
+    //                     setSelectedAppSettings({
+    //                       ...selectedAppSettings,
+    //                       fontSize: item,
+    //                     });
+    //                     setTimeout(() => onboardingRef.current.goNext(), 1000);
+    //                   }}
+    //                 >
+    //                   <View
+    //                     style={{
+    //                       flex: 1,
+    //                       borderRadius: 8,
+    //                       borderWidth: 0,
+    //                       minHeight: 100,
+    //                       margin: 8,
+    //                       overflow: "hidden",
+    //                     }}
+    //                   >
+    //                     <View
+    //                       style={{
+    //                         flex: 1,
+    //                         flexDirection: "column",
+    //                         padding: 0,
+    //                         margin: 0,
+    //                         alignItems: "center",
+    //                         justifyContent: "center",
+    //                       }}
+    //                     >
+    //                       <View
+    //                         style={{
+    //                           flex: 1,
+    //                           justifyContent: "center",
+    //                           alignItems: "center",
+    //                           borderWidth: 4,
+    //                           borderColor:
+    //                             selectedAppSettings.fontSize === item
+    //                               ? selectedColor(selectedAppSettings.theme.id)
+    //                               : "transparent",
+    //                           borderRadius: 18,
+    //                           padding: 0,
+    //                           margin: 0,
+    //                         }}
+    //                       >
+    //                         <Image
+    //                           source={findImage(item)}
+    //                           style={{ width: 80, height: 80 }}
+    //                         />
+    //                       </View>
+    //                       <Text
+    //                         style={[
+    //                           globalStyles.lightTheme.textPrimary,
+    //                           {
+    //                             color: "#000",
+    //                             fontSize:
+    //                               item === "small"
+    //                                 ? 12
+    //                                 : item === "medium"
+    //                                 ? 16
+    //                                 : 32,
+    //                           },
+    //                         ]}
+    //                       >
+    //                         {item[0].toUpperCase() + item.substring(1)}
+    //                       </Text>
+    //                     </View>
+    //                   </View>
+    //                 </TouchableOpacity>
+    //               </>
+    //             );
+    //           }}
+    //         />
+    //       </View>
+    //     </>
+    //   ),
+    //   subtitle: "",
+    // },
 
-    // TAG : Select Currency
+    // TAG : Select Default Currency
     {
       backgroundColor:
         selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
@@ -490,8 +505,8 @@ const InitialSetupScreen = ({ navigation }) => {
                               alignItems: "center",
                               borderWidth: 4,
                               borderColor:
-                                selectedAppSettings.currency.isoCode ===
-                                item.isoCode
+                                selectedAppSettings.logbookSettings
+                                  .defaultCurrency.isoCode === item.isoCode
                                   ? selectedColor(selectedAppSettings.theme.id)
                                   : "transparent",
                               borderRadius: 18,

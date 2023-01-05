@@ -9,6 +9,7 @@ import Loading from "../../components/Loading";
 import { MyBudgetsPreview } from "../../components/MyBudgetsPreview";
 import RecentTransactions from "../../components/RecentTransactions";
 import { TextPrimary, TextSecondary } from "../../components/Text";
+import TotalExpenseWidget from "../../components/TotalExpenseWidget";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -47,7 +48,7 @@ const DashboardScreen = ({ navigation }) => {
   });
   const [screenLoading, setScreenLoading] = useState(false);
 
-  const cardHeight = 200;
+  const cardHeight = 200 - 16; // 200 is the height of card in the carousel
   const checkmark = require("../../../src/assets/img/checkmark.png");
   const isFocus = useIsFocused();
 
@@ -167,250 +168,39 @@ const DashboardScreen = ({ navigation }) => {
               style={{ color: appSettings.theme.style.colors.textHeader }}
             />
             <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-              <TextPrimary
-                label={userAccount?.profile?.nickname}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 36,
-                  color: appSettings.theme.style.colors.textHeader,
-                }}
-              />
-              <Image
-                source={checkmark}
-                style={{ width: 20, height: 20, marginLeft: 4 }}
-              />
+              {userAccount?.profile?.nickname && (
+                <TextPrimary
+                  label={userAccount?.profile?.nickname}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 36,
+                    color: appSettings.theme.style.colors.textHeader,
+                  }}
+                />
+              )}
+              {userAccount?.account?.premium && (
+                <Image
+                  source={checkmark}
+                  style={{
+                    tintColor: appSettings.theme.style.colors.textHeader,
+                    width: 20,
+                    height: 20,
+                    marginLeft: 4,
+                  }}
+                />
+              )}
             </View>
           </View>
 
-          {/* // SECTION : Carousel */}
-          <View
-            style={{
-              // paddingTop: 16,
-              flexDirection: "column",
-            }}
-          >
-            {/* <ChartTab /> */}
-            <Carousel
-              loop
-              autoPlay
-              autoPlayInterval={2000}
-              scrollAnimationDuration={3000}
-              width={screenWidth}
-              height={cardHeight}
-              data={["expense", "income"]}
-              key={(index) => index}
-              renderItem={({ index }) => (
-                <>
-                  {/* // TAG : Container */}
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate(screenList.analyticsScreen)
-                    }
-                    style={{
-                      shadowColor: appSettings.theme.style.colors.foreground,
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 16,
-                      elevation: 5,
-                    }}
-                  >
-                    <View
-                      style={{
-                        // backgroundColor: appSettings.theme.style.colors.background,
-                        padding: 16,
-                      }}
-                    >
-                      {/* // TAG : Expense Widget */}
-                      {appSettings.dashboardSettings.showTotalExpenseWidget && (
-                        <View
-                          style={{
-                            backgroundColor:
-                              // appSettings.theme.style.colors.secondary,
-                              "#FFE088",
-                            padding: 16,
-                            borderRadius: 16,
-                            height: "100%",
-                            width: "100%",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: "hidden",
-                          }}
-                        >
-                          {graph.status !== "done" && (
-                            <View
-                              style={{
-                                height: "100%",
-                                width: "100%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                zIndex: 1,
-                              }}
-                            >
-                              <TextPrimary
-                                style={{
-                                  zIndex: 1,
-                                  color: appSettings.theme.style.colors.black,
-                                  textAlign: "center",
-                                  textAlignVertical: "center",
-                                }}
-                                label={`Add transactions to see your ${
-                                  index === 0 ? "expenses" : "income"
-                                } graph here`}
-                              />
-                            </View>
-                          )}
-
-                          {graph.status === "done" && (
-                            <>
-                              <View
-                                style={{
-                                  height: "100%",
-                                  width: "100%",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  zIndex: 1,
-                                }}
-                              >
-                                <View
-                                  style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <TextSecondary
-                                    label={
-                                      appSettings.logbookSettings
-                                        .defaultCurrency.symbol
-                                    }
-                                    style={{
-                                      paddingRight: 4,
-                                      color:
-                                        appSettings.theme.style.colors.black,
-                                    }}
-                                  />
-                                  <TextPrimary
-                                    style={{
-                                      fontSize: 32,
-                                      fontWeight: "bold",
-                                      color:
-                                        appSettings.theme.style.colors.black,
-                                    }}
-                                    label={utils.GetFormattedNumber({
-                                      value: activeBudget.spent,
-                                      currency:
-                                        appSettings.logbookSettings
-                                          .defaultCurrency.name,
-                                    })}
-                                  />
-                                </View>
-                                <TextPrimary
-                                  style={{
-                                    zIndex: 1,
-                                    color: appSettings.theme.style.colors.black,
-                                  }}
-                                  label="Total Expense this week"
-                                />
-                              </View>
-
-                              <View
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  left: 0,
-                                  zIndex: 0,
-                                }}
-                              >
-                                <CustomBarChart
-                                  //   Graph Data
-                                  mainGraph={
-                                    graph.status === "done"
-                                      ? graph.graphData.mainGraph
-                                      : null
-                                  }
-                                  shadowGraph={
-                                    graph.status === "done"
-                                      ? graph.graphData.shadowGraph
-                                      : null
-                                  }
-                                  limitLine={
-                                    graph.status === "done" &&
-                                    graph.graphData.limitLine.length
-                                      ? graph.graphData.limitLine
-                                      : null
-                                  }
-                                  symbol={
-                                    appSettings.logbookSettings.defaultCurrency
-                                      .symbol
-                                  }
-                                  rangeDay={graph.rangeDay}
-                                  //  Graph Style
-                                  successColor={
-                                    appSettings.theme.style.colors.success
-                                  }
-                                  primaryColor={utils.HexToRgb({
-                                    hex: appSettings.theme.style.colors.white,
-                                    opacity: 0.1,
-                                  })}
-                                  overBudgetBarColor={
-                                    appSettings.theme.style.colors.danger
-                                  }
-                                  warnBudgetBarColor={
-                                    appSettings.theme.style.colors.warn
-                                  }
-                                  shadowBarColor={utils.HexToRgb({
-                                    hex: appSettings.theme.style.colors.success,
-                                    opacity: 0,
-                                  })}
-                                  width={Dimensions.get("window").width - 32}
-                                  height={cardHeight - 64}
-                                  textColor={
-                                    appSettings.theme.style.text.textSecondary
-                                      .color
-                                  }
-                                  barRadius={8}
-                                  barWidth={
-                                    graph.rangeDay === 7
-                                      ? 28
-                                      : graph.rangeDay === 30
-                                      ? 8
-                                      : 16
-                                  }
-                                />
-                              </View>
-                            </>
-                          )}
-                          {/* {index === 1 && <IncomeChartPreview />} */}
-                          {graph.status !== "done" && (
-                            <Image
-                              source={CoinsImg}
-                              style={{
-                                position: "absolute",
-                                // top: 0,
-                                right: -50,
-                                bottom: -50,
-                                // left: 0,
-                                zIndex: 0,
-                                width: 250,
-                                height: 250,
-                                opacity: 0.5,
-                                resizeMode: "contain",
-                              }}
-                            />
-                          )}
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                </>
-              )}
+          {appSettings.dashboardSettings.showTotalExpenseWidget && (
+            <TotalExpenseWidget
+              graph={graph}
+              activeBudget={activeBudget}
+              cardHeight={cardHeight}
+              onPress={() => navigation.navigate(screenList.analyticsScreen)}
             />
-          </View>
+          )}
+
           {/* <Chart /> */}
 
           {/* <ScrollView

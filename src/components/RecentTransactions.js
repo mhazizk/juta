@@ -58,7 +58,7 @@ const RecentTransactions = ({
     // });
     let finalArray = [];
 
-    if (sortedTransactions.groupSorted.length) {
+    if (sortedTransactions.groupSorted?.length) {
       sortedTransactions.groupSorted.forEach((logbook) => {
         if (logbook.transactions.length) {
           // if (startDate && finishDate) {
