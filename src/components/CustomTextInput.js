@@ -9,6 +9,7 @@ const CustomTextInput = ({
   inputRef,
   //   secureTextEntry = false,
   onChange,
+  onEndEditing,
   placeholder,
   returnKeyType,
 }) => {
@@ -17,26 +18,14 @@ const CustomTextInput = ({
 
   const rightButton = () => {
     switch (true) {
-      case inputQuery && inputType === "password" && secureTextEntry:
-        return (
-          <IonIcons
-            onPress={() => {
-              setSecureTextEntry(!secureTextEntry);
-            }}
-            name="eye"
-            size={24}
-            color={appSettings.theme.style.colors.foreground}
-            style={{ paddingHorizontal: 16 }}
-          />
-        );
       case inputQuery && inputType === "password" && !secureTextEntry:
         return (
           <IonIcons
             onPress={() => {
-              setSecureTextEntry(!secureTextEntry);
+              setSecureTextEntry(true);
             }}
-            name="eye-off"
-            size={24}
+            name="eye"
+            size={20}
             color={appSettings.theme.style.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
@@ -45,10 +34,10 @@ const CustomTextInput = ({
         return (
           <IonIcons
             onPress={() => {
-              setSecureTextEntry(!secureTextEntry);
+              setSecureTextEntry(false);
             }}
-            name="eye"
-            size={24}
+            name="eye-off"
+            size={20}
             color={appSettings.theme.style.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
@@ -61,7 +50,7 @@ const CustomTextInput = ({
               onChange("");
             }}
             name="close-circle"
-            size={24}
+            size={20}
             color={appSettings.theme.style.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
@@ -71,6 +60,36 @@ const CustomTextInput = ({
         return;
     }
   };
+
+  const leftIcon = (inputType) => {
+    let iconName = inputType;
+    switch (true) {
+      case iconName === "search":
+        iconName = "search";
+        break;
+      case iconName === "email":
+        iconName = "mail";
+        break;
+      case iconName === "password":
+        iconName = "lock-closed";
+        break;
+      case iconName === "displayName":
+        iconName = "person";
+        break;
+
+      default:
+        break;
+    }
+    return (
+      <IonIcons
+        name={iconName}
+        size={20}
+        color={appSettings.theme.style.colors.primary}
+        style={{ paddingHorizontal: 16 }}
+      />
+    );
+  };
+
   return (
     <View
       style={{
@@ -87,32 +106,10 @@ const CustomTextInput = ({
         margin: 8,
       }}
     >
-      {inputType === "search" && (
-        <IonIcons
-          name="search"
-          size={24}
-          color={appSettings.theme.style.colors.primary}
-          style={{ paddingHorizontal: 16 }}
-        />
-      )}
-      {inputType === "email" && (
-        <IonIcons
-          name="mail"
-          size={24}
-          color={appSettings.theme.style.colors.primary}
-          style={{ paddingHorizontal: 16 }}
-        />
-      )}
-      {inputType === "password" && (
-        <IonIcons
-          name="key"
-          size={24}
-          color={appSettings.theme.style.colors.primary}
-          style={{ paddingHorizontal: 16 }}
-        />
-      )}
+      {leftIcon(inputType)}
       <TextInput
         ref={inputRef}
+        keyboardType={inputType === "password" ? "default" : "default"}
         returnKeyType={returnKeyType || "default"}
         placeholder={placeholder || "Type something here ..."}
         placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
@@ -124,6 +121,7 @@ const CustomTextInput = ({
         }}
         secureTextEntry={inputType === "password" && secureTextEntry}
         onChangeText={(searchText) => onChange(searchText)}
+        onEndEditing={onEndEditing}
         clearButtonMode="while-editing"
         value={inputQuery}
       />

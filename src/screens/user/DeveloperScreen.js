@@ -241,8 +241,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                   key: "account",
                   rawValue: {
                     profile: {
-                      nickname: "Haziz",
-                      avatar: null,
+                      displayName: "Haziz",
+                      photoURL: null,
                     },
                     account: {
                       premium: true,

@@ -39,13 +39,15 @@ const UserHeaderComponent = ({ navigation }) => {
               name="person"
               size={64}
               color={appSettings.theme.style.colors.primary}
-              style={{ display: !userAccount.profile.avatar ? "flex" : "none" }}
+              style={{
+                display: !userAccount.account.photoURL ? "flex" : "none",
+              }}
             />
           </View>
           <View style={{ flexDirection: "row", alignItems: "baseline" }}>
             <TextPrimary label="Hi," style={{ fontSize: 32, marginRight: 8 }} />
             <TextPrimary
-              label={userAccount.profile.nickname}
+              label={userAccount.account.displayName}
               style={{ fontSize: 32, fontWeight: "bold", marginRight: 4 }}
             />
             <Image

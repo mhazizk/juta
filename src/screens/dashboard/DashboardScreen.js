@@ -168,9 +168,9 @@ const DashboardScreen = ({ navigation }) => {
               style={{ color: appSettings.theme.style.colors.textHeader }}
             />
             <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-              {userAccount?.profile?.nickname && (
+              {userAccount?.profile?.displayName && (
                 <TextPrimary
-                  label={userAccount?.profile?.nickname}
+                  label={userAccount?.profile?.displayName}
                   style={{
                     fontWeight: "bold",
                     fontSize: 36,

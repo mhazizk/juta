@@ -54,7 +54,7 @@ import LogBookScreen from "../screens/logbook/LogBookScreen";
 import { Alert, BackHandler } from "react-native";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import LoginScreen from "../screens/auth/LoginScreen";
-import RegisterScreen from "../screens/auth/RegisterScreen";
+import SignUpScreen from "../screens/auth/SignUpScreen";
 
 const Stack = createStackNavigator();
 
@@ -315,8 +315,8 @@ const RootStack = ({ navigation }) => {
         options={{
           ...noHeader,
         }}
-        name={screenList.registerScreen}
-        component={RegisterScreen}
+        name={screenList.signUpScreen}
+        component={SignUpScreen}
       />
 
       {/* // SECTION : DASHBOARD */}

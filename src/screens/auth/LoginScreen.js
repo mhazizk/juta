@@ -9,10 +9,17 @@ import {
 } from "react-native";
 import { TextPrimary } from "../../components/Text";
 import { lightTheme } from "../../assets/themes/lightTheme";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import {
+  useGlobalAppSettings,
+  useGlobalUserAccount,
+} from "../../reducers/GlobalContext";
+import {
+  ButtonDisabled,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import handleUserLogin from "../../utils/HandlUserLogin";
 import handleUserSignUp from "../../utils/HandleUserSignUp";
 import CheckList from "../../components/CheckList";
@@ -20,36 +27,91 @@ import Loading from "../../components/Loading";
 import Carousel from "react-native-reanimated-carousel";
 import LottieView from "lottie-react-native";
 import { wave } from "../../assets/animation/wave.json";
+import AnimatedLoginText from "../../components/AnimatedLoginText";
+import screenList from "../../navigations/ScreenList";
+import Footer from "../../components/Footer";
+import { auth } from "../../api/firebaseConfig";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
-const LoginScreen = () => {
+const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberLogin, setRememberLogin] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [authAccount, setAuthAccount] = useState(null);
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
 
-  const finalCheck = (action) => {
+  useEffect(() => {
+    const authSubscription = auth.onAuthStateChanged((user) => {
+      setAuthAccount(user);
+    });
+    if (route?.params?.newUser && route?.params?.password) {
+      const newUser = route?.params?.newUser;
+      const password = route?.params?.password;
+      setEmail(newUser.account.email);
+      setPassword(password);
+    }
+    return () => {
+      authSubscription();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(authAccount);
+  }, [authAccount]);
+
+  useEffect(() => {
+    if (email && password) {
+      setShowButton(true);
+    } else {
+      setShowButton(false);
+    }
+  }, [email, password]);
+
+  const finalCheck = () => {
     switch (true) {
-      case email && password.length >= 6 && action === "login":
-        return (
-          setScreenLoading(true),
-          handleUserLogin({ email, password }),
-          setScreenLoading(false)
-        );
-
-      case email && password.length >= 6 && action === "signup":
-        setScreenLoading(true);
-        return handleUserSignUp({ email, password });
-
       case !email:
-        return alert("Please fill in email") && inputEmailRef.current.focus();
-
+        alert("Please fill in email");
+        inputEmailRef.current.focus();
+        return;
       case !password || password.length < 6:
-        return (
-          alert("Please fill in password") && inputPasswordRef.current.focus()
-        );
+        alert("Please fill in password");
+        inputPasswordRef.current.focus();
+        return;
+      case !!email && !!password:
+        setScreenLoading(true);
+        setTimeout(() => {
+          if (authAccount) {
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+              payload: {
+                displayName: authAccount.displayName,
+                premium: false,
+                uid: authAccount.uid,
+                email: authAccount.email,
+                emailVerified: authAccount.emailVerified,
+                photoURL: authAccount.providerData[0].photoURL,
+              },
+            });
+            //   TODO : FIX NAVIGATION AFTER LOGIN AND PERSIST STORAGE AUTH ACCOUNT
+            navigation.replace(screenList.splashScreen);
+          } else {
+            handleUserLogin({ email, password })
+              .then((user) => {
+                console.log("coba", user);
+              })
+              .catch((error) => {
+                alert(error);
+                setScreenLoading(false);
+              });
+          }
+        }, 1);
+
+        return;
 
       default:
         return;
@@ -85,7 +147,7 @@ const LoginScreen = () => {
                   fontWeight: "bold",
                 }}
               />
-              <AnimateLoginText />
+              <AnimatedLoginText />
             </View>
             <View
               style={{
@@ -129,9 +191,10 @@ const LoginScreen = () => {
                 }}
               >
                 <CheckList
+                  pressable
                   checkboxPlacement="left"
                   singleChecklist
-                  item={false}
+                  item={true}
                   primaryLabel="Remember me"
                   selected={rememberLogin}
                   onPress={() => {
@@ -161,18 +224,31 @@ const LoginScreen = () => {
                 </View>
               </TouchableOpacity>
             </View>
-            <ButtonPrimary
-              style={{ marginVertical: 16 }}
-              width={Dimensions.get("window").width - 32}
-              label="Login"
-              onPress={() => {
-                finalCheck("login");
-              }}
-            />
+            {/* // TAG : Button */}
+            {showButton && (
+              <ButtonPrimary
+                style={{ marginVertical: 16 }}
+                width={Dimensions.get("window").width - 32}
+                label="Login"
+                onPress={() => finalCheck()}
+              />
+            )}
+            {/* // TAG : Button */}
+            {!showButton && (
+              <ButtonDisabled
+                style={{ marginVertical: 16 }}
+                width={Dimensions.get("window").width - 32}
+                label="Login"
+              />
+            )}
             {/* 
           // TODO : Create a signup screen 
            */}
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.replace(screenList.signUpScreen);
+              }}
+            >
               <View
                 style={{
                   flexDirection: "row",
@@ -199,110 +275,15 @@ const LoginScreen = () => {
         )}
         {screenLoading && (
           <>
-            <Loading size={56} />
-            <TextPrimary
+            <Loading lottie size={150} />
+            {/* <TextPrimary
               label="Logging you in ..."
               style={{ paddingVertical: 16 }}
-            />
+            /> */}
           </>
         )}
       </ScrollView>
-      {/* // TAG : Footer */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 16,
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <TextPrimary label="Cash Log" />
-        <TextPrimary label="v.1.0.0" />
-      </View>
-    </>
-  );
-};
-
-const AnimateLoginText = () => {
-  const textData = [
-    { name: "food", emoji: "🍜" },
-    { name: "travel", emoji: "🚗" },
-    { name: "shopping", emoji: "🛍" },
-    { name: "salary", emoji: "💰" },
-    { name: "bills", emoji: "📝" },
-    { name: "games", emoji: "🎮" },
-    { name: "gifts", emoji: "🎁" },
-  ];
-  return (
-    <>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          //   height: 64,
-        }}
-      >
-        <TextPrimary
-          label="Your"
-          style={{
-            paddingBottom: 16,
-            fontSize: 48,
-            fontWeight: "bold",
-          }}
-        />
-        <View
-          style={{
-            flex: 1,
-            // alignItems: "flex-start",
-          }}
-        >
-          <Carousel
-            vertical
-            //   mode='vertical-stack'
-            loop
-            autoPlay
-            autoPlayInterval={1000}
-            scrollAnimationDuration={1000}
-            //   width={100}
-            height={72}
-            data={textData}
-            key={(index) => index}
-            renderItem={({ index }) => (
-              <>
-                <View
-                  style={{
-                    // flex: 1,
-                    // width: 200,
-                    // height: 64,
-                    flexDirection: "row",
-                    paddingLeft: 10,
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  <TextPrimary
-                    label={textData[index].name}
-                    style={{
-                      color: "#CD0E61",
-                      fontSize: 48,
-                      fontWeight: "bold",
-                    }}
-                  />
-                  <TextPrimary
-                    label={textData[index].emoji}
-                    style={{
-                      marginLeft: 8,
-                      fontSize: 32,
-                    }}
-                  />
-                </View>
-              </>
-            )}
-          />
-        </View>
-      </View>
+      <Footer />
     </>
   );
 };
@@ -310,7 +291,7 @@ const AnimateLoginText = () => {
 const LottieBackground = () => {
   return (
     <>
-      {/* // TAG : ANIMATED BACKGROUND */}
+      {/* // TAG : Header Animated Background */}
       <LottieView
         autoPlay
         resizeMode="cover"

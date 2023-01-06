@@ -5,16 +5,18 @@ import { TextPrimary, TextSecondary } from "./Text";
 const CheckList = ({
   checkboxPlacement = "right",
   singleChecklist = false,
+  viewOnly,
   primaryLabel,
   secondaryLabel,
   item,
   onPress,
+  pressable,
   selected,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   return (
     <>
-      {!singleChecklist && (
+      {!singleChecklist && pressable && (
         <TouchableNativeFeedback
           onPress={() => {
             onPress(item);
@@ -115,7 +117,7 @@ const CheckList = ({
           </View>
         </TouchableNativeFeedback>
       )}
-      {singleChecklist && (
+      {singleChecklist && pressable && (
         <TouchableOpacity
           onPress={() => {
             onPress(item);
@@ -129,7 +131,7 @@ const CheckList = ({
               flexDirection: "row",
               paddingHorizontal: 16,
               minHeight: 48,
-              alignItems: 'center',
+              alignItems: "center",
               justifyContent: "flex-start",
             }}
           >
@@ -215,6 +217,71 @@ const CheckList = ({
             )}
           </View>
         </TouchableOpacity>
+      )}
+      {/* // SECTION : Checkbox View Only */}
+      {singleChecklist && viewOnly && (
+        <>
+          {/* // TAG : Container */}
+          <View
+            style={{
+              flexDirection: "row",
+              // paddingHorizontal: 16,
+              // backgroundColor:'red',
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            {/* // TAG : Checkbox */}
+            <View
+              style={{
+                // backgroundColor: "yellow",
+                // height: 20,
+                // width: 20,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <IonIcons
+                name={selected === item ? "checkmark-sharp" : "close-sharp"}
+                size={16}
+                color={
+                  selected === item
+                    ? appSettings.theme.style.colors.success
+                    : appSettings.theme.style.colors.danger
+                }
+              />
+            </View>
+
+            <View
+              style={{
+                // flex: 1,
+                paddingVertical: 2,
+                paddingLeft: 8,
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "flex-start",
+              }}
+            >
+              {primaryLabel && (
+                <TextPrimary
+                  label={primaryLabel}
+                  style={{
+                    color:
+                      selected === item
+                        ? appSettings.theme.style.colors.success
+                        : appSettings.theme.style.colors.danger,
+                  }}
+                />
+              )}
+              {secondaryLabel && (
+                <TextSecondary
+                  label={secondaryLabel}
+                  style={{ fontSize: 14 }}
+                />
+              )}
+            </View>
+          </View>
+        </>
       )}
     </>
   );

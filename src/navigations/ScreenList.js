@@ -15,7 +15,7 @@ const screenList = {
 
   // Auth Screen
   loginScreen: "Login Screen",
-  registerScreen: "Register Screen",
+  signUpScreen: "Sign Up Screen",
 
   // Dashboard Screen
   dashboardScreen: "Dashboard Screen",

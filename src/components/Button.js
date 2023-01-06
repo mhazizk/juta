@@ -53,6 +53,46 @@ export const ButtonPrimary = ({
   );
 };
 
+// TAG : Button Disabled
+export const ButtonDisabled = ({
+  label,
+  props,
+  onPress,
+  condition,
+  theme,
+  width,
+  style,
+}) => {
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      {/* <TouchableOpacity onPress={onPress}> */}
+        <View
+          style={[
+            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
+          {
+              backgroundColor:appSettings.theme.style.colors.secondary,
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
+          <TextButtonPrimary label={label} />
+          {/* </View> */}
+        </View>
+      {/* </TouchableOpacity> */}
+    </>
+  );
+};
+
 // TAG : Button Secondary
 export const ButtonSecondary = ({
   label,

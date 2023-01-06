@@ -28,7 +28,7 @@ const UserScreen = ({ navigation }) => {
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
-        <UserHeaderComponent />
+        {/* <UserHeaderComponent /> */}
 
         {/* // TAG : My Profile */}
         <ListItem

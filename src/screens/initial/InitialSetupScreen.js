@@ -87,8 +87,8 @@ const InitialSetupScreen = ({ navigation }) => {
   });
   const [newUserAccount, setNewUserAccount] = useState({
     profile: {
-      nickname: "",
-      avatar: null,
+      displayName: "",
+      photoURL: null,
     },
     account: {
       premium: false,

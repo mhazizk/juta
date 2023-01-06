@@ -41,14 +41,14 @@ const ProfileSettingsScreen = ({ item, navigation }) => {
           <ListItem
             pressable
             leftLabel="Change Nick Name"
-            rightLabel={userAccount.profile.nickname}
+            rightLabel={userAccount.account.displayName}
             iconLeftName="create"
             iconPack="IonIcons"
             onPress={() =>
               navigation.navigate(screenList.modalScreen, {
                 title: "Change Nick Name",
                 modalType: "textInput",
-                default: userAccount.profile.nickname,
+                default: userAccount.account.displayName,
                 selected: (item) => {
                   dispatchUserAccount({
                     type: ACTIONS.USER_ACCOUNT.NICKNAME.SET,

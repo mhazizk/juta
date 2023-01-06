@@ -166,8 +166,8 @@ export const initialTransactions = null;
 export const initialUserAccount = null;
 // {
 //     profile: {
-//         nickname: null,
-//         avatar: null
+//         displayName: null,
+//         photoURL: null
 //     },
 //     account: {
 //         verification: false,
@@ -2087,7 +2087,7 @@ export const globalUserAccount = (state, action) => {
         ...state,
         profile: {
           ...state.profile,
-          avatar: action.payload,
+          photoURL: action.payload,
         },
       };
     case ACTIONS.USER_ACCOUNT.NICKNAME.SET:
@@ -2095,7 +2095,7 @@ export const globalUserAccount = (state, action) => {
         ...state,
         profile: {
           ...state.profile,
-          nickname: action.payload,
+          displayName: action.payload,
         },
       };
     case ACTIONS.USER_ACCOUNT.VERIFICATION.SET:
