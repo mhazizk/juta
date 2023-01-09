@@ -19,6 +19,11 @@ import SettingsHeaderList from "../../components/List/SettingsHeaderList";
 import SettingsSection from "../../components/List/SettingsSection";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import getCurrencyRate from "../../api/GetCurrencyRate";
+import auth from "../../api/firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { signOut } from "firebase/auth/react-native";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -33,9 +38,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
     appSettings.logbookSettings
   );
   const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
-  useEffect(() => {
-    // console.log(JSON.stringify(appSettings));
-  }, [appSettings]);
+  const [user, loading, error] = useAuthState(auth);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +57,16 @@ const CurrencySettingsScreen = ({ navigation }) => {
   }, [dashboardSettings, searchSettings, logbookSettings, currencyRate]);
 
   useEffect(() => {
-    console.log(JSON.stringify(appSettings));
+    // console.log(JSON.stringify(appSettings));
+    if (appSettings) {
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+          appSettings.uid,
+          appSettings
+        );
+      }, 1);
+    }
   }, [appSettings]);
 
   useEffect(() => {
@@ -159,50 +171,6 @@ const CurrencySettingsScreen = ({ navigation }) => {
           </>
         )}
 
-        {/* // SECTION : Account Section */}
-        {userAccount && (
-          <>
-            {/* <SettingsHeaderList
-              label="Account Settings"
-              iconName="person-circle"
-            /> */}
-            {/* // TAG : Other */}
-            <SettingsSection>
-              {/* // TAG : Change Email */}
-              {/* <ListItem
-                pressable
-                leftLabel="Change Email"
-                rightLabel={userAccount.account.email}
-                iconLeftName="mail"
-                iconPack="IonIcons"
-                onPress={() => alert("Feature in progress ...")}
-              /> */}
-
-              {/* // TAG : Change Password */}
-              {/* <ListItem
-                pressable
-                leftLabel="Change Password"
-                iconLeftName="key"
-                iconPack="IonIcons"
-                onPress={() => alert("Feature in progress ...")}
-              /> */}
-
-              {/* // TAG : Premium */}
-              {/* <ListItem
-                pressable
-                leftLabel="Account Type"
-                rightLabel={
-                  userAccount.account.premium
-                    ? "Premium Account"
-                    : "Basic Account"
-                }
-                iconLeftName="checkmark"
-                iconPack="IonIcons"
-                onPress={() => alert("Feature in progress ...")}
-              /> */}
-            </SettingsSection>
-          </>
-        )}
         {/* // TODO : Hide Dashboard Section for next release */}
         {/* // SECTION : Dashboard Section */}
         {dashboardSettings && (

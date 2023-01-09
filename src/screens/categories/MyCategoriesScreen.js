@@ -4,14 +4,15 @@ import { FlatList } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
+import SettingsSection from "../../components/List/SettingsSection";
 import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
-    useGlobalAppSettings,
-    useGlobalCategories,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalCategories,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 
@@ -62,25 +63,28 @@ const MyCategoriesScreen = ({ navigation }) => {
               renderItem={({ item }) => {
                 return (
                   <>
-                    <ListItem
-                      pressable
-                      leftLabel={
-                        item?.name[0].toUpperCase() + item?.name.substring(1)
-                      }
-                      iconLeftName={item.icon.name}
-                      iconLeftColor={
-                        item.icon.color === "default"
-                          ? appSettings.theme.style.colors.foreground
-                          : item.icon.color
-                      }
-                      iconPack={item.icon.pack}
-                      iconRightName="chevron-forward"
-                      onPress={() =>
-                        navigation.navigate(screenList.categoryPreviewScreen, {
-                          category: item,
-                        })
-                      }
-                    />
+                      <ListItem
+                        pressable
+                        leftLabel={
+                          item?.name[0].toUpperCase() + item?.name.substring(1)
+                        }
+                        iconLeftName={item.icon.name}
+                        iconLeftColor={
+                          item.icon.color === "default"
+                            ? appSettings.theme.style.colors.foreground
+                            : item.icon.color
+                        }
+                        iconPack={item.icon.pack}
+                        iconRightName="chevron-forward"
+                        onPress={() =>
+                          navigation.navigate(
+                            screenList.categoryPreviewScreen,
+                            {
+                              category: item,
+                            }
+                          )
+                        }
+                      />
                   </>
                 );
               }}
@@ -91,7 +95,9 @@ const MyCategoriesScreen = ({ navigation }) => {
                       pressable
                       rightLabel="Add New Category"
                       iconRightName="add"
-                      onPress={() => navigation.navigate(screenList.newCategoryScreen)}
+                      onPress={() =>
+                        navigation.navigate(screenList.newCategoryScreen)
+                      }
                     />
                   </>
                 );
@@ -118,7 +124,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                                                 "updated_at": Date.now()
                                             },
                                             "_id": Math.random * 10000,
-                                            "user_id": userAccount.account.user_id,
+                                            "user_id": userAccount.uid,
                                             "username": null,
                                             "logbook_id": Math.random() * 10000,
                                             "logbook_name": item,

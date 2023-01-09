@@ -2,37 +2,25 @@
 
 import {
   View,
-  Keyboard,
   Dimensions,
   TouchableOpacity,
   ScrollView,
-  FlatList,
+  Alert,
 } from "react-native";
 import { TextPrimary } from "../../components/Text";
-import { lightTheme } from "../../assets/themes/lightTheme";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import {
-  ButtonDisabled,
-  ButtonPrimary,
-  ButtonSecondary,
-} from "../../components/Button";
+import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserLogin from "../../utils/HandlUserLogin";
 import handleUserSignUp from "../../utils/HandleUserSignUp";
 import CheckList from "../../components/CheckList";
 import Loading from "../../components/Loading";
-import Carousel from "react-native-reanimated-carousel";
 import LottieView from "lottie-react-native";
-import { wave } from "../../assets/animation/wave.json";
 import AnimatedLoginText from "../../components/AnimatedLoginText";
-import Footer from "../../components/Footer";
 import screenList from "../../navigations/ScreenList";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -73,18 +61,7 @@ const SignUpScreen = ({ route, navigation }) => {
     },
   ]);
 
-  useEffect(() => {
-    // const keyboardDidShow = Keyboard.addListener("keyboardDidShow", () =>
-    //   setIsKeyboardVisible(true)
-    // );
-    // const keyboardDidHide = Keyboard.addListener("keyboardDidHide", () =>
-    //   setIsKeyboardVisible(false)
-    // );
-    // return () => {
-    //   keyboardDidHide.remove();
-    //   keyboardDidShow.remove();
-    // };
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (displayName) {
@@ -289,22 +266,43 @@ const SignUpScreen = ({ route, navigation }) => {
     if (email?.includes("@") && showButton) {
       setScreenLoading(true);
       setTimeout(() => {
-        handleUserSignUp({ email, password })
+        // Network timeout 10s
+        // setTimeout(() => {
+        //   Alert.alert(
+        //     "Network timeout",
+        //     "Please check your internet connection and try again"
+        //   );
+        //   setScreenLoading(false);
+        // }, 10000);
+
+        handleUserSignUp({ email, password, displayName })
           .then((user) => {
-            const newUser = {
-              account: {
-                displayName: displayName,
-                premium: false,
-                uid: user.uid,
-                email: user.email,
-                emailVerified: user.emailVerified,
-                photoURL: user.providerData[0].photoURL,
-              },
-            };
-            navigation.replace(screenList.loginScreen, {
-              newUser: newUser,
-              password: password,
-            });
+            handleUserUpdateProfile({ displayName, photoURL: null }).then(
+              () => {
+                const account = {
+                  displayName: displayName,
+                  premium: false,
+                  uid: user.uid,
+                  email: user.email,
+                  emailVerified: user.emailVerified,
+                  photoURL: user.photoURL,
+                };
+
+                setTimeout(async () => {
+                  await firestore.setData(
+                    FIRESTORE_COLLECTION_NAMES.USERS,
+                    account.uid,
+                    account
+                  );
+                }, 1);
+
+                navigation.replace(screenList.loginScreen, {
+                  account: account,
+                  password: password,
+                  status: "NEW_USER",
+                });
+              }
+            );
           })
           .catch((error) => {
             alert(error);

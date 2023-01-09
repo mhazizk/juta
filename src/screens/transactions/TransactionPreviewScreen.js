@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
   ButtonIconDanger,
@@ -488,6 +490,13 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             //     initialTransactionsDeleteCounter: rawTransactions.transactionsDeleteCounter,
                             //     initialSortedTransactionsDeleteCounter: sortedTransactions.sortedTransactionsDeleteCounter
                             // })
+
+                            setTimeout(async () => {
+                              await firestore.deleteData(
+                                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                                transaction.transaction_id
+                              );
+                            }, 1);
                             navigation.navigate(screenList.loadingScreen, {
                               label: "Deleting Transaction ...",
                               loadingType: "deleteOneTransaction",

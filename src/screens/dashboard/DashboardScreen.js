@@ -168,9 +168,9 @@ const DashboardScreen = ({ navigation }) => {
               style={{ color: appSettings.theme.style.colors.textHeader }}
             />
             <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-              {userAccount?.profile?.displayName && (
+              {userAccount?.displayName && (
                 <TextPrimary
-                  label={userAccount?.profile?.displayName}
+                  label={userAccount?.displayName}
                   style={{
                     fontWeight: "bold",
                     fontSize: 36,
@@ -178,7 +178,7 @@ const DashboardScreen = ({ navigation }) => {
                   }}
                 />
               )}
-              {userAccount?.account?.premium && (
+              {userAccount?.premium && (
                 <Image
                   source={checkmark}
                   style={{

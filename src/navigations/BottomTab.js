@@ -74,7 +74,17 @@ const BottomTab = ({ route, navigation }) => {
             paddingHorizontal: 0,
             backgroundColor: appSettings.theme.style.colors.background,
           },
-          headerShown: false,
+          headerShown: true,
+          headerBackground: () => (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor:
+                  appSettings.theme.style.colors.header,
+              }}
+            />
+          ),
+
           headerShadowVisible: false,
           tabBarBadgeStyle: {
             textAlign: "center",

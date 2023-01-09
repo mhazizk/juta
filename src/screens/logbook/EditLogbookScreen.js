@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
-    ScrollView,
-    TextInput,
-    TouchableNativeFeedback,
-    View,
+  ScrollView,
+  TextInput,
+  TouchableNativeFeedback,
+  View,
 } from "react-native";
 // import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
 // import "intl/locale-data/jsonp/en";
@@ -11,16 +11,18 @@ import CountryFlag from "react-native-country-flag";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
-    useGlobalAppSettings,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalTransactions,
+  useGlobalAppSettings,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import * as utils from "../../utils";
 import screenList from "../../navigations/ScreenList";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -385,19 +387,27 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   label="Save"
                   width={150}
                   onPress={() => {
-                    setLogbook({
+                    const finalLogbook = {
                       ...logbook,
                       _timestamps: {
                         ...logbook._timestamps,
                         updated_at: Date.now(),
                       },
-                    });
+                    };
+
+                    setTimeout(async () => {
+                      await firestore.setData(
+                        FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                        finalLogbook.logbook_id,
+                        finalLogbook
+                      );
+                    }, 1);
 
                     navigation.navigate(screenList.loadingScreen, {
                       label: "Saving Logbook ...",
                       loadingType: "patchLogbook",
                       logbookToOpen: logbookToOpen,
-                      patchLogbook: logbook,
+                      patchLogbook: finalLogbook,
                       initialLogbookPatchCounter: logbooks.logbookPatchCounter,
                       // initialSortedLogbookPatchCounter: sortedTransactions.sortedLogbookPatchCounter
                     });

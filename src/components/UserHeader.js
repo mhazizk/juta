@@ -40,20 +40,20 @@ const UserHeaderComponent = ({ navigation }) => {
               size={64}
               color={appSettings.theme.style.colors.primary}
               style={{
-                display: !userAccount.account.photoURL ? "flex" : "none",
+                display: !userAccount.photoURL ? "flex" : "none",
               }}
             />
           </View>
           <View style={{ flexDirection: "row", alignItems: "baseline" }}>
             <TextPrimary label="Hi," style={{ fontSize: 32, marginRight: 8 }} />
             <TextPrimary
-              label={userAccount.account.displayName}
+              label={userAccount.displayName}
               style={{ fontSize: 32, fontWeight: "bold", marginRight: 4 }}
             />
             <Image
               source={checkmark}
               style={{
-                display: userAccount.account.premium ? "flex" : "none",
+                display: userAccount.premium ? "flex" : "none",
                 height: 22,
                 width: 22,
               }}

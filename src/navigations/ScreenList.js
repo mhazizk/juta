@@ -16,6 +16,7 @@ const screenList = {
   // Auth Screen
   loginScreen: "Login Screen",
   signUpScreen: "Sign Up Screen",
+  forgotPasswordScreen: "Forgot Password Screen",
 
   // Dashboard Screen
   dashboardScreen: "Dashboard Screen",
@@ -54,10 +55,9 @@ const screenList = {
 
   // Setttings Screen
   settingsScreen: "Settings Screen",
-  accountSettingsScreen: "Account Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",
   personalizationSettingsScreen: "Personalization Settings Screen",
-  profileSettingsScreen: "Profile Settings Screen",
+  accountSettingsScreen: "Account Settings Screen",
   dataSettingsScreen: "Data Settings Screen",
   developerSettingsScreen: "Developer Settings Screen",
   aboutScreen: "About Screen",

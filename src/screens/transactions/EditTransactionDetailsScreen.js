@@ -14,6 +14,8 @@ import {
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Octicons from "react-native-vector-icons/Octicons";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
   ButtonPrimary,
@@ -62,7 +64,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
   // Loaded User Logbooks
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
-
 
   // TAG : useEffect Section //
 
@@ -199,14 +200,24 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       case !transaction.details.category_id:
         return alert("Please select transaction category");
       default:
+        const finalTransaction = {
+          ...transaction,
+          _timestamps: { ...transaction._timestamps, updated_at: Date.now() },
+        };
+
+        setTimeout(async () => {
+          firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+            finalTransaction.transaction_id,
+            finalTransaction
+          );
+        }, 1);
+
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Transction ...",
           loadingType: "patchTransaction",
           logbookToOpen: logbookToOpen,
-          patchTransaction: {
-            ...transaction,
-            _timestamps: { ...transaction._timestamps, updated_at: Date.now() },
-          },
+          patchTransaction: finalTransaction,
           prevTransaction: prevTransaction,
           logbookToOpen: logbookToOpen,
           initialSortedTransactionsPatchCounter:
@@ -595,9 +606,15 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         label={
                           !transaction?.details?.date
                             ? "Pick date"
-                            : new Date(transaction.details.date).getHours() +
+                            : new Date(transaction.details.date)
+                                .getHours()
+                                .toString()
+                                .padStart(2, "0") +
                               ":" +
-                              new Date(transaction.details.date).getMinutes()
+                              new Date(transaction.details.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
                         }
                         style={{
                           color:

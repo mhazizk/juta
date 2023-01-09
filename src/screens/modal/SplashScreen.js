@@ -19,8 +19,13 @@ import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import uuid from "react-native-uuid";
 import Loading from "../../components/Loading";
+import auth from "../../api/firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+// import useAuth from "../../hooks/useAuth";
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = ({ route, navigation }) => {
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -29,12 +34,28 @@ const SplashScreen = ({ navigation }) => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
+  // const auth = useAuth();
+  const [user, loading, error] = useAuthState(auth);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      loadInitialState();
-    }, 1);
-  }, []);
+    // goToLogInScreen();
+    switch (true) {
+      case !!user && !loading:
+        startApp(user);
+        break;
+      case !user && !loading:
+        // goToLogInScreen();
+        navigation.replace(screenList.onboardingScreen);
+        break;
+      case error:
+        console.log(error);
+        break;
+      default:
+        break;
+    }
+  }, [user, loading, error]);
 
   useEffect(() => {
     // refresh state
@@ -59,17 +80,53 @@ const SplashScreen = ({ navigation }) => {
     return true;
   };
 
-  const loadInitialState = async () => {
+  const goToLogInScreen = async () => {
+    const loadAppSettings = await persistStorage.asyncStorage({
+      action: PERSIST_ACTIONS.GET,
+      key: "appSettings",
+    });
+
+    Promise.all([loadAppSettings]).then((data) => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        payload: data[0],
+      });
+      navigation.replace(screenList.loginScreen);
+    });
+  };
+
+  const startApp = async (currUser) => {
+    // console.log(currUser);
     // Initial load app settings
     const loadAppSettings = await persistStorage.asyncStorage({
       action: PERSIST_ACTIONS.GET,
       key: "appSettings",
     });
 
-    const loadUserAccount = await persistStorage.asyncSecureStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "account",
-    });
+    const loadUserDataFromFirestore = await firestore.getOneDoc(
+      FIRESTORE_COLLECTION_NAMES.USERS,
+      currUser.uid
+    );
+
+    const loadAppSettingsFromFirestore = await firestore.getOneDoc(
+      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+      currUser.uid
+    );
+
+    const loadLogbooksFromFirestore = await firestore.queryData(
+      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      currUser.uid
+    );
+
+    // TODO : load transactions from firestore
+    // TODO : load categories from firestore
+    // TODO : load budget from firestore
+    // TODO : merge transactions into sorted transactions
+
+    // const loadUserAccount = await persistStorage.asyncSecureStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "authAccount",
+    // });
 
     const loadSortedTransactions = await persistStorage.asyncStorage({
       action: PERSIST_ACTIONS.GET,
@@ -87,59 +144,89 @@ const SplashScreen = ({ navigation }) => {
     });
 
     Promise.all([
-      loadUserAccount,
-      loadAppSettings,
+      // loadUserAccount,
+      loadUserDataFromFirestore,
+      // loadAppSettings,
+      loadAppSettingsFromFirestore,
       loadSortedTransactions,
-      loadLogbooks,
+      // loadLogbooks,
+      loadLogbooksFromFirestore,
       loadCategories,
     ])
       .then((data) => {
-        console.log(data[0]);
-        switch (true) {
-          case !data[0] || isUserAccountEmpty(data[0]):
-            console.log("No account");
-            dispatchAppSettings({
-              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-              payload: data[1],
-            });
-            navigation.navigate(screenList.loginScreen);
+        // Check if firebase user is the same as the one in local storage
+        dispatchUserAccount({
+          type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+          payload: data[0],
+          // payload: data[0].uid === currUser.uid ? data[0] : currUser,
+        });
 
-          default:
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-              payload: data[0],
-            });
-            dispatchAppSettings({
-              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-              payload: data[1],
-            });
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .SET_MULTI_ACTIONS,
-              payload: data[2],
-            });
-            dispatchLogbooks({
-              type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
-              payload: data[3],
-            });
-            dispatchCategories({
-              type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
-              payload: data[4],
-            });
-            //  Hide splash screen
-            if (
-              !data[0].hiddenScreens?.some(
-                (screen) => screen === screenList.splashScreen
-              )
-            ) {
-              dispatchAppSettings({
-                type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-                payload: screenList.splashScreen,
-              });
-            } else {
-            }
-            return;
-        }
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: data[1],
+        });
+        dispatchSortedTransactions({
+          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET,
+          payload: data[2],
+        });
+        dispatchLogbooks({
+          type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
+          payload: {
+            logbooks: data[3],
+          },
+        });
+        dispatchCategories({
+          type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
+          payload: data[4],
+        });
+        navigation.replace(screenList.bottomTabNavigator);
+
+        // switch (true) {
+        //   case !data[0] || isUserAccountEmpty(data[0] || !currUser):
+        //     console.log("No account");
+        //     dispatchAppSettings({
+        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        //       payload: data[1],
+        //     });
+        //     navigation.replace(screenList.loginScreen);
+        //     return;
+
+        //   default:
+        //     // dispatchUserAccount({
+        //     //   type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+        //     //   payload: data[0],
+        //     // });
+        //     dispatchAppSettings({
+        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        //       payload: data[1],
+        //     });
+        //     dispatchSortedTransactions({
+        //       type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+        //         .SET_MULTI_ACTIONS,
+        //       payload: data[2],
+        //     });
+        //     dispatchLogbooks({
+        //       type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
+        //       payload: data[3],
+        //     });
+        //     dispatchCategories({
+        //       type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
+        //       payload: data[4],
+        //     });
+        //     //  Hide splash screen
+        //     if (
+        //       !data[0].hiddenScreens?.some(
+        //         (screen) => screen === screenList.splashScreen
+        //       )
+        //     ) {
+        //       dispatchAppSettings({
+        //         type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
+        //         payload: screenList.splashScreen,
+        //       });
+        //     } else {
+        //     }
+        //     return;
+        // }
       })
       .catch((err) => {
         console.log(err);

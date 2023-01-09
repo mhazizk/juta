@@ -1,26 +1,45 @@
+import { signOut } from "firebase/auth";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import {
-  Image,
+  Alert,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
   View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import auth from "../../api/firebase/auth";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
-import { TextPrimary, TextSecondary } from "../../components/Text";
+import SettingsSection from "../../components/List/SettingsSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
+import { ACTIONS } from "../../reducers/GlobalReducer";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const AccountSettingsScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings, dispatchSettings } = useGlobalAppSettings();
+  const [user, loading, error] = useAuthState(auth);
 
-  const checkmark = require("../../../src/assets/img/checkmark.png");
+  useEffect(() => {
+    if (userAccount) {
+      setTimeout(async () => {
+        firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.USERS,
+          userAccount.uid,
+          userAccount
+        );
+      }, 1);
+    }
+  }, [userAccount]);
 
   return (
     <>
@@ -33,98 +52,103 @@ const AccountSettingsScreen = ({ item, navigation }) => {
         >
           <UserHeaderComponent />
           {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
-                        <Text style={{ fontSize: 32, color: '#bbb' }}>Account</Text>
-                    </View> */}
+                    <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
+                </View> */}
+          <SettingsSection>
+            {/* // TAG : Profile */}
+            <ListItem
+              pressable
+              leftLabel="Change Avatar"
+              iconLeftName="person"
+              iconPack="IonIcons"
+              onPress={() => alert("Coming soon")}
+            />
 
-          {/* // TAG : Change Email */}
-          <ListItem
-            leftLabel="Change Email"
-            rightLabel={userAccount.account.email}
-            iconLeftName="mail"
-            iconPack="IonIcons"
-            onPress={() => alert("Feature in progress ...")}
-          />
+            {/* // TAG : Change Display Name */}
+            <ListItem
+              pressable
+              leftLabel="Change Display Name"
+              rightLabel={userAccount.displayName}
+              iconLeftName="create"
+              iconPack="IonIcons"
+              onPress={() =>
+                navigation.navigate(screenList.modalScreen, {
+                  title: "Change Display Name",
+                  modalType: "textInput",
+                  default: userAccount.displayName,
+                  selected: (item) => {
+                    dispatchUserAccount({
+                      type: REDUCER_ACTIONS.USER_ACCOUNT.DISPLAY_NAME.SET,
+                      payload: item,
+                    });
+                  },
+                })
+              }
+            />
+            {/* // TAG : Change Email */}
+            <ListItem
+              pressable
+              leftLabel="Change Email"
+              rightLabel={userAccount.email}
+              iconLeftName="mail"
+              iconPack="IonIcons"
+              onPress={() => {}}
+            />
 
-          {/* // TAG : Change Password */}
-          <ListItem
-            leftLabel="Change Password"
-            iconLeftName="key"
-            iconPack="IonIcons"
-            onPress={() => alert("Feature in progress ...")}
-          />
+            {/* // TAG : Change Password */}
+            <ListItem
+              pressable
+              leftLabel="Change Password"
+              iconLeftName="key"
+              iconPack="IonIcons"
+              onPress={() => alert("Feature in progress ...")}
+            />
 
-          {/* // TAG : Data */}
-          <ListItem
-            leftLabel="Data"
-            iconLeftName="cube"
-            iconPack="IonIcons"
-            onPress={() => navigation.navigate(screenList.dataSettingsScreen)}
-          />
-
-          {/* // TAG : Verification */}
-          <TouchableNativeFeedback
-            onPress={() => alert("Feature in progress ...")}
-          >
-            <View style={appSettings.theme.style.list.listContainer}>
-              <View style={{ paddingRight: 16 }}>
-                <Image source={checkmark} style={{ width: 18, height: 18 }} />
-              </View>
-              <View style={{ ...appSettings.theme.style.list.listItem }}>
-                <TextPrimary label="Verification" />
-                <TextSecondary
-                  label={
-                    userAccount.account.premium
-                      ? "Verified"
-                      : "Not Verified"
-                  }
-                />
-              </View>
-            </View>
-          </TouchableNativeFeedback>
+            {/* // TAG : Premium */}
+            <ListItem
+              pressable
+              leftLabel="Account Type"
+              rightLabel={
+                userAccount.premium ? "Premium Account" : "Basic Account"
+              }
+              iconLeftName="checkmark"
+              iconPack="IonIcons"
+              onPress={() => alert("Feature in progress ...")}
+            />
+          </SettingsSection>
+          <SettingsSection>
+            {/* // TAG : Log out */}
+            <ListItem
+              pressable
+              leftLabel="Log out account"
+              iconLeftName="log-out-outline"
+              iconPack="IonIcons"
+              onPress={() =>
+                Alert.alert("Log out", "Are you sure you want to log out?", [
+                  {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "Yes",
+                    onPress: () =>
+                      signOut(auth).then(() =>
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: screenList.loginScreen }],
+                        })
+                      ),
+                    // style: "default",
+                  },
+                ])
+              }
+            />
+          </SettingsSection>
         </View>
       )}
     </>
   );
 };
-
-const styles = new StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  flatListView: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    height: 48,
-  },
-  flatListViewUnderscore: {
-    display: "flex",
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    // backgroundColor: 'green',
-    paddingVertical: 0,
-    paddingLeft: 16,
-    borderColor: "#d9d9d9",
-    borderBottomWidth: 0.5,
-    minHeight: 46,
-    textAlignVertical: "center",
-  },
-  flatListViewText: {
-    display: "flex",
-    color: "#000",
-    textAlignVertical: "center",
-    fontSize: 18,
-    textAlignVertical: "center",
-  },
-});
 
 export default AccountSettingsScreen;

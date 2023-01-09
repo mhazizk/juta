@@ -31,10 +31,13 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
 import * as utils from "../../utils";
 import uuid from "react-native-uuid";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
@@ -45,6 +48,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     useGlobalSortedTransactions();
   const { categories, dispathCategories } = useGlobalCategories();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { userAccount } = useGlobalUserAccount();
 
   // TAG : useState Section //
 
@@ -88,6 +92,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       _id: Date.now(),
       logbook_id: logbooks.logbooks[0].logbook_id,
       transaction_id: uuid.v4(),
+      uid: userAccount.uid,
     });
 
     dispatchLoading({
@@ -213,6 +218,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       case !transaction.details.category_id:
         return alert("Please select transaction category");
       default:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+            transaction.transaction_id,
+            transaction
+          );
+        }, 1);
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving ...",
           loadingType: "insertTransaction",

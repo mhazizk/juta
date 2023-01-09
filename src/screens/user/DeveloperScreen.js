@@ -11,6 +11,7 @@ import userTransactions from "../../database/userTransactions";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -24,6 +25,10 @@ import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
 import devAppSettings from "../../dev/devAppSettings";
 import devUserAccount from "../../dev/devUserAccount";
+import { useAuthState } from "react-firebase-hooks/auth";
+import auth from "../../api/firebase/auth";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -31,11 +36,12 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const [loaded, setLoaded] = useState(null);
+  const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
+  const [user, loading, error] = useAuthState(auth);
 
-  useEffect(() => {
-    // refresh
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     console.log(loaded);
@@ -325,18 +331,158 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
+          <TextPrimary label="Transactions" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Post custom transaction to server"
+            iconLeftName="cloud-upload"
+            iconPack="IonIcons"
+            onPress={() => {
+              firestore
+                .setData(FIRESTORE_COLLECTION_NAMES.TRANSACTIONS, {
+                  _timestamps: {
+                    created_at: 1673276098432,
+                    updated_at: 1673276098432,
+                  },
+                  _id: 1673276098432,
+                  logbook_id: "ef756b9f-9f3c-4723-a99c-40bb5d265cf3",
+                  transaction_id: "bbb21e92-0d0a-4658-adc0-cea5791936e3",
+                  details: {
+                    in_out: "expense",
+                    type: "cash",
+                    date: 1673276098432,
+                    notes: null,
+                    amount: 100000,
+                    category_id: "1",
+                  },
+                })
+                .then(() => alert("transaction posted"));
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log sortedTransactions"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(sortedTransactions));
+            }}
+          />
+
+          <TextPrimary label="Log books" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Post logbook to server"
+            iconLeftName="cloud-upload"
+            iconPack="IonIcons"
+            onPress={() => {
+              firestore
+                .setData(FIRESTORE_COLLECTION_NAMES.LOGBOOKS, {
+                  _timestamps: {
+                    created_at: 1673263349998,
+                    updated_at: 1673263349998,
+                  },
+                  _id: "3bcdcaba-90c9-4b6f-8337-33ef0345ccbd",
+                  uid: "5eiznx0wC5UhVjJhPp7VWl3ihD93",
+                  logbook_currency: {
+                    name: "IDR",
+                    symbol: "Rp",
+                    isoCode: "id",
+                  },
+                  logbook_type: "basic",
+                  logbook_id: "eb1aada7-89df-4f98-b04f-91969b109a1e",
+                  logbook_name: "Logbook ku",
+                  logbook_records: [],
+                  logbook_categories: [],
+                  __v: 0,
+                })
+                .then(() => alert("logbook posted"));
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log logbooks from server"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={async () => {
+              console.log(
+                JSON.stringify(
+                  await firestore.queryData(
+                    FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                    appSettings.uid
+                  )
+                )
+              );
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log logbooks state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(logbooks));
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Force set new logbooks to Reducer State"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              dispatchLogbooks({
+                type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
+                payload: {
+                  logbooks: [{}],
+                },
+              });
+            }}
+          />
+
           <TextPrimary label="User account" style={{ padding: 16 }} />
           <ListItem
             pressable
-            leftLabel="// TAG : Force set new user account to Reducer and Storage"
+            leftLabel="// TAG : Log firebase user account state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(user);
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log reducer user account state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(userAccount);
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Force set new user account to Reducer State"
             iconLeftName="download"
             iconPack="IonIcons"
             onPress={() => {
-              dispatchAppSettings({
+              dispatchUserAccount({
                 type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
                 payload: devUserAccount,
               });
               alert("user account has been forced set");
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Force set new user account to Storage"
+            iconLeftName="download"
+            iconPack="IonIcons"
+            onPress={() => {
+              persistStorage.asyncSecureStorage({
+                action: PERSIST_ACTIONS.SET,
+                key: "account",
+                rawValue: devUserAccount,
+              });
+              alert("user account has been forced saved to storage");
             }}
           />
           <ListItem
@@ -351,12 +497,22 @@ const DeveloperScreen = ({ item, navigation }) => {
                   key: "account",
                 })
                 .then(() => {
-                  alert("user account has been forced set");
+                  alert("user account has been forced removed from storage");
                 });
             }}
           />
 
           <TextPrimary label="App Settings" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log app settings state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(appSettings));
+              alert("all app settings removed");
+            }}
+          />
           <ListItem
             pressable
             leftLabel="// TAG : Remove all app settings from Reducer"

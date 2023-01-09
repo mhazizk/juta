@@ -41,9 +41,8 @@ import LogbookPreviewScren from "../screens/logbook/LogbookPreviewScreen";
 import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import CurrencySettingsScreen from "../screens/settings/CurrencySettingsScreen";
 import PersonalizationSettingsScreen from "../screens/settings/PersonalizationSettingsScreen";
-import AccountSettingsScreen from "../screens/settings/AccountSettingsScreen";
 import UserScreen from "../screens/user/UserScreen";
-import ProfileSettingsScreen from "../screens/settings/ProfileSettingsScreen";
+import AccountSettingsScreen from "../screens/settings/AccountSettingsScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
 import DashboardScreen from "../screens/dashboard/DashboardScreen";
 import SearchScreen from "../screens/search/SearchScreen";
@@ -55,6 +54,7 @@ import { Alert, BackHandler } from "react-native";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
+import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 
 const Stack = createStackNavigator();
 
@@ -257,9 +257,7 @@ const RootStack = ({ navigation }) => {
       {/* // TAG : Bottom Tab */}
       <Stack.Screen
         name={screenList.bottomTabNavigator}
-        options={{
-          ...noHeader,
-        }}
+        options={noHeader}
         component={BottomTab}
       />
 
@@ -310,13 +308,22 @@ const RootStack = ({ navigation }) => {
         name={screenList.loginScreen}
         component={LoginScreen}
       />
-      {/* // TAG : Register Screen */}
+      {/* // TAG : Sign Up Screen */}
       <Stack.Screen
         options={{
           ...noHeader,
         }}
         name={screenList.signUpScreen}
         component={SignUpScreen}
+      />
+
+      {/* // TAG : Forgot Password Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.forgotPasswordScreen}
+        component={ForgotPasswordScreen}
       />
 
       {/* // SECTION : DASHBOARD */}
@@ -504,13 +511,6 @@ const RootStack = ({ navigation }) => {
         options={{ ...showHeader, title: "User" }}
         name={screenList.userScreen}
         component={UserScreen}
-      />
-
-      {/* // TAG : Profile Settings Screen */}
-      <Stack.Screen
-        options={{ ...showHeader, title: "Profile Settings" }}
-        name={screenList.profileSettingsScreen}
-        component={ProfileSettingsScreen}
       />
 
       {/* // SECTION : SETTINGS */}

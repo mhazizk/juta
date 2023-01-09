@@ -1,13 +1,16 @@
-import firebase from "firebase/compat";
-// import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-// Optionally import the services that you want to use
-// import {...} from "firebase/auth";
-// import {...} from "firebase/database";
-// import {...} from "firebase/firestore";
-// import {...} from "firebase/functions";
-// import {...} from "firebase/storage";
+import {
+  getAuth,
+  onAuthStateChanged,
+  initializeAuth,
+  getReactNativePersistence,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  setPersistence,
+} from "firebase/auth/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initializeApp } from "firebase/app";
+import { getAnalytics, isSupported } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBa2PQkoyKDmok1qEmGGTPdZPEhy16unPQ",
@@ -19,18 +22,41 @@ const firebaseConfig = {
   measurementId: "G-4F0HF1XHQ9",
 };
 
-// Initialize Firebase
-let app;
-if (firebase.apps.length === 0) {
-  app = firebase.initializeApp(firebaseConfig);
-} else {
-  app = firebase.app();
-}
+const app = initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const analytics = getAnalytics(app);
+const analytics = isSupported()
+  .then(() => getAnalytics(app))
+  .catch(() => {
+    alert("Analytics is not supported on this device");
+  });
 
-export { auth, analytics };
+const auth = getAuth(app);
+
+const getAuthState = onAuthStateChanged(auth, (user) => {
+  return user;
+});
+
+// Sign in with email and password
+const signInAndPersist = (email, password) =>
+  setPersistence(auth, getReactNativePersistence(AsyncStorage)).then(() => {
+    return signInWithEmailAndPassword(auth, email, password);
+  });
+
+// Create a new user
+const createNewUser = (email, password) => {
+  return createUserWithEmailAndPassword(auth, email, password);
+};
+
+const db = getFirestore(app);
+
+export {
+  analytics,
+  db,
+  signInAndPersist,
+  createNewUser,
+  setPersistence,
+  getAuthState,
+};
 
 // For more information on how to access Firebase in your project,
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase

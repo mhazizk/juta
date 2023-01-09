@@ -1907,6 +1907,9 @@ export const globalSortedTransactions = (state, action) => {
         logbookToOpen: action.payload.logbookToOpen,
       };
 
+    case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET:
+      return action.payload;
+
     default:
       return state;
   }
@@ -2082,45 +2085,30 @@ export const globalAppSettings = (state, action) => {
 
 export const globalUserAccount = (state, action) => {
   switch (action.type) {
-    case ACTIONS.USER_ACCOUNT.AVATAR.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.AVATAR.SET:
       return {
         ...state,
-        profile: {
-          ...state.profile,
-          photoURL: action.payload,
-        },
+        photoURL: action.payload,
       };
-    case ACTIONS.USER_ACCOUNT.NICKNAME.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.DISPLAY_NAME.SET:
       return {
         ...state,
-        profile: {
-          ...state.profile,
-          displayName: action.payload,
-        },
+        displayName: action.payload,
       };
-    case ACTIONS.USER_ACCOUNT.VERIFICATION.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.VERIFICATION.SET:
       return {
         ...state,
-        account: {
-          ...state.account,
-          premium: action.payload,
-        },
+        premium: action.payload,
       };
-    case ACTIONS.USER_ACCOUNT.EMAIL.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.EMAIL.SET:
       return {
         ...state,
-        account: {
-          ...state.account,
-          email: action.payload,
-        },
+        email: action.payload,
       };
-    case ACTIONS.USER_ACCOUNT.TOKEN.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.TOKEN.SET:
       return {
         ...state,
-        account: {
-          ...state.account,
-          token: action.payload,
-        },
+        token: action.payload,
       };
 
     // TAG : Multiple Actions

@@ -1,19 +1,46 @@
 const devAppSettings = {
+  uid: "jGd3AqDAatYtmb7Po4z127Euk7H2",
   fontSize: "medium",
   language: "english",
   locale: "en-US",
+  dashboardSettings: {
+    showRecentTransactions: true,
+    showTotalBalanceWidget: true,
+    showTotalExpenseWidget: true,
+    showTotalIncomeWidget: true,
+    showMyBudgetsWidget: true,
+    showMyLogbooksWidget: true,
+  },
+  searchSettings: { showTransactionsResult: true, showSettingsResult: true },
+  logbookSettings: {
+    defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+    secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
+    showSecondaryCurrency: false,
+    showTransactionNotes: true,
+    showTransactionTime: true,
+    dailySummary: "expense-only",
+  },
+  currencyRate: {
+    data: [
+      { name: "USD", rate: 1 },
+      { name: "IDR", rate: 14000 },
+    ],
+    updatedAt: 1673275538634,
+  },
+  hiddenScreens: [],
+  currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
   theme: {
-    name: "Light Theme",
-    id: "light",
+    name: "Color of The Year 2023",
+    id: "colorOfTheYear2023",
     style: {
       colors: {
         background: "#F5F5F5",
         foreground: "#151515",
-        primary: "#151515",
+        primary: "#BC2649",
         secondary: "#D5D5D5",
-        header: "#F5F5F5",
-        incomeAmount: "#008888",
-        incomeSymbol: "#00B19B",
+        header: "#BC2649",
+        cardBackground: "#eabdc8",
+        textHeader: "#F5F5F5",
         success: "#0ECD9D",
         warn: "#F49D1A",
         danger: "#CD0E61",
@@ -78,34 +105,5 @@ const devAppSettings = {
       },
     },
   },
-  dashboardSettings: {
-    showRecentTransactions: true,
-    showTotalBalanceWidget: true,
-    showTotalExpenseWidget: true,
-    showTotalIncomeWidget: true,
-    showMyBudgetsWidget: true,
-    showMyLogbooksWidget: true,
-  },
-  searchSettings: {
-    showTransactionsResult: true,
-    showSettingsResult: true,
-  },
-  logbookSettings: {
-    defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
-    showSecondaryCurrency: false,
-    showTransactionNotes: true,
-    showTransactionTime: true,
-    dailySummary: "expense-only",
-  },
-  currencyRate: {
-    data: [
-      { name: "USD", rate: 1 },
-      { name: "IDR", rate: 14000 },
-    ],
-    updatedAt: 1672894918666,
-  },
-  currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-  hiddenScreens: ["Onboarding Screen", "Initial Setup Screen", "Splash Screen"],
 };
 export default devAppSettings;

@@ -6,12 +6,15 @@ import { globalStyles } from "../../../src/assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import screenList from "../../navigations/ScreenList";
 import {
-    useGlobalAppSettings,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions,
-    useGlobalUserAccount
+  useGlobalAppSettings,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ACTIONS } from "../../reducers/GlobalReducer";
+import uuid from "react-native-uuid";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const MyLogbooksScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -99,21 +102,28 @@ const MyLogbooksScreen = ({ navigation }) => {
                             created_at: Date.now(),
                             updated_at: Date.now(),
                           },
-                          _id: Math.random * 10000,
-                          user_id: userAccount.account.user_id,
-                          username: null,
+                          _id: uuid.v4(),
+                          uid: userAccount.uid,
                           logbook_currency: {
                             name: "IDR",
                             symbol: "Rp",
                             isoCode: "id",
                           },
                           logbook_type: "basic",
-                          logbook_id: Math.random() * 10000,
+                          logbook_id: uuid.v4(),
                           logbook_name: item,
                           logbook_records: [],
                           logbook_categories: [],
                           __v: 0,
                         };
+
+                        setTimeout(async () => {
+                          await firestore.setData(
+                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                            newLogbook.logbook_id,
+                            newLogbook
+                          );
+                        }, 1);
 
                         dispatchLogbooks({
                           type: ACTIONS.LOGBOOKS.INSERT,

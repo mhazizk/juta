@@ -1,20 +1,18 @@
+import { updateProfile } from "firebase/auth/react-native";
 import { Alert } from "react-native";
+import auth from "../api/firebase/auth";
 import createNewUser from "../api/firebase/createNewUser";
 
-const handleUserSignUp = async ({ email, password }) => {
+const handleUserUpdateProfile = async ({
+  displayName = null,
+  photoURL = null,
+}) => {
   try {
-    const userCredential = await createNewUser(email, password);
-    const user = userCredential.user;
-    return user;
+    return await updateProfile(auth.currentUser, { displayName, photoURL });
   } catch (error) {
     switch (true) {
       case error.message.includes("email-already-in-use"):
         return Alert.alert("Account", "Email address is already registered");
-      case error.message.includes("network-request-failed"):
-        return Alert.alert(
-          "Account",
-          "Network request failed. Please try again"
-        );
 
       default:
         return Alert.alert("Account", error.message.replace("Firebase: ", ""));
@@ -22,4 +20,4 @@ const handleUserSignUp = async ({ email, password }) => {
   }
 };
 
-export default handleUserSignUp;
+export default handleUserUpdateProfile;

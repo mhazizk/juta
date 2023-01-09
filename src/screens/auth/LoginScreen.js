@@ -30,9 +30,15 @@ import { wave } from "../../assets/animation/wave.json";
 import AnimatedLoginText from "../../components/AnimatedLoginText";
 import screenList from "../../navigations/ScreenList";
 import Footer from "../../components/Footer";
-import { auth } from "../../api/firebaseConfig";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
-
+// import useAuth from "../../hooks/useAuth";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import auth from "../../api/firebase/auth";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -41,38 +47,51 @@ const LoginScreen = ({ route, navigation }) => {
   const [rememberLogin, setRememberLogin] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
   const [showButton, setShowButton] = useState(false);
-  const [authAccount, setAuthAccount] = useState(null);
+
+  // const [authAccount, setAuthAccount] = useState(null);
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
+  const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
-    const authSubscription = auth.onAuthStateChanged((user) => {
-      setAuthAccount(user);
-    });
-    if (route?.params?.newUser && route?.params?.password) {
-      const newUser = route?.params?.newUser;
+    if (route?.params?.account && route?.params?.password) {
+      const account = route?.params?.account;
       const password = route?.params?.password;
-      setEmail(newUser.account.email);
+      setEmail(account.email);
       setPassword(password);
+    } else {
+      const loadUserAccount = persistStorage
+        .asyncSecureStorage({
+          action: PERSIST_ACTIONS.GET,
+          key: "authAccount",
+        })
+        .then((account) => {
+          setEmail(account?.email);
+          // setPassword(account.password);
+        });
     }
-    return () => {
-      authSubscription();
-    };
   }, []);
 
   useEffect(() => {
-    console.log(authAccount);
-  }, [authAccount]);
-
-  useEffect(() => {
-    if (email && password) {
+    if (email && password.length >= 6) {
       setShowButton(true);
     } else {
       setShowButton(false);
     }
   }, [email, password]);
 
+  useEffect(() => {
+    if (user) {
+      // setEmail(auth.email);
+      console.log("hooks", user);
+      // navigation.replace(screenList.splashScreen);
+    }
+  }, [user]);
+
   const finalCheck = () => {
+    setScreenLoading(true);
+
+    // Field check
     switch (true) {
       case !email:
         alert("Please fill in email");
@@ -82,40 +101,94 @@ const LoginScreen = ({ route, navigation }) => {
         alert("Please fill in password");
         inputPasswordRef.current.focus();
         return;
-      case !!email && !!password:
-        setScreenLoading(true);
-        setTimeout(() => {
-          if (authAccount) {
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-              payload: {
+
+      default:
+        break;
+    }
+
+    // if (rememberLogin) {
+    //   persistStorage.asyncSecureStorage({
+    //     action: PERSIST_ACTIONS.SET,
+    //     key: "authAccount",
+    //     rawValue: {
+    //       displayName:
+    //         auth.currentUser.displayName || route?.params?.account?.name,
+    //       premium: false,
+    //       uid: auth.currentUser.uid || route?.params?.account?.uid,
+    //       email: auth.currentUser.email || route?.params?.account?.email,
+    //       emailVerified: auth.currentUser.emailVerified,
+    //       photoURL: auth.currentUser.photoURL,
+    //     },
+    //   });
+    // }
+
+    // Login check
+    setTimeout(() => {
+      switch (true) {
+        case !!email && !!password && route.params?.status === "NEW_USER":
+          dispatchUserAccount({
+            type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+            payload: {
+              displayName: auth.currentUser.displayName,
+              premium: false,
+              uid: auth.currentUser.uid,
+              email: auth.currentUser.email,
+              emailVerified: auth.currentUser.emailVerified,
+              photoURL: auth.currentUser.photoURL,
+            },
+          });
+          return navigation.replace(screenList.initialSetupScreen);
+
+        case !!email && !!password:
+          dispatchUserAccount({
+            type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+            payload: {
+              displayName: auth.currentUser.displayName,
+              premium: false,
+              uid: auth.currentUser.uid,
+              email: auth.currentUser.email,
+              emailVerified: auth.currentUser.emailVerified,
+              photoURL: auth.currentUser.photoURL,
+            },
+          });
+          return navigation.replace(screenList.splashScreen);
+
+        case !user:
+          // New login
+          handleUserLogin({ email, password })
+            .then((authAccount) => {
+              const account = {
                 displayName: authAccount.displayName,
                 premium: false,
                 uid: authAccount.uid,
                 email: authAccount.email,
                 emailVerified: authAccount.emailVerified,
-                photoURL: authAccount.providerData[0].photoURL,
-              },
-            });
-            //   TODO : FIX NAVIGATION AFTER LOGIN AND PERSIST STORAGE AUTH ACCOUNT
-            navigation.replace(screenList.splashScreen);
-          } else {
-            handleUserLogin({ email, password })
-              .then((user) => {
-                console.log("coba", user);
-              })
-              .catch((error) => {
-                alert(error);
-                setScreenLoading(false);
+                photoURL: authAccount.photoURL,
+              };
+              dispatchUserAccount({
+                type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+                payload: account,
               });
-          }
-        }, 1);
+              if (rememberLogin) {
+                persistStorage.asyncSecureStorage({
+                  action: PERSIST_ACTIONS.SET,
+                  key: "authAccount",
+                  rawValue: account,
+                });
+              }
+              navigation.replace(screenList.splashScreen);
+            })
+            .catch((error) => {
+              // alert(error);
+              setScreenLoading(false);
+            });
+          break;
 
-        return;
-
-      default:
-        return;
-    }
+        default:
+          setScreenLoading(false);
+          break;
+      }
+    }, 1);
   };
 
   return (
@@ -203,6 +276,9 @@ const LoginScreen = ({ route, navigation }) => {
                 />
               </View>
               <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(screenList.forgotPasswordScreen)
+                }
                 style={{
                   flex: 1,
                 }}

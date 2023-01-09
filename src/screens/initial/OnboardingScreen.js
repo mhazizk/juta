@@ -24,7 +24,8 @@ const OnboardingScreen = ({ navigation }) => {
             type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
             payload: {
               theme: { name: "Light Theme", id: "light", style: lightTheme },
-              hiddenScreens: [screenList.onboardingScreen],
+              // hiddenScreens: [screenList.onboardingScreen],
+              hiddenScreens: [],
               fontSize: "medium",
               language: "english",
               logbookSettings: {
@@ -39,7 +40,7 @@ const OnboardingScreen = ({ navigation }) => {
             },
           });
 
-          navigation.navigate(screenList.initialSetupScreen);
+          navigation.replace(screenList.loginScreen);
         }}
         pages={[
           {

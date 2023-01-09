@@ -83,26 +83,26 @@ const InitialSetupScreen = ({ navigation }) => {
       updatedAt: Date.now(),
     },
     currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    hiddenScreens: [screenList.onboardingScreen, screenList.initialSetupScreen],
+    // hiddenScreens: [screenList.onboardingScreen, screenList.initialSetupScreen],
+    hiddenScreens: [],
   });
-  const [newUserAccount, setNewUserAccount] = useState({
-    profile: {
-      displayName: "",
-      photoURL: null,
-    },
-    account: {
-      premium: false,
-      user_id: userId,
-    },
-  });
+  // const [newUserAccount, setNewUserAccount] = useState({
+  //   profile: {
+  //     displayName: "",
+  //     photoURL: null,
+  //   },
+  //   account: {
+  //     premium: false,
+  //     user_id: userId,
+  //   },
+  // });
   const [newLogbook, setNewLogbook] = useState({
     _timestamps: {
       created_at: null,
       updated_at: null,
     },
     _id: "12234",
-    user_id: userId,
-    username: "mhazizk",
+    uid: userAccount.uid,
     logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
     logbook_type: "basic",
     logbook_id: uuid.v4(),
@@ -166,8 +166,8 @@ const InitialSetupScreen = ({ navigation }) => {
         updated_at: Date.now(),
       },
       _id: newLogbook.logbook_id,
-      user_id: newLogbook.user_id,
-      username: newLogbook.username,
+      uid: newLogbook.uid,
+      // username: newLogbook.username,
       logbook_currency: newLogbook.logbook_currency,
       logbook_type: "basic",
       logbook_id: newLogbook.logbook_id,
@@ -234,7 +234,7 @@ const InitialSetupScreen = ({ navigation }) => {
       saveSortedTransactions,
       saveAppSettings,
     ]).then(() => {
-      return navigation.navigate(screenList.splashScreen);
+      return navigation.replace(screenList.splashScreen);
     });
   };
 

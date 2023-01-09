@@ -14,6 +14,8 @@ import {
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import firestore from "../../api/firebase/firestore";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -158,6 +160,13 @@ const LogbookPreviewScren = ({ route, navigation }) => {
             {
               text: "OK",
               onPress: () => {
+                setTimeout(async () => {
+                  await firestore.deleteData(
+                    FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                    logbook.logbook_id
+                  );
+                }, 1);
+
                 navigation.navigate(screenList.loadingScreen, {
                   label: "Deleting Logbook ...",
                   loadingType: "deleteOneLogbook",

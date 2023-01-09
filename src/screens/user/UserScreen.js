@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ListItem } from "../../components/List";
+import SettingsSection from "../../components/List/SettingsSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -28,72 +29,77 @@ const UserScreen = ({ navigation }) => {
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
-        {/* <UserHeaderComponent /> */}
-
-        {/* // TAG : My Profile */}
-        <ListItem
-          pressable
-          leftLabel="My Profile"
-          iconLeftName="person"
-          iconPack="IonIcons"
-          onPress={() => navigation.navigate(screenList.profileSettingsScreen)}
-        />
-        {/* // TAG : My Logbooks */}
-        <ListItem
-          pressable
-          leftLabel="My Logbooks"
-          rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
-          iconLeftName="book"
-          iconPack="IonIcons"
-          onPress={() => navigation.navigate(screenList.myLogbooksScreen)}
-        />
-        {/* // TAG : My Categories */}
-        <ListItem
-          pressable
-          leftLabel="My Categories"
-          rightLabel={`${
-            categories?.categories.expense?.length +
-            categories?.categories.income?.length
-          } categories`}
-          iconLeftName="pricetags"
-          iconPack="IonIcons"
-          onPress={() => navigation.navigate(screenList.myCategoriesScreen)}
-        />
-        {/* // TAG : My Budget */}
-        <ListItem
-          pressable
-          leftLabel="My Budgets"
-          // rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
-          iconLeftName="piggy-bank"
-          iconPack="FontAwesome5"
-          onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
-        />
-        {/* // TAG : Settings */}
-        <ListItem
-          pressable
-          leftLabel="Settings"
-          iconLeftName="build"
-          iconPack="IonIcons"
-          onPress={() => navigation.navigate(screenList.settingsScreen)}
-        />
-        {/* // TAG : About */}
-        <ListItem
-          pressable
-          leftLabel="About"
-          iconLeftName="information-circle"
-          iconPack="IonIcons"
-          onPress={() => navigation.navigate(screenList.aboutScreen)}
-        />
-        {/* // TAG : Developer*/}
-        <ListItem
-          pressable
-          leftLabel="Developer"
-          iconLeftName="code"
-          iconPack="IonIcons"
-          onPress={() =>
-            navigation.navigate(screenList.developerSettingsScreen)
-          }
-        />
+        <UserHeaderComponent />
+        <SettingsSection>
+          {/* // TAG : My Profile */}
+          <ListItem
+            pressable
+            leftLabel="My Account"
+            iconLeftName="person"
+            iconPack="IonIcons"
+            onPress={() =>
+              navigation.navigate(screenList.accountSettingsScreen)
+            }
+          />
+          {/* // TAG : My Logbooks */}
+          <ListItem
+            pressable
+            leftLabel="My Logbooks"
+            rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
+            iconLeftName="book"
+            iconPack="IonIcons"
+            onPress={() => navigation.navigate(screenList.myLogbooksScreen)}
+          />
+          {/* // TAG : My Categories */}
+          <ListItem
+            pressable
+            leftLabel="My Categories"
+            rightLabel={`${
+              categories?.categories.expense?.length +
+              categories?.categories.income?.length
+            } categories`}
+            iconLeftName="pricetags"
+            iconPack="IonIcons"
+            onPress={() => navigation.navigate(screenList.myCategoriesScreen)}
+          />
+          {/* // TAG : My Budget */}
+          <ListItem
+            pressable
+            leftLabel="My Budgets"
+            // rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
+            iconLeftName="piggy-bank"
+            iconPack="FontAwesome5"
+            onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
+          />
+        </SettingsSection>
+        <SettingsSection>
+          {/* // TAG : Settings */}
+          <ListItem
+            pressable
+            leftLabel="Settings"
+            iconLeftName="build"
+            iconPack="IonIcons"
+            onPress={() => navigation.navigate(screenList.settingsScreen)}
+          />
+          {/* // TAG : About */}
+          <ListItem
+            pressable
+            leftLabel="About"
+            iconLeftName="information-circle"
+            iconPack="IonIcons"
+            onPress={() => navigation.navigate(screenList.aboutScreen)}
+          />
+          {/* // TAG : Developer*/}
+          <ListItem
+            pressable
+            leftLabel="Developer"
+            iconLeftName="code"
+            iconPack="IonIcons"
+            onPress={() =>
+              navigation.navigate(screenList.developerSettingsScreen)
+            }
+          />
+        </SettingsSection>
       </View>
     </>
   );
