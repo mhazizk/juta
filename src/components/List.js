@@ -181,9 +181,15 @@ export const TransactionListItem = ({
                       //   { hour: "2-digit", minute: "2-digit" }
                       // )}
                       label={
-                        new Date(transactionHour).getHours() +
+                        new Date(transactionHour)
+                          .getHours()
+                          .toString()
+                          .padStart(2, "0") +
                         ":" +
-                        new Date(transactionHour).getMinutes()
+                        new Date(transactionHour)
+                          .getMinutes()
+                          .toString()
+                          .padStart(2, "0")
                       }
                       // label={getTime(transactionHour)}
                       style={{ fontSize: 14 }}

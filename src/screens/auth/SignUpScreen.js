@@ -277,32 +277,32 @@ const SignUpScreen = ({ route, navigation }) => {
 
         handleUserSignUp({ email, password, displayName })
           .then((user) => {
-            handleUserUpdateProfile({ displayName, photoURL: null }).then(
-              () => {
-                const account = {
-                  displayName: displayName,
-                  premium: false,
-                  uid: user.uid,
-                  email: user.email,
-                  emailVerified: user.emailVerified,
-                  photoURL: user.photoURL,
-                };
+            const account = {
+              displayName: displayName,
+              premium: false,
+              uid: user.uid,
+              email: user.email,
+              emailVerified: user.emailVerified,
+              photoURL: user.photoURL,
+            };
 
-                setTimeout(async () => {
-                  await firestore.setData(
-                    FIRESTORE_COLLECTION_NAMES.USERS,
-                    account.uid,
-                    account
-                  );
-                }, 1);
+            setTimeout(async () => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.USERS,
+                account.uid,
+                account
+              );
+              await handleUserUpdateProfile({
+                displayName,
+                photoURL: null,
+              }).catch((error) => setScreenLoading(false));
+            }, 1);
 
-                navigation.replace(screenList.loginScreen, {
-                  account: account,
-                  password: password,
-                  status: "NEW_USER",
-                });
-              }
-            );
+            navigation.replace(screenList.loginScreen, {
+              account: account,
+              password: password,
+              status: "NEW_USER",
+            });
           })
           .catch((error) => {
             alert(error);

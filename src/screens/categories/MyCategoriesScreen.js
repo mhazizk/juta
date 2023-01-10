@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import SettingsSection from "../../components/List/SettingsSection";
@@ -26,6 +28,15 @@ const MyCategoriesScreen = ({ navigation }) => {
 
   useEffect(() => {
     // console.log(categories.categories.expense)
+    if (categories.categories) {
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+          categories.categories.uid,
+          categories.categories
+        );
+      }, 1);
+    }
   }, [categories.categories]);
 
   const data = (item) => {
@@ -63,28 +74,25 @@ const MyCategoriesScreen = ({ navigation }) => {
               renderItem={({ item }) => {
                 return (
                   <>
-                      <ListItem
-                        pressable
-                        leftLabel={
-                          item?.name[0].toUpperCase() + item?.name.substring(1)
-                        }
-                        iconLeftName={item.icon.name}
-                        iconLeftColor={
-                          item.icon.color === "default"
-                            ? appSettings.theme.style.colors.foreground
-                            : item.icon.color
-                        }
-                        iconPack={item.icon.pack}
-                        iconRightName="chevron-forward"
-                        onPress={() =>
-                          navigation.navigate(
-                            screenList.categoryPreviewScreen,
-                            {
-                              category: item,
-                            }
-                          )
-                        }
-                      />
+                    <ListItem
+                      pressable
+                      leftLabel={
+                        item?.name[0].toUpperCase() + item?.name.substring(1)
+                      }
+                      iconLeftName={item.icon.name}
+                      iconLeftColor={
+                        item.icon.color === "default"
+                          ? appSettings.theme.style.colors.foreground
+                          : item.icon.color
+                      }
+                      iconPack={item.icon.pack}
+                      iconRightName="chevron-forward"
+                      onPress={() =>
+                        navigation.navigate(screenList.categoryPreviewScreen, {
+                          category: item,
+                        })
+                      }
+                    />
                   </>
                 );
               }}

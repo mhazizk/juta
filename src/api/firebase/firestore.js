@@ -21,8 +21,10 @@ import {
   // collection
   doc,
   collection,
-} from "firebase/firestore/lite";
-import { Alert } from "react-native";
+  onSnapshot,
+} from "firebase/firestore";
+// import { onSnapshot, collection } from "firebase/firestore";
+import { Alert, Settings } from "react-native";
 import { db } from "../firebaseConfig";
 
 // Get data from firestore
@@ -72,6 +74,9 @@ const updateData = async (collectionName, documentId = null, data) => {
 const queryData = async (collectionName, uid) => {
   try {
     const q = query(collection(db, collectionName), where("uid", "==", uid));
+    // onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+    //   snapshot.docChanges();
+    // });
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => doc.data());
     querySnapshot.forEach((doc) => {

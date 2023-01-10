@@ -55,6 +55,10 @@ import REDUCER_ACTIONS from "../reducers/reducer.action";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
+import firestore from "../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
+import { useAuthState } from "react-firebase-hooks/auth";
+import auth from "../api/firebase/auth";
 
 const Stack = createStackNavigator();
 
@@ -67,6 +71,7 @@ const RootStack = ({ navigation }) => {
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const [user, loading, error] = useAuthState(auth);
 
   // TAG : useEffect for state
   useEffect(() => {
@@ -82,56 +87,62 @@ const RootStack = ({ navigation }) => {
 
   // Save Sorted Transactions to storage
   useEffect(() => {
-    if (userAccount) {
-      persistStorage.asyncSecureStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "account",
-        rawValue: userAccount,
-      });
+    if (userAccount && user && !isLoading) {
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.USERS,
+          userAccount.uid,
+          userAccount
+        );
+      }, 1);
     }
   }, [userAccount]);
 
   // Save Sorted Transactions to storage
   useEffect(() => {
     if (sortedTransactions) {
-      persistStorage.asyncStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "sortedTransactions",
-        rawValue: sortedTransactions,
-      });
+      // persistStorage.asyncStorage({
+      //   action: PERSIST_ACTIONS.SET,
+      //   key: "sortedTransactions",
+      //   rawValue: sortedTransactions,
+      // });
     }
   }, [sortedTransactions]);
 
   // Save App Settings to storage
   useEffect(() => {
-    if (appSettings) {
-      persistStorage.asyncStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "appSettings",
-        rawValue: appSettings,
-      });
+    if (appSettings && user && !isLoading) {
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+          appSettings.uid,
+          appSettings
+        );
+      }, 1);
     }
   }, [appSettings]);
 
   // Save Logbooks to storage
   useEffect(() => {
-    if (logbooks) {
-      persistStorage.asyncStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "logbooks",
-        rawValue: logbooks,
-      });
+    if (logbooks.logbooks) {
+      // setTimeout(async () => {
+      //   await firestore.setData(
+      //     FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      //     logbooks.logbooks.uid,
+      //     userAccount
+      //   );
+      // }, 1);
     }
   }, [logbooks]);
 
   // Save Categories to storage
   useEffect(() => {
     if (categories) {
-      persistStorage.asyncStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "categories",
-        rawValue: categories,
-      });
+      // persistStorage.asyncStorage({
+      //   action: PERSIST_ACTIONS.SET,
+      //   key: "categories",
+      //   rawValue: categories,
+      // });
     }
   }, [categories]);
 

@@ -86,8 +86,8 @@ const LogBookScreen = ({ route, navigation }) => {
     setFilteredTransactions(null);
     if (
       categories.categories &&
-      sortedTransactions.groupSorted &&
-      logbooks.logbooks
+      sortedTransactions.groupSorted.length &&
+      logbooks.logbooks.length
     ) {
       if (targetLogbook) {
         setSelectedLogbooks(targetLogbook);

@@ -626,9 +626,15 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         label={
                           !transaction?.details?.date
                             ? "Pick date"
-                            : new Date(transaction.details.date).getHours() +
+                            : new Date(transaction.details.date)
+                                .getHours()
+                                .toString()
+                                .padStart(2, "0") +
                               ":" +
-                              new Date(transaction.details.date).getMinutes()
+                              new Date(transaction.details.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
                         }
                         style={{
                           color:

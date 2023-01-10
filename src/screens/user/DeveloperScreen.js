@@ -29,6 +29,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
+import testing from "../../dev/testing";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -331,6 +333,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             </View>
           </TouchableNativeFeedback>
 
+          {/* // SECTION : Transactions */}
           <TextPrimary label="Transactions" style={{ padding: 16 }} />
           <ListItem
             pressable
@@ -361,6 +364,19 @@ const DeveloperScreen = ({ item, navigation }) => {
           />
           <ListItem
             pressable
+            leftLabel="// TAG : Try log merge transactions"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              mergeTransactionsIntoSortedTransactions(
+                testing.transactions,
+                testing.logbooks
+              );
+            }}
+          />
+
+          <ListItem
+            pressable
             leftLabel="// TAG : Log sortedTransactions"
             iconLeftName="document"
             iconPack="IonIcons"
@@ -369,6 +385,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             }}
           />
 
+          {/* // SECTION : Logbook */}
           <TextPrimary label="Log books" style={{ padding: 16 }} />
           <ListItem
             pressable

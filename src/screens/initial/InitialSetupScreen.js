@@ -41,8 +41,10 @@ import InitialSortedTransactions from "../../reducers/initial-state/InitialSorte
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import uuid from "react-native-uuid";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
-const InitialSetupScreen = ({ navigation }) => {
+const InitialSetupScreen = ({ route, navigation }) => {
   const { transactions, dispatchTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -207,34 +209,54 @@ const InitialSetupScreen = ({ navigation }) => {
     // })
 
     // Save to storage
-    const saveTransaction = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.SET,
-      key: "transactions",
-      rawValue: [],
-    });
-    const saveCategories = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.SET,
-      key: "categories",
-      rawValue: initialCategories,
-    });
-    const saveSortedTransactions = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.SET,
-      key: "sortedTrasactions",
-      rawValue: InitialSortedTransactions,
-    });
-    const saveAppSettings = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.SET,
-      key: "appSettings",
-      rawValue: selectedAppSettings,
-    });
+    // const saveTransaction = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.SET,
+    //   key: "transactions",
+    //   rawValue: [],
+    // });
+    const saveCategories = await firestore.setData(
+      FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+      userAccount.uid,
+      {
+        ...initialCategories,
+        uid: userAccount.uid,
+      }
+    );
+
+    //   await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.SET,
+    //   key: "categories",
+    //   rawValue: initialCategories,
+    // });
+    // const saveSortedTransactions = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.SET,
+    //   key: "sortedTrasactions",
+    //   rawValue: InitialSortedTransactions,
+    // });
+    const saveAppSettings = await firestore.setData(
+      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+      userAccount.uid,
+      {
+        ...selectedAppSettings,
+        uid: userAccount.uid,
+      }
+    )
+      
+    //   await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.SET,
+    //   key: "appSettings",
+    //   rawValue: selectedAppSettings,
+    // });
 
     Promise.all([
       saveCategories,
-      saveTransaction,
-      saveSortedTransactions,
+      // saveTransaction,
+      // saveSortedTransactions,
       saveAppSettings,
     ]).then(() => {
-      return navigation.replace(screenList.splashScreen);
+      return navigation.replace(screenList.splashScreen, {
+        status: "NEW_USER",
+      });
     });
   };
 

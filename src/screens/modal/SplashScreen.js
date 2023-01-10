@@ -23,6 +23,13 @@ import auth from "../../api/firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import devAppSettings from "../../dev/devAppSettings";
+import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
+import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
+import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
+import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
+import initialCategories from "../../reducers/initial-state/InitialCategories";
+import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -42,10 +49,13 @@ const SplashScreen = ({ route, navigation }) => {
   useEffect(() => {
     // goToLogInScreen();
     switch (true) {
-      case !!user && !loading:
-        startApp(user);
+      case route.params?.status === "NEW_USER" && !!user && !loading:
+        startAppWithNewUser(user);
         break;
-      case !user && !loading:
+      case !route.params?.status && !!user && !loading:
+        startAppWithExistingUser(user);
+        break;
+      case !route.params?.status && !user && !loading:
         // goToLogInScreen();
         navigation.replace(screenList.onboardingScreen);
         break;
@@ -95,7 +105,28 @@ const SplashScreen = ({ route, navigation }) => {
     });
   };
 
-  const startApp = async (currUser) => {
+  const startAppWithNewUser = (currUser) => {
+    dispatchAppSettings({
+      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+      payload: {
+        ...appSettings,
+        uid: currUser.uid,
+      },
+    });
+
+    dispatchCategories({
+      type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
+      payload: {
+        categories: { ...categoriesFallback, uid: currUser.uid },
+      },
+    });
+
+    setTimeout(() => {
+      navigation.navigate(screenList.bottomTabNavigator);
+    }, 1000);
+  };
+
+  const startAppWithExistingUser = async (currUser) => {
     // console.log(currUser);
     // Initial load app settings
     const loadAppSettings = await persistStorage.asyncStorage({
@@ -119,7 +150,17 @@ const SplashScreen = ({ route, navigation }) => {
     );
 
     // TODO : load transactions from firestore
+    const loadTransactionsFromFirestore = await firestore.queryData(
+      FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+      currUser.uid
+    );
+
     // TODO : load categories from firestore
+    const loadCategoriesFromFirestore = await firestore.getOneDoc(
+      FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+      currUser.uid
+    );
+
     // TODO : load budget from firestore
     // TODO : merge transactions into sorted transactions
 
@@ -144,89 +185,56 @@ const SplashScreen = ({ route, navigation }) => {
     });
 
     Promise.all([
-      // loadUserAccount,
       loadUserDataFromFirestore,
-      // loadAppSettings,
       loadAppSettingsFromFirestore,
-      loadSortedTransactions,
-      // loadLogbooks,
+      loadTransactionsFromFirestore,
       loadLogbooksFromFirestore,
-      loadCategories,
+      loadCategoriesFromFirestore,
+      // loadUserAccount,
+      // loadAppSettings,
+      // loadSortedTransactions,
+      // loadLogbooks,
+      // loadCategories,
     ])
       .then((data) => {
-        // Check if firebase user is the same as the one in local storage
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
           payload: data[0],
           // payload: data[0].uid === currUser.uid ? data[0] : currUser,
         });
-
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-          payload: data[1],
+          payload: data[1] || {
+            ...appSettingsFallback,
+            uid: currUser.uid,
+          },
         });
+        // Merge transactions into sorted transactions
+        const groupSorted = mergeTransactionsIntoSortedTransactions(
+          data[2],
+          data[3]
+        );
+
         dispatchSortedTransactions({
           type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET,
-          payload: data[2],
+          payload: { ...InitialSortedTransactions, groupSorted: groupSorted },
         });
+
         dispatchLogbooks({
-          type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
+          type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
           payload: {
-            logbooks: data[3],
+            ...initialLogbooks,
+            logbooks: data[3] || [],
           },
         });
         dispatchCategories({
           type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-          payload: data[4],
+          payload: {
+            ...initialCategories,
+            categories: data[4] || { ...categoriesFallback, uid: currUser.uid },
+          },
         });
         navigation.replace(screenList.bottomTabNavigator);
-
-        // switch (true) {
-        //   case !data[0] || isUserAccountEmpty(data[0] || !currUser):
-        //     console.log("No account");
-        //     dispatchAppSettings({
-        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        //       payload: data[1],
-        //     });
-        //     navigation.replace(screenList.loginScreen);
-        //     return;
-
-        //   default:
-        //     // dispatchUserAccount({
-        //     //   type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-        //     //   payload: data[0],
-        //     // });
-        //     dispatchAppSettings({
-        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        //       payload: data[1],
-        //     });
-        //     dispatchSortedTransactions({
-        //       type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-        //         .SET_MULTI_ACTIONS,
-        //       payload: data[2],
-        //     });
-        //     dispatchLogbooks({
-        //       type: REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS,
-        //       payload: data[3],
-        //     });
-        //     dispatchCategories({
-        //       type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
-        //       payload: data[4],
-        //     });
-        //     //  Hide splash screen
-        //     if (
-        //       !data[0].hiddenScreens?.some(
-        //         (screen) => screen === screenList.splashScreen
-        //       )
-        //     ) {
-        //       dispatchAppSettings({
-        //         type: REDUCER_ACTIONS.APP_SETTINGS.SCREEN_HIDDEN.PUSH,
-        //         payload: screenList.splashScreen,
-        //       });
-        //     } else {
-        //     }
-        //     return;
-        // }
       })
       .catch((err) => {
         console.log(err);

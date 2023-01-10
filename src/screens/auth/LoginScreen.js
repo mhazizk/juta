@@ -126,34 +126,39 @@ const LoginScreen = ({ route, navigation }) => {
     setTimeout(() => {
       switch (true) {
         case !!email && !!password && route.params?.status === "NEW_USER":
-          dispatchUserAccount({
-            type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-            payload: {
-              displayName: auth.currentUser.displayName,
-              premium: false,
-              uid: auth.currentUser.uid,
-              email: auth.currentUser.email,
-              emailVerified: auth.currentUser.emailVerified,
-              photoURL: auth.currentUser.photoURL,
-            },
-          });
-          return navigation.replace(screenList.initialSetupScreen);
+          if (auth.currentUser) {
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+              payload: {
+                displayName: auth.currentUser.displayName,
+                premium: false,
+                uid: auth.currentUser.uid,
+                email: auth.currentUser.email,
+                emailVerified: auth.currentUser.emailVerified,
+                photoURL: auth.currentUser.photoURL,
+              },
+            });
+            return navigation.replace(screenList.initialSetupScreen);
+          }
+          break;
+        // case !!email && !!password:
+        //   if (auth.currentUser) {
+        //     dispatchUserAccount({
+        //       type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+        //       payload: {
+        //         displayName: auth.currentUser.displayName,
+        //         premium: false,
+        //         uid: auth.currentUser.uid,
+        //         email: auth.currentUser.email,
+        //         emailVerified: auth.currentUser.emailVerified,
+        //         photoURL: auth.currentUser.photoURL,
+        //       },
+        //     });
+        //     return navigation.replace(screenList.splashScreen);
+        //   }
+        //   break;
 
-        case !!email && !!password:
-          dispatchUserAccount({
-            type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-            payload: {
-              displayName: auth.currentUser.displayName,
-              premium: false,
-              uid: auth.currentUser.uid,
-              email: auth.currentUser.email,
-              emailVerified: auth.currentUser.emailVerified,
-              photoURL: auth.currentUser.photoURL,
-            },
-          });
-          return navigation.replace(screenList.splashScreen);
-
-        case !user:
+        case !!email && !!password && !user:
           // New login
           handleUserLogin({ email, password })
             .then((authAccount) => {

@@ -275,6 +275,9 @@ export const globalBudgets = (state, action) => {
 
 export const globalLogbooks = (state, action) => {
   switch (action.type) {
+    case REDUCER_ACTIONS.LOGBOOKS.FORCE_SET:
+      return action.payload;
+
     case REDUCER_ACTIONS.LOGBOOKS.SET_MULTI_ACTIONS:
       return {
         ...state,
@@ -332,6 +335,9 @@ export const globalLogbooks = (state, action) => {
 
 export const globalCategories = (state, action) => {
   switch (action.type) {
+    case REDUCER_ACTIONS.CATEGORIES.FORCE_SET:
+      return action.payload;
+
     case REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS:
       return {
         ...state,
@@ -824,7 +830,7 @@ export const globalSortedTransactions = (state, action) => {
         if (!foundDateSection.length) {
           // Create new date section
           const newDateSection = {
-            title: new Date(newTransaction.details.date).toLocaleDateString(),
+            title: new Date(newTransaction.details.date).toDateString(),
             customDate: `${new Date(
               newTransaction.details.date
             ).getFullYear()}/${(

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
@@ -22,6 +24,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (route.params.budget) {
       setPatchBudget({
+        uid: route.params.budget.uid,
         budget_id: route.params.budget.budget_id,
         budget_name: route.params.budget.budget_name,
         repeat: route.params.budget.repeat,
@@ -92,6 +95,13 @@ const EditBudgetScreen = ({ navigation, route }) => {
         return alert("Please select a budget finish date");
 
       default:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.BUDGETS,
+            patchBudget.budget_id,
+            patchBudget
+          );
+        }, 1);
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Budget ...",
           loadingType: "patchBudget",
@@ -186,7 +196,8 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   ? null
                   : utils.GetFormattedNumber({
                       value: patchBudget.limit,
-                      currency: appSettings.logbookSettings.defaultCurrency.name,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     }),
                 selected: (string) => {
                   const removedThousands = string
@@ -257,12 +268,15 @@ const EditBudgetScreen = ({ navigation, route }) => {
                         ? utils
                             .GetFormattedNumber({
                               value: patchBudget.limit,
-                              currency: appSettings.logbookSettings.defaultCurrency.name,
+                              currency:
+                                appSettings.logbookSettings.defaultCurrency
+                                  .name,
                             })
                             .slice(0, 15) + "..."
                         : utils.GetFormattedNumber({
                             value: patchBudget.limit,
-                            currency: appSettings.logbookSettings.defaultCurrency.name,
+                            currency:
+                              appSettings.logbookSettings.defaultCurrency.name,
                           })
                     }
                     numberOfLines={1}
@@ -512,14 +526,22 @@ const EditBudgetScreen = ({ navigation, route }) => {
                       },
                       {
                         text: "YES",
-                        onPress: () =>
+                        onPress: () => {
+                          setTimeout(async () => {
+                            await firestore.deleteData(
+                              FIRESTORE_COLLECTION_NAMES.BUDGETS,
+                              patchBudget.budget_id
+                            );
+                          }, 1);
+
                           navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting Budget...",
                             loadingType: "deleteBudget",
                             deleteBudget: patchBudget,
                             initialBudgetDeleteCounter:
                               budgets.budgetDeleteCounter,
-                          }),
+                          });
+                        },
                       },
                     ],
                     { cancelable: false }

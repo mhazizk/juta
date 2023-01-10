@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { TextInput, TouchableNativeFeedback, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
@@ -18,6 +20,7 @@ const NewBudgetScreen = ({ navigation }) => {
   const [date, setDate] = useState(new Date());
 
   const [newBudget, setNewBudget] = useState({
+    uid: appSettings.uid,
     budget_id: Math.floor(Math.random() * 1000000000),
     budget_name: "Monthly Budget",
     repeat: false,
@@ -77,13 +80,20 @@ const NewBudgetScreen = ({ navigation }) => {
       case !newBudget.budget_name.length:
         return alert("Please enter a budget name");
       case !newBudget.limit:
-        return alert("Please enter a budget limit limit");
+        return alert("Please enter a budget limit");
       case !newBudget.start_date:
         return alert("Please select a budget start date");
       case !newBudget.finish_date:
         return alert("Please select a budget finish date");
 
       default:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.BUDGETS,
+            newBudget.budget_id,
+            newBudget
+          );
+        }, 1);
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Budget ...",
           loadingType: "insertBudget",
@@ -244,12 +254,14 @@ const NewBudgetScreen = ({ navigation }) => {
                       ? utils
                           .GetFormattedNumber({
                             value: newBudget.limit,
-                            currency: appSettings.logbookSettings.defaultCurrency.name,
+                            currency:
+                              appSettings.logbookSettings.defaultCurrency.name,
                           })
                           .slice(0, 15) + "..."
                       : utils.GetFormattedNumber({
                           value: newBudget.limit,
-                          currency: appSettings.logbookSettings.defaultCurrency.name,
+                          currency:
+                            appSettings.logbookSettings.defaultCurrency.name,
                         })
                   }
                   numberOfLines={1}

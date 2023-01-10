@@ -363,6 +363,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
 
               {/* // TAG : Show secondary currency */}
               <CheckList
+                pressable
                 primaryLabel="Show secondary currency"
                 secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
                 item={true}
@@ -460,6 +461,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
             <SettingsSection>
               {/* // TAG : Show Transaction Time */}
               <CheckList
+                pressable
                 primaryLabel="Show Transaction Time"
                 item={true}
                 selected={logbookSettings.showTransactionTime}
@@ -472,6 +474,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               />
               {/* // TAG : Show Transaction Notes */}
               <CheckList
+                pressable
                 item={true}
                 primaryLabel="Show Transaction Notes"
                 selected={logbookSettings.showTransactionNotes}

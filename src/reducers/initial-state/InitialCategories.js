@@ -4,7 +4,7 @@ const initialCategories =
     categoryInsertCounter: 0,
     categoryDeleteCounter: 0,
     categories:
-    {
+    {   uid:null,
         expense: [
             { name: 'food and drink', id: '1', icon: { name: 'fast-food', color: 'default', pack: 'IonIcons' } },
             { name: 'bills and utilities', id: '2', icon: { name: 'flash', color: 'default', pack: 'IonIcons' } },
