@@ -1,23 +1,28 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
 // Screens
 import { useState } from "react";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalUserAccount,
+} from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
 import UserScreen from "../screens/user/UserScreen";
 import DashboardScreen from "../screens/dashboard/DashboardScreen";
 import LogBookScreen from "../screens/logbook/LogBookScreen";
 import SearchScreen from "../screens/search/SearchScreen";
 import screenList from "./ScreenList";
+import { TextPrimary } from "../components/Text";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTab = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount } = useGlobalUserAccount();
 
   return (
     <>
@@ -79,8 +84,7 @@ const BottomTab = ({ route, navigation }) => {
             <View
               style={{
                 flex: 1,
-                backgroundColor:
-                  appSettings.theme.style.colors.header,
+                backgroundColor: appSettings.theme.style.colors.header,
               }}
             />
           ),
@@ -97,14 +101,36 @@ const BottomTab = ({ route, navigation }) => {
           options={{
             title: "Dashboard",
             tabBarBadge: 3,
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() =>
+                  // navigation.navigate(screenList.bottomTabNavigator, {
+                  //   screen: screenList.userScreen,
+                  // })
+                  navigation.navigate(screenList.dashboardTourScreen)
+                }
+              >
+                <View
+                  style={{
+                    paddingRight: 16,
+                  }}
+                >
+                  <TextPrimary
+                    label={userAccount?.displayName}
+                    style={{
+                      color: appSettings.theme.style.colors.textHeader,
+                      fontSize: 18,
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
           }}
           name={screenList.dashboardScreen}
           component={DashboardScreen}
         />
         <Tab.Screen
-          options={{
-            title: "Logbook",
-          }}
+          options={{ title: "", headerShown: false }}
           name={screenList.logbookScreen}
           component={LogBookScreen}
         />
@@ -127,12 +153,12 @@ const BottomTab = ({ route, navigation }) => {
           })}
         />
         <Tab.Screen
-          options={{ title: "Search" }}
+          options={{ title: "", headerShown: false }}
           name={screenList.searchScreen}
           component={SearchScreen}
         />
         <Tab.Screen
-          options={{ title: "Settings" }}
+          options={{ title: "", headerShown: false }}
           name={screenList.userScreen}
           component={UserScreen}
         />

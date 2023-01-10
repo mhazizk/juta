@@ -5,7 +5,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import { ButtonPrimary, ButtonSecondary, ButtonSecondaryDanger } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -23,15 +23,16 @@ const EditBudgetScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (route.params.budget) {
-      setPatchBudget({
-        uid: route.params.budget.uid,
-        budget_id: route.params.budget.budget_id,
-        budget_name: route.params.budget.budget_name,
-        repeat: route.params.budget.repeat,
-        limit: route.params.budget.limit,
-        start_date: route.params.budget.start_date,
-        finish_date: route.params.budget.finish_date,
-      });
+      // setPatchBudget({
+      //   uid: route.params.budget.uid,
+      //   budget_id: route.params.budget.budget_id,
+      //   budget_name: route.params.budget.budget_name,
+      //   repeat: route.params.budget.repeat,
+      //   limit: route.params.budget.limit,
+      //   start_date: route.params.budget.start_date,
+      //   finish_date: route.params.budget.finish_date,
+      // });
+      setPatchBudget(route.params.budget);
     }
   }, []);
 
@@ -74,7 +75,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
       minimumDate:
         mode === "start"
           ? new Date().setHours(0, 0, 0, 0)
-          : new Date(patchBudget.start_date),
+          : new Date(patchBudget.start_date + 1000 * 60 * 60 * 24),
     });
   };
 
@@ -501,19 +502,19 @@ const EditBudgetScreen = ({ navigation, route }) => {
             }}
           >
             {/* // TAG : Cancel Button */}
-            <View style={{ paddingRight: 8 }}>
+            <View style={{ paddingRight: 8, flex:1 }}>
               <ButtonSecondary
                 label="Cancel"
-                width={150}
+                // width={150}
                 onPress={() => navigation.goBack()}
               />
             </View>
 
             {/* // TAG : Delete Button */}
-            <View style={{}}>
-              <ButtonSecondary
+            <View style={{flex:1}}>
+              <ButtonSecondaryDanger
                 label="Delete"
-                width={150}
+                // width={150}
                 onPress={() =>
                   Alert.alert(
                     "Delete Budget",
@@ -551,10 +552,10 @@ const EditBudgetScreen = ({ navigation, route }) => {
             </View>
 
             {/* // TAG : Save Button */}
-            <View style={{ paddingLeft: 8 }}>
+            <View style={{ paddingLeft: 8, flex:2 }}>
               <ButtonPrimary
                 label="Save"
-                width={150}
+                // width={150}
                 onPress={() => {
                   checkFinalBudget();
                 }}

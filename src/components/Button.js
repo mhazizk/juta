@@ -10,6 +10,7 @@ import {
   TextDanger,
   TextPrimary,
   TextSecondary,
+  TextWarn,
 } from "./Text";
 
 // TAG : BUTTON COMPONENT //
@@ -68,26 +69,26 @@ export const ButtonDisabled = ({
   return (
     <>
       {/* <TouchableOpacity onPress={onPress}> */}
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
+      <View
+        style={[
+          { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
           {
-              backgroundColor:appSettings.theme.style.colors.secondary,
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
-          <TextButtonPrimary label={label} />
-          {/* </View> */}
-        </View>
+            backgroundColor: appSettings.theme.style.colors.secondary,
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...(style || null) },
+        ]}
+      >
+        {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
+        <TextButtonPrimary label={label} />
+        {/* </View> */}
+      </View>
       {/* </TouchableOpacity> */}
     </>
   );
@@ -125,6 +126,48 @@ export const ButtonSecondary = ({
         >
           {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
           <TextButtonSecondary label={label} />
+          {/* </View> */}
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
+// TAG : Button Secondary
+export const ButtonSecondaryDanger = ({
+  label,
+  props,
+  onPress,
+  condition,
+  theme,
+  width,
+  style,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...appSettings.theme.style.button.buttonDanger.buttonStyle },
+            {
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
+          <TextDanger
+            label={label}
+            // style={{...appSettings.theme.style.buttonDanger.textStyle}}
+          />
           {/* </View> */}
         </View>
       </TouchableOpacity>

@@ -11,7 +11,7 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
-  useGlobalSortedTransactions
+  useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
 
 const MyBudgetsScreen = ({ route, navigation }) => {
@@ -68,6 +68,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
           logbook.transactions.forEach((section) =>
             section.data.forEach((transaction) => {
               if (
+                transaction.details.in_out === "expense" &&
                 transaction.details.date >= startDate &&
                 transaction.details.date <= finishDate
               ) {

@@ -144,7 +144,7 @@ const DashboardScreen = ({ navigation }) => {
           />
 
           {/* // SECTION : Header Section */}
-          <View
+          {/* <View
             style={{
               // backgroundColor: appSettings.theme.style.colors.header,
               flexDirection: "column",
@@ -190,7 +190,7 @@ const DashboardScreen = ({ navigation }) => {
                 />
               )}
             </View>
-          </View>
+          </View> */}
 
           {appSettings.dashboardSettings.showTotalExpenseWidget && (
             <TotalExpenseWidget

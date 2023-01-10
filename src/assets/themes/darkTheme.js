@@ -102,11 +102,23 @@ export const darkTheme = {
       borderRadius: 8,
     },
     buttonDanger: {
-      backgroundColor: "transparent",
-      borderColor: palette.red,
-      borderRadius: 8,
-      borderWidth: 1,
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.red,
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.red,
+        fontSize: 16,
+      },
     },
+    // buttonDanger: {
+    //   backgroundColor: "transparent",
+    //   borderColor: palette.red,
+    //   borderRadius: 8,
+    //   borderWidth: 1,
+    // },
     buttonFailure: {
       backgroundColor: palette.red,
       borderRadius: 8,

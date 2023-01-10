@@ -283,7 +283,6 @@ const LogBookScreen = ({ route, navigation }) => {
           {/* Transaction Render */}
           {/* {!isLoading.status && filteredTransactions && ( */}
           {!screenLoading && !componentLoading && selectedLogbook && (
-            // TODO Fix transaction out of sync with logbook
             <TransactionList
               selectedLogbook={selectedLogbook}
               // transactions={filteredTransactions}

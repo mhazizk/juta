@@ -124,6 +124,11 @@ const LoginScreen = ({ route, navigation }) => {
 
     // Login check
     setTimeout(() => {
+      persistStorage.asyncSecureStorage({
+        action: PERSIST_ACTIONS.SET,
+        key: "authAccount",
+        rawValue: email,
+      });
       switch (true) {
         case !!email && !!password && route.params?.status === "NEW_USER":
           if (auth.currentUser) {

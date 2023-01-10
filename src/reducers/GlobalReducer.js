@@ -183,7 +183,7 @@ export const initialLoading = {
 
 export const globalBudgets = (state, action) => {
   switch (action.type) {
-    case ACTIONS.BUDGETS.SET:
+    case REDUCER_ACTIONS.BUDGETS.SET:
       return {
         budgetPatchCounter: 0,
         budgetInsertCounter: 0,
@@ -191,7 +191,7 @@ export const globalBudgets = (state, action) => {
         budgets: [action.payload],
       };
 
-    case ACTIONS.BUDGETS.INSERT:
+    case REDUCER_ACTIONS.BUDGETS.INSERT:
       let sortInsertedBudgets = [...state.budgets, action.payload].sort(
         (a, b) => {
           if (a.budget_name < b.budget_name) {
@@ -210,7 +210,7 @@ export const globalBudgets = (state, action) => {
         budgets: [...sortInsertedBudgets],
       };
 
-    case ACTIONS.BUDGETS.PATCH:
+    case REDUCER_ACTIONS.BUDGETS.PATCH:
       let patchBudget = action.payload;
 
       let foundBudget = state.budgets.filter(
@@ -237,7 +237,7 @@ export const globalBudgets = (state, action) => {
         budgets: [...sortBudgets],
       };
 
-    case ACTIONS.BUDGETS.DELETE_ONE:
+    case REDUCER_ACTIONS.BUDGETS.DELETE_ONE:
       let deleteBudget = action.payload;
 
       let foundOtherBudget = state.budgets.filter(

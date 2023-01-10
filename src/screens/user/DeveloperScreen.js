@@ -11,6 +11,7 @@ import userTransactions from "../../database/userTransactions";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
@@ -39,6 +40,7 @@ const DeveloperScreen = ({ item, navigation }) => {
     useGlobalSortedTransactions();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { budgets, dispatchBudgets } = useGlobalBudgets();
   const [loaded, setLoaded] = useState(null);
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
   const [user, loading, error] = useAuthState(auth);
@@ -385,8 +387,35 @@ const DeveloperScreen = ({ item, navigation }) => {
             }}
           />
 
+          {/* // SECTION : Budgets */}
+          <TextPrimary label="Budget" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log budgets from state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(budgets));
+            }}
+          />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Load budgets from firestore"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={async () => {
+              console.log(
+                JSON.stringify(
+                  await firestore.queryData(
+                    FIRESTORE_COLLECTION_NAMES.BUDGETS,
+                    appSettings.uid
+                  )
+                )
+              );
+            }}
+          />
           {/* // SECTION : Logbook */}
-          <TextPrimary label="Log books" style={{ padding: 16 }} />
+          <TextPrimary label="Logbooks" style={{ padding: 16 }} />
           <ListItem
             pressable
             leftLabel="// TAG : Post logbook to server"

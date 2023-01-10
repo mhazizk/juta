@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -18,7 +18,7 @@ import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import {
   useGlobalAppSettings,
-  useGlobalLoading
+  useGlobalLoading,
 } from "../../reducers/GlobalContext";
 
 const ModalScreen = ({ route, navigation }) => {
@@ -218,6 +218,7 @@ const ModalScreen = ({ route, navigation }) => {
               defaultValue={route.params?.default ? route.params.default : ""}
               value={textInput}
               onChangeText={(input) => setTextInput(input)}
+              maxLength={route?.params?.maxLength || null}
             />
             {textInput && (
               <IonIcons

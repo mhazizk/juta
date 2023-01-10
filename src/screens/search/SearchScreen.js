@@ -72,7 +72,7 @@ const SearchScreen = ({ navigation }) => {
               flexDirection: "row",
               borderColor: appSettings.theme.style.colors.primary,
               justifyContent: "space-between",
-              borderRadius: 8,
+              borderRadius: 16,
               borderWidth: 1,
               backgroundColor: appSettings.theme.style.colors.background,
             }}

@@ -59,6 +59,7 @@ import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../api/firebase/auth";
+import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
 
 const Stack = createStackNavigator();
 
@@ -337,6 +338,19 @@ const RootStack = ({ navigation }) => {
         component={ForgotPasswordScreen}
       />
 
+      {/* // SECTION : TOUR SCREEN */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+          cardOverlayEnabled: true,
+          detachPreviousScreen: false,
+          cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
+          cardStyle: { backgroundColor: "transparent" },
+        }}
+        name={screenList.dashboardTourScreen}
+        component={DashboardTourScreen}
+      />
+
       {/* // SECTION : DASHBOARD */}
       {/* // TAG : Dashboard Screen */}
       <Stack.Screen
@@ -424,7 +438,7 @@ const RootStack = ({ navigation }) => {
         component={EditLogbookScreen}
       />
 
-      {/* // SECTION : CA SECTION : */}
+      {/* // SECTION : CATEGORIES SECTION : */}
       {/* // TAG : My Categories Screen */}
       <Stack.Screen
         options={{

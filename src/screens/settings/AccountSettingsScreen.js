@@ -88,6 +88,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Change Display Name",
                     modalType: "textInput",
+                    maxLength: 14,
                     default: userAccount.displayName,
                     selected: (item) => {
                       dispatchUserAccount({

@@ -13,6 +13,7 @@ import {
   useGlobalBudgets,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
+import uuid from "react-native-uuid";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -21,12 +22,12 @@ const NewBudgetScreen = ({ navigation }) => {
 
   const [newBudget, setNewBudget] = useState({
     uid: appSettings.uid,
-    budget_id: Math.floor(Math.random() * 1000000000),
+    budget_id: uuid.v4(),
     budget_name: "Monthly Budget",
     repeat: false,
     limit: 0,
     start_date: +new Date().setHours(0, 0, 0, 0),
-    finish_date: Date.now() + 2629746000,
+    finish_date: new Date(Date.now() + 2629746000).setHours(0, 0, 0, 0),
   });
 
   useEffect(() => {
@@ -66,7 +67,7 @@ const NewBudgetScreen = ({ navigation }) => {
       minimumDate:
         mode === "start"
           ? new Date().setHours(0, 0, 0, 0)
-          : new Date(newBudget.start_date),
+          : new Date(newBudget.start_date + 1000 * 60 * 60 * 24),
     });
   };
 

@@ -1,13 +1,14 @@
 import {
-  Image, StyleSheet, Text,
-  TouchableNativeFeedback, View
+  Image,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-  globalStyles,
-  globalTheme
-} from "../../assets/themes/globalStyles";
+import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
+import SettingsSection from "../../components/List/SettingsSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 
@@ -26,36 +27,40 @@ const AboutScreen = ({ item, navigation }) => {
         {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
                 </View> */}
+        <SettingsSection>
+          {/* // TAG : Made by */}
+          <ListItem
+            pressable
+            leftLabel="Made by"
+            rightLabel="Haziz"
+            iconLeftName="information-circle"
+            iconPack="IonIcons"
+            onPress={() =>
+              alert(
+                "Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !"
+              )
+            }
+          />
 
-        {/* // TAG : Made by */}
-        <ListItem
-          leftLabel="Made by"
-          rightLabel="Haziz"
-          iconLeftName="information-circle"
-          iconPack="IonIcons"
-          onPress={() =>
-            alert(
-              "Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !"
-            )
-          }
-        />
+          {/* // TAG : Contact */}
+          <ListItem
+            pressable
+            leftLabel="Contact Me"
+            iconLeftName="mail"
+            iconPack="IonIcons"
+            onPress={() => alert("OTW")}
+          />
 
-        {/* // TAG : Contact */}
-        <ListItem
-          leftLabel="Contact Me"
-          iconLeftName="mail"
-          iconPack="IonIcons"
-          onPress={() => alert("OTW")}
-        />
-
-        {/* // TAG : App Version */}
-        <ListItem
-          leftLabel="App Version"
-          rightLabel="v.1.0.0"
-          iconLeftName="phone-portrait"
-          iconPack="IonIcons"
-          onPress={() => alert("OTW")}
-        />
+          {/* // TAG : App Version */}
+          <ListItem
+            pressable
+            leftLabel="App Version"
+            rightLabel="v.1.0.0"
+            iconLeftName="phone-portrait"
+            iconPack="IonIcons"
+            onPress={() => alert("OTW")}
+          />
+        </SettingsSection>
       </View>
     </>
   );

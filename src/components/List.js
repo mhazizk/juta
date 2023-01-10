@@ -283,7 +283,6 @@ export const TransactionListItem = ({
                       //   amount: transactionAmount,
                       //   currency: currency.name,
                       // })}
-                      // TODO : Create a function to convert currency
                       label={utils.GetFormattedNumber({
                         value: utils.ConvertCurrency({
                           amount: transactionAmount,

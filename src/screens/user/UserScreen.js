@@ -12,6 +12,7 @@ import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
   useGlobalCategories,
   useGlobalLogbooks,
 } from "../../reducers/GlobalContext";
@@ -20,6 +21,7 @@ const UserScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { budgets } = useGlobalBudgets();
 
   return (
     <>
@@ -66,7 +68,11 @@ const UserScreen = ({ navigation }) => {
           <ListItem
             pressable
             leftLabel="My Budgets"
-            // rightLabel={`${logbooks?.logbooks?.length} logbook(s)`}
+            rightLabel={
+              Date.now() <= budgets?.budgets?.[0].finish_date
+                ? "Active"
+                : "Inactive"
+            }
             iconLeftName="piggy-bank"
             iconPack="FontAwesome5"
             onPress={() => navigation.navigate(screenList.myBudgetsScreen)}

@@ -18,6 +18,12 @@ const screenList = {
   signUpScreen: "Sign Up Screen",
   forgotPasswordScreen: "Forgot Password Screen",
 
+  // Tour Screen
+  dashboardTourScreen: "Dashboard Tour Screen",
+  logbookTourScreen: "Logbook Tour Screen",
+  searchTourScreen: "Search Tour Screen",
+  userTourScreen: "User Tour Screen",
+
   // Dashboard Screen
   dashboardScreen: "Dashboard Screen",
 

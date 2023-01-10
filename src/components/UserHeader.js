@@ -1,4 +1,5 @@
-import { Image, StyleSheet, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { Image, SafeAreaView, StyleSheet, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
@@ -10,6 +11,7 @@ const UserHeaderComponent = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const checkmark = require("../assets/img/checkmark.png");
+  // const statHeight = StatusBar.currentHeight;
   return (
     <>
       {userAccount && (

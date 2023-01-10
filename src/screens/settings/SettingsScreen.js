@@ -1,5 +1,3 @@
-// TODO create a currency settings screen
-
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import CheckList from "../../components/CheckList";
@@ -408,11 +406,6 @@ const CurrencySettingsScreen = ({ navigation }) => {
                       setIsLoading(false);
                     }
                   );
-                  // TODO : FIX THIS ASYNC FUNCTION
-                  // setCurrencyRate({
-                  //   data: getCurrencyRate(appSettings.currencyRate.data),
-                  //   updatedAt: Date.now(),
-                  // });
                 }}
 
                 // TODO : Add currency rate screen

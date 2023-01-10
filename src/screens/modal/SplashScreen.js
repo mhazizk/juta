@@ -5,6 +5,7 @@ import { lightTheme } from "../../assets/themes/lightTheme";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
@@ -41,7 +42,7 @@ const SplashScreen = ({ route, navigation }) => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  // const auth = useAuth();
+  const { budgets, dispatchBudgets } = useGlobalBudgets();
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {}, []);
@@ -149,40 +150,40 @@ const SplashScreen = ({ route, navigation }) => {
       currUser.uid
     );
 
-    // TODO : load transactions from firestore
     const loadTransactionsFromFirestore = await firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
       currUser.uid
     );
 
-    // TODO : load categories from firestore
     const loadCategoriesFromFirestore = await firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
       currUser.uid
     );
 
-    // TODO : load budget from firestore
-    // TODO : merge transactions into sorted transactions
+    const loadBudgetsFromFirestore = await firestore.queryData(
+      FIRESTORE_COLLECTION_NAMES.BUDGETS,
+      currUser.uid
+    );
 
     // const loadUserAccount = await persistStorage.asyncSecureStorage({
     //   action: PERSIST_ACTIONS.GET,
     //   key: "authAccount",
     // });
 
-    const loadSortedTransactions = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "sortedTransactions",
-    });
+    // const loadSortedTransactions = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "sortedTransactions",
+    // });
 
-    const loadCategories = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "categories",
-    });
+    // const loadCategories = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "categories",
+    // });
 
-    const loadLogbooks = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "logbooks",
-    });
+    // const loadLogbooks = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "logbooks",
+    // });
 
     Promise.all([
       loadUserDataFromFirestore,
@@ -190,6 +191,7 @@ const SplashScreen = ({ route, navigation }) => {
       loadTransactionsFromFirestore,
       loadLogbooksFromFirestore,
       loadCategoriesFromFirestore,
+      loadBudgetsFromFirestore,
       // loadUserAccount,
       // loadAppSettings,
       // loadSortedTransactions,
@@ -227,6 +229,7 @@ const SplashScreen = ({ route, navigation }) => {
             logbooks: data[3] || [],
           },
         });
+
         dispatchCategories({
           type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
           payload: {
@@ -234,6 +237,32 @@ const SplashScreen = ({ route, navigation }) => {
             categories: data[4] || { ...categoriesFallback, uid: currUser.uid },
           },
         });
+
+        // Check budget if it is expired
+        const budget = data[5];
+        let newBudget;
+        if (budget.length) {
+          console.log(budget);
+          const today = Date.now();
+          // const foundBudget = budget.find((budget) => {
+          //   today > budget.finish_date;
+          // });
+
+          if (budget[0].repeat === true && today > budget[0].finish_date) {
+            const duration = budget[0].finish_date - budget[0].start_date;
+            newBudget = {
+              ...budget[0],
+              start_date: budget[0].start_date,
+              finish_date: budget[0].finish_date + duration,
+            };
+          }
+
+          dispatchBudgets({
+            type: REDUCER_ACTIONS.BUDGETS.SET,
+            payload: newBudget || budget[0],
+          });
+        }
+
         navigation.replace(screenList.bottomTabNavigator);
       })
       .catch((err) => {

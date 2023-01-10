@@ -72,6 +72,7 @@ export const MyBudgetsPreview = ({
           logbook.transactions.forEach((section) =>
             section.data.forEach((transaction) => {
               if (
+                transaction.details.in_out === "expense" &&
                 transaction.details.date >= startDate &&
                 transaction.details.date <= finishDate
               ) {

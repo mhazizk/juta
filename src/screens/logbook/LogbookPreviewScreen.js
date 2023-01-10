@@ -4,7 +4,7 @@ import { Alert, ScrollView, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { ButtonSecondary } from "../../components/Button";
+import { ButtonSecondary, ButtonSecondaryDanger } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
 import {
@@ -388,7 +388,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
 
               {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
-                <ButtonSecondary
+                <ButtonSecondaryDanger
                   label="Delete"
                   type="danger"
                   width={150}

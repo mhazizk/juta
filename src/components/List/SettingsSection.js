@@ -2,13 +2,13 @@ import { View } from "react-native";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
-const SettingsSection = ({ children }) => {
+const SettingsSection = ({ noMargin, children }) => {
   const { appSettings } = useGlobalAppSettings();
   return (
     <>
       <View
         style={{
-          marginBottom: 16,
+          marginBottom: noMargin ? 0 : 16,
           overflow: "hidden",
           borderRadius: 16,
           backgroundColor: utils.HexToRgb({

@@ -20,6 +20,7 @@ import {
   ButtonIconDanger,
   ButtonPrimary,
   ButtonSecondary,
+  ButtonSecondaryDanger,
   ButtonSwitch,
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
@@ -465,7 +466,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
               {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
-                <ButtonSecondary
+                <ButtonSecondaryDanger
                   label="Delete"
                   type="danger"
                   width={150}

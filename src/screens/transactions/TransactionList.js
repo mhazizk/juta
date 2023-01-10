@@ -286,11 +286,11 @@ const TransactionList = ({
                         },
                       ]}
                     >
-                      <TextButtonPrimary
+                      <TextPrimary
                         label={selectedLogbook.logbook_currency.symbol}
                         style={{ paddingRight: 8 }}
                       />
-                      <TextButtonPrimary
+                      <TextPrimary
                         label={utils.GetFormattedNumber({
                           value: sumAmount(section.data),
                           currency: selectedLogbook.logbook_currency.name,

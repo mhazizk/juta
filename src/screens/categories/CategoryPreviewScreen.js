@@ -10,7 +10,10 @@ import {
   useGlobalSortedTransactions,
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
-import { ButtonSecondary } from "../../components/Button";
+import {
+  ButtonSecondary,
+  ButtonSecondaryDanger,
+} from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
 import screenList from "../../navigations/ScreenList";
@@ -362,7 +365,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
               {/* // TAG : Delete Button */}
               <View style={{ paddingLeft: 8 }}>
-                <ButtonSecondary
+                <ButtonSecondaryDanger
                   label="Delete"
                   type="danger"
                   width={150}

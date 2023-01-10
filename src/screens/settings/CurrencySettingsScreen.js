@@ -1,5 +1,3 @@
-// TODO create a currency settings screen
-
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import CheckList from "../../components/CheckList";
@@ -91,11 +89,11 @@ const CurrencySettingsScreen = ({ navigation }) => {
 
             {/* // TAG : Show secondary currency */}
             <CheckList
+              pressable
               primaryLabel="Show secondary currency"
-              secondaryLabel='This will show the default currency as secondary currency in the Logbook screen.'
+              secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
               item={true}
               selected={logbookSettings.showSecondaryCurrency}
-              // TODO : fix this check list
               onPress={() => {
                 dispatchAppSettings({
                   type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
@@ -116,7 +114,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
             label="Daily Summary"
             style={{
               paddingHorizontal: 16,
-              paddingBottom:16,
+              paddingBottom: 16,
               color: appSettings.theme.style.colors.primary,
             }}
           />
