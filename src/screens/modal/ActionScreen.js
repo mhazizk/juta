@@ -147,6 +147,7 @@ const ActionScreen = ({ route, navigation }) => {
                       },
                       _id: uuid.v4(),
                       uid: userAccount.uid,
+                      group_id: null,
                       logbook_currency:
                         appSettings.logbookSettings.defaultCurrency,
                       logbook_type: "basic",

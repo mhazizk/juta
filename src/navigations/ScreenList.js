@@ -56,8 +56,21 @@ const screenList = {
   // Search Screen
   searchScreen: "Search Screen",
 
+  // My Groups Screen
+  myGroupsScreen: "My Groups Screen",
+  newGroupScreen: "New Group Screen",
+  editGroupScreen: "Edit Group Screen",
+  groupPreviewScreen: "Group Preview Screen",
+
   // User Screen
   userScreen: "User Screen",
+
+  // Devices Screen
+  devicesScreen: "Devices Screen",
+  
+  // Change Account Credentials Screen
+  changeAccountPasswordScreen: "Change Account Password Screen",
+  changeAccountEmailScreen: "Change Account Email Screen",
 
   // Setttings Screen
   settingsScreen: "Settings Screen",

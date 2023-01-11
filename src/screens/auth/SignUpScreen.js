@@ -38,7 +38,7 @@ const SignUpScreen = ({ route, navigation }) => {
     email: "no",
   });
   const [showButton, setShowButton] = useState(false);
-  const [passwordRules, setPasswordConditions] = useState([
+  const [passwordConditions, setPasswordConditions] = useState([
     {
       id: 1,
       label: "At least 6 characters",
@@ -57,6 +57,11 @@ const SignUpScreen = ({ route, navigation }) => {
     {
       id: 4,
       label: "Does not contain your email address or display name",
+      checked: false,
+    },
+    {
+      id: 5,
+      label: "Does not contain generic password",
       checked: false,
     },
   ]);
@@ -93,7 +98,7 @@ const SignUpScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log(passwordRules);
-  }, [passwordRules]);
+  }, [passwordConditions]);
 
   useEffect(() => {
     if (
@@ -109,7 +114,7 @@ const SignUpScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      passwordRulesCheck(passwordRules);
+      passwordRulesCheck(passwordConditions);
     }, 1000);
   }, [password]);
 
@@ -284,6 +289,8 @@ const SignUpScreen = ({ route, navigation }) => {
               email: user.email,
               emailVerified: user.emailVerified,
               photoURL: user.photoURL,
+              devicesLoggedIn: [],
+              groups: [],
             };
 
             setTimeout(async () => {
@@ -295,14 +302,18 @@ const SignUpScreen = ({ route, navigation }) => {
               await handleUserUpdateProfile({
                 displayName,
                 photoURL: null,
-              }).catch((error) => setScreenLoading(false));
+              }).catch((error) => {
+                alert(error);
+                setScreenLoading(false);
+              });
             }, 1);
-
-            navigation.replace(screenList.loginScreen, {
-              account: account,
-              password: password,
-              status: "NEW_USER",
-            });
+            setTimeout(() => {
+              navigation.replace(screenList.loginScreen, {
+                account: account,
+                password: password,
+                status: "NEW_USER",
+              });
+            }, 1000);
           })
           .catch((error) => {
             alert(error);
@@ -427,7 +438,7 @@ const SignUpScreen = ({ route, navigation }) => {
                 />
               </View>
               {showPasswordRules && (
-                <PasswordRules conditions={passwordRules} />
+                <PasswordRules conditions={passwordConditions} />
               )}
             </View>
             {/* //SECTION : Footer */}

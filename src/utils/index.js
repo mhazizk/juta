@@ -11,3 +11,6 @@ export { default as FormatHyphenInStrings } from "./FormatHyphenInStrings";
 export { default as ConvertCurrency } from "./ConvertCurrency";
 export { default as HandleUserLogin } from "./HandlUserLogin";
 export { default as HandleUserSignUp } from "./HandleUserSignUp";
+export { default as getDeviceId } from "./GetDeviceId";
+export { default as getDeviceName } from "./GetDeviceName";
+export { default as getDeviceOSName } from "./GetDeviceOSName";

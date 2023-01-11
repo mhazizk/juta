@@ -6,7 +6,7 @@ import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
-import SettingsSection from "../../components/List/SettingsSection";
+import ListSection from "../../components/List/ListSection";
 import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -51,11 +51,77 @@ const MyCategoriesScreen = ({ navigation }) => {
   return (
     <>
       {/* <View style={{ backgroundColor: '#fff', height: '100%' }}> */}
-      <FlatList
+      <ScrollView
+        contentContainerStyle={{
+          minHeight: "100%",
+          backgroundColor: appSettings.theme.style.colors.background,
+        }}
+      >
+        {/* // TAG : Expense */}
+        <TextPrimary
+          label="Expense"
+          style={{ paddingHorizontal: 32, paddingVertical: 16 }}
+        />
+        <ListSection>
+          {categories.categories?.expense?.map((item) => {
+            return (
+              <ListItem
+                pressable
+                leftLabel={
+                  item?.name[0].toUpperCase() + item?.name.substring(1)
+                }
+                iconLeftName={item.icon.name}
+                iconLeftColor={
+                  item.icon.color === "default"
+                    ? appSettings.theme.style.colors.foreground
+                    : item.icon.color
+                }
+                iconPack={item.icon.pack}
+                iconRightName="chevron-forward"
+                onPress={() =>
+                  navigation.navigate(screenList.categoryPreviewScreen, {
+                    category: item,
+                  })
+                }
+              />
+            );
+          })}
+        </ListSection>
+
+        {/* // TAG : Income */}
+        <TextPrimary
+          label="Income"
+          style={{ paddingHorizontal: 32, paddingVertical: 16 }}
+        />
+        <ListSection>
+          {categories.categories?.income?.map((item) => {
+            return (
+              <ListItem
+                pressable
+                leftLabel={
+                  item?.name[0].toUpperCase() + item?.name.substring(1)
+                }
+                iconLeftName={item.icon.name}
+                iconLeftColor={
+                  item.icon.color === "default"
+                    ? appSettings.theme.style.colors.foreground
+                    : item.icon.color
+                }
+                iconPack={item.icon.pack}
+                iconRightName="chevron-forward"
+                onPress={() =>
+                  navigation.navigate(screenList.categoryPreviewScreen, {
+                    category: item,
+                  })
+                }
+              />
+            );
+          })}
+        </ListSection>
+      </ScrollView>
+      {/* <FlatList
         data={["expense", "income"]}
         keyExtractor={(item) => item}
-        // style={{ flexGrow: 0 }}
-        // nestedScrollEnabled
         renderItem={({ item }) => (
           <>
             <FlatList
@@ -114,60 +180,9 @@ const MyCategoriesScreen = ({ navigation }) => {
           </>
         )}
         ListFooterComponent={() => {
-          return (
-            <>
-              {/* <ListItem
-                                leftLabel='Add New Categories'
-                            />
-                            <TouchableNativeFeedback
-                                onPress={() => navigation.navigate('Modal Screen', {
-                                    modalType: 'textInput',
-                                    title: 'Create New Log Book',
-                                    placeholder: 'Enter new log book name ...',
-                                    selected: (item) => {
-
-                                        const newLogbook = {
-                                            "_timestamps": {
-                                                "created_at": Date.now(),
-                                                "updated_at": Date.now()
-                                            },
-                                            "_id": Math.random * 10000,
-                                            "user_id": userAccount.uid,
-                                            "username": null,
-                                            "logbook_id": Math.random() * 10000,
-                                            "logbook_name": item,
-                                            "logbook_records": [],
-                                            "logbook_categories": [],
-                                            "__v": 0
-                                        }
-
-                                        dispatchLogbooks({
-                                            type: ACTIONS.LOGBOOKS.INSERT,
-                                            payload: newLogbook
-                                        })
-
-                                        dispatchSortedTransactions({
-                                            type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_LOGBOOK,
-                                            payload: {
-                                                newLogbook: {
-                                                    logbook_id: newLogbook.logbook_id,
-                                                    transactions: []
-                                                },
-                                                logbookToOpen: {
-                                                    name: newLogbook.logbook_name,
-                                                    logbook_id: newLogbook.logbook_id
-                                                }
-                                            }
-                                        })
-
-                                    }
-                                })} >
-                                <Text>Cek</Text>
-                            </TouchableNativeFeedback> */}
-            </>
-          );
+          return <></>;
         }}
-      />
+      /> */}
     </>
   );
 };

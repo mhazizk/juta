@@ -1,5 +1,5 @@
-// TODO : Create a login screen
-
+import * as Device from "expo-device";
+import * as Application from "expo-application";
 import {
   View,
   Text,
@@ -39,10 +39,14 @@ import {
 import auth from "../../api/firebase/auth";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import { getDeviceId, getDeviceName, getDeviceOSName } from "../../utils";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [email, setEmail] = useState("");
+  // TODO : Clear up async storage when user logs out and load the last user account
   const [password, setPassword] = useState("");
   const [rememberLogin, setRememberLogin] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
@@ -130,55 +134,55 @@ const LoginScreen = ({ route, navigation }) => {
         rawValue: email,
       });
       switch (true) {
-        case !!email && !!password && route.params?.status === "NEW_USER":
+        case !!email &&
+          !!password &&
+          route.params?.status === "NEW_USER" &&
+          !!route.params?.account:
           if (auth.currentUser) {
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-              payload: {
-                displayName: auth.currentUser.displayName,
-                premium: false,
-                uid: auth.currentUser.uid,
-                email: auth.currentUser.email,
-                emailVerified: auth.currentUser.emailVerified,
-                photoURL: auth.currentUser.photoURL,
-              },
-            });
-            return navigation.replace(screenList.initialSetupScreen);
+            // Login from new user
+            Promise.all([
+              firestore.getOneDoc(
+                FIRESTORE_COLLECTION_NAMES.USERS,
+                auth.currentUser.uid
+              ),
+              getDeviceId(),
+              getDeviceName(),
+              getDeviceOSName(),
+            ])
+              .then((data) => {
+                const userAccount = data[0];
+                const deviceId = data[1];
+                const deviceName = data[2];
+                const deviceOSName = data[3];
+                const loggedInUserAccount = {
+                  ...userAccount,
+                  devicesLoggedIn: [
+                    ...userAccount.devicesLoggedIn,
+                    {
+                      device_id: deviceId,
+                      device_name: deviceName,
+                      device_os_name: deviceOSName,
+                      last_login: Date.now(),
+                    },
+                  ],
+                };
+                dispatchUserAccount({
+                  type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+                  payload: loggedInUserAccount,
+                });
+
+                return navigation.replace(screenList.initialSetupScreen);
+              })
+              .catch((error) => {
+                setScreenLoading(false);
+              });
           }
           break;
-        // case !!email && !!password:
-        //   if (auth.currentUser) {
-        //     dispatchUserAccount({
-        //       type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-        //       payload: {
-        //         displayName: auth.currentUser.displayName,
-        //         premium: false,
-        //         uid: auth.currentUser.uid,
-        //         email: auth.currentUser.email,
-        //         emailVerified: auth.currentUser.emailVerified,
-        //         photoURL: auth.currentUser.photoURL,
-        //       },
-        //     });
-        //     return navigation.replace(screenList.splashScreen);
-        //   }
-        //   break;
 
         case !!email && !!password && !user:
           // New login
           handleUserLogin({ email, password })
             .then((authAccount) => {
-              const account = {
-                displayName: authAccount.displayName,
-                premium: false,
-                uid: authAccount.uid,
-                email: authAccount.email,
-                emailVerified: authAccount.emailVerified,
-                photoURL: authAccount.photoURL,
-              };
-              dispatchUserAccount({
-                type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-                payload: account,
-              });
               if (rememberLogin) {
                 persistStorage.asyncSecureStorage({
                   action: PERSIST_ACTIONS.SET,
@@ -189,7 +193,24 @@ const LoginScreen = ({ route, navigation }) => {
               navigation.replace(screenList.splashScreen);
             })
             .catch((error) => {
-              // alert(error);
+              setScreenLoading(false);
+            });
+          break;
+
+        case !!email && !!password && !!user && !route?.params?.status:
+          // Login existing account
+          handleUserLogin({ email, password })
+            .then((authAccount) => {
+              if (rememberLogin) {
+                persistStorage.asyncSecureStorage({
+                  action: PERSIST_ACTIONS.SET,
+                  key: "authAccount",
+                  rawValue: account,
+                });
+              }
+              navigation.replace(screenList.splashScreen);
+            })
+            .catch((error) => {
               setScreenLoading(false);
             });
           break;

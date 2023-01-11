@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,8 @@ import {
   GlobalStateProvider,
   useGlobalAppSettings,
 } from "./src/reducers/GlobalContext";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
   // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();

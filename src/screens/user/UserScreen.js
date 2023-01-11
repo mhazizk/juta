@@ -1,5 +1,6 @@
 import {
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
@@ -7,7 +8,7 @@ import {
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ListItem } from "../../components/List";
-import SettingsSection from "../../components/List/SettingsSection";
+import ListSection from "../../components/List/ListSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -25,14 +26,14 @@ const UserScreen = ({ navigation }) => {
 
   return (
     <>
-      <View
-        style={{
+      <ScrollView
+        contentContainerStyle={{
           height: "100%",
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         <UserHeaderComponent />
-        <SettingsSection>
+        <ListSection>
           {/* // TAG : My Profile */}
           <ListItem
             pressable
@@ -42,6 +43,14 @@ const UserScreen = ({ navigation }) => {
             onPress={() =>
               navigation.navigate(screenList.accountSettingsScreen)
             }
+          />
+          {/* // TAG : My Groups */}
+          <ListItem
+            pressable
+            leftLabel="My Groups"
+            iconLeftName="people"
+            iconPack="IonIcons"
+            onPress={() => navigation.navigate(screenList.myGroupsScreen)}
           />
           {/* // TAG : My Logbooks */}
           <ListItem
@@ -69,7 +78,7 @@ const UserScreen = ({ navigation }) => {
             pressable
             leftLabel="My Budgets"
             rightLabel={
-              Date.now() <= budgets?.budgets?.[0].finish_date
+              Date.now() <= budgets?.budgets[0]?.finish_date
                 ? "Active"
                 : "Inactive"
             }
@@ -77,8 +86,8 @@ const UserScreen = ({ navigation }) => {
             iconPack="FontAwesome5"
             onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
           />
-        </SettingsSection>
-        <SettingsSection>
+        </ListSection>
+        <ListSection>
           {/* // TAG : Settings */}
           <ListItem
             pressable
@@ -105,50 +114,10 @@ const UserScreen = ({ navigation }) => {
               navigation.navigate(screenList.developerSettingsScreen)
             }
           />
-        </SettingsSection>
-      </View>
+        </ListSection>
+      </ScrollView>
     </>
   );
 };
-
-const styles = new StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  flatListView: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    height: 48,
-  },
-  flatListViewUnderscore: {
-    display: "flex",
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    // backgroundColor: 'green',
-    paddingVertical: 0,
-    paddingLeft: 16,
-    borderColor: "#d9d9d9",
-    borderBottomWidth: 0.5,
-    minHeight: 46,
-    textAlignVertical: "center",
-  },
-  flatListViewText: {
-    display: "flex",
-    color: "#000",
-    textAlignVertical: "center",
-    fontSize: 18,
-    textAlignVertical: "center",
-  },
-});
 
 export default UserScreen;

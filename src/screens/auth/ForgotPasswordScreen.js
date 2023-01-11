@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, ScrollView, View } from "react-native";
+import password from "../../api/firebase/password";
+import resetPassword from "../../api/firebase/password";
 import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
 import { TextPrimary } from "../../components/Text";
+import screenList from "../../navigations/ScreenList";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 
 const ForgotPasswordScreen = ({ route, navigation }) => {
@@ -20,8 +23,6 @@ const ForgotPasswordScreen = ({ route, navigation }) => {
       setShowButton(false);
     }
   }, [email]);
-
-  const resetPassword = (email) => {};
 
   return (
     <>
@@ -77,16 +78,26 @@ const ForgotPasswordScreen = ({ route, navigation }) => {
             placeholder="Email"
           />
         </View>
-        {/* // TAG : Button */}
+        {/* // TAG : Button Active */}
         {showButton && (
           <ButtonPrimary
             style={{ marginVertical: 16 }}
             width={Dimensions.get("window").width - 32}
             label="Reset Password"
-            onPress={() => resetPassword(email)}
+            onPress={() =>
+              password
+                .resetPassword(email)
+                .then(() => {
+                  alert("Password reset email sent, check your inbox.");
+                })
+                .then(() => {
+                  navigation.replace(screenList.loginScreen);
+                })
+                .catch((error) => alert(error.message))
+            }
           />
         )}
-        {/* // TAG : Button */}
+        {/* // TAG : Button Disabled */}
         {!showButton && (
           <ButtonDisabled
             style={{ marginVertical: 16 }}

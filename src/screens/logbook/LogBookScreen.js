@@ -215,7 +215,7 @@ const LogBookScreen = ({ route, navigation }) => {
                 style={{ flexShrink: 1, flexGrow: 1, maxWidth: "70%" }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
-                    title: "Log Books",
+                    title: "Logbooks",
                     iconProps: {
                       name: "book",
                       pack: "IonIcons",

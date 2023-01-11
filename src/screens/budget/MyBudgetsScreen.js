@@ -59,8 +59,8 @@ const MyBudgetsScreen = ({ route, navigation }) => {
         (budget) => Date.now() <= budget.finish_date
       );
       console.log(activeBudget);
-      const startDate = activeBudget.start_date;
-      const finishDate = activeBudget.finish_date;
+      const startDate = activeBudget?.start_date;
+      const finishDate = activeBudget?.finish_date;
 
       // Find all transactions that are within the active budget
       if (sortedTransactions.groupSorted.length) {

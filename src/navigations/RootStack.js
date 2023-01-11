@@ -50,7 +50,7 @@ import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogBookScreen from "../screens/logbook/LogBookScreen";
-import { Alert, BackHandler } from "react-native";
+import { Alert, BackHandler, TouchableOpacity } from "react-native";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
@@ -60,10 +60,19 @@ import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames
 import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../api/firebase/auth";
 import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
+import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
+import NewGroupScreen from "../features/groups/screens/NewGroupScreen";
+import EditGroupScreen from "../features/groups/screens/EditGroupScreen";
+import GroupPreviewScreen from "../features/groups/screens/GroupPreviewScreen";
+import DevicesScreen from "../features/devices/screens/DevicesScreen";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import { TextPrimary } from "../components/Text";
+import { useNavigation } from "@react-navigation/native";
+import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
 
 const Stack = createStackNavigator();
 
-const RootStack = ({ navigation }) => {
+const RootStack = () => {
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -72,6 +81,7 @@ const RootStack = ({ navigation }) => {
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
 
   // TAG : useEffect for state
@@ -88,6 +98,16 @@ const RootStack = ({ navigation }) => {
 
   // Save Sorted Transactions to storage
   useEffect(() => {
+    // TODO : snapshot listener for cross device sync
+    /* 
+    TODO : example :
+    useEffect(() => {
+    onSnapshot(collection(db, "profiles"), (snapshot) => {
+      setProfiles(snapshot.docs.map((doc)=>({...doc.data(), id: doc.id})))
+    })
+    console.log(profiles);
+});
+    */
     if (userAccount && user && !isLoading) {
       setTimeout(async () => {
         await firestore.setData(
@@ -355,8 +375,8 @@ const RootStack = ({ navigation }) => {
       {/* // TAG : Dashboard Screen */}
       <Stack.Screen
         options={{
-          ...showHeader,
-          headerTitle: "Dashboard",
+          ...noHeader,
+          // headerTitle: "Dashboard",
         }}
         name={screenList.dashboardScreen}
         component={DashboardScreen}
@@ -413,12 +433,95 @@ const RootStack = ({ navigation }) => {
         options={{
           ...showHeader,
           title: "My Logbooks",
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                style={{
+                  marginRight: 20,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  // console.log(navigation);
+                  navigation.navigate(screenList.modalScreen, {
+                    modalType: "textInput",
+                    title: "Create New Log Book",
+                    placeholder: "Enter new log book name ...",
+                    selected: (item) => {
+                      const newLogbook = {
+                        _timestamps: {
+                          created_at: Date.now(),
+                          updated_at: Date.now(),
+                        },
+                        _id: uuid.v4(),
+                        uid: userAccount.uid,
+                        logbook_currency: {
+                          name: "IDR",
+                          symbol: "Rp",
+                          isoCode: "id",
+                        },
+                        logbook_type: "basic",
+                        logbook_id: uuid.v4(),
+                        logbook_name: item,
+                        logbook_records: [],
+                        logbook_categories: [],
+                        __v: 0,
+                      };
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                          newLogbook.logbook_id,
+                          newLogbook
+                        );
+                      }, 1);
+
+                      dispatchLogbooks({
+                        type: ACTIONS.LOGBOOKS.INSERT,
+                        payload: newLogbook,
+                      });
+
+                      dispatchSortedTransactions({
+                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                          .INSERT_LOGBOOK,
+                        payload: {
+                          newLogbook: {
+                            logbook_id: newLogbook.logbook_id,
+                            transactions: [],
+                          },
+                          logbookToOpen: {
+                            name: newLogbook.logbook_name,
+                            logbook_id: newLogbook.logbook_id,
+                            logbook_currency: {
+                              name: "IDR",
+                              symbol: "Rp",
+                              isoCode: "id",
+                            },
+                          },
+                        },
+                      });
+                    },
+                  });
+                }}
+              >
+                <IonIcons
+                  name="add"
+                  size={20}
+                  color={appSettings.theme.style.colors.textHeader}
+                />
+                <TextPrimary
+                  label="Add"
+                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                />
+              </TouchableOpacity>
+            );
+          },
         }}
         name={screenList.myLogbooksScreen}
         component={MyLogbooksScreen}
       />
 
-      {/* // TAG : Edit Logbook Screen */}
+      {/* // TAG : Logbook Preview Screen */}
       <Stack.Screen
         options={{
           ...showHeader,
@@ -444,6 +547,31 @@ const RootStack = ({ navigation }) => {
         options={{
           ...showHeader,
           title: "My Categories",
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                style={{
+                  marginRight: 20,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  // console.log(navigation);
+                  navigation.navigate(screenList.newCategoryScreen);
+                }}
+              >
+                <IonIcons
+                  name="add"
+                  size={20}
+                  color={appSettings.theme.style.colors.textHeader}
+                />
+                <TextPrimary
+                  label="Add"
+                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                />
+              </TouchableOpacity>
+            );
+          },
         }}
         name={screenList.myCategoriesScreen}
         component={MyCategoriesScreen}
@@ -530,12 +658,63 @@ const RootStack = ({ navigation }) => {
         component={SearchScreen}
       />
 
+      {/* // SECTION : MY GROUPS */}
+      {/* // TAG : My Groups Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Groups",
+        }}
+        name={screenList.myGroupsScreen}
+        component={MyGroupsScreen}
+      />
+      {/* // TAG : New Group Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.newGroupScreen}
+        component={NewGroupScreen}
+      />
+      {/* // TAG : Edit Group Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.editGroupScreen}
+        component={EditGroupScreen}
+      />
+      {/* // TAG : Group Preview Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.groupPreviewScreen}
+        component={GroupPreviewScreen}
+      />
+
       {/* // SECTION : USER */}
       {/* // TAG : User Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "User" }}
         name={screenList.userScreen}
         component={UserScreen}
+      />
+
+      {/* // SECTION : DEVICES */}
+      {/* // TAG : Devices Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Active Devices" }}
+        name={screenList.devicesScreen}
+        component={DevicesScreen}
+      />
+
+      {/* // SECTION : ACCOUNT CREDENTIALS */}
+      {/* // TAG : Devices Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Active Devices" }}
+        name={screenList.changeAccountPasswordScreen}
+        component={ChangeAccountPasswordScreen}
       />
 
       {/* // SECTION : SETTINGS */}

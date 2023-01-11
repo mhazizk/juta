@@ -14,7 +14,7 @@ import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import * as utils from "../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import SettingsHeaderList from "../../components/List/SettingsHeaderList";
-import SettingsSection from "../../components/List/SettingsSection";
+import ListSection from "../../components/List/ListSection";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import getCurrencyRate from "../../api/GetCurrencyRate";
 import auth from "../../api/firebase/auth";
@@ -22,6 +22,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth/react-native";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import { StatusBar } from "expo-status-bar";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -86,7 +87,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               iconName="color-palette"
             />
             {/* // TAG : Other */}
-            <SettingsSection>
+            <ListSection>
               {/* // TAG : App Theme */}
               <ListItem
                 pressable
@@ -165,7 +166,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   })
                 }
               />
-            </SettingsSection>
+            </ListSection>
           </>
         )}
 
@@ -177,7 +178,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
               label="Dashboard Settings"
               iconName="analytics"
             />
-            <SettingsSection> */}
+            <ListSection> */}
             {/* // TAG : Show Recent Transactions */}
             {/* <CheckList
                 primaryLabel="Show Recent Transactions"
@@ -255,7 +256,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </SettingsSection> */}
+            </ListSection> */}
           </>
         )}
 
@@ -264,7 +265,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
         {searchSettings && (
           <>
             {/* <SettingsHeaderList label="Search Settings" iconName="search" />
-            <SettingsSection> */}
+            <ListSection> */}
             {/* // TAG : Transactions Search*/}
             {/* <CheckList
                 primaryLabel="Transactions"
@@ -290,7 +291,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </SettingsSection> */}
+            </ListSection> */}
           </>
         )}
 
@@ -302,12 +303,12 @@ const CurrencySettingsScreen = ({ navigation }) => {
             <TextPrimary
               label="Currency"
               style={{
-                paddingHorizontal: 16,
+                paddingHorizontal: 32,
                 paddingBottom: 16,
                 color: appSettings.theme.style.colors.primary,
               }}
             />
-            <SettingsSection>
+            <ListSection>
               <ListItem
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
@@ -410,28 +411,18 @@ const CurrencySettingsScreen = ({ navigation }) => {
 
                 // TODO : Add currency rate screen
               />
-            </SettingsSection>
+            </ListSection>
 
             {/* // TAG : Daily Summary */}
             <TextPrimary
               label="Daily Summary"
               style={{
-                paddingHorizontal: 16,
+                paddingHorizontal: 32,
                 paddingBottom: 16,
                 color: appSettings.theme.style.colors.primary,
               }}
             />
-            <View
-              style={{
-                overflow: "hidden",
-                borderRadius: 16,
-                marginBottom: 16,
-                backgroundColor: utils.HexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <ListSection>
               <RadioButtonList
                 items={APP_SETTINGS.LOGBOOKS.DAILY_SUMMARY.OPTIONS.map(
                   (option) => {
@@ -449,9 +440,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </View>
+            </ListSection>
             {/* // TAG : Other */}
-            <SettingsSection>
+            <ListSection>
               {/* // TAG : Show Transaction Time */}
               <CheckList
                 pressable
@@ -478,7 +469,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-            </SettingsSection>
+            </ListSection>
           </>
         )}
         {/* // SECTION : Data Section */}
@@ -486,17 +477,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
           <>
             <SettingsHeaderList label="Data Settings" iconName="cube" />
             {/* // TAG : Other */}
-            <View
-              style={{
-                marginBottom: 16,
-                overflow: "hidden",
-                borderRadius: 16,
-                backgroundColor: utils.HexToRgb({
-                  hex: appSettings.theme.style.colors.foreground,
-                  opacity: 0.07,
-                }),
-              }}
-            >
+            <ListSection>
               {/* // TAG : Export */}
               <ListItem
                 pressable
@@ -516,7 +497,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                 leftLabel="Sync Data"
                 rightLabel="Last sync : 17 Nov 2022"
               />
-            </View>
+            </ListSection>
           </>
         )}
       </Animated.ScrollView>

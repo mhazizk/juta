@@ -8,7 +8,7 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
-import SettingsSection from "../../components/List/SettingsSection";
+import ListSection from "../../components/List/ListSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 
@@ -27,7 +27,7 @@ const AboutScreen = ({ item, navigation }) => {
         {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
                 </View> */}
-        <SettingsSection>
+        <ListSection>
           {/* // TAG : Made by */}
           <ListItem
             pressable
@@ -60,7 +60,7 @@ const AboutScreen = ({ item, navigation }) => {
             iconPack="IonIcons"
             onPress={() => alert("OTW")}
           />
-        </SettingsSection>
+        </ListSection>
       </View>
     </>
   );

@@ -423,9 +423,15 @@ export const SearchResultListItem = ({
                       />
                       <TextSecondary
                         label={
-                          new Date(transactionDate).getHours() +
+                          new Date(transactionDate)
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0") +
                           ":" +
-                          new Date(transactionDate).getMinutes()
+                          new Date(transactionDate)
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")
                         }
                         style={{ fontSize: 14 }}
                       />

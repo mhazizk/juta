@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import { ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../../src/assets/themes/globalStyles";
@@ -15,6 +15,7 @@ import { ACTIONS } from "../../reducers/GlobalReducer";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import ListSection from "../../components/List/ListSection";
 
 const MyLogbooksScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -55,13 +56,36 @@ const MyLogbooksScreen = ({ navigation }) => {
   return (
     <>
       {loadedLogbooks && (
-        <View
-          style={{
+        <ScrollView
+          contentContainerStyle={{
             backgroundColor: appSettings.theme.style.colors.background,
-            height: "100%",
+            minHeight: "100%",
           }}
         >
-          <FlatList
+          <ListSection marginTop={16}>
+            {loadedLogbooks?.map((item) => {
+              return (
+                <>
+                  <ListItem
+                    pressable
+                    leftLabel={
+                      item?.logbook_name[0]?.toUpperCase() +
+                      item?.logbook_name?.substring(1)
+                    }
+                    iconLeftName="book"
+                    iconRightName="chevron-forward"
+                    iconPack="IonIcons"
+                    onPress={() => {
+                      navigation.navigate(screenList.logbookPreviewScreen, {
+                        logbook: item,
+                      });
+                    }}
+                  />
+                </>
+              );
+            })}
+          </ListSection>
+          {/* <FlatList
             data={loadedLogbooks}
             keyExtractor={(item) => item.logbook_id}
             style={{ flex: 1 }}
@@ -155,8 +179,8 @@ const MyLogbooksScreen = ({ navigation }) => {
                 />
               </>
             )}
-          />
-        </View>
+          /> */}
+        </ScrollView>
       )}
     </>
   );

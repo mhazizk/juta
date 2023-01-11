@@ -1,3 +1,6 @@
+import * as Device from "expo-device";
+import * as Application from "expo-application";
+
 import { useEffect } from "react";
 import { ActivityIndicator, Linking, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
@@ -31,6 +34,8 @@ import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactio
 import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 import initialCategories from "../../reducers/initial-state/InitialCategories";
 import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
+import { getDeviceId, getDeviceOSName } from "../../utils";
+import getDeviceName from "../../utils/GetDeviceName";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -56,14 +61,15 @@ const SplashScreen = ({ route, navigation }) => {
       case !route.params?.status && !!user && !loading:
         startAppWithExistingUser(user);
         break;
-      case !route.params?.status && !user && !loading:
-        // goToLogInScreen();
-        navigation.replace(screenList.onboardingScreen);
+      case !route.params?.status === "RETRY_LOGIN":
+        // case !route.params?.status === "RETRY_LOGIN" && !user && !loading:
+        navigation.replace(screenList.loginScreen);
         break;
       case error:
         console.log(error);
         break;
       default:
+        navigation.replace(screenList.onboardingScreen);
         break;
     }
   }, [user, loading, error]);
@@ -106,61 +112,105 @@ const SplashScreen = ({ route, navigation }) => {
     });
   };
 
-  const startAppWithNewUser = (currUser) => {
-    dispatchAppSettings({
-      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-      payload: {
-        ...appSettings,
-        uid: currUser.uid,
-      },
-    });
+  const startAppWithNewUser = async (currUser) => {
+    Promise.all([
+      firestore.getOneDoc(FIRESTORE_COLLECTION_NAMES.USERS, currUser.uid),
+      getDeviceId(),
+      getDeviceName(),
+      getDeviceOSName(),
+    ])
+      .then((data) => {
+        const userAccount = data[0];
+        const deviceId = data[1];
+        const deviceName = data[2];
+        const deviceOSName = data[3];
+        const loggedInUserAccount = {
+          ...userAccount,
+          devicesLoggedIn: [
+            ...userAccount.devicesLoggedIn,
+            {
+              device_id: deviceId,
+              device_name: deviceName,
+              device_os_name: deviceOSName,
+              last_login: Date.now(),
+            },
+          ],
+        };
+        dispatchUserAccount({
+          type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+          payload: loggedInUserAccount,
+        });
 
-    dispatchCategories({
-      type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
-      payload: {
-        categories: { ...categoriesFallback, uid: currUser.uid },
-      },
-    });
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: {
+            ...appSettings,
+            uid: currUser.uid,
+          },
+        });
 
-    setTimeout(() => {
-      navigation.navigate(screenList.bottomTabNavigator);
-    }, 1000);
+        dispatchCategories({
+          type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
+          payload: {
+            categories: { ...categoriesFallback, uid: currUser.uid },
+          },
+        });
+
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.USERS,
+            currUser.uid,
+            loggedInUserAccount
+          );
+
+          navigation.navigate(screenList.bottomTabNavigator);
+        }, 1000);
+      })
+      .catch((error) => {
+        navigation.navigate(screenList.loginScreen);
+      });
   };
 
   const startAppWithExistingUser = async (currUser) => {
     // console.log(currUser);
     // Initial load app settings
-    const loadAppSettings = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "appSettings",
-    });
+    // const loadAppSettings = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "appSettings",
+    // });
 
-    const loadUserDataFromFirestore = await firestore.getOneDoc(
+    const deviceId = getDeviceId();
+
+    const deviceName = getDeviceName();
+
+    const deviceOSName = getDeviceOSName();
+
+    const loadUserDataFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.USERS,
       currUser.uid
     );
 
-    const loadAppSettingsFromFirestore = await firestore.getOneDoc(
+    const loadAppSettingsFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
       currUser.uid
     );
 
-    const loadLogbooksFromFirestore = await firestore.queryData(
+    const loadLogbooksFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
       currUser.uid
     );
 
-    const loadTransactionsFromFirestore = await firestore.queryData(
+    const loadTransactionsFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
       currUser.uid
     );
 
-    const loadCategoriesFromFirestore = await firestore.getOneDoc(
+    const loadCategoriesFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
       currUser.uid
     );
 
-    const loadBudgetsFromFirestore = await firestore.queryData(
+    const loadBudgetsFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.BUDGETS,
       currUser.uid
     );
@@ -186,6 +236,9 @@ const SplashScreen = ({ route, navigation }) => {
     // });
 
     Promise.all([
+      deviceId,
+      deviceName,
+      deviceOSName,
       loadUserDataFromFirestore,
       loadAppSettingsFromFirestore,
       loadTransactionsFromFirestore,
@@ -199,22 +252,54 @@ const SplashScreen = ({ route, navigation }) => {
       // loadCategories,
     ])
       .then((data) => {
+        const deviceIdData = data[0];
+        const deviceNameData = data[1];
+        const deviceOSNameData = data[2];
+        const userAccountData = data[3];
+        const appSettingsData = data[4];
+        const transactionsData = data[5];
+        const logbooksData = data[6];
+        const categoriesData = data[7];
+        const budgetsData = data[8];
+        const otherDevicesLoggedIn = userAccountData.devicesLoggedIn.filter(
+          (device) => device.device_id !== deviceIdData
+        );
+        const loggedInUserAccount = {
+          ...userAccountData,
+          devicesLoggedIn: [
+            ...otherDevicesLoggedIn,
+            {
+              device_id: deviceIdData,
+              device_name: deviceNameData,
+              device_os_name: deviceOSNameData,
+              last_login: Date.now(),
+            },
+          ],
+        };
+
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-          payload: data[0],
-          // payload: data[0].uid === currUser.uid ? data[0] : currUser,
+          payload: loggedInUserAccount,
         });
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.USERS,
+            currUser.uid,
+            loggedInUserAccount
+          );
+        }, 1);
+
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-          payload: data[1] || {
+          payload: appSettingsData || {
             ...appSettingsFallback,
             uid: currUser.uid,
           },
         });
         // Merge transactions into sorted transactions
         const groupSorted = mergeTransactionsIntoSortedTransactions(
-          data[2],
-          data[3]
+          transactionsData,
+          logbooksData
         );
 
         dispatchSortedTransactions({
@@ -226,7 +311,7 @@ const SplashScreen = ({ route, navigation }) => {
           type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
           payload: {
             ...initialLogbooks,
-            logbooks: data[3] || [],
+            logbooks: logbooksData || [],
           },
         });
 
@@ -234,32 +319,34 @@ const SplashScreen = ({ route, navigation }) => {
           type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
           payload: {
             ...initialCategories,
-            categories: data[4] || { ...categoriesFallback, uid: currUser.uid },
+            categories: categoriesData || {
+              ...categoriesFallback,
+              uid: currUser.uid,
+            },
           },
         });
 
         // Check budget if it is expired
-        const budget = data[5];
+        const budget = budgetsData[0];
         let newBudget;
-        if (budget.length) {
-          console.log(budget);
+        if (budgetsData.length) {
+          console.log(budgetsData);
           const today = Date.now();
           // const foundBudget = budget.find((budget) => {
           //   today > budget.finish_date;
           // });
 
-          if (budget[0].repeat === true && today > budget[0].finish_date) {
-            const duration = budget[0].finish_date - budget[0].start_date;
+          if (budget.repeat === true && today > budget.finish_date) {
+            const duration = budget.finish_date - budget.start_date;
             newBudget = {
-              ...budget[0],
-              start_date: budget[0].start_date,
-              finish_date: budget[0].finish_date + duration,
+              ...budget,
+              start_date: budget.start_date,
+              finish_date: budget.finish_date + duration,
             };
           }
-
           dispatchBudgets({
             type: REDUCER_ACTIONS.BUDGETS.SET,
-            payload: newBudget || budget[0],
+            payload: newBudget || budget,
           });
         }
 
@@ -267,6 +354,7 @@ const SplashScreen = ({ route, navigation }) => {
       })
       .catch((err) => {
         console.log(err);
+        navigation.replace(screenList.login);
       });
   };
 

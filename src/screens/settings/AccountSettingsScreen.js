@@ -1,8 +1,11 @@
+import * as Application from "expo-application";
+import * as Device from "expo-device";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
   Alert,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
@@ -12,10 +15,12 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
-import SettingsSection from "../../components/List/SettingsSection";
+import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
+import { TextPrimary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -31,14 +36,16 @@ import initialCategories from "../../reducers/initial-state/InitialCategories";
 import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
 import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import { getDeviceId } from "../../utils";
 
 const AccountSettingsScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchSettings } = useGlobalAppSettings();
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const { dispatchCategories } = useGlobalCategories();
   const { dispatchLogbooks } = useGlobalLogbooks();
   const { dispatchBudgets } = useGlobalBudgets();
+  const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
@@ -55,19 +62,19 @@ const AccountSettingsScreen = ({ item, navigation }) => {
 
   return (
     <>
-      <View
-        style={{
-          height: "100%",
+      <ScrollView
+        contentContainerStyle={{
+          minHeight: "100%",
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
-        {userAccount && (
+        {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
             {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
-            <SettingsSection>
+            <ListSection>
               {/* // TAG : Profile */}
               <ListItem
                 pressable
@@ -115,7 +122,9 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                 leftLabel="Change Password"
                 iconLeftName="key"
                 iconPack="IonIcons"
-                onPress={() => alert("Feature in progress ...")}
+                onPress={() =>
+                  navigation.navigate(screenList.changeAccountPasswordScreen)
+                }
               />
 
               {/* // TAG : Premium */}
@@ -129,8 +138,19 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
               />
-            </SettingsSection>
-            <SettingsSection>
+            </ListSection>
+            <ListSection>
+              {/* // TAG : Active Devices */}
+              <ListItem
+                pressable
+                leftLabel="Active Devices"
+                rightLabel={userAccount.devicesLoggedIn?.length + " device(s)"}
+                iconLeftName="laptop-outline"
+                iconPack="IonIcons"
+                onPress={() => navigation.navigate(screenList.devicesScreen)}
+              />
+            </ListSection>
+            <ListSection>
               {/* // TAG : Log out */}
               <ListItem
                 pressable
@@ -146,35 +166,65 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                     },
                     {
                       text: "Yes",
-                      onPress: () =>
-                        signOut(auth).then(() => {
-                          // dispatchSortedTransactions({
-                          //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS
-                          //     .GROUP_SORTED.FORCE_SET,
-                          //   payload: InitialSortedTransactions,
-                          // });
-                          // dispatchCategories({
-                          //   type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-                          //   payload: initialCategories,
-                          // });
-                          // dispatchLogbooks({
-                          //   type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
-                          //   payload: initialLogbooks,
-                          // });
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: screenList.loginScreen }],
+                      onPress: async () => {
+                        setIsLoading(true);
+
+                        // Get device id
+                        const deviceId = await getDeviceId();
+                        const removedDeviceIdFromDevicesLoggedIn =
+                          userAccount.devicesLoggedIn?.filter(
+                            (device) => device.device_id !== deviceId
+                          );
+
+                        try {
+                          // Update user account
+                          await firestore.setData(
+                            FIRESTORE_COLLECTION_NAMES.USERS,
+                            userAccount.uid,
+                            {
+                              ...userAccount,
+                              devicesLoggedIn:
+                                removedDeviceIdFromDevicesLoggedIn,
+                            }
+                          );
+                          signOut(auth).then(() => {
+                            dispatchAppSettings({
+                              type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
+                              payload: { style: colorOfTheYear2023 },
+                            });
+                            navigation.reset({
+                              index: 0,
+                              routes: [{ name: screenList.loginScreen }],
+                            });
                           });
-                        }),
-                      // style: "default",
+                        } catch (error) {
+                          alert(error);
+                          setIsLoading(false);
+                        }
+                      },
                     },
                   ])
                 }
               />
-            </SettingsSection>
+            </ListSection>
           </>
         )}
-      </View>
+        {isLoading && (
+          <>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: appSettings.theme.style.colors.background,
+              }}
+            >
+              <Loading />
+              <TextPrimary label="Logging you out..." />
+            </View>
+          </>
+        )}
+      </ScrollView>
     </>
   );
 };

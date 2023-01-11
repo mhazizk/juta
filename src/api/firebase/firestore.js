@@ -37,6 +37,7 @@ const getOneDoc = async (collectionName, documentId = null) => {
     // });
   } catch (error) {
     Alert.alert("Error", error.message);
+    return Promise.reject(error);
   }
 };
 
@@ -47,7 +48,7 @@ const setData = async (collectionName, documentId = null, data) => {
     // console.log("Document written w ith ID: ", docRef.id);
   } catch (error) {
     Alert.alert("Error", error.message);
-    console.log(error.message);
+    return Promise.reject(error);
   }
 };
 
@@ -58,7 +59,7 @@ const deleteData = async (collectionName, documentId) => {
     // console.log("Document written w ith ID: ", docRef.id);
   } catch (error) {
     Alert.alert("Error", error.message);
-    console.log(error.message);
+    return Promise.reject(error);
   }
 };
 
@@ -68,6 +69,7 @@ const updateData = async (collectionName, documentId = null, data) => {
     console.log("Document written with ID: ", docRef.id);
   } catch (error) {
     Alert.alert("Error", error.message);
+    return Promise.reject(error);
   }
 };
 
@@ -85,6 +87,7 @@ const queryData = async (collectionName, uid) => {
     });
   } catch (error) {
     Alert.alert("Error", error.message);
+    return Promise.reject(error);
   }
 };
 

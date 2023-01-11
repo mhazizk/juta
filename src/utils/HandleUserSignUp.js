@@ -9,16 +9,17 @@ const handleUserSignUp = async ({ email, password }) => {
   } catch (error) {
     switch (true) {
       case error.message.includes("email-already-in-use"):
-        return Alert.alert("Account", "Email address is already registered");
+        Alert.alert("Account", "Email address is already registered");
+        break;
       case error.message.includes("network-request-failed"):
-        return Alert.alert(
-          "Account",
-          "Network request failed. Please try again"
-        );
+        Alert.alert("Account", "Network request failed. Please try again");
+        break;
 
       default:
-        return Alert.alert("Account", error.message.replace("Firebase: ", ""));
+        Alert.alert("Account", error.message.replace("Firebase: ", ""));
+        break;
     }
+    return Promise.reject(error);
   }
 };
 

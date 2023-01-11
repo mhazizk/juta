@@ -53,6 +53,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
   const [selectedAppSettings, setSelectedAppSettings] = useState({
+    uid: userAccount.uid,
     theme: { name: "Light Theme", id: "light", style: lightTheme },
     fontSize: "medium",
     language: "english",
@@ -111,6 +112,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     logbook_name: "",
     logbook_records: [],
     logbook_categories: [],
+    group_id: null,
     __v: 0,
   });
 
@@ -169,7 +171,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
       },
       _id: newLogbook.logbook_id,
       uid: newLogbook.uid,
-      // username: newLogbook.username,
       logbook_currency: newLogbook.logbook_currency,
       logbook_type: "basic",
       logbook_id: newLogbook.logbook_id,
@@ -205,59 +206,33 @@ const InitialSetupScreen = ({ route, navigation }) => {
       ],
     });
 
-    // dispatchSortedTransactions({
-    // })
-
-    // Save to storage
-    // const saveTransaction = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "transactions",
-    //   rawValue: [],
-    // });
     const saveCategories = await firestore.setData(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
       userAccount.uid,
-      {
-        ...initialCategories,
-        uid: userAccount.uid,
-      }
+      initialCategories.categories
     );
 
-    //   await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "categories",
-    //   rawValue: initialCategories,
-    // });
-    // const saveSortedTransactions = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "sortedTrasactions",
-    //   rawValue: InitialSortedTransactions,
-    // });
     const saveAppSettings = await firestore.setData(
       FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
       userAccount.uid,
-      {
-        ...selectedAppSettings,
-        uid: userAccount.uid,
-      }
-    )
-      
-    //   await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "appSettings",
-    //   rawValue: selectedAppSettings,
-    // });
+      selectedAppSettings
+    );
 
-    Promise.all([
-      saveCategories,
-      // saveTransaction,
-      // saveSortedTransactions,
-      saveAppSettings,
-    ]).then(() => {
-      return navigation.replace(screenList.splashScreen, {
-        status: "NEW_USER",
+    const saveLogbook = await firestore.setData(
+      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      logbookToDispatch.logbook_id,
+      logbookToDispatch
+    );
+
+    Promise.all([saveCategories, saveLogbook, saveAppSettings])
+      .then(() => {
+        return navigation.replace(screenList.splashScreen, {
+          status: "NEW_USER",
+        });
+      })
+      .catch((err) => {
+        alert(err);
       });
-    });
   };
 
   const pages = [

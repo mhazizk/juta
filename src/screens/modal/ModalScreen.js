@@ -316,8 +316,8 @@ const ModalScreen = ({ route, navigation }) => {
           <FlatList
             numColumns={6}
             columnWrapperStyle={{ justifyContent: "space-between", padding: 8 }}
-            data={route?.params?.props}
             showsHorizontalScrollIndicator={false}
+            data={route?.params?.props}
             style={{ height: "100%" }}
             contentContainerStyle={{
               paddingHorizontal: 16,
