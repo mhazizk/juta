@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useState } from "react";
 import {
   globalAppSettings,
   globalBudgets,
@@ -27,6 +27,7 @@ const GlobalUserAccountContext = createContext();
 const GlobalLoadingContext = createContext();
 const GlobalLogbooksContext = createContext();
 const GlobalCategoriesContext = createContext();
+const GlobalBadgeCounterContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -61,6 +62,10 @@ export const useGlobalLoading = () => {
   return useContext(GlobalLoadingContext);
 };
 
+export const useGlobalBadgeCounter = () => {
+  return useContext(GlobalBadgeCounterContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -93,6 +98,15 @@ export const GlobalStateProvider = ({ children }) => {
   );
 
   const [budgets, dispatchBudgets] = useReducer(globalBudgets, InitialBudgets);
+
+  const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
+  const [badgeCounter, setBadgeCounter] = useState({
+    dashboardTab: 0,
+    logbookTab: 0,
+    actionTab: 0,
+    searchTab: 0,
+    userTab: 0,
+  });
 
   return (
     <>
@@ -141,7 +155,14 @@ export const GlobalStateProvider = ({ children }) => {
                         dispatchBudgets: dispatchBudgets,
                       }}
                     >
-                      {children}
+                      <GlobalBadgeCounterContext.Provider
+                        value={{
+                          badgeCounter: badgeCounter,
+                          setBadgeCounter: setBadgeCounter,
+                        }}
+                      >
+                        {children}
+                      </GlobalBadgeCounterContext.Provider>
                     </GlobalBudgetsContext.Provider>
                   </GlobalSortedTransactionsContext.Provider>
                 </GlobalCategoriesContext.Provider>

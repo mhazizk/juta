@@ -114,7 +114,7 @@ const SplashScreen = ({ route, navigation }) => {
 
   const startAppWithNewUser = async (currUser) => {
     Promise.all([
-      firestore.getOneDoc(FIRESTORE_COLLECTION_NAMES.USERS, currUser.uid),
+      firestore.get(FIRESTORE_COLLECTION_NAMES.USERS, currUser.uid),
       getDeviceId(),
       getDeviceName(),
       getDeviceOSName(),
@@ -185,55 +185,80 @@ const SplashScreen = ({ route, navigation }) => {
 
     const deviceOSName = getDeviceOSName();
 
+    // const listenedDataInFirestore = {
+    //   userData: null,
+    //   appSettings: null,
+    //   categories: null,
+    //   logbooks: null,
+    //   budgets: null,
+    //   transactions: null,
+    // };
+
+    // const loadUserDataFromFirestore = firestore.getAndListenOneDoc(
+    //   FIRESTORE_COLLECTION_NAMES.USERS,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadUserDataFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.USERS,
       currUser.uid
     );
 
+    // const loadAppSettingsFromFirestore = firestore.getAndListenOneDoc(
+    //   FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadAppSettingsFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
       currUser.uid
     );
 
+    // const loadLogbooksFromFirestore = firestore.getAndListenMultipleDocs(
+    //   FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadLogbooksFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
       currUser.uid
     );
 
+    // const loadTransactionsFromFirestore = firestore.getAndListenMultipleDocs(
+    //   FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadTransactionsFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
       currUser.uid
     );
 
+    // const loadCategoriesFromFirestore = firestore.getAndListenOneDoc(
+    //   FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadCategoriesFromFirestore = firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
       currUser.uid
     );
 
+    // const loadBudgetsFromFirestore = firestore.getAndListenMultipleDocs(
+    //   FIRESTORE_COLLECTION_NAMES.BUDGETS,
+    //   currUser.uid,
+    //   (data) => Promise.resolve(data),
+    //   (error) => Promise.reject(error)
+    // );
     const loadBudgetsFromFirestore = firestore.queryData(
       FIRESTORE_COLLECTION_NAMES.BUDGETS,
       currUser.uid
     );
-
-    // const loadUserAccount = await persistStorage.asyncSecureStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "authAccount",
-    // });
-
-    // const loadSortedTransactions = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "sortedTransactions",
-    // });
-
-    // const loadCategories = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "categories",
-    // });
-
-    // const loadLogbooks = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "logbooks",
-    // });
 
     Promise.all([
       deviceId,
@@ -245,11 +270,6 @@ const SplashScreen = ({ route, navigation }) => {
       loadLogbooksFromFirestore,
       loadCategoriesFromFirestore,
       loadBudgetsFromFirestore,
-      // loadUserAccount,
-      // loadAppSettings,
-      // loadSortedTransactions,
-      // loadLogbooks,
-      // loadCategories,
     ])
       .then((data) => {
         const deviceIdData = data[0];
@@ -327,11 +347,12 @@ const SplashScreen = ({ route, navigation }) => {
         });
 
         // Check budget if it is expired
-        const budget = budgetsData[0];
+        // const budget = budgetsData[0];
         let newBudget;
         if (budgetsData.length) {
           console.log(budgetsData);
           const today = Date.now();
+          const budget = budgetsData[0];
           // const foundBudget = budget.find((budget) => {
           //   today > budget.finish_date;
           // });
@@ -346,9 +367,18 @@ const SplashScreen = ({ route, navigation }) => {
           }
           dispatchBudgets({
             type: REDUCER_ACTIONS.BUDGETS.SET,
-            payload: newBudget || budget,
+            payload: newBudget || budgetsData[0],
           });
         }
+        // dispatchBudgets({
+        //   type: REDUCER_ACTIONS.BUDGETS.FORCE_SET,
+        //   payload: {
+        //     budgetPatchCounter: 0,
+        //     budgetInsertCounter: 0,
+        //     budgetDeleteCounter: 0,
+        //     budgets: [newBudget || budgetsData[0]] || [],
+        //   },
+        // });
 
         navigation.replace(screenList.bottomTabNavigator);
       })

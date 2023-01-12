@@ -59,9 +59,9 @@ export const MyBudgetsPreview = ({
     let transactionList = [];
     let spent = 0;
 
-    if (budgets.budgets.length) {
+    if (budgets.budgets?.length) {
       const activeBudget = budgets.budgets.find(
-        (budget) => Date.now() <= budget.finish_date
+        (budget) => Date.now() <= budget?.finish_date
       );
       const startDate = activeBudget?.start_date;
       const finishDate = activeBudget?.finish_date;

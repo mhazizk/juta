@@ -17,8 +17,6 @@ import {
   useGlobalTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
-import * as utils from "../../utils";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
@@ -376,6 +374,25 @@ const DeveloperScreen = ({ item, navigation }) => {
               );
             }}
           />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log transactions from snapshot"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              const unsubscribe = firestore.getAndListenMultipleDocs(
+                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                appSettings.uid,
+                (data) => console.log(JSON.stringify(data)),
+                (error) => console.log(error)
+              );
+
+              return setTimeout(() => {
+                unsubscribe();
+                alert("unsubscribed");
+              }, 1000);
+            }}
+          />
 
           <ListItem
             pressable
@@ -457,6 +474,12 @@ const DeveloperScreen = ({ item, navigation }) => {
                     FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
                     appSettings.uid
                   )
+                  // firestore.getAndListenMultipleDocs(
+                  //   FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                  //   appSettings.uid,
+                  //   (data) => console.log(data),
+                  //   (error) => console.log(error)
+                  // )
                 )
               );
             }}
@@ -484,7 +507,7 @@ const DeveloperScreen = ({ item, navigation }) => {
               });
             }}
           />
-
+          {/* // SECTION : User Account */}
           <TextPrimary label="User account" style={{ padding: 16 }} />
           <ListItem
             pressable
@@ -495,6 +518,26 @@ const DeveloperScreen = ({ item, navigation }) => {
               console.log(user);
             }}
           />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log user account from snapshot"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              const unsubscribe = firestore.getAndListenOneDoc(
+                FIRESTORE_COLLECTION_NAMES.USERS,
+                appSettings.uid,
+                (data) => console.log(JSON.stringify(data)),
+                (error) => console.log(error)
+              );
+
+              return setTimeout(() => {
+                unsubscribe();
+                alert("unsubscribed");
+              }, 1000);
+            }}
+          />
+
           <ListItem
             pressable
             leftLabel="// TAG : Log reducer user account state"

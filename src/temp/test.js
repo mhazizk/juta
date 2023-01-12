@@ -146,3 +146,63 @@ const result = [
   },
   { logbook_id: "logbook3", transactions: [] },
 ];
+
+const coba = {
+  status: "done",
+  result: [
+    {
+      transaction: {
+        uid: "wZHyjSIETQgnVnHQ3IKCHOVqGU82",
+        details: {
+          amount: 600000,
+          type: "cash",
+          in_out: "income",
+          date: 1673508572594,
+          category_id: "13",
+          notes: null,
+        },
+        logbook_id: "37608b84-d8bd-493e-af7b-b8aeb40c43a5",
+        _id: 1673508572594,
+        transaction_id: "c3d79c41-90e4-4e15-9ddc-96e729a0c943",
+        _timestamps: { updated_at: 1673508572594, created_at: 1673508572594 },
+      },
+      category: {
+        categoryName: "Salary",
+        categoryId: "13",
+        icon: { iconPack: "IonIcons", iconColor: "#F5F5F5", iconName: "cash" },
+      },
+      logbook: {
+        logbookName: "My Logbook",
+        logbookId: "37608b84-d8bd-493e-af7b-b8aeb40c43a5",
+        logbookCurrency: { isoCode: "id", symbol: "Rp", name: "IDR" },
+      },
+    },
+    {
+      transaction: {
+        logbook_id: "37608b84-d8bd-493e-af7b-b8aeb40c43a5",
+        details: {
+          category_id: "4",
+          notes: null,
+          type: "cash",
+          in_out: "expense",
+          amount: 300000,
+          date: 1673508557211,
+        },
+        _timestamps: { created_at: 1673508557211, updated_at: 1673508557211 },
+        uid: "wZHyjSIETQgnVnHQ3IKCHOVqGU82",
+        _id: 1673508557211,
+        transaction_id: "de88abb1-e73b-4f34-9164-66000c247d45",
+      },
+      category: {
+        categoryName: "Shopping",
+        categoryId: "4",
+        icon: { iconPack: "IonIcons", iconColor: "#F5F5F5", iconName: "cart" },
+      },
+      logbook: {
+        logbookName: "My Logbook",
+        logbookId: "37608b84-d8bd-493e-af7b-b8aeb40c43a5",
+        logbookCurrency: { isoCode: "id", symbol: "Rp", name: "IDR" },
+      },
+    },
+  ],
+};

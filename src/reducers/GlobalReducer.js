@@ -183,6 +183,9 @@ export const initialLoading = {
 
 export const globalBudgets = (state, action) => {
   switch (action.type) {
+    case REDUCER_ACTIONS.BUDGETS.FORCE_SET:
+      return action.payload;
+
     case REDUCER_ACTIONS.BUDGETS.SET:
       return {
         budgetPatchCounter: 0,
@@ -319,8 +322,6 @@ export const globalLogbooks = (state, action) => {
       foundOtherLogbook = state.logbooks.filter(
         (logbook) => logbook.logbook_id !== patchLogbook.logbook_id
       );
-      console.log(foundOtherLogbook);
-      // TODO REPLACE LOGBOOK WITH PATCHED ONE AND REPLACE ALL TRANSACTIONS IN IT WITH THE NEW LOGBBOK
 
       return {
         ...state,

@@ -187,6 +187,37 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                                 removedDeviceIdFromDevicesLoggedIn,
                             }
                           );
+
+                          // Unsuscribe from all firestore collections
+                          const multiSubscription = [
+                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                            FIRESTORE_COLLECTION_NAMES.BUDGETS,
+                          ];
+
+                          const singleSubscription = [
+                            FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+                            FIRESTORE_COLLECTION_NAMES.USERS,
+                            FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          ];
+
+                          multiSubscription.forEach((collection) => {
+                            const unsubscribe =
+                              firestore.getAndListenMultipleDocs(
+                                collection,
+                                appSettings.uid
+                              );
+                            unsubscribe();
+                          });
+
+                          singleSubscription.forEach((doc) => {
+                            const unsubscribe = firestore.getAndListenOneDoc(
+                              doc,
+                              appSettings.uid
+                            );
+                            unsubscribe();
+                          });
+
                           signOut(auth).then(() => {
                             dispatchAppSettings({
                               type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,

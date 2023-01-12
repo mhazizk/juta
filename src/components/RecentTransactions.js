@@ -48,7 +48,7 @@ const RecentTransactions = ({
   }, [sortedTransactions]);
 
   useEffect(() => {
-    console.log(JSON.stringify(recentTransactions));
+    // console.log(JSON.stringify(recentTransactions));
   }, [recentTransactions]);
 
   const getRecentTransactions = () => {

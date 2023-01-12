@@ -41,6 +41,90 @@ const getOneDoc = async (collectionName, documentId = null) => {
   }
 };
 
+// Listen to realtime one Doc
+const setAndListenOneDoc = (
+  collectionName,
+  documentId = null,
+  callback,
+  errorCallback
+) => {
+  const query = doc(db, collectionName, documentId);
+
+  return onSnapshot(
+    query,
+    (querySnapshot) => {
+      callback(querySnapshot.data());
+    },
+    (error) => {
+      Alert.alert("Error", error.message);
+      errorCallback(error);
+    }
+  );
+};
+
+// Listen to realtime one Doc
+const getAndListenOneDoc = (
+  collectionName,
+  documentId = null,
+  callback,
+  errorCallback
+) => {
+  const query = doc(db, collectionName, documentId);
+
+  return onSnapshot(
+    query,
+    (querySnapshot) => {
+      callback(querySnapshot.data());
+    },
+    (error) => {
+      Alert.alert("Error", error.message);
+      errorCallback(error);
+    }
+  );
+};
+
+// Listen to realtime multiple docs
+const getAndListenMultipleDocs = (
+  collectionName,
+  documentId = null,
+  errorCallback,
+  getAllDocsCallback,
+  getChangesDocsCallback
+) => {
+  const q = query(
+    collection(db, collectionName),
+    where("uid", "==", documentId)
+  );
+
+  return onSnapshot(
+    q,
+    (querySnapshots) => {
+      getAllDocsCallback(querySnapshots.docs.map((doc) => doc.data()));
+
+      querySnapshots.docChanges().forEach((change) => {
+        switch (change.type) {
+          case "added":
+            getChangesDocsCallback(change.doc.data(), "added");
+            break;
+          case "modified":
+            getChangesDocsCallback(change.doc.data(), "modified");
+            break;
+          case "removed":
+            getChangesDocsCallback(change.doc.data(), "removed");
+            break;
+
+          default:
+            break;
+        }
+      });
+    },
+    (error) => {
+      Alert.alert("Error", error.message);
+      errorCallback(error);
+    }
+  );
+};
+
 // Add data to firestore
 const setData = async (collectionName, documentId = null, data) => {
   try {
@@ -93,6 +177,8 @@ const queryData = async (collectionName, uid) => {
 
 const firestore = {
   getOneDoc,
+  getAndListenMultipleDocs,
+  getAndListenOneDoc,
   setData,
   deleteData,
   queryData,

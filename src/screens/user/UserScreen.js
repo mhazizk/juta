@@ -1,3 +1,5 @@
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect } from "react";
 import {
   Image,
   ScrollView,
@@ -13,6 +15,7 @@ import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalLogbooks,
@@ -23,6 +26,19 @@ const UserScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { budgets } = useGlobalBudgets();
+  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
+  const isFocus = useIsFocused();
+
+  useEffect(() => {
+    if (isFocus) {
+      setTimeout(() => {
+        setBadgeCounter({
+          ...badgeCounter,
+          userTab: 0,
+        });
+      }, 1);
+    }
+  }, [isFocus]);
 
   return (
     <>

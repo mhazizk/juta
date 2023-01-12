@@ -94,11 +94,11 @@ const DashboardScreen = ({ navigation }) => {
   }, [screenLoading]);
 
   useEffect(() => {
-    console.log("graph", graph);
+    // console.log("graph", graph);
   }, [graph]);
 
   useEffect(() => {
-    console.log("activeBudget", activeBudget);
+    // console.log("activeBudget", activeBudget);
   }, [activeBudget]);
 
   // convert epoch number in date

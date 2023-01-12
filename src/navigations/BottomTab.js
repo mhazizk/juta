@@ -4,9 +4,10 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
 // Screens
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
@@ -25,6 +26,11 @@ const BottomTab = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
+  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
+
+  useEffect(() => {
+    // console.log(badgeCounter);
+  }, []);
 
   return (
     <>
@@ -108,6 +114,10 @@ const BottomTab = ({ route, navigation }) => {
           {/* // TAG : Dashboard Screen */}
           <Tab.Screen
             options={{
+              tabBarBadge:
+                badgeCounter?.dashboardTab === 0
+                  ? null
+                  : badgeCounter?.dashboardTab,
               headerShown: false,
               // title: "Dashboard",
               // tabBarBadge: 3,
@@ -142,13 +152,22 @@ const BottomTab = ({ route, navigation }) => {
           />
           {/* // TAG : Logbook Screen */}
           <Tab.Screen
-            options={{ title: "", headerShown: false }}
+            options={{
+              title: "",
+              headerShown: false,
+              tabBarBadge:
+                badgeCounter?.logbookTab === 0
+                  ? null
+                  : badgeCounter?.logbookTab,
+            }}
             name={screenList.logbookScreen}
             component={LogBookScreen}
           />
           {/* // TAG : Action Screen */}
           <Tab.Screen
             options={{
+              tabBarBadge:
+                badgeCounter?.actionTab === 0 ? null : badgeCounter?.actionTab,
               tabBarItemStyle: {
                 alignSelf: "center",
                 marginBottom: 28,
@@ -167,13 +186,23 @@ const BottomTab = ({ route, navigation }) => {
           />
           {/* // TAG : Search Screen */}
           <Tab.Screen
-            options={{ title: "", headerShown: false }}
+            options={{
+              title: "",
+              headerShown: false,
+              tabBarBadge:
+                badgeCounter?.searchTab === 0 ? null : badgeCounter?.searchTab,
+            }}
             name={screenList.searchScreen}
             component={SearchScreen}
           />
           {/* // TAG : User Screen */}
           <Tab.Screen
-            options={{ title: "", headerShown: false }}
+            options={{
+              title: "",
+              headerShown: false,
+              tabBarBadge:
+                badgeCounter?.userTab === 0 ? null : badgeCounter?.userTab,
+            }}
             name={screenList.userScreen}
             component={UserScreen}
           />

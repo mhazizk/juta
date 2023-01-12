@@ -3,12 +3,14 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { setSortedTransactions } from "../utils/FetchData";
 import persistStorage from "../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
+  useGlobalBudgets,
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
@@ -79,35 +81,136 @@ const RootStack = () => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
+  const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
+  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
 
   // TAG : useEffect for state
   useEffect(() => {
-    // BackHandler.addEventListener("hardwareBackPress", exitPrompt);
-    // dispatchLoading({
-    //   type: ACTIONS.LOADING.SET,
-    //   payload: true,
-    // });
+    let appSettingsSubscription;
+    let userAccountSubscription;
+    let logbooksSubscription;
+    let transactionsSubscription;
+    let categoriesSubscription;
+    let budgetsSubscription;
+
+    // Subscribe to firestore
+    if (appSettings?.uid) {
+      // TAG : Subscription Section
+      appSettingsSubscription = firestore.getAndListenOneDoc(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        (data) =>
+          setBadgeCounter({
+            ...badgeCounter,
+            userTab: badgeCounter.userTab + 1,
+          }),
+
+        // dispatchAppSettings({
+        //   type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+        //   payload: data,
+        // }),
+        (error) => alert(error)
+      );
+      userAccountSubscription = firestore.getAndListenOneDoc(
+        FIRESTORE_COLLECTION_NAMES.USERS,
+        appSettings.uid,
+        (data) =>
+          setBadgeCounter({
+            ...badgeCounter,
+            userTab: badgeCounter.userTab + 1,
+          }),
+        // dispatchAppSettings({
+        //   type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+        //   payload: data,
+        // }),
+        (error) => alert(error)
+      );
+      logbooksSubscription = firestore.getAndListenMultipleDocs(
+        FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+        appSettings.uid,
+        (error) => alert(error),
+        (data) => {},
+        (data, type) => {
+          switch (type) {
+            case "added":
+              // console.log("added", data);
+              // dispatchLogbooks({
+              //   type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
+              //   payload: data,
+              // });
+              break;
+            case "modified":
+              // dispatchLogbooks({
+              //   type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
+              //   payload: data,
+              // });
+              break;
+            case "removed":
+              // dispatchLogbooks({
+              //   type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
+              //   payload: data,
+              // });
+              break;
+
+            default:
+              break;
+          }
+        }
+        // dispatchLogbooks({
+        //   type: REDUCER_ACTIONS.LOGBOOKS.SET,
+        //   payload: data,
+        // })
+      );
+      transactionsSubscription = firestore.getAndListenMultipleDocs(
+        FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+        appSettings.uid,
+        (error) => alert(error),
+        (data) => {},
+        (data) => {
+          //
+        }
+      );
+      categoriesSubscription = firestore.getAndListenMultipleDocs(
+        FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+        appSettings.uid,
+        (error) => alert(error),
+        (data) => {},
+        (data) => {}
+        // dispatchCategories({
+        //   type: REDUCER_ACTIONS.CATEGORIES.SET,
+        //   payload: data,
+        // }),
+      );
+      budgetsSubscription = firestore.getAndListenMultipleDocs(
+        FIRESTORE_COLLECTION_NAMES.BUDGETS,
+        appSettings.uid,
+        (error) => alert(error),
+        (data) => {},
+        (data) => {}
+        // dispatchBudgets({
+        //   type: REDUCER_ACTIONS.BUDGETS.SET,
+        //   payload: data,
+        // }),
+      );
+    }
     // return () => {
-    //   BackHandler.removeEventListener("hardwareBackPress", exitPrompt);
+    //   // Unsubscribe from firestore
+    //   appSettingsSubscription();
+    //   userAccountSubscription();
+    //   logbooksSubscription();
+    //   transactionsSubscription();
+    //   categoriesSubscription();
+    //   budgetsSubscription();
     // };
   }, []);
 
   // Save Sorted Transactions to storage
   useEffect(() => {
     // TODO : snapshot listener for cross device sync
-    /* 
-    TODO : example :
-    useEffect(() => {
-    onSnapshot(collection(db, "profiles"), (snapshot) => {
-      setProfiles(snapshot.docs.map((doc)=>({...doc.data(), id: doc.id})))
-    })
-    console.log(profiles);
-});
-    */
     if (userAccount && user && !isLoading) {
       setTimeout(async () => {
         await firestore.setData(
