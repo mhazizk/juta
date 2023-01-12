@@ -114,6 +114,13 @@ const BottomTab = ({ route, navigation }) => {
           {/* // TAG : Dashboard Screen */}
           <Tab.Screen
             options={{
+              tabBarBadgeStyle: {
+                color: "transparent",
+                minWidth: 13,
+                minHeight: 13,
+                maxHeight: 13,
+                maxWidth: 13,
+              },
               tabBarBadge:
                 badgeCounter?.dashboardTab === 0
                   ? null
@@ -155,6 +162,13 @@ const BottomTab = ({ route, navigation }) => {
             options={{
               title: "",
               headerShown: false,
+              tabBarBadgeStyle: {
+                color: "transparent",
+                minWidth: 13,
+                minHeight: 13,
+                maxHeight: 13,
+                maxWidth: 13,
+              },
               tabBarBadge:
                 badgeCounter?.logbookTab === 0
                   ? null
@@ -166,6 +180,13 @@ const BottomTab = ({ route, navigation }) => {
           {/* // TAG : Action Screen */}
           <Tab.Screen
             options={{
+              tabBarBadgeStyle: {
+                color: "transparent",
+                minWidth: 13,
+                minHeight: 13,
+                maxHeight: 13,
+                maxWidth: 13,
+              },
               tabBarBadge:
                 badgeCounter?.actionTab === 0 ? null : badgeCounter?.actionTab,
               tabBarItemStyle: {
@@ -189,6 +210,13 @@ const BottomTab = ({ route, navigation }) => {
             options={{
               title: "",
               headerShown: false,
+              tabBarBadgeStyle: {
+                color: "transparent",
+                minWidth: 13,
+                minHeight: 13,
+                maxHeight: 13,
+                maxWidth: 13,
+              },
               tabBarBadge:
                 badgeCounter?.searchTab === 0 ? null : badgeCounter?.searchTab,
             }}
@@ -200,6 +228,13 @@ const BottomTab = ({ route, navigation }) => {
             options={{
               title: "",
               headerShown: false,
+              tabBarBadgeStyle: {
+                color: "transparent",
+                minWidth: 13,
+                minHeight: 13,
+                maxHeight: 13,
+                maxWidth: 13,
+              },
               tabBarBadge:
                 badgeCounter?.userTab === 0 ? null : badgeCounter?.userTab,
             }}

@@ -176,62 +176,62 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                             (device) => device.device_id !== deviceId
                           );
 
-                        try {
-                          // Update user account
-                          await firestore.setData(
-                            FIRESTORE_COLLECTION_NAMES.USERS,
-                            userAccount.uid,
-                            {
-                              ...userAccount,
-                              devicesLoggedIn:
-                                removedDeviceIdFromDevicesLoggedIn,
-                            }
-                          );
+                        // Update user account
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.USERS,
+                          userAccount.uid,
+                          {
+                            ...userAccount,
+                            devicesLoggedIn: removedDeviceIdFromDevicesLoggedIn,
+                          }
+                        );
 
-                          // Unsuscribe from all firestore collections
-                          const multiSubscription = [
-                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                            FIRESTORE_COLLECTION_NAMES.BUDGETS,
-                          ];
+                        // try {
 
-                          const singleSubscription = [
-                            FIRESTORE_COLLECTION_NAMES.CATEGORIES,
-                            FIRESTORE_COLLECTION_NAMES.USERS,
-                            FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                          ];
+                        // Unsuscribe from all firestore collections
+                        // const multiSubscription = [
+                        //   FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                        //   FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                        //   FIRESTORE_COLLECTION_NAMES.BUDGETS,
+                        // ];
 
-                          multiSubscription.forEach((collection) => {
-                            const unsubscribe =
-                              firestore.getAndListenMultipleDocs(
-                                collection,
-                                appSettings.uid
-                              );
-                            unsubscribe();
+                        // const singleSubscription = [
+                        //   FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+                        //   FIRESTORE_COLLECTION_NAMES.USERS,
+                        //   FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                        // ];
+
+                        // multiSubscription.forEach((collection) => {
+                        //   const unsubscribe =
+                        //     firestore.getAndListenMultipleDocs(
+                        //       collection,
+                        //       appSettings.uid
+                        //     );
+                        //   unsubscribe();
+                        // });
+
+                        // singleSubscription.forEach((doc) => {
+                        //   const unsubscribe = firestore.getAndListenOneDoc(
+                        //     doc,
+                        //     appSettings.uid
+                        //   );
+                        //   unsubscribe();
+                        // });
+
+                        signOut(auth).then(() => {
+                          dispatchAppSettings({
+                            type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
+                            payload: { style: colorOfTheYear2023 },
                           });
-
-                          singleSubscription.forEach((doc) => {
-                            const unsubscribe = firestore.getAndListenOneDoc(
-                              doc,
-                              appSettings.uid
-                            );
-                            unsubscribe();
+                          navigation.reset({
+                            index: 0,
+                            routes: [{ name: screenList.loginScreen }],
                           });
-
-                          signOut(auth).then(() => {
-                            dispatchAppSettings({
-                              type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
-                              payload: { style: colorOfTheYear2023 },
-                            });
-                            navigation.reset({
-                              index: 0,
-                              routes: [{ name: screenList.loginScreen }],
-                            });
-                          });
-                        } catch (error) {
-                          alert(error);
-                          setIsLoading(false);
-                        }
+                        });
+                        // } catch (error) {
+                        //   alert(error);
+                        //   setIsLoading(false);
+                        // }
                       },
                     },
                   ])

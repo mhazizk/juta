@@ -50,6 +50,7 @@ const DevicesScreen = ({ navigation }) => {
                 pressable
                 leftLabel={device.device_name}
                 iconLeftName={renderIcon(device.device_os_name)}
+                // iconLeftColor={appSettings.theme.style.colors.success}
                 iconPack="IonIcons"
                 rightLabel={new Date(device.last_login).toDateString()}
               />

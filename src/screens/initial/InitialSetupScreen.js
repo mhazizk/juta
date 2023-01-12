@@ -106,6 +106,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     },
     _id: "12234",
     uid: userAccount.uid,
+    group_id: null,
     logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
     logbook_type: "basic",
     logbook_id: uuid.v4(),

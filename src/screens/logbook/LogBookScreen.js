@@ -20,6 +20,7 @@ import {
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
@@ -58,6 +59,7 @@ const LogBookScreen = ({ route, navigation }) => {
   });
   const [screenLoading, setScreenLoading] = useState(false);
   const [componentLoading, setComponentLoading] = useState(false);
+  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
   const isFocused = useIsFocused();
 
   // TAG : useEffect Section //
@@ -67,7 +69,20 @@ const LogBookScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
+    setBadgeCounter({
+      ...badgeCounter,
+      logbookTab: 0,
+    });
+    logbookToBeSelected();
+    filterTransactions();
+  }, [sortedTransactions.groupSorted]);
+
+  useEffect(() => {
     if (isFocused) {
+      setBadgeCounter({
+        ...badgeCounter,
+        logbookTab: 0,
+      });
       setScreenLoading(true);
     }
   }, [isFocused]);

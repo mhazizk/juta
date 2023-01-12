@@ -206,7 +206,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         };
 
         setTimeout(async () => {
-          firestore.setData(
+          await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
             finalTransaction.transaction_id,
             finalTransaction

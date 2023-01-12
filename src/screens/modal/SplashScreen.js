@@ -68,8 +68,12 @@ const SplashScreen = ({ route, navigation }) => {
       case error:
         console.log(error);
         break;
-      default:
+
+      case !user && !loading:
         navigation.replace(screenList.onboardingScreen);
+        break;
+
+      default:
         break;
     }
   }, [user, loading, error]);

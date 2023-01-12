@@ -294,10 +294,14 @@ export const globalLogbooks = (state, action) => {
       };
 
     case ACTIONS.LOGBOOKS.INSERT:
+      const newLogbook = action.payload;
+      let foundOtherLogbooks = state.logbooks.filter(
+        (logbook) => logbook.logbook_id !== newLogbook.logbook_id
+      );
       return {
         ...state,
         logbookInsertCounter: state.logbookInsertCounter + 1,
-        logbooks: [...state.logbooks, action.payload],
+        logbooks: [...foundOtherLogbooks, action.payload],
       };
 
     case ACTIONS.LOGBOOKS.DELETE_ONE:
@@ -803,124 +807,147 @@ export const globalSortedTransactions = (state, action) => {
       ).slice(-2)}`;
       let groupSortedToBeReplaced;
 
-      // TAG : Check logbook
-      if (
-        state.groupSorted.some(
-          (logbooks) => logbooks.logbook_id === newTransaction.logbook_id
-        )
-      ) {
-        // Get logboook section
-        const foundLogbook = state.groupSorted.filter(
-          (logbook) => logbook.logbook_id === newTransaction.logbook_id
-        );
-        const foundOtherLogbooks = state.groupSorted.filter(
-          (logbook) => logbook.logbook_id !== newTransaction.logbook_id
-        );
-        console.log("first");
+      // TAG : Find for duplicates
+      let duplicate = false;
+      state.groupSorted.forEach((logbook) => {
+        logbook.transactions.forEach((section) => {
+          section.data.forEach((transaction) => {
+            if (transaction.transaction_id === newTransaction.transaction_id) {
+              duplicate = true;
+            }
+          });
+        });
+      });
 
-        // Check date and Get date section
-        const foundDateSection = foundLogbook[0].transactions.filter(
-          (dateSection) => dateSection.customDate === customDate
-        );
-        const foundOtherDateSection = foundLogbook[0].transactions.filter(
-          (dateSection) => dateSection.customDate !== customDate
-        );
-        console.log("second");
+      switch (duplicate) {
+        case false:
+          // TAG : Check logbook
+          if (
+            state.groupSorted.some(
+              (logbooks) => logbooks.logbook_id === newTransaction.logbook_id
+            )
+          ) {
+            // Get logboook section
+            const foundLogbook = state.groupSorted.filter(
+              (logbook) => logbook.logbook_id === newTransaction.logbook_id
+            );
+            const foundOtherLogbooks = state.groupSorted.filter(
+              (logbook) => logbook.logbook_id !== newTransaction.logbook_id
+            );
+            console.log("first");
 
-        // TAG :  If transaction has new date
-        if (!foundDateSection.length) {
-          // Create new date section
-          const newDateSection = {
-            title: new Date(newTransaction.details.date).toDateString(),
-            customDate: `${new Date(
-              newTransaction.details.date
-            ).getFullYear()}/${(
-              "0" +
-              (new Date(newTransaction.details.date).getMonth() + 1)
-            ).slice(-2)}/${(
-              "0" + new Date(newTransaction.details.date).getDate()
-            ).slice(-2)}`,
-            data: [newTransaction],
+            // Check date and Get date section
+            const foundDateSection = foundLogbook[0].transactions.filter(
+              (dateSection) => dateSection.customDate === customDate
+            );
+            const foundOtherDateSection = foundLogbook[0].transactions.filter(
+              (dateSection) => dateSection.customDate !== customDate
+            );
+            console.log("second");
+
+            // TAG :  If transaction has new date
+            if (!foundDateSection.length) {
+              // Create new date section
+              const newDateSection = {
+                title: new Date(newTransaction.details.date).toDateString(),
+                customDate: `${new Date(
+                  newTransaction.details.date
+                ).getFullYear()}/${(
+                  "0" +
+                  (new Date(newTransaction.details.date).getMonth() + 1)
+                ).slice(-2)}/${(
+                  "0" + new Date(newTransaction.details.date).getDate()
+                ).slice(-2)}`,
+                data: [newTransaction],
+              };
+
+              // Insert new date section in logbook
+              // Replace initial logbook transactions with new section
+              const mergeLogbookTransactions = [
+                ...foundOtherDateSection,
+                newDateSection,
+              ];
+              const sortedLogbookTransactions = mergeLogbookTransactions.sort(
+                sortLogbookTransactions
+              );
+              // console.log(foundOtherDateSection)
+              const logbookToBeReplaced = {
+                ...foundLogbook[0],
+                transactions: sortedLogbookTransactions,
+              };
+              console.log("sixth");
+              console.log(logbookToBeReplaced);
+
+              // Rebuild new sorted transactions
+              groupSortedToBeReplaced = [
+                ...foundOtherLogbooks,
+                logbookToBeReplaced,
+              ];
+              console.log(groupSortedToBeReplaced);
+            }
+
+            // TAG : If transaction has same date
+            if (foundDateSection.length) {
+              // Insert new transaction
+              const insertedTransactions = [
+                ...foundDateSection[0].data,
+                newTransaction,
+              ];
+              console.log("third");
+
+              // Sort new inserted transactions
+              const sortedDateSectionTransactions =
+                insertedTransactions.sort(sortTransactionsDate);
+              console.log("forth");
+
+              // Replace initial transactions data with sorted transactions
+              const sectionToBeInserted = {
+                ...foundDateSection[0],
+                data: sortedDateSectionTransactions,
+              };
+              console.log("fifth");
+
+              // Replace initial logbook transactions with new section
+              const mergeLogbookTransactions = [
+                ...foundOtherDateSection,
+                sectionToBeInserted,
+              ];
+              const sortedLogbookTransactions = mergeLogbookTransactions.sort(
+                sortLogbookTransactions
+              );
+              // console.log(foundOtherDateSection)
+              const logbookToBeReplaced = {
+                ...foundLogbook[0],
+                transactions: sortedLogbookTransactions,
+              };
+              console.log("sixth");
+              console.log(logbookToBeReplaced);
+
+              // Rebuild new sorted transactions
+              groupSortedToBeReplaced = [
+                ...foundOtherLogbooks,
+                logbookToBeReplaced,
+              ];
+              console.log(groupSortedToBeReplaced);
+            }
+          }
+
+          return {
+            ...state,
+            groupSorted: groupSortedToBeReplaced,
+            logbookToOpen: action.payload.logbookToOpen,
+            sortedTransactionsInsertCounter:
+              state.sortedTransactionsInsertCounter + 1,
           };
 
-          // Insert new date section in logbook
-          // Replace initial logbook transactions with new section
-          const mergeLogbookTransactions = [
-            ...foundOtherDateSection,
-            newDateSection,
-          ];
-          const sortedLogbookTransactions = mergeLogbookTransactions.sort(
-            sortLogbookTransactions
-          );
-          // console.log(foundOtherDateSection)
-          const logbookToBeReplaced = {
-            ...foundLogbook[0],
-            transactions: sortedLogbookTransactions,
+        case true:
+          return {
+            ...state,
           };
-          console.log("sixth");
-          console.log(logbookToBeReplaced);
 
-          // Rebuild new sorted transactions
-          groupSortedToBeReplaced = [
-            ...foundOtherLogbooks,
-            logbookToBeReplaced,
-          ];
-          console.log(groupSortedToBeReplaced);
-        }
-
-        // TAG : If transaction has same date
-        if (foundDateSection.length) {
-          // Insert new transaction
-          const insertedTransactions = [
-            ...foundDateSection[0].data,
-            newTransaction,
-          ];
-          console.log("third");
-
-          // Sort new inserted transactions
-          const sortedDateSectionTransactions =
-            insertedTransactions.sort(sortTransactionsDate);
-          console.log("forth");
-
-          // Replace initial transactions data with sorted transactions
-          const sectionToBeInserted = {
-            ...foundDateSection[0],
-            data: sortedDateSectionTransactions,
-          };
-          console.log("fifth");
-
-          // Replace initial logbook transactions with new section
-          const mergeLogbookTransactions = [
-            ...foundOtherDateSection,
-            sectionToBeInserted,
-          ];
-          const sortedLogbookTransactions = mergeLogbookTransactions.sort(
-            sortLogbookTransactions
-          );
-          // console.log(foundOtherDateSection)
-          const logbookToBeReplaced = {
-            ...foundLogbook[0],
-            transactions: sortedLogbookTransactions,
-          };
-          console.log("sixth");
-          console.log(logbookToBeReplaced);
-
-          // Rebuild new sorted transactions
-          groupSortedToBeReplaced = [
-            ...foundOtherLogbooks,
-            logbookToBeReplaced,
-          ];
-          console.log(groupSortedToBeReplaced);
-        }
+        default:
+          break;
       }
-
-      return {
-        ...state,
-        groupSorted: groupSortedToBeReplaced,
-        logbookToOpen: action.payload.logbookToOpen,
-        sortedTransactionsInsertCounter:
-          state.sortedTransactionsInsertCounter + 1,
-      };
 
     // TAG : Patch Transaction Method
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:

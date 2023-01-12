@@ -71,7 +71,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { TextPrimary } from "../components/Text";
 import { useNavigation } from "@react-navigation/native";
 import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
-
+import uuid from "react-native-uuid";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -88,131 +88,242 @@ const RootStack = () => {
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
 
+  const subscription = ({ uid, subscribeAll, unsubscribeAll }) => {
+    const unsubscribeAppSettings = firestore.getAndListenOneDoc(
+      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+      uid,
+      (data) => {
+        setBadgeCounter({
+          ...badgeCounter,
+          userTab: badgeCounter.userTab + 1,
+        });
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: data,
+        });
+      },
+      (error) => alert(error)
+    );
+    // unsubscribeAppSettings = userAccountSubscription;
+
+    const unsubscribeUserAccount = firestore.getAndListenOneDoc(
+      FIRESTORE_COLLECTION_NAMES.USERS,
+      uid,
+      (data) => {
+        setBadgeCounter({
+          ...badgeCounter,
+          userTab: badgeCounter.userTab + 1,
+        });
+        dispatchUserAccount({
+          type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+          payload: data,
+        });
+      },
+      (error) => alert(error)
+    );
+    // unsubscribeUserAccount = userAccountSubscription;
+
+    const unsubscribeLogbooks = firestore.getAndListenMultipleDocs(
+      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      uid,
+      (error) => alert(error),
+      (data) => {},
+      (data, type) => {
+        switch (type) {
+          case "added":
+            dispatchLogbooks({
+              type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
+              payload: data,
+            });
+            break;
+          case "modified":
+            dispatchLogbooks({
+              type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
+              payload: data,
+            });
+            break;
+          case "removed":
+            dispatchLogbooks({
+              type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
+              payload: data,
+            });
+            break;
+
+          default:
+            break;
+        }
+      }
+      // dispatchLogbooks({
+      //   type: REDUCER_ACTIONS.LOGBOOKS.SET,
+      //   payload: data,
+      // })
+    );
+    // unsubscribeLogbooks = logbooksSubscription;
+
+    const unsubscribeTransactions = firestore.getAndListenMultipleDocs(
+      FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+      uid,
+      (error) => alert(error),
+      (data) => {},
+      (data, type) => {
+        switch (type) {
+          case "added":
+            setBadgeCounter({
+              ...badgeCounter,
+              logbookTab: badgeCounter.logbookTab + 1,
+            });
+
+            dispatchSortedTransactions({
+              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                .INSERT_TRANSACTION,
+              payload: {
+                transaction: data,
+                logbookToOpen: logbooks.logbooks.find((logbook) => {
+                  if (logbook.logbook_id === data.logbook_id) {
+                    return {
+                      name: logbook.logbook_name,
+                      logbook_id: logbook.logbook_id,
+                      logbook_currency: logbook.logbook_currency,
+                    };
+                  }
+                }),
+              },
+            });
+            break;
+          case "modified":
+            setBadgeCounter({
+              ...badgeCounter,
+              logbookTab: badgeCounter.logbookTab + 1,
+            });
+
+            // TODO : Update transaction
+            // dispatchSortedTransactions({
+            //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+            //     .PATCH_TRANSACTION,
+            //   payload: {
+            //     transaction: data,
+            //     logbookToOpen: logbooks.logbooks.find((logbook) => {
+            //       if (logbook.logbook_id === data.logbook_id) {
+            //         return {
+            //           name: logbook.logbook_name,
+            //           logbook_id: logbook.logbook_id,
+            //           logbook_currency: logbook.logbook_currency,
+            //         };
+            //       }
+            //     }),
+            //   },
+            // });
+            break;
+
+          case "removed":
+            setBadgeCounter({
+              ...badgeCounter,
+              logbookTab: badgeCounter.logbookTab + 1,
+            });
+            //  TODO : fix delete transaction bug if section is empty
+            dispatchSortedTransactions({
+              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                .DELETE_ONE_TRANSACTION,
+              payload: {
+                deleteTransaction: data,
+                logbookToOpen: logbooks.logbooks.find((logbook) => {
+                  if (logbook.logbook_id === data.logbook_id) {
+                    return {
+                      name: logbook.logbook_name,
+                      logbook_id: logbook.logbook_id,
+                      logbook_currency: logbook.logbook_currency,
+                    };
+                  }
+                }),
+              },
+            });
+            break;
+
+          default:
+            break;
+        }
+      }
+    );
+    // unsubscribeTransactions = transactionsSubscription;
+
+    const unsubscribeCategories = firestore.getAndListenOneDoc(
+      FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+      uid,
+      (data) => {
+        dispatchCategories({
+          type: REDUCER_ACTIONS.CATEGORIES.SET,
+          payload: data,
+        });
+      },
+      (error) => alert(error)
+    );
+    // unsubscribeCategories = categoriesSubscription;
+
+    const unsubscribeBudgets = firestore.getAndListenMultipleDocs(
+      FIRESTORE_COLLECTION_NAMES.BUDGETS,
+      uid,
+      (error) => alert(error),
+      (data) => {},
+      (data) => {}
+      // dispatchBudgets({
+      //   type: REDUCER_ACTIONS.BUDGETS.SET,
+      //   payload: data,
+      // }),
+    );
+
+    if (subscribeAll) {
+      return () => {
+        unsubscribeAppSettings;
+        unsubscribeUserAccount;
+        unsubscribeLogbooks;
+        unsubscribeTransactions;
+        unsubscribeCategories;
+        unsubscribeBudgets;
+      };
+    }
+    if (unsubscribeAll) {
+      return () => {
+        unsubscribeAppSettings();
+        unsubscribeUserAccount();
+        unsubscribeLogbooks();
+        unsubscribeTransactions();
+        unsubscribeCategories();
+        unsubscribeBudgets();
+      };
+    }
+  };
+
   // TAG : useEffect for state
   useEffect(() => {
-    let appSettingsSubscription;
-    let userAccountSubscription;
-    let logbooksSubscription;
-    let transactionsSubscription;
-    let categoriesSubscription;
-    let budgetsSubscription;
+    // let unsubscribeAppSettings;
+    // let unsubscribeUserAccount;
+    // let unsubscribeLogbooks;
+    // let unsubscribeTransactions;
+    // let unsubscribeCategories;
+    // let unsubscribeBudgets;
 
     // Subscribe to firestore
-    if (appSettings?.uid) {
-      // TAG : Subscription Section
-      appSettingsSubscription = firestore.getAndListenOneDoc(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        (data) =>
-          setBadgeCounter({
-            ...badgeCounter,
-            userTab: badgeCounter.userTab + 1,
-          }),
-
-        // dispatchAppSettings({
-        //   type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-        //   payload: data,
-        // }),
-        (error) => alert(error)
-      );
-      userAccountSubscription = firestore.getAndListenOneDoc(
-        FIRESTORE_COLLECTION_NAMES.USERS,
-        appSettings.uid,
-        (data) =>
-          setBadgeCounter({
-            ...badgeCounter,
-            userTab: badgeCounter.userTab + 1,
-          }),
-        // dispatchAppSettings({
-        //   type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-        //   payload: data,
-        // }),
-        (error) => alert(error)
-      );
-      logbooksSubscription = firestore.getAndListenMultipleDocs(
-        FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-        appSettings.uid,
-        (error) => alert(error),
-        (data) => {},
-        (data, type) => {
-          switch (type) {
-            case "added":
-              // console.log("added", data);
-              // dispatchLogbooks({
-              //   type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-              //   payload: data,
-              // });
-              break;
-            case "modified":
-              // dispatchLogbooks({
-              //   type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
-              //   payload: data,
-              // });
-              break;
-            case "removed":
-              // dispatchLogbooks({
-              //   type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
-              //   payload: data,
-              // });
-              break;
-
-            default:
-              break;
-          }
-        }
-        // dispatchLogbooks({
-        //   type: REDUCER_ACTIONS.LOGBOOKS.SET,
-        //   payload: data,
-        // })
-      );
-      transactionsSubscription = firestore.getAndListenMultipleDocs(
-        FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-        appSettings.uid,
-        (error) => alert(error),
-        (data) => {},
-        (data) => {
-          //
-        }
-      );
-      categoriesSubscription = firestore.getAndListenMultipleDocs(
-        FIRESTORE_COLLECTION_NAMES.CATEGORIES,
-        appSettings.uid,
-        (error) => alert(error),
-        (data) => {},
-        (data) => {}
-        // dispatchCategories({
-        //   type: REDUCER_ACTIONS.CATEGORIES.SET,
-        //   payload: data,
-        // }),
-      );
-      budgetsSubscription = firestore.getAndListenMultipleDocs(
-        FIRESTORE_COLLECTION_NAMES.BUDGETS,
-        appSettings.uid,
-        (error) => alert(error),
-        (data) => {},
-        (data) => {}
-        // dispatchBudgets({
-        //   type: REDUCER_ACTIONS.BUDGETS.SET,
-        //   payload: data,
-        // }),
-      );
+    // if (userAccount.uid) {
+    //   // TAG : Subscription Section
+    //   subscription({ subscribeAll: true });
+    // }
+    if (userAccount && user && !isLoading) {
+      subscription({ uid: userAccount.uid, subscribeAll: true });
     }
-    // return () => {
-    //   // Unsubscribe from firestore
-    //   appSettingsSubscription();
-    //   userAccountSubscription();
-    //   logbooksSubscription();
-    //   transactionsSubscription();
-    //   categoriesSubscription();
-    //   budgetsSubscription();
-    // };
+    return () => {
+      // Unsubscribe from firestore
+      if (userAccount) {
+        subscription({ uid: userAccount.uid, unsubscribeAll: true });
+      }
+    };
   }, []);
-
+  // TODO : REFACTOR SUBSCRIPTION FUNCTION SO IT CAN BE CALLED FROM ACCOUNT SCREEN
   // Save Sorted Transactions to storage
   useEffect(() => {
     // TODO : snapshot listener for cross device sync
     if (userAccount && user && !isLoading) {
       setTimeout(async () => {
+        subscription({ uid: userAccount.uid, subscribeAll: true });
         await firestore.setData(
           FIRESTORE_COLLECTION_NAMES.USERS,
           userAccount.uid,
@@ -220,7 +331,7 @@ const RootStack = () => {
         );
       }, 1);
     }
-  }, [userAccount]);
+  }, [userAccount, user, isLoading]);
 
   // Save Sorted Transactions to storage
   useEffect(() => {
@@ -564,6 +675,7 @@ const RootStack = () => {
                           isoCode: "id",
                         },
                         logbook_type: "basic",
+                        group_id: null,
                         logbook_id: uuid.v4(),
                         logbook_name: item,
                         logbook_records: [],
@@ -815,7 +927,7 @@ const RootStack = () => {
       {/* // SECTION : ACCOUNT CREDENTIALS */}
       {/* // TAG : Devices Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Active Devices" }}
+        options={{ ...showHeader, title: "Change Password" }}
         name={screenList.changeAccountPasswordScreen}
         component={ChangeAccountPasswordScreen}
       />
