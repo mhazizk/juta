@@ -27,6 +27,7 @@ import {
   useGlobalSortedTransactions,
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
 import * as utils from "../../utils";
 import TransactionList from "../transactions/TransactionList";
@@ -59,7 +60,7 @@ const LogBookScreen = ({ route, navigation }) => {
   });
   const [screenLoading, setScreenLoading] = useState(false);
   const [componentLoading, setComponentLoading] = useState(false);
-  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
+  const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const isFocused = useIsFocused();
 
   // TAG : useEffect Section //
@@ -69,20 +70,24 @@ const LogBookScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    setBadgeCounter({
-      ...badgeCounter,
-      logbookTab: 0,
-    });
+    // setTimeout(() => {
+    //   dispatchBadgeCounter({
+    //     type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+    //     payload: "0",
+    //   });
+    // }, 1);
     logbookToBeSelected();
     filterTransactions();
   }, [sortedTransactions.groupSorted]);
 
   useEffect(() => {
     if (isFocused) {
-      setBadgeCounter({
-        ...badgeCounter,
-        logbookTab: 0,
-      });
+      setTimeout(() => {
+        dispatchBadgeCounter({
+          type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+          payload: "0",
+        });
+      }, 1);
       setScreenLoading(true);
     }
   }, [isFocused]);
@@ -190,7 +195,7 @@ const LogBookScreen = ({ route, navigation }) => {
 
   const countTransactions = () => {
     if (selectedLogbook) {
-      const filtered = sortedTransactions.groupSorted.find((logbook) => {
+      const filtered = sortedTransactions?.groupSorted?.find((logbook) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
       let array = [];

@@ -178,7 +178,7 @@ const DashboardScreen = ({ navigation }) => {
                   }}
                 />
               )}
-              {userAccount?.premium && (
+              {userAccount?.subscription?.plan === 'premium' && (
                 <Image
                   source={checkmark}
                   style={{

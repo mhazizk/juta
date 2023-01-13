@@ -4,7 +4,10 @@ import { Alert, ScrollView, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { ButtonSecondary, ButtonSecondaryDanger } from "../../components/Button";
+import {
+  ButtonSecondary,
+  ButtonSecondaryDanger,
+} from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
 import {
@@ -120,7 +123,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
       case countTransactions() > 0:
         Alert.alert(
           "Delete This Logbook ?",
-          'Cannot delete logbook with transactions. Please delete all transactions in this logbook first. You can delete all transactions by clicking "Delete All Transactions" button in "Logbook Details" screen',
+          "Cannot delete logbook with transactions. Please delete all transactions in this logbook first.",
           [
             {
               text: "OK",

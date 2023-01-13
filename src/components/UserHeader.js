@@ -1,11 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { Image, SafeAreaView, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
-import { TextPrimary } from "./Text";
+import { TextPrimary, TextSecondary } from "./Text";
 
 const UserHeaderComponent = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -17,10 +23,11 @@ const UserHeaderComponent = ({ navigation }) => {
       {userAccount && (
         <View
           style={{
-            display: "flex",
             flexDirection: "column",
             backgroundColor: appSettings.theme.style.colors.background,
-            height: "40%",
+            // height: "40%",
+            height: Dimensions.get("window").height * 0.4,
+            // flex:1,
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -46,7 +53,13 @@ const UserHeaderComponent = ({ navigation }) => {
               }}
             />
           </View>
-          <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              paddingTop: 8,
+              alignItems: "baseline",
+            }}
+          >
             <TextPrimary label="Hi," style={{ fontSize: 32, marginRight: 8 }} />
             <TextPrimary
               label={userAccount.displayName}
@@ -55,12 +68,19 @@ const UserHeaderComponent = ({ navigation }) => {
             <Image
               source={checkmark}
               style={{
-                display: userAccount.premium ? "flex" : "none",
+                display:
+                  userAccount?.subscription?.plan === "premium"
+                    ? "flex"
+                    : "none",
                 height: 22,
                 width: 22,
               }}
             />
           </View>
+          <TextSecondary
+            label={userAccount.email}
+            style={{ fontWeight: "bold", marginRight: 4 }}
+          />
         </View>
       )}
     </>

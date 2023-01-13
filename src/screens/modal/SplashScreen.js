@@ -8,6 +8,7 @@ import { lightTheme } from "../../assets/themes/lightTheme";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalLoading,
@@ -36,6 +37,7 @@ import initialCategories from "../../reducers/initial-state/InitialCategories";
 import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
 import { getDeviceId, getDeviceOSName } from "../../utils";
 import getDeviceName from "../../utils/GetDeviceName";
+import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -48,6 +50,7 @@ const SplashScreen = ({ route, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {}, []);
@@ -290,6 +293,12 @@ const SplashScreen = ({ route, navigation }) => {
         );
         const loggedInUserAccount = {
           ...userAccountData,
+          // subscription: {
+          //   active: false,
+          //   plan: "free",
+          //   date: Date.now(),
+          //   expiry: null,
+          // },
           devicesLoggedIn: [
             ...otherDevicesLoggedIn,
             {
@@ -374,15 +383,24 @@ const SplashScreen = ({ route, navigation }) => {
             payload: newBudget || budgetsData[0],
           });
         }
-        // dispatchBudgets({
-        //   type: REDUCER_ACTIONS.BUDGETS.FORCE_SET,
-        //   payload: {
-        //     budgetPatchCounter: 0,
-        //     budgetInsertCounter: 0,
-        //     budgetDeleteCounter: 0,
-        //     budgets: [newBudget || budgetsData[0]] || [],
-        //   },
-        // });
+        useFirestoreSubscriptions({
+          uid: userAccountData.uid,
+          subscribeAll: true,
+          appSettings: appSettings,
+          dispatchAppSettings: dispatchAppSettings,
+          userAccount: userAccount,
+          dispatchUserAccount: dispatchUserAccount,
+          logbooks: logbooks,
+          dispatchLogbooks: dispatchLogbooks,
+          sortedTransactions: sortedTransactions,
+          dispatchSortedTransactions: dispatchSortedTransactions,
+          categories: categories,
+          dispatchCategories: dispatchCategories,
+          budgets: budgets,
+          dispatchBudgets: dispatchBudgets,
+          badgeCounter: badgeCounter,
+          dispatchBadgeCounter: dispatchBadgeCounter,
+        });
 
         navigation.replace(screenList.bottomTabNavigator);
       })

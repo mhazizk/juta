@@ -26,7 +26,7 @@ const BottomTab = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
-  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
+  const { badgeCounter } = useGlobalBadgeCounter();
 
   useEffect(() => {
     // console.log(badgeCounter);
@@ -122,9 +122,9 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.dashboardTab === 0
+                badgeCounter?.tab?.dashboardTab === 0
                   ? null
-                  : badgeCounter?.dashboardTab,
+                  : badgeCounter?.tab?.dashboardTab,
               headerShown: false,
               // title: "Dashboard",
               // tabBarBadge: 3,
@@ -170,9 +170,9 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.logbookTab === 0
+                badgeCounter?.tab?.logbookTab === 0
                   ? null
-                  : badgeCounter?.logbookTab,
+                  : badgeCounter?.tab?.logbookTab,
             }}
             name={screenList.logbookScreen}
             component={LogBookScreen}
@@ -188,7 +188,7 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.actionTab === 0 ? null : badgeCounter?.actionTab,
+                badgeCounter?.tab?.actionTab === 0 ? null : badgeCounter?.tab?.actionTab,
               tabBarItemStyle: {
                 alignSelf: "center",
                 marginBottom: 28,
@@ -218,7 +218,7 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.searchTab === 0 ? null : badgeCounter?.searchTab,
+                badgeCounter?.tab?.searchTab === 0 ? null : badgeCounter?.tab?.searchTab,
             }}
             name={screenList.searchScreen}
             component={SearchScreen}
@@ -236,7 +236,7 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.userTab === 0 ? null : badgeCounter?.userTab,
+                badgeCounter?.tab?.userTab === 0 ? null : badgeCounter?.tab?.userTab,
             }}
             name={screenList.userScreen}
             component={UserScreen}

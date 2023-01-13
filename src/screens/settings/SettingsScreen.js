@@ -46,19 +46,50 @@ const CurrencySettingsScreen = ({ navigation }) => {
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
         payload: {
-          dashboardSettings: dashboardSettings,
-          searchSettings: searchSettings,
-          logbookSettings: logbookSettings,
           currencyRate: currencyRate,
         },
       });
     }, 1);
-  }, [dashboardSettings, searchSettings, logbookSettings, currencyRate]);
+  }, [currencyRate]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        payload: {
+          logbookSettings: logbookSettings,
+        },
+      });
+    }, 1);
+  }, [logbookSettings]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        payload: {
+          dashboardSettings: dashboardSettings,
+        },
+      });
+    }, 1);
+  }, [dashboardSettings]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        payload: {
+          searchSettings: searchSettings,
+        },
+      });
+    }, 1);
+  }, [searchSettings]);
 
   useEffect(() => {
     // console.log(JSON.stringify(appSettings));
     if (appSettings) {
       setTimeout(async () => {
+        console.log("appSettings");
         await firestore.setData(
           FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
           appSettings.uid,

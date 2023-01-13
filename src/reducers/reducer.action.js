@@ -1,4 +1,25 @@
+import screenList from "../navigations/ScreenList";
+
 const REDUCER_ACTIONS = {
+  BADGE_COUNTER: {
+    FORCE_SET_ALL: "FORCE_SET_ALL_BADGE_COUNTER",
+    TAB: {
+      SET_BADGE_IN_DASHBOARD_TAB: "SET_DASHBOARD_TAB",
+      SET_BADGE_IN_LOGBOOK_TAB: "SET_LOGBOOK_TAB",
+      SET_BADGE_IN_ACTION_TAB: "SET_ACTION_TAB",
+      SET_BADGE_IN_SEARCH_TAB: "SET_SEARCH_TAB",
+      SET_BADGE_IN_USER_TAB: "SET_USER_TAB",
+      FORCE_SET_BADGE_TAB: "FORCE_SET_BADGE_TAB",
+    },
+    SCREEN: {
+      SET_BADGE_IN_ACCOUNT_SCREEN: screenList.accountSettingsScreen
+        .replace(/ /g, "_")
+        .toUpperCase(),
+      SET_BADGE_IN_ACCOUNT_SCREEN: screenList.logbookScreen
+        .replace(/ /g, "_")
+        .toUpperCase(),
+    },
+  },
   MULTI_ACTIONS: {
     SET_INIT_TRANSACTIONS: "SET_INIT_TRANSACTIONS",
   },

@@ -67,10 +67,14 @@ const screenList = {
 
   // Devices Screen
   devicesScreen: "Devices Screen",
-  
+
   // Change Account Credentials Screen
   changeAccountPasswordScreen: "Change Account Password Screen",
   changeAccountEmailScreen: "Change Account Email Screen",
+
+  // Subscription Screen
+  subscriptionPlanScreen: "Subscription Plan Screen",
+  accountSubscriptionScreen: "Account Subscription Screen",
 
   // Setttings Screen
   settingsScreen: "Settings Screen",

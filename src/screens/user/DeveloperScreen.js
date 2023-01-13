@@ -11,6 +11,7 @@ import userTransactions from "../../database/userTransactions";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
+  useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
@@ -39,6 +40,7 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [loaded, setLoaded] = useState(null);
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
   const [user, loading, error] = useAuthState(auth);
@@ -404,6 +406,17 @@ const DeveloperScreen = ({ item, navigation }) => {
             }}
           />
 
+          {/* // SECTION : Badge Counter */}
+          <TextPrimary label="Badge Counter" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log badge counter from state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(badgeCounter));
+            }}
+          />
           {/* // SECTION : Budgets */}
           <TextPrimary label="Budget" style={{ padding: 16 }} />
           <ListItem

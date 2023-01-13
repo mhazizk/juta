@@ -18,6 +18,8 @@ export const ListItem = ({
   iconLeftName,
   iconLeftColor,
   iconRightName,
+  iconRightSize,
+  iconRightColor,
   onPress,
 }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -58,8 +60,12 @@ export const ListItem = ({
             {iconRightName && !isLoading && (
               <IonIcons
                 name={iconRightName}
-                size={iconRightName === "checkmark-circle" ? 22 : 18}
+                size={
+                  iconRightSize ||
+                  (iconRightName === "checkmark-circle" ? 22 : 18)
+                }
                 color={
+                  iconRightColor ||
                   appSettings.theme.style.colors.foreground ||
                   lightTheme.colors.foreground
                 }
@@ -90,6 +96,149 @@ export const ListItem = ({
             <View style={{ flexDirection: "row" }}>
               {symbol && <TextSecondary label={symbol} />}
               {rightLabel && <TextSecondary label={rightLabel} />}
+            </View>
+          </View>
+          {iconRightName && (
+            <IonIcons
+              name={iconRightName}
+              size={iconRightName === "checkmark-circle" ? 22 : 18}
+              color={
+                appSettings.theme.style.colors.foreground ||
+                lightTheme.colors.foreground
+              }
+              style={{ paddingLeft: 16 }}
+            />
+          )}
+        </View>
+      )}
+    </>
+  );
+};
+
+export const ListTable = ({
+  onPress,
+  isLoading = false,
+  theme,
+  symbol,
+  pressable,
+  iconPack,
+  // left
+  leftLabel,
+  iconLeftName,
+  iconLeftColor,
+  props,
+  // middle
+  middleLabel,
+  middleLabelColor,
+  // right
+  rightLabel,
+  rightLabelColor,
+  iconRightName,
+  iconRightSize,
+  iconRightColor,
+}) => {
+  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      {pressable && (
+        <TouchableNativeFeedback onPress={onPress}>
+          <View style={appSettings.theme.style.list.listContainer}>
+            {iconPack === "IonIcons" && (
+              <IonIcons
+                name={iconLeftName}
+                size={18}
+                color={
+                  iconLeftColor || appSettings.theme.style.colors.foreground
+                }
+                style={{ paddingRight: 16 }}
+              />
+            )}
+            {iconPack === "FontAwesome5" && (
+              <FontAwesome5Icon
+                name={iconLeftName}
+                color={
+                  iconLeftColor || appSettings.theme.style.colors.foreground
+                }
+                size={18}
+                style={{
+                  transform: [{ scaleX: -1 }],
+                  paddingLeft: 16,
+                }}
+              />
+            )}
+            <View style={appSettings.theme.style.list.listItem}>
+              {leftLabel && <TextPrimary label={leftLabel} />}
+              {rightLabel && <TextSecondary label={rightLabel} />}
+            </View>
+            {/* {iconPack === "IonIcons" && ( */}
+            {iconRightName && !isLoading && (
+              <IonIcons
+                name={iconRightName}
+                size={
+                  iconRightSize ||
+                  (iconRightName === "checkmark-circle" ? 22 : 18)
+                }
+                color={
+                  iconRightColor ||
+                  appSettings.theme.style.colors.foreground ||
+                  lightTheme.colors.foreground
+                }
+                style={{ paddingLeft: 16 }}
+              />
+            )}
+            {isLoading && <Loading size={18} />}
+            {/* )} */}
+          </View>
+        </TouchableNativeFeedback>
+      )}
+
+      {!pressable && (
+        <View style={appSettings.theme.style.list.listContainer}>
+          {iconLeftName && (
+            <IonIcons
+              name={iconLeftName}
+              size={18}
+              color={
+                appSettings.theme.style.colors.foreground ||
+                lightTheme.colors.foreground
+              }
+              style={{ paddingRight: 16 }}
+            />
+          )}
+          <View style={appSettings.theme.style.list.listItem}>
+            <View
+              style={{
+                flex: 4,
+              }}
+            >
+              {leftLabel && <TextPrimary label={leftLabel} />}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+              }}
+            >
+              {middleLabel && (
+                <TextSecondary
+                  label={middleLabel}
+                  style={{ color: middleLabelColor }}
+                />
+              )}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+              }}
+            >
+              {rightLabel && (
+                <TextSecondary
+                  label={rightLabel}
+                  style={{ color: rightLabelColor }}
+                />
+              )}
             </View>
           </View>
           {iconRightName && (

@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer, useState } from "react";
 import {
   globalAppSettings,
+  globalBadgeCounter,
   globalBudgets,
   globalCategories,
   GlobalLoading,
@@ -13,6 +14,7 @@ import {
   initialUserAccount,
 } from "./GlobalReducer";
 import initialAppSettings from "./initial-state/InitialAppSettings";
+import initialBadgeCounter from "./initial-state/InitialBadgeCounter";
 import { InitialBudgets } from "./initial-state/InitialBudgets";
 import initialCategories from "./initial-state/InitialCategories";
 import initialLogbooks from "./initial-state/InitialLogbooks";
@@ -100,13 +102,10 @@ export const GlobalStateProvider = ({ children }) => {
   const [budgets, dispatchBudgets] = useReducer(globalBudgets, InitialBudgets);
 
   const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
-  const [badgeCounter, setBadgeCounter] = useState({
-    dashboardTab: 0,
-    logbookTab: 0,
-    actionTab: 0,
-    searchTab: 0,
-    userTab: 0,
-  });
+  const [badgeCounter, dispatchBadgeCounter] = useReducer(
+    globalBadgeCounter,
+    initialBadgeCounter
+  );
 
   return (
     <>
@@ -158,7 +157,7 @@ export const GlobalStateProvider = ({ children }) => {
                       <GlobalBadgeCounterContext.Provider
                         value={{
                           badgeCounter: badgeCounter,
-                          setBadgeCounter: setBadgeCounter,
+                          dispatchBadgeCounter: dispatchBadgeCounter,
                         }}
                       >
                         {children}

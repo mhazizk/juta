@@ -181,6 +181,57 @@ export const initialLoading = {
   status: true,
 };
 
+export const globalBadgeCounter = (state, action) => {
+  switch (action.type) {
+    case REDUCER_ACTIONS.BADGE_COUNTER.FORCE_SET_ALL:
+      return action.payload;
+    case REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_DASHBOARD_TAB:
+      return {
+        ...state,
+        tab: {
+          ...state.tab,
+          dashboardTab: Number(action.payload),
+        },
+      };
+
+    case REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB:
+      return {
+        ...state,
+        tab: {
+          ...state.tab,
+          logbookTab: Number(action.payload),
+        },
+      };
+    case REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_ACTION_TAB:
+      return {
+        ...state,
+        tab: {
+          ...state.tab,
+          actionTab: Number(action.payload),
+        },
+      };
+    case REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_SEARCH_TAB:
+      return {
+        ...state,
+        tab: {
+          ...state.tab,
+          searchTab: Number(action.payload),
+        },
+      };
+    case REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB:
+      return {
+        ...state,
+        tab: {
+          ...state.tab,
+          userTab: Number(action.payload),
+        },
+      };
+
+    default:
+      return state;
+  }
+};
+
 export const globalBudgets = (state, action) => {
   switch (action.type) {
     case REDUCER_ACTIONS.BUDGETS.FORCE_SET:
@@ -329,7 +380,9 @@ export const globalLogbooks = (state, action) => {
 
       return {
         ...state,
-        logbooks: [...foundOtherLogbook, patchLogbook],
+        logbooks: [...foundOtherLogbook, patchLogbook].sort((a, b) => {
+          return a.logbook_name > b.logbook_name ? 1 : -1;
+        }),
         logbookPatchCounter: state.logbookPatchCounter + 1,
       };
 
@@ -1841,6 +1894,7 @@ export const globalSortedTransactions = (state, action) => {
         logbookToOpen: action.payload.logbookToOpen,
       };
 
+    // TAG : DELETE ONE TRANSACTION
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION:
       const deleteTransaction = action.payload.deleteTransaction;
       const customDeleteDate = `${new Date(
@@ -2108,9 +2162,7 @@ export const globalAppSettings = (state, action) => {
       return { ...state, ...action.payload };
 
     case REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET:
-      return {
-        ...action.payload,
-      };
+      return action.payload;
 
     default:
       return state;
@@ -2150,9 +2202,7 @@ export const globalUserAccount = (state, action) => {
       return { ...state, ...action.payload };
 
     case REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET:
-      return {
-        ...action.payload,
-      };
+      return action.payload;
 
     default:
       return state;

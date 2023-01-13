@@ -123,7 +123,7 @@ const MyGroupsScreen = ({ item, navigation }) => {
                 pressable
                 leftLabel="Account Type"
                 rightLabel={
-                  userAccount.premium ? "Premium Account" : "Basic Account"
+                  userAccount?.subscription?.plan === 'premium' ? "Premium Account" : "Basic Account"
                 }
                 iconLeftName="checkmark"
                 iconPack="IonIcons"

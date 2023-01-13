@@ -7,10 +7,14 @@ import {
 } from "../../../reducers/GlobalContext";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ListSection from "../../../components/List/ListSection";
+import { getDeviceId } from "../../../utils";
 
 const DevicesScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const deviceId = getDeviceId().then((deviceId) => {
+    return deviceId;
+  });
   const renderIcon = (device_os_name) => {
     let name = "";
     switch (true) {
@@ -50,6 +54,9 @@ const DevicesScreen = ({ navigation }) => {
                 pressable
                 leftLabel={device.device_name}
                 iconLeftName={renderIcon(device.device_os_name)}
+                // iconRightName="ellipse"
+                // iconRightSize={10}
+                // iconRightColor={device.device_id === deviceId ? "green" : "red"}
                 // iconLeftColor={appSettings.theme.style.colors.success}
                 iconPack="IonIcons"
                 rightLabel={new Date(device.last_login).toDateString()}

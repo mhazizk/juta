@@ -1,45 +1,33 @@
-import * as Application from "expo-application";
-import * as Device from "expo-device";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableNativeFeedback,
-  View,
+    Alert,
+    ScrollView, View
 } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import auth from "../../api/firebase/auth";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
-import { ListItem } from "../../components/List";
-import ListSection from "../../components/List/ListSection";
-import Loading from "../../components/Loading";
-import { TextPrimary } from "../../components/Text";
-import UserHeaderComponent from "../../components/UserHeader";
-import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
-import screenList from "../../navigations/ScreenList";
+import auth from "../../../api/firebase/auth";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import { colorOfTheYear2023 } from "../../../assets/themes/colorOfTheYear2023";
+import { ListItem } from "../../../components/List";
+import ListSection from "../../../components/List/ListSection";
+import Loading from "../../../components/Loading";
+import { TextPrimary } from "../../../components/Text";
+import UserHeaderComponent from "../../../components/UserHeader";
+import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
+import screenList from "../../../navigations/ScreenList";
 import {
-  useGlobalAppSettings,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
-import initialCategories from "../../reducers/initial-state/InitialCategories";
-import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
-import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
-import { getDeviceId } from "../../utils";
+    useGlobalAppSettings,
+    useGlobalBudgets,
+    useGlobalCategories,
+    useGlobalLogbooks,
+    useGlobalSortedTransactions,
+    useGlobalUserAccount,
+} from "../../../reducers/GlobalContext";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import { getDeviceId } from "../../../utils";
 
-const AccountSettingsScreen = ({ item, navigation }) => {
+const SubscriptionPlanScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -128,20 +116,16 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                 }
               />
 
-              {/* // TAG : Premium Subscription */}
+              {/* // TAG : Premium */}
               <ListItem
                 pressable
-                leftLabel="Subscription"
+                leftLabel="Account Type"
                 rightLabel={
-                  userAccount?.subscription?.plan === "premium"
-                    ? "Premium Account"
-                    : "Free Account"
+                  userAccount?.subscription?.plan === 'premium' ? "Premium Account" : "Basic Account"
                 }
-                iconLeftName="ribbon"
+                iconLeftName="checkmark"
                 iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.accountSubscriptionScreen)
-                }
+                onPress={() => alert("Feature in progress ...")}
               />
             </ListSection>
             <ListSection>
@@ -260,4 +244,4 @@ const AccountSettingsScreen = ({ item, navigation }) => {
   );
 };
 
-export default AccountSettingsScreen;
+export default SubscriptionPlanScreen;

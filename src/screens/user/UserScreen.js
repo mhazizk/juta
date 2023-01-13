@@ -20,21 +20,22 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
 } from "../../reducers/GlobalContext";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const UserScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { budgets } = useGlobalBudgets();
-  const { badgeCounter, setBadgeCounter } = useGlobalBadgeCounter();
+  const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const isFocus = useIsFocused();
 
   useEffect(() => {
     if (isFocus) {
       setTimeout(() => {
-        setBadgeCounter({
-          ...badgeCounter,
-          userTab: 0,
+        dispatchBadgeCounter({
+          type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
+          payload: "0",
         });
       }, 1);
     }
@@ -44,7 +45,7 @@ const UserScreen = ({ navigation }) => {
     <>
       <ScrollView
         contentContainerStyle={{
-          height: "100%",
+          minHeight: "100%",
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >

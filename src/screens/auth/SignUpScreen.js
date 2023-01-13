@@ -21,6 +21,7 @@ import screenList from "../../navigations/ScreenList";
 import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import userAccountModel from "../../model/userAccountModel";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -282,16 +283,24 @@ const SignUpScreen = ({ route, navigation }) => {
 
         handleUserSignUp({ email, password, displayName })
           .then((user) => {
-            const account = {
+            const account = userAccountModel({
               displayName: displayName,
-              premium: false,
               uid: user.uid,
               email: user.email,
               emailVerified: user.emailVerified,
               photoURL: user.photoURL,
-              devicesLoggedIn: [],
-              groups: [],
-            };
+            });
+
+            // const account = {
+            //   displayName: displayName,
+            //   premium: false,
+            //   uid: user.uid,
+            //   email: user.email,
+            //   emailVerified: user.emailVerified,
+            //   photoURL: user.photoURL,
+            //   devicesLoggedIn: [],
+            //   groups: [],
+            // };
 
             setTimeout(async () => {
               await firestore.setData(

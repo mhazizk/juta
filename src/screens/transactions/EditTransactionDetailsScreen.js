@@ -219,7 +219,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           logbookToOpen: logbookToOpen,
           patchTransaction: finalTransaction,
           prevTransaction: prevTransaction,
-          logbookToOpen: logbookToOpen,
           initialSortedTransactionsPatchCounter:
             sortedTransactions.sortedTransactionsPatchCounter,
         });
