@@ -87,7 +87,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       },
       _timestamps: {
         created_at: Date.now(),
+        created_by: userAccount.uid,
         updated_at: Date.now(),
+        updated_by: userAccount.uid,
       },
       _id: Date.now(),
       logbook_id: logbooks.logbooks[0].logbook_id,

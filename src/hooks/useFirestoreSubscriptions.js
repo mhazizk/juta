@@ -11,6 +11,7 @@ import REDUCER_ACTIONS from "../reducers/reducer.action";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import firestore from "../api/firebase/firestore";
 import { Transaction } from "firebase/firestore";
+import { useRef } from "react";
 
 const useFirestoreSubscriptions = ({
   uid,
@@ -31,6 +32,14 @@ const useFirestoreSubscriptions = ({
   badgeCounter,
   dispatchBadgeCounter,
 }) => {
+  // const userAccountRef = useRef(userAccount);
+  // const appSettingsRef = useRef(appSettings);
+  // const logbooksRef = useRef(logbooks);
+  // const sortedTransactionsRef = useRef(sortedTransactions);
+  // const categoriesRef = useRef(categories);
+  // const budgetsRef = useRef(budgets);
+  // const badgeCounterRef = useRef(badgeCounter);
+
   console.log("useFirestoreSubscriptions");
   // TAG : App Settings Subscription //
   const unsubscribeAppSettings = firestore.getAndListenOneDoc(
@@ -83,54 +92,24 @@ const useFirestoreSubscriptions = ({
           });
           break;
         case "modified":
-          let existingLogbook = null;
-          logbooks.logbooks.forEach((logbook) => {
-            if (logbook.logbook_id === data.logbook_id) {
-              existingLogbook = logbook;
-            }
+          dispatchLogbooks({
+            type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
+            payload: data,
           });
-          // Check duplicate between new and prev transaction
-          let isLogbookSame = true;
-          if (existingLogbook) {
-            isLogbookSame =
-              data._timestamps.updated_at ===
-              existingLogbook._timestamps.updated_at;
-          }
-
-          if (existingLogbook && !isLogbookSame) {
-            dispatchLogbooks({
-              type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
-              payload: data,
-            });
-          }
           break;
         case "removed":
-          let isLogbookDuplicate = false;
-          logbooks.logbooks.forEach((logbook) => {
-            if (logbook.logbook_id === data.logbook_id) {
-              isLogbookDuplicate = true;
-            }
+          dispatchLogbooks({
+            type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
+            payload: data,
           });
-          // Check duplicate between new and prev transaction
 
-          if (isLogbookDuplicate) {
-            dispatchLogbooks({
-              type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
-              payload: data,
-            });
-          }
           break;
 
         default:
           break;
       }
     }
-    // dispatchLogbooks({
-    //   type: REDUCER_ACTIONS.LOGBOOKS.SET,
-    //   payload: data,
-    // })
   );
-  // unsubscribeLogbooks = logbooksSubscription;
 
   // TAG : Transactions Subscription //
   const unsubscribeTransactions = firestore.getAndListenMultipleDocs(
@@ -181,94 +160,70 @@ const useFirestoreSubscriptions = ({
                 }),
               },
             });
+            // TODO : problem transaction are late 1 step after addition, so we dont get the added transaction in this function
+            setTimeout(() => {
+              let added = [];
+              sortedTransactions.groupSorted.forEach((logbook) => {
+                logbook.transactions.forEach((section) => {
+                  section.data.forEach((transaction) => {
+                    added.push(transaction.transaction_id);
+                  });
+                });
+              });
+              console.log({ added });
+            }, 2000);
           }
           break;
         case "modified":
           // TODO : fix patch transaction with different target logbook
-          sortedTransactions.groupSorted.forEach((logbook) => {
-            logbook.transactions.forEach((section) => {
-              section.data.forEach((transaction) => {
-                if (transaction.transaction_id === data.transaction_id) {
-                  prevTransaction = transaction;
-                }
-              });
-            });
+          dispatchBadgeCounter({
+            type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+            payload: 1,
           });
-          // Check duplicate between new and prev transaction
-          let isTimestampSame = true;
-          if (prevTransaction) {
-            isTimestampSame =
-              data._timestamps.updated_at ===
-              prevTransaction._timestamps.updated_at;
-          }
-          console.log("modified", { prevTransaction });
-          console.log("modified", { isTimestampSame });
 
-          if (prevTransaction && !isTimestampSame) {
-            dispatchBadgeCounter({
-              type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-              payload: 1,
-            });
-
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .PATCH_TRANSACTION,
-              payload: {
-                patchTransaction: data,
-                prevTransaction: prevTransaction,
-                logbookToOpen: logbooks.logbooks.find((logbook) => {
-                  if (logbook.logbook_id === data.logbook_id) {
-                    return {
-                      name: logbook.logbook_name,
-                      logbook_id: logbook.logbook_id,
-                      logbook_currency: logbook.logbook_currency,
-                    };
-                  }
-                }),
-              },
-            });
-          }
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .PATCH_TRANSACTION,
+            payload: {
+              patchTransaction: data,
+              // prevTransaction: prevTransaction,
+              logbookToOpen: logbooks.logbooks.find((logbook) => {
+                if (logbook.logbook_id === data.logbook_id) {
+                  return {
+                    name: logbook.logbook_name,
+                    logbook_id: logbook.logbook_id,
+                    logbook_currency: logbook.logbook_currency,
+                  };
+                }
+              }),
+            },
+          });
+          // }
           break;
 
         case "removed":
-          //  TODO : fix delete transaction bug if section is empty
-
-          let isDuplicate = false;
-          sortedTransactions.groupSorted.forEach((logbook) => {
-            logbook.transactions.forEach((section) => {
-              section.data.forEach((transaction) => {
-                if (transaction.transaction_id === data.transaction_id) {
-                  isDuplicate = true;
-                }
-              });
-            });
+          dispatchBadgeCounter({
+            type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+            payload: 1,
           });
-          // Check duplicate between new and prev transaction
-          // const isDuplicate = data.transaction_id === duplicate.transaction_id;
-          console.log({ isDuplicate, data });
-          if (isDuplicate) {
-            dispatchBadgeCounter({
-              type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-              payload: 1,
-            });
 
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .DELETE_ONE_TRANSACTION,
-              payload: {
-                deleteTransaction: data,
-                logbookToOpen: logbooks.logbooks.find((logbook) => {
-                  if (logbook.logbook_id === data.logbook_id) {
-                    return {
-                      name: logbook.logbook_name,
-                      logbook_id: logbook.logbook_id,
-                      logbook_currency: logbook.logbook_currency,
-                    };
-                  }
-                }),
-              },
-            });
-          }
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .DELETE_ONE_TRANSACTION,
+            payload: {
+              deleteTransaction: data,
+              logbookToOpen: logbooks.logbooks.find((logbook) => {
+                if (logbook.logbook_id === data.logbook_id) {
+                  return {
+                    name: logbook.logbook_name,
+                    logbook_id: logbook.logbook_id,
+                    logbook_currency: logbook.logbook_currency,
+                  };
+                }
+              }),
+            },
+          });
+          // }
           break;
 
         default:

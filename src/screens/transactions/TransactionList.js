@@ -308,6 +308,7 @@ const TransactionList = ({
                 {/* <Text>{item.details.amount}</Text> */}
                 {mappedTransactions && (
                   <TransactionListItem
+                    transactionId={item.transaction_id}
                     categoryName={utils.FindById.findCategoryNameById({
                       id: item.details.category_id,
                       categories: categories,

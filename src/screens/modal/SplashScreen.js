@@ -156,12 +156,12 @@ const SplashScreen = ({ route, navigation }) => {
           },
         });
 
-        dispatchCategories({
-          type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
-          payload: {
-            categories: { ...categoriesFallback, uid: currUser.uid },
-          },
-        });
+        // dispatchCategories({
+        //   type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
+        //   payload: {
+        //     categories: { ...categoriesFallback, uid: currUser.uid },
+        //   },
+        // });
 
         setTimeout(async () => {
           await firestore.setData(
@@ -329,6 +329,23 @@ const SplashScreen = ({ route, navigation }) => {
             uid: currUser.uid,
           },
         });
+
+        const fallbackCategories = categoriesFallback({
+          uid: currUser.uid,
+          created_by: currUser.uid,
+          updated_by: currUser.uid,
+        });
+
+        const categories = {
+          ...initialCategories,
+          categories: categoriesData || fallbackCategories,
+        };
+
+        dispatchCategories({
+          type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
+          payload: categories,
+        });
+
         // Merge transactions into sorted transactions
         const groupSorted = mergeTransactionsIntoSortedTransactions(
           transactionsData,
@@ -345,17 +362,6 @@ const SplashScreen = ({ route, navigation }) => {
           payload: {
             ...initialLogbooks,
             logbooks: logbooksData || [],
-          },
-        });
-
-        dispatchCategories({
-          type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-          payload: {
-            ...initialCategories,
-            categories: categoriesData || {
-              ...categoriesFallback,
-              uid: currUser.uid,
-            },
           },
         });
 

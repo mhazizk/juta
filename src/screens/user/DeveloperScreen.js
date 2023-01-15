@@ -13,6 +13,7 @@ import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
+  useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
@@ -40,6 +41,7 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { categories, dispatchCategories } = useGlobalCategories();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [loaded, setLoaded] = useState(null);
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
@@ -334,6 +336,17 @@ const DeveloperScreen = ({ item, navigation }) => {
               </View>
             </View>
           </TouchableNativeFeedback>
+          {/* // SECTION : Categories */}
+          <TextPrimary label="Categories" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log categories"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(categories));
+            }}
+          />
 
           {/* // SECTION : Transactions */}
           <TextPrimary label="Transactions" style={{ padding: 16 }} />

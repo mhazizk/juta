@@ -3,7 +3,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { setSortedTransactions } from "../utils/FetchData";
 import persistStorage from "../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
@@ -91,6 +91,51 @@ const RootStack = () => {
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
 
+  const userAccountRef = useRef(userAccount);
+  const appSettingsRef = useRef(appSettings);
+  const logbooksRef = useRef(logbooks);
+  const sortedTransactionsRef = useRef(sortedTransactions);
+  const categoriesRef = useRef(categories);
+  const budgetsRef = useRef(budgets);
+  const badgeCounterRef = useRef(badgeCounter);
+
+  const callback = useCallback(() => {
+    useFirestoreSubscriptions({
+      uid: userAccount.uid,
+      subscribeAll: true,
+      appSettings: appSettingsRef,
+      dispatchAppSettings: dispatchAppSettings,
+      userAccount: userAccountRef,
+      dispatchUserAccount: dispatchUserAccount,
+      logbooks: logbooksRef,
+      dispatchLogbooks: dispatchLogbooks,
+      sortedTransactions: sortedTransactionsRef,
+      dispatchSortedTransactions: dispatchSortedTransactions,
+      categories: categoriesRef,
+      dispatchCategories: dispatchCategories,
+      budgets: budgetsRef,
+      dispatchBudgets: dispatchBudgets,
+      badgeCounter: badgeCounterRef,
+      dispatchBadgeCounter: dispatchBadgeCounter,
+    });
+  }, [
+    userAccountRef,
+    appSettingsRef,
+    logbooksRef,
+    sortedTransactionsRef,
+    categoriesRef,
+    budgetsRef,
+    badgeCounterRef,
+
+    // userAccount,
+    // appSettings,
+    // logbooks,
+    // sortedTransactions,
+    // categories,
+    // budgets,
+    // badgeCounter,
+  ]);
+
   // TAG : useEffect for state
   useEffect(() => {
     // let unsubscribeAppSettings;
@@ -109,48 +154,48 @@ const RootStack = () => {
     if (userAccount && user && !loading) {
       // if (userAccount) {
       console.log("here");
-      useFirestoreSubscriptions({
-        uid: userAccount.uid,
-        subscribeAll: true,
-        appSettings: appSettings,
-        dispatchAppSettings: dispatchAppSettings,
-        userAccount: userAccount,
-        dispatchUserAccount: dispatchUserAccount,
-        logbooks: logbooks,
-        dispatchLogbooks: dispatchLogbooks,
-        sortedTransactions: sortedTransactions,
-        dispatchSortedTransactions: dispatchSortedTransactions,
-        categories: categories,
-        dispatchCategories: dispatchCategories,
-        budgets: budgets,
-        dispatchBudgets: dispatchBudgets,
-        badgeCounter: badgeCounter,
-        dispatchBadgeCounter: dispatchBadgeCounter,
-      });
+      // useFirestoreSubscriptions({
+      //   uid: userAccount.uid,
+      //   subscribeAll: true,
+      //   appSettings: appSettings,
+      //   dispatchAppSettings: dispatchAppSettings,
+      //   userAccount: userAccount,
+      //   dispatchUserAccount: dispatchUserAccount,
+      //   logbooks: logbooks,
+      //   dispatchLogbooks: dispatchLogbooks,
+      //   sortedTransactions: sortedTransactions,
+      //   dispatchSortedTransactions: dispatchSortedTransactions,
+      //   categories: categories,
+      //   dispatchCategories: dispatchCategories,
+      //   budgets: budgets,
+      //   dispatchBudgets: dispatchBudgets,
+      //   badgeCounter: badgeCounter,
+      //   dispatchBadgeCounter: dispatchBadgeCounter,
+      // });
     }
     return () => {
       // Unsubscribe from firestore
       if (userAccount && user && !loading) {
         console.log("here unsubscribe");
         // if (userAccount) {
-        useFirestoreSubscriptions({
-          uid: userAccount.uid,
-          unsubscribeAll: true,
-          appSettings: appSettings,
-          dispatchAppSettings: dispatchAppSettings,
-          userAccount: userAccount,
-          dispatchUserAccount: dispatchUserAccount,
-          logbooks: logbooks,
-          dispatchLogbooks: dispatchLogbooks,
-          sortedTransactions: sortedTransactions,
-          dispatchSortedTransactions: dispatchSortedTransactions,
-          categories: categories,
-          dispatchCategories: dispatchCategories,
-          budgets: budgets,
-          dispatchBudgets: dispatchBudgets,
-          badgeCounter: badgeCounter,
-          dispatchBadgeCounter: dispatchBadgeCounter,
-        });
+        // useFirestoreSubscriptions({
+        //   uid: userAccount.uid,
+        //   unsubscribeAll: true,
+        //   appSettings: appSettings,
+        //   dispatchAppSettings: dispatchAppSettings,
+        //   userAccount: userAccount,
+        //   dispatchUserAccount: dispatchUserAccount,
+        //   logbooks: logbooks,
+        //   dispatchLogbooks: dispatchLogbooks,
+        //   sortedTransactions: sortedTransactions,
+        //   dispatchSortedTransactions: dispatchSortedTransactions,
+        //   categories: categories,
+        //   dispatchCategories: dispatchCategories,
+        //   budgets: budgets,
+        //   dispatchBudgets: dispatchBudgets,
+        //   badgeCounter: badgeCounter,
+        //   dispatchBadgeCounter: dispatchBadgeCounter,
+        // });
       }
     };
   }, []);
@@ -173,13 +218,33 @@ const RootStack = () => {
 
   // Save Sorted Transactions to storage
   useEffect(() => {
-    if (sortedTransactions) {
-      // persistStorage.asyncStorage({
-      //   action: PERSIST_ACTIONS.SET,
-      //   key: "sortedTransactions",
-      //   rawValue: sortedTransactions,
+    if (sortedTransactions && user && !loading) {
+      console.log("here");
+      // useFirestoreSubscriptions({
+      //   uid: userAccount.uid,
+      //   subscribeAll: true,
+      //   appSettings: appSettings,
+      //   dispatchAppSettings: dispatchAppSettings,
+      //   userAccount: userAccount,
+      //   dispatchUserAccount: dispatchUserAccount,
+      //   logbooks: logbooks,
+      //   dispatchLogbooks: dispatchLogbooks,
+      //   sortedTransactions: sortedTransactions,
+      //   dispatchSortedTransactions: dispatchSortedTransactions,
+      //   categories: categories,
+      //   dispatchCategories: dispatchCategories,
+      //   budgets: budgets,
+      //   dispatchBudgets: dispatchBudgets,
+      //   badgeCounter: badgeCounter,
+      //   dispatchBadgeCounter: dispatchBadgeCounter,
       // });
     }
+
+    // persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.SET,
+    //   key: "sortedTransactions",
+    //   rawValue: sortedTransactions,
+    // });
   }, [sortedTransactions]);
 
   // Save App Settings to storage
@@ -483,7 +548,9 @@ const RootStack = () => {
                       const newLogbook = {
                         _timestamps: {
                           created_at: Date.now(),
+                          created_by: userAccount.uid,
                           updated_at: Date.now(),
+                          updated_by: userAccount.uid,
                         },
                         _id: uuid.v4(),
                         uid: userAccount.uid,

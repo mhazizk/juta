@@ -32,12 +32,14 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount } = useGlobalUserAccount();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -202,7 +204,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       default:
         const finalTransaction = {
           ...transaction,
-          _timestamps: { ...transaction._timestamps, updated_at: Date.now() },
+          _timestamps: {
+            ...transaction._timestamps,
+            updated_at: Date.now(),
+            updated_by: userAccount.uid,
+          },
         };
 
         setTimeout(async () => {

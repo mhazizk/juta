@@ -83,8 +83,8 @@ const UserScreen = ({ navigation }) => {
             pressable
             leftLabel="My Categories"
             rightLabel={`${
-              categories?.categories.expense?.length +
-              categories?.categories.income?.length
+              categories?.categories?.expense?.length +
+              categories?.categories?.income?.length
             } categories`}
             iconLeftName="pricetags"
             iconPack="IonIcons"

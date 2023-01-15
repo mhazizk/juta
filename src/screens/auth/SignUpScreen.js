@@ -22,6 +22,7 @@ import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import userAccountModel from "../../model/userAccountModel";
+import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -301,7 +302,6 @@ const SignUpScreen = ({ route, navigation }) => {
             //   devicesLoggedIn: [],
             //   groups: [],
             // };
-
             setTimeout(async () => {
               await firestore.setData(
                 FIRESTORE_COLLECTION_NAMES.USERS,

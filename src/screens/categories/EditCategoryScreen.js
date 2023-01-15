@@ -9,10 +9,12 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
-  useGlobalSortedTransactions
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 
 const EditCategoryScreen = ({ route, navigation }) => {
+  const { userAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -421,12 +423,20 @@ const EditCategoryScreen = ({ route, navigation }) => {
                         { cancelable: true }
                       );
                     } else {
+                      const newPatchCategory = {
+                        ...category.category,
+                        _timestamps: {
+                          ...category.category._timestamps,
+                          updated_at: Date.now(),
+                          updated_by: userAccount.uid,
+                        },
+                      };
                       navigation.navigate(screenList.loadingScreen, {
                         label: "Saving Category ...",
                         loadingType: "patchCategory",
                         prevCategoryType: category.prevCategoryType,
                         targetCategoryType: category.targetCategoryType,
-                        patchCategory: category.category,
+                        patchCategory: newPatchCategory,
                         initialCategoryPatchCounter:
                           categories.categoryPatchCounter,
                         initialSortedTransactionsPatchCounter:

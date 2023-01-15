@@ -10,9 +10,11 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 
 const NewCategoryScreen = ({ route, navigation }) => {
+  const { userAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { categories, dispatchCategories } = useGlobalCategories();
   const [category, setCategory] = useState(null);
@@ -382,11 +384,21 @@ const NewCategoryScreen = ({ route, navigation }) => {
                         { cancelable: true }
                       );
                     } else {
+                      const newCategory = {
+                        ...category.category,
+                        _timestamps: {
+                          ...category.category._timestamps,
+                          created_at: Date.now(),
+                          updated_at: Date.now(),
+                          created_by: userAccount.uid,
+                          updated_by: userAccount.uid,
+                        },
+                      };
                       navigation.navigate(screenList.loadingScreen, {
                         label: "Saving Category ...",
                         loadingType: "insertCategory",
                         categoryType: category.type,
-                        insertCategory: category.category,
+                        insertCategory: newCategory,
                         initialCategoryInsertCounter:
                           categories.categoryInsertCounter,
                       });

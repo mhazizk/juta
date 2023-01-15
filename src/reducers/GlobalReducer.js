@@ -355,8 +355,16 @@ export const globalLogbooks = (state, action) => {
         logbooks: [...foundOtherLogbooks, action.payload],
       };
 
-    case ACTIONS.LOGBOOKS.DELETE_ONE:
+    case REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE:
       let deleteLogbook = action.payload;
+
+      // let isLogbookDuplicate = false;
+      // state.logbooks.forEach((logbook) => {
+      //   if (logbook.logbook_id === deleteLogbook.logbook_id) {
+      //     isLogbookDuplicate = true;
+      //   }
+      // });
+      // console.log({ isLogbookDuplicate });
 
       let foundOtherLogbook = state.logbooks.filter(
         (logbook) => logbook.logbook_id !== deleteLogbook.logbook_id
@@ -371,21 +379,38 @@ export const globalLogbooks = (state, action) => {
     case ACTIONS.LOGBOOKS.PATCH:
       let patchLogbook = action.payload;
       // console.log(patchLogbook)
-      const foundLogbook = state.logbooks.filter(
-        (logbook) => logbook.logbook_id === patchLogbook.logbook_id
-      );
-      foundOtherLogbook = state.logbooks.filter(
-        (logbook) => logbook.logbook_id !== patchLogbook.logbook_id
-      );
+      let existingLogbook = null;
+      let isLogbookUpdateTimeSame = true;
+      state.logbooks.forEach((logbook) => {
+        if (logbook.logbook_id === patchLogbook.logbook_id) {
+          existingLogbook = logbook;
+        }
+      });
+      if (existingLogbook) {
+        isLogbookUpdateTimeSame =
+          patchLogbook._timestamps.updated_at ===
+          existingLogbook._timestamps.updated_at;
+      }
+      console.log({ isLogbookUpdateTimeSame });
+      console.log({ existingLogbook });
+      // Check duplicate between new and prev transaction
+      if (existingLogbook && !isLogbookUpdateTimeSame) {
+        const foundLogbook = state.logbooks.filter(
+          (logbook) => logbook.logbook_id === patchLogbook.logbook_id
+        );
+        foundOtherLogbook = state.logbooks.filter(
+          (logbook) => logbook.logbook_id !== patchLogbook.logbook_id
+        );
 
-      return {
-        ...state,
-        logbooks: [...foundOtherLogbook, patchLogbook].sort((a, b) => {
-          return a.logbook_name > b.logbook_name ? 1 : -1;
-        }),
-        logbookPatchCounter: state.logbookPatchCounter + 1,
-      };
-
+        return {
+          ...state,
+          logbooks: [...foundOtherLogbook, patchLogbook].sort((a, b) => {
+            return a.logbook_name > b.logbook_name ? 1 : -1;
+          }),
+          logbookPatchCounter: state.logbookPatchCounter + 1,
+        };
+      }
+      return state;
     default:
       return state;
   }
@@ -402,7 +427,7 @@ export const globalCategories = (state, action) => {
         ...action.payload,
       };
 
-    case ACTIONS.CATEGORIES.SET:
+    case REDUCER_ACTIONS.CATEGORIES.SET:
       return {
         ...state,
         categories: action.payload,
@@ -1005,7 +1030,24 @@ export const globalSortedTransactions = (state, action) => {
     // TAG : Patch Transaction Method
     case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:
       const newPatchTransaction = action.payload.patchTransaction;
-      const prevTransaction = action.payload.prevTransaction;
+      // Check if patched transaction id is the same as existing transaction id
+      let prevTransaction = null;
+      if (action.payload.prevTransaction) {
+        prevTransaction = action.payload.prevTransaction;
+      } else {
+        state.groupSorted.forEach((logbook) => {
+          logbook.transactions.forEach((section) => {
+            section.data.forEach((transaction) => {
+              if (
+                transaction.transaction_id ===
+                newPatchTransaction.transaction_id
+              ) {
+                prevTransaction = transaction;
+              }
+            });
+          });
+        });
+      }
       const customPatchDate = `${new Date(
         newPatchTransaction.details.date
       ).getFullYear()}/${(
@@ -1028,874 +1070,896 @@ export const globalSortedTransactions = (state, action) => {
       let prevLogbookToBeReplaced;
       let targetLogbookToBeReplaced;
 
-      // TAG : Create new date section
-      const newDateSection = {
-        title: new Date(newPatchTransaction.details.date).toLocaleDateString(),
-        customDate: customPatchDate,
-        data: [newPatchTransaction],
-      };
+      let isTimestampSame;
 
-      // Check patch and prev if logbook id and transaction date is still the same
-      const isLogbookIdSame =
-        newPatchTransaction.logbook_id === prevTransaction.logbook_id;
-      const isTransactionDateSame = customPatchDate === customPrevDate;
+      if (prevTransaction) {
+        isTimestampSame =
+          newPatchTransaction._timestamps.updated_at ===
+          prevTransaction._timestamps.updated_at;
+      }
 
-      // Get logboook section
-      const foundPrevLogbook = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id === prevTransaction.logbook_id
-      );
-      const foundPrevOtherLogbooks = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id !== prevTransaction.logbook_id
-      );
-      const foundTargetLogbook = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id === newPatchTransaction.logbook_id
-      );
-      const foundTargetOtherLogbooks = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id !== newPatchTransaction.logbook_id
-      );
-      console.log("first");
+      if (prevTransaction && !isTimestampSame) {
+        // TAG : Create new date section
+        const newDateSection = {
+          title: new Date(
+            newPatchTransaction.details.date
+          ).toLocaleDateString(),
+          customDate: customPatchDate,
+          data: [newPatchTransaction],
+        };
 
-      // Check date and Get date section
-      // Target Date Section
-      const foundTargetDateSection = foundTargetLogbook[0].transactions.filter(
-        (dateSection) => dateSection.customDate === customPatchDate
-      );
-      const foundTargetOtherDateSection =
-        foundTargetLogbook[0].transactions.filter(
-          (dateSection) => dateSection.customDate !== customPatchDate
+        // Check patch and prev if logbook id and transaction date is still the same
+        const isLogbookIdSame =
+          newPatchTransaction.logbook_id === prevTransaction.logbook_id;
+        const isTransactionDateSame = customPatchDate === customPrevDate;
+
+        // Get logboook section
+        const foundPrevLogbook = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id === prevTransaction.logbook_id
         );
-      // Prev Date Section
-      const foundPrevDateSection = foundPrevLogbook[0].transactions.filter(
-        (dateSection) => dateSection.customDate === customPrevDate
-      );
-      const foundPrevOtherDateSection = foundPrevLogbook[0].transactions.filter(
-        (dateSection) => dateSection.customDate !== customPrevDate
-      );
-      // Prev Transactions Data
-      const foundPrevOtherTransactionsData =
-        foundPrevDateSection[0].data.filter(
-          (transaction) =>
-            transaction.transaction_id !== newPatchTransaction.transaction_id
+        const foundPrevOtherLogbooks = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id !== prevTransaction.logbook_id
         );
-
-      // TAG : OPTION 11
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        !foundPrevOtherDateSection.length &&
-        foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 11");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
+        const foundTargetLogbook = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id === newPatchTransaction.logbook_id
+        );
+        const foundTargetOtherLogbooks = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id !== newPatchTransaction.logbook_id
+        );
         console.log("first");
-        // 2. Replace previous date section data with no 1
-        // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
-        console.log("second");
 
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
-        // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
-        console.log("third");
+        // Check date and Get date section
+        // Target Date Section
+        const foundTargetDateSection =
+          foundTargetLogbook[0].transactions.filter(
+            (dateSection) => dateSection.customDate === customPatchDate
+          );
+        const foundTargetOtherDateSection =
+          foundTargetLogbook[0].transactions.filter(
+            (dateSection) => dateSection.customDate !== customPatchDate
+          );
+        // Prev Date Section
+        const foundPrevDateSection = foundPrevLogbook[0].transactions.filter(
+          (dateSection) => dateSection.customDate === customPrevDate
+        );
+        const foundPrevOtherDateSection =
+          foundPrevLogbook[0].transactions.filter(
+            (dateSection) => dateSection.customDate !== customPrevDate
+          );
+        // Prev Transactions Data
+        const foundPrevOtherTransactionsData =
+          foundPrevDateSection[0].data.filter(
+            (transaction) =>
+              transaction.transaction_id !== newPatchTransaction.transaction_id
+          );
 
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = { ...foundPrevLogbook[0], transactions: [] };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
+        // TAG : OPTION 11
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          !foundPrevOtherDateSection.length &&
+          foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 11");
 
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundTargetDateSection[0].data,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("fifth");
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
+          console.log("second");
 
-        // 6. Replace target date section data with no 5
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
+          // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: [],
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundTargetDateSection[0].data,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 1 date section and sort it
+          const removeTargetDateSections = foundTargetOtherDateSection.filter(
+            (section) => section.customDate !== customPatchDate
+          );
+          const overrideTargetDateSections = [
+            ...removeTargetDateSections,
+            replacedTargetDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 10
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          !foundPrevOtherDateSection.length &&
+          !foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 10");
+
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
+          console.log("second");
+
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
+          // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: [],
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
+          // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 2 date section and sort it
+          // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
+          const overrideTargetDateSections = [
+            ...foundTargetOtherDateSection,
+            newDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 9
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          foundPrevOtherDateSection.length &&
+          !foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 9");
+
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          const sortedPrevOtherTransactionsData =
+            foundPrevOtherTransactionsData.sort(sortTransactionsDate);
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          const replacedPrevDateSection = {
+            ...foundPrevDateSection[0],
+            data: sortedPrevOtherTransactionsData,
+          };
+          console.log("second");
+
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
+          sortedLogbookTransactions = foundPrevOtherDateSection.sort(
+            sortLogbookTransactions
+          );
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
+          // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 2 date section and sort it
+          // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
+          const overrideTargetDateSections = [
+            ...foundTargetOtherDateSection,
+            newDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 8
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          foundPrevOtherDateSection.length &&
+          !foundTargetDateSection.length &&
+          foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 8");
+
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          const sortedPrevOtherTransactionsData =
+            foundPrevOtherTransactionsData.sort(sortTransactionsDate);
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          const replacedPrevDateSection = {
+            ...foundPrevDateSection[0],
+            data: sortedPrevOtherTransactionsData,
+          };
+          console.log("second");
+
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          const overridePrevDateSections = [
+            ...foundPrevOtherDateSection,
+            replacedPrevDateSection,
+          ];
+          sortedLogbookTransactions = overridePrevDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
+          // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 2 date section and sort it
+          // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
+          const overrideTargetDateSections = [
+            ...foundTargetOtherDateSection,
+            newDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 7
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          foundPrevOtherDateSection.length &&
+          foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 7");
+
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
+          // console.log('first')
+          // 2. Replace previous date section data with no 1
+          // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
+          // console.log('second')
+
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
+          sortedLogbookTransactions = foundPrevOtherDateSection.sort(
+            sortLogbookTransactions
+          );
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundTargetDateSection[0].data,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 2 date section and sort it
+          const removeTargetDateSections = foundTargetOtherDateSection.filter(
+            (section) => section.customDate !== customPatchDate
+          );
+          const overrideTargetDateSections = [
+            ...removeTargetDateSections,
+            replacedTargetDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 6
+        if (
+          !isLogbookIdSame &&
+          // isTransactionDateSame &&
+          foundPrevOtherDateSection.length &&
+          foundTargetDateSection.length &&
+          foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 6");
+
+          // TAG : [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          const sortedPrevOtherTransactionsData =
+            foundPrevOtherTransactionsData.sort(sortTransactionsDate);
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          const replacedPrevDateSection = {
+            ...foundPrevDateSection[0],
+            data: sortedPrevOtherTransactionsData,
+          };
+          console.log("second");
+
+          // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
+          // 3. Get previous section date, override date section and sort it
+          const overridePrevDateSections = [
+            ...foundPrevOtherDateSection,
+            replacedPrevDateSection,
+          ];
+          sortedLogbookTransactions = overridePrevDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("third");
+
+          // 4. Replace initial logbook transactions with new section
+          prevLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("forth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [C] HANDLING TARGET DATE SECTION
+          // 5. Get transactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundTargetDateSection[0].data,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("fifth");
+
+          // 6. Replace target date section data with no 5
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+          console.log("sixth");
+
+          // TAG : [D] JOIN [C] IN TARGET LOGBOOK
+          // 7. Get previous section date, override 2 date section and sort it
+          const removeTargetDateSections = foundTargetOtherDateSection.filter(
+            (section) => section.customDate !== customPatchDate
+          );
+          const overrideTargetDateSections = [
+            ...removeTargetDateSections,
+            replacedTargetDateSection,
+          ];
+          console.log("seventh");
+
+          // 8. Sort new transactions date sections
+          sortedLogbookTransactions = overrideTargetDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("eigth");
+
+          // 9. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundTargetLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("ninth");
+          // console.log(logbookToBeReplaced)
+
+          // TAG : [E] JOINING [A] AND [D]
+
+          // 10. Final Override
+          const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
+            (logbook) =>
+              logbook.logbook_id !== newPatchTransaction.logbook_id &&
+              logbook.logbook_id !== prevTransaction.logbook_id
+          );
+          groupSortedToBeReplaced = [
+            ...removedTwoLogbooks,
+            targetLogbookToBeReplaced,
+            prevLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 5
+        if (
+          isLogbookIdSame &&
+          isTransactionDateSame &&
+          foundTargetDateSection.length
+        ) {
+          console.log("OPT 5");
+
+          // [A] HANDLING TARGET DATE SECTION
+          // 1. Get trasnactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundPrevOtherTransactionsData,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("third");
+
+          // 4. Replace target date section data with no 3
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+
+          // [C] JOINING [A] AND [B]
+
+          // 5. Get previous section date, override 2 date section and sort it
+          const overrideDateSections = [
+            ...foundTargetOtherDateSection,
+            replacedTargetDateSection,
+          ];
+
+          // 6. Sort new transactions date sections
+          sortedLogbookTransactions = overrideDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("forth");
+
+          // 7. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("sixth");
+          // console.log(logbookToBeReplaced)
+
+          // 8. Final Override
+          groupSortedToBeReplaced = [
+            ...foundPrevOtherLogbooks,
+            targetLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 4
+        if (
+          isLogbookIdSame &&
+          !isTransactionDateSame &&
+          foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 4");
+
+          // [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
+          // console.log('first')
+          // 2. Replace previous date section data with no 1
+          // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
+          // console.log('second')
+
+          // [B] HANDLING TARGET DATE SECTION
+          // 3. Get transactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundTargetDateSection[0].data,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("third");
+
+          // 4. Replace target date section data with no 3
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+
+          // [C] JOINING [A] AND [B]
+
+          // 5. Get previous section date, override 2 date section and sort it
+          const removeTwoDateSections = foundTargetOtherDateSection.filter(
+            (section) =>
+              section.customDate !== customPatchDate &&
+              section.customDate !== customPrevDate
+          );
+          const overrideDateSections = [
+            ...removeTwoDateSections,
+            replacedTargetDateSection,
+          ];
+
+          // 6. Sort new transactions date sections
+          sortedLogbookTransactions = overrideDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("forth");
+
+          // 7. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("sixth");
+          // console.log(logbookToBeReplaced)
+
+          // 8. Final Override
+          groupSortedToBeReplaced = [
+            ...foundPrevOtherLogbooks,
+            targetLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 3
+        if (
+          isLogbookIdSame &&
+          !isTransactionDateSame &&
+          foundTargetDateSection.length &&
+          foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 3");
+
+          // [A] HANDLING PREVIOUS DATE SECTION
+          // 1. Remove transaction from previous date section and sort it
+          const sortedPrevOtherTransactionsData =
+            foundPrevOtherTransactionsData.sort(sortTransactionsDate);
+          console.log("first");
+          // 2. Replace previous date section data with no 1
+          const replacedPrevDateSection = {
+            ...foundPrevDateSection[0],
+            data: sortedPrevOtherTransactionsData,
+          };
+          console.log("second");
+
+          // [B] HANDLING TARGET DATE SECTION
+          // 3. Get transactions from target date section and sort it
+          const getTargetTransactionsData = [
+            ...foundTargetDateSection[0].data,
+            newPatchTransaction,
+          ];
+          const sortedTargetTransactionsData =
+            getTargetTransactionsData.sort(sortTransactionsDate);
+          console.log("third");
+
+          // 4. Replace target date section data with no 3
+          const replacedTargetDateSection = {
+            ...foundTargetDateSection[0],
+            data: sortedTargetTransactionsData,
+          };
+
+          // [C] JOINING [A] AND [B]
+
+          // 5. Get previous section date, override 2 date section and sort it
+          const removeTwoDateSections = foundTargetOtherDateSection.filter(
+            (section) =>
+              section.customDate !== customPatchDate &&
+              section.customDate !== customPrevDate
+          );
+          const overrideDateSections = [
+            ...removeTwoDateSections,
+            replacedPrevDateSection,
+            replacedTargetDateSection,
+          ];
+
+          // 6. Sort new transactions date sections
+          sortedLogbookTransactions = overrideDateSections.sort(
+            sortLogbookTransactions
+          );
+          console.log("forth");
+
+          // 7. Replace initial logbook transactions with new section
+          targetLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("sixth");
+          // console.log(logbookToBeReplaced)
+
+          // 8. Final Override
+          groupSortedToBeReplaced = [
+            ...foundPrevOtherLogbooks,
+            targetLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 2
+        if (
+          isLogbookIdSame &&
+          !isTransactionDateSame &&
+          !foundTargetDateSection.length &&
+          !foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 2");
+
+          mergeLogbookTransactions = [
+            ...foundPrevOtherDateSection,
+            newDateSection,
+          ];
+
+          sortedLogbookTransactions = mergeLogbookTransactions.sort(
+            sortLogbookTransactions
+          );
+
+          targetLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("sixth");
+          console.log(targetLogbookToBeReplaced);
+
+          // Rebuild new sorted transactions
+          groupSortedToBeReplaced = [
+            ...foundPrevOtherLogbooks,
+            targetLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        // TAG : OPTION 1
+        if (
+          isLogbookIdSame &&
+          !isTransactionDateSame &&
+          !foundTargetDateSection.length &&
+          foundPrevOtherTransactionsData.length
+        ) {
+          console.log("OPT 1");
+
+          // TAG : New date && same logbook && has prevTransactionsData remains
+          // Sort new inserted transactions
+          const prevSortedDateSectionTransactions =
+            foundPrevOtherTransactionsData.sort(sortTransactionsDate);
+          console.log("forth");
+
+          // Replace initial transactions data with sorted transactions
+          const newPrevDateSection = {
+            ...foundPrevDateSection[0],
+            data: prevSortedDateSectionTransactions,
+          };
+          console.log("fifth");
+
+          // Replace initial logbook transactions with new section
+          mergeLogbookTransactions = [
+            ...foundPrevOtherDateSection,
+            newPrevDateSection,
+            newDateSection,
+          ];
+          sortedLogbookTransactions = mergeLogbookTransactions.sort(
+            sortLogbookTransactions
+          );
+          // console.log(foundOtherDateSection)
+          targetLogbookToBeReplaced = {
+            ...foundPrevLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          console.log("sixth");
+          console.log(targetLogbookToBeReplaced);
+
+          // Rebuild new sorted transactions
+          groupSortedToBeReplaced = [
+            ...foundPrevOtherLogbooks,
+            targetLogbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        return {
+          ...state,
+          groupSorted: groupSortedToBeReplaced,
+          sortedTransactionsPatchCounter:
+            state.sortedTransactionsPatchCounter + 1,
+          logbookToOpen: action.payload.logbookToOpen,
         };
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 1 date section and sort it
-        const removeTargetDateSections = foundTargetOtherDateSection.filter(
-          (section) => section.customDate !== customPatchDate
-        );
-        const overrideTargetDateSections = [
-          ...removeTargetDateSections,
-          replacedTargetDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
       }
-
-      // TAG : OPTION 10
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        !foundPrevOtherDateSection.length &&
-        !foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 10");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
-        console.log("first");
-        // 2. Replace previous date section data with no 1
-        // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
-        console.log("second");
-
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
-        // sortedLogbookTransactions = foundPrevOtherDateSection.sort(sortLogbookTransactions)
-        console.log("third");
-
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = { ...foundPrevLogbook[0], transactions: [] };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
-        // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
-        console.log("fifth");
-
-        // 6. Replace target date section data with no 5
-        // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 2 date section and sort it
-        // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
-        const overrideTargetDateSections = [
-          ...foundTargetOtherDateSection,
-          newDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 9
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        foundPrevOtherDateSection.length &&
-        !foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 9");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
-        console.log("first");
-        // 2. Replace previous date section data with no 1
-        const replacedPrevDateSection = {
-          ...foundPrevDateSection[0],
-          data: sortedPrevOtherTransactionsData,
-        };
-        console.log("second");
-
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
-        sortedLogbookTransactions = foundPrevOtherDateSection.sort(
-          sortLogbookTransactions
-        );
-        console.log("third");
-
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
-        // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
-        console.log("fifth");
-
-        // 6. Replace target date section data with no 5
-        // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 2 date section and sort it
-        // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
-        const overrideTargetDateSections = [
-          ...foundTargetOtherDateSection,
-          newDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 8
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        foundPrevOtherDateSection.length &&
-        !foundTargetDateSection.length &&
-        foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 8");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
-        console.log("first");
-        // 2. Replace previous date section data with no 1
-        const replacedPrevDateSection = {
-          ...foundPrevDateSection[0],
-          data: sortedPrevOtherTransactionsData,
-        };
-        console.log("second");
-
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        const overridePrevDateSections = [
-          ...foundPrevOtherDateSection,
-          replacedPrevDateSection,
-        ];
-        sortedLogbookTransactions = overridePrevDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("third");
-
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        // const getTargetTransactionsData = [...foundTargetDateSection[0].data, newPatchTransaction]
-        // const sortedTargetTransactionsData = getTargetTransactionsData.sort(sortTransactions)
-        console.log("fifth");
-
-        // 6. Replace target date section data with no 5
-        // const replacedTargetDateSection = { ...foundTargetDateSection[0], data: sortedTargetTransactionsData }
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 2 date section and sort it
-        // const removeTargetDateSections = foundTargetOtherDateSection.filter((section) => section.customDate !== customPatchDate)
-        const overrideTargetDateSections = [
-          ...foundTargetOtherDateSection,
-          newDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 7
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        foundPrevOtherDateSection.length &&
-        foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 7");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
-        // console.log('first')
-        // 2. Replace previous date section data with no 1
-        // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
-        // console.log('second')
-
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        // const overridePrevDateSections = [...foundPrevOtherDateSection, replacedPrevDateSection]
-        sortedLogbookTransactions = foundPrevOtherDateSection.sort(
-          sortLogbookTransactions
-        );
-        console.log("third");
-
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundTargetDateSection[0].data,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("fifth");
-
-        // 6. Replace target date section data with no 5
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
-        };
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 2 date section and sort it
-        const removeTargetDateSections = foundTargetOtherDateSection.filter(
-          (section) => section.customDate !== customPatchDate
-        );
-        const overrideTargetDateSections = [
-          ...removeTargetDateSections,
-          replacedTargetDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 6
-      if (
-        !isLogbookIdSame &&
-        // isTransactionDateSame &&
-        foundPrevOtherDateSection.length &&
-        foundTargetDateSection.length &&
-        foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 6");
-
-        // TAG : [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
-        console.log("first");
-        // 2. Replace previous date section data with no 1
-        const replacedPrevDateSection = {
-          ...foundPrevDateSection[0],
-          data: sortedPrevOtherTransactionsData,
-        };
-        console.log("second");
-
-        // TAG : [B] JOIN [A] IN PREVIOUS LOGBOOK
-        // 3. Get previous section date, override date section and sort it
-        const overridePrevDateSections = [
-          ...foundPrevOtherDateSection,
-          replacedPrevDateSection,
-        ];
-        sortedLogbookTransactions = overridePrevDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("third");
-
-        // 4. Replace initial logbook transactions with new section
-        prevLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("forth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [C] HANDLING TARGET DATE SECTION
-        // 5. Get transactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundTargetDateSection[0].data,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("fifth");
-
-        // 6. Replace target date section data with no 5
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
-        };
-        console.log("sixth");
-
-        // TAG : [D] JOIN [C] IN TARGET LOGBOOK
-        // 7. Get previous section date, override 2 date section and sort it
-        const removeTargetDateSections = foundTargetOtherDateSection.filter(
-          (section) => section.customDate !== customPatchDate
-        );
-        const overrideTargetDateSections = [
-          ...removeTargetDateSections,
-          replacedTargetDateSection,
-        ];
-        console.log("seventh");
-
-        // 8. Sort new transactions date sections
-        sortedLogbookTransactions = overrideTargetDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("eigth");
-
-        // 9. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundTargetLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("ninth");
-        // console.log(logbookToBeReplaced)
-
-        // TAG : [E] JOINING [A] AND [D]
-
-        // 10. Final Override
-        const removedTwoLogbooks = foundPrevOtherLogbooks.filter(
-          (logbook) =>
-            logbook.logbook_id !== newPatchTransaction.logbook_id &&
-            logbook.logbook_id !== prevTransaction.logbook_id
-        );
-        groupSortedToBeReplaced = [
-          ...removedTwoLogbooks,
-          targetLogbookToBeReplaced,
-          prevLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 5
-      if (
-        isLogbookIdSame &&
-        isTransactionDateSame &&
-        foundTargetDateSection.length
-      ) {
-        console.log("OPT 5");
-
-        // [A] HANDLING TARGET DATE SECTION
-        // 1. Get trasnactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundPrevOtherTransactionsData,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("third");
-
-        // 4. Replace target date section data with no 3
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
-        };
-
-        // [C] JOINING [A] AND [B]
-
-        // 5. Get previous section date, override 2 date section and sort it
-        const overrideDateSections = [
-          ...foundTargetOtherDateSection,
-          replacedTargetDateSection,
-        ];
-
-        // 6. Sort new transactions date sections
-        sortedLogbookTransactions = overrideDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("forth");
-
-        // 7. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("sixth");
-        // console.log(logbookToBeReplaced)
-
-        // 8. Final Override
-        groupSortedToBeReplaced = [
-          ...foundPrevOtherLogbooks,
-          targetLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 4
-      if (
-        isLogbookIdSame &&
-        !isTransactionDateSame &&
-        foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 4");
-
-        // [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        // const sortedPrevOtherTransactionsData = foundPrevOtherTransactionsData.sort(sortTransactions)
-        // console.log('first')
-        // 2. Replace previous date section data with no 1
-        // const replacedPrevDateSection = { ...foundPrevDateSection[0], data: sortedPrevOtherTransactionsData }
-        // console.log('second')
-
-        // [B] HANDLING TARGET DATE SECTION
-        // 3. Get transactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundTargetDateSection[0].data,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("third");
-
-        // 4. Replace target date section data with no 3
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
-        };
-
-        // [C] JOINING [A] AND [B]
-
-        // 5. Get previous section date, override 2 date section and sort it
-        const removeTwoDateSections = foundTargetOtherDateSection.filter(
-          (section) =>
-            section.customDate !== customPatchDate &&
-            section.customDate !== customPrevDate
-        );
-        const overrideDateSections = [
-          ...removeTwoDateSections,
-          replacedTargetDateSection,
-        ];
-
-        // 6. Sort new transactions date sections
-        sortedLogbookTransactions = overrideDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("forth");
-
-        // 7. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("sixth");
-        // console.log(logbookToBeReplaced)
-
-        // 8. Final Override
-        groupSortedToBeReplaced = [
-          ...foundPrevOtherLogbooks,
-          targetLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 3
-      if (
-        isLogbookIdSame &&
-        !isTransactionDateSame &&
-        foundTargetDateSection.length &&
-        foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 3");
-
-        // [A] HANDLING PREVIOUS DATE SECTION
-        // 1. Remove transaction from previous date section and sort it
-        const sortedPrevOtherTransactionsData =
-          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
-        console.log("first");
-        // 2. Replace previous date section data with no 1
-        const replacedPrevDateSection = {
-          ...foundPrevDateSection[0],
-          data: sortedPrevOtherTransactionsData,
-        };
-        console.log("second");
-
-        // [B] HANDLING TARGET DATE SECTION
-        // 3. Get transactions from target date section and sort it
-        const getTargetTransactionsData = [
-          ...foundTargetDateSection[0].data,
-          newPatchTransaction,
-        ];
-        const sortedTargetTransactionsData =
-          getTargetTransactionsData.sort(sortTransactionsDate);
-        console.log("third");
-
-        // 4. Replace target date section data with no 3
-        const replacedTargetDateSection = {
-          ...foundTargetDateSection[0],
-          data: sortedTargetTransactionsData,
-        };
-
-        // [C] JOINING [A] AND [B]
-
-        // 5. Get previous section date, override 2 date section and sort it
-        const removeTwoDateSections = foundTargetOtherDateSection.filter(
-          (section) =>
-            section.customDate !== customPatchDate &&
-            section.customDate !== customPrevDate
-        );
-        const overrideDateSections = [
-          ...removeTwoDateSections,
-          replacedPrevDateSection,
-          replacedTargetDateSection,
-        ];
-
-        // 6. Sort new transactions date sections
-        sortedLogbookTransactions = overrideDateSections.sort(
-          sortLogbookTransactions
-        );
-        console.log("forth");
-
-        // 7. Replace initial logbook transactions with new section
-        targetLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("sixth");
-        // console.log(logbookToBeReplaced)
-
-        // 8. Final Override
-        groupSortedToBeReplaced = [
-          ...foundPrevOtherLogbooks,
-          targetLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 2
-      if (
-        isLogbookIdSame &&
-        !isTransactionDateSame &&
-        !foundTargetDateSection.length &&
-        !foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 2");
-
-        mergeLogbookTransactions = [
-          ...foundPrevOtherDateSection,
-          newDateSection,
-        ];
-
-        sortedLogbookTransactions = mergeLogbookTransactions.sort(
-          sortLogbookTransactions
-        );
-
-        targetLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("sixth");
-        console.log(targetLogbookToBeReplaced);
-
-        // Rebuild new sorted transactions
-        groupSortedToBeReplaced = [
-          ...foundPrevOtherLogbooks,
-          targetLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      // TAG : OPTION 1
-      if (
-        isLogbookIdSame &&
-        !isTransactionDateSame &&
-        !foundTargetDateSection.length &&
-        foundPrevOtherTransactionsData.length
-      ) {
-        console.log("OPT 1");
-
-        // TAG : New date && same logbook && has prevTransactionsData remains
-        // Sort new inserted transactions
-        const prevSortedDateSectionTransactions =
-          foundPrevOtherTransactionsData.sort(sortTransactionsDate);
-        console.log("forth");
-
-        // Replace initial transactions data with sorted transactions
-        const newPrevDateSection = {
-          ...foundPrevDateSection[0],
-          data: prevSortedDateSectionTransactions,
-        };
-        console.log("fifth");
-
-        // Replace initial logbook transactions with new section
-        mergeLogbookTransactions = [
-          ...foundPrevOtherDateSection,
-          newPrevDateSection,
-          newDateSection,
-        ];
-        sortedLogbookTransactions = mergeLogbookTransactions.sort(
-          sortLogbookTransactions
-        );
-        // console.log(foundOtherDateSection)
-        targetLogbookToBeReplaced = {
-          ...foundPrevLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        console.log("sixth");
-        console.log(targetLogbookToBeReplaced);
-
-        // Rebuild new sorted transactions
-        groupSortedToBeReplaced = [
-          ...foundPrevOtherLogbooks,
-          targetLogbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      return {
-        ...state,
-        groupSorted: groupSortedToBeReplaced,
-        sortedTransactionsPatchCounter:
-          state.sortedTransactionsPatchCounter + 1,
-        logbookToOpen: action.payload.logbookToOpen,
-      };
+      return state;
 
     // TAG : DELETE ONE TRANSACTION
-    case ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.DELETE_ONE_TRANSACTION:
+    case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+      .DELETE_ONE_TRANSACTION:
       const deleteTransaction = action.payload.deleteTransaction;
       const customDeleteDate = `${new Date(
         deleteTransaction.details.date
@@ -1906,94 +1970,109 @@ export const globalSortedTransactions = (state, action) => {
         "0" + new Date(deleteTransaction.details.date).getDate()
       ).slice(-2)}`;
 
-      // Get logboook section
-      const foundPrevDelLogbook = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id === deleteTransaction.logbook_id
-      );
-      const foundPrevDelOtherLogbooks = state.groupSorted.filter(
-        (logbook) => logbook.logbook_id !== deleteTransaction.logbook_id
-      );
-      console.log("first");
-
-      // Check date and Get date section
-      // Prev Date Section
-      const foundPrevDelDateSection =
-        foundPrevDelLogbook[0].transactions.filter(
-          (dateSection) => dateSection.customDate === customDeleteDate
+      let isDuplicate = false;
+      state.groupSorted.forEach((logbook) => {
+        logbook.transactions.forEach((section) => {
+          section.data.forEach((transaction) => {
+            if (
+              transaction.transaction_id === deleteTransaction.transaction_id
+            ) {
+              isDuplicate = true;
+            }
+          });
+        });
+      });
+      if (isDuplicate) {
+        // Get logboook section
+        const foundPrevDelLogbook = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id === deleteTransaction.logbook_id
         );
-      const foundPrevDelOtherDateSection =
-        foundPrevDelLogbook[0].transactions.filter(
-          (dateSection) => dateSection.customDate !== customDeleteDate
+        const foundPrevDelOtherLogbooks = state.groupSorted.filter(
+          (logbook) => logbook.logbook_id !== deleteTransaction.logbook_id
         );
-      // Prev Transactions Data
-      const foundPrevDelOtherTransactionsData =
-        foundPrevDelDateSection[0].data.filter(
-          (transaction) =>
-            transaction.transaction_id !== deleteTransaction.transaction_id
-        );
+        console.log("first");
 
-      if (foundPrevDelOtherTransactionsData.length) {
-        console.log("if1");
+        // Check date and Get date section
+        // Prev Date Section
+        const foundPrevDelDateSection =
+          foundPrevDelLogbook[0].transactions.filter(
+            (dateSection) => dateSection.customDate === customDeleteDate
+          );
+        const foundPrevDelOtherDateSection =
+          foundPrevDelLogbook[0].transactions.filter(
+            (dateSection) => dateSection.customDate !== customDeleteDate
+          );
+        // Prev Transactions Data
+        const foundPrevDelOtherTransactionsData =
+          foundPrevDelDateSection[0].data.filter(
+            (transaction) =>
+              transaction.transaction_id !== deleteTransaction.transaction_id
+          );
 
-        // [A] HANDLING PREVIOUS DATA
-        // 1. Remove transaction from previous date section, sort it, and put it back in date section
-        const sortedDelTransactionsData =
-          foundPrevDelOtherTransactionsData.sort(sortTransactionsDate);
-        const newDateSection = {
-          ...foundPrevDelDateSection[0],
-          data: sortedDelTransactionsData,
+        if (foundPrevDelOtherTransactionsData.length) {
+          console.log("if1");
+
+          // [A] HANDLING PREVIOUS DATA
+          // 1. Remove transaction from previous date section, sort it, and put it back in date section
+          const sortedDelTransactionsData =
+            foundPrevDelOtherTransactionsData.sort(sortTransactionsDate);
+          const newDateSection = {
+            ...foundPrevDelDateSection[0],
+            data: sortedDelTransactionsData,
+          };
+          // 2. Join [1] with other date section in same logbook, sort it
+          const mergeLogbookTransactions = [
+            ...foundPrevDelOtherDateSection,
+            newDateSection,
+          ];
+          const sortedLogbookTransactions = mergeLogbookTransactions.sort(
+            sortLogbookTransactions
+          );
+          const logbookToBeReplaced = {
+            ...foundPrevDelLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          // 3. Join [2] with other logbook
+          groupSortedToBeReplaced = [
+            ...foundPrevDelOtherLogbooks,
+            logbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        if (!foundPrevDelOtherTransactionsData.length) {
+          console.log("if2");
+
+          // [A] HANDLING PREVIOUS DATA
+          // 1. Remove transaction from previous date section, sort it, and put it back in date section
+          // const sortedDelTransactionsData = foundPrevDelOtherTransactionsData.sort(sortTransactions)
+          // const newDateSection = { ...foundPrevDelDateSection[0], data: sortedDelTransactionsData }
+          // 2. Join [1] with other date section in same logbook, sort it
+          // const mergeLogbookTransactions = [...foundPrevDelOtherDateSection, newDateSection]
+          const sortedLogbookTransactions = foundPrevDelOtherDateSection.sort(
+            sortLogbookTransactions
+          );
+          const logbookToBeReplaced = {
+            ...foundPrevDelLogbook[0],
+            transactions: sortedLogbookTransactions,
+          };
+          // 3. Join [2] with other logbook
+          groupSortedToBeReplaced = [
+            ...foundPrevDelOtherLogbooks,
+            logbookToBeReplaced,
+          ];
+          console.log(groupSortedToBeReplaced);
+        }
+
+        return {
+          ...state,
+          groupSorted: groupSortedToBeReplaced,
+          sortedTransactionsDeleteCounter:
+            state.sortedTransactionsDeleteCounter + 1,
+          logbookToOpen: action.payload.logbookToOpen,
         };
-        // 2. Join [1] with other date section in same logbook, sort it
-        const mergeLogbookTransactions = [
-          ...foundPrevDelOtherDateSection,
-          newDateSection,
-        ];
-        const sortedLogbookTransactions = mergeLogbookTransactions.sort(
-          sortLogbookTransactions
-        );
-        const logbookToBeReplaced = {
-          ...foundPrevDelLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        // 3. Join [2] with other logbook
-        groupSortedToBeReplaced = [
-          ...foundPrevDelOtherLogbooks,
-          logbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
       }
-
-      if (!foundPrevDelOtherTransactionsData.length) {
-        console.log("if2");
-
-        // [A] HANDLING PREVIOUS DATA
-        // 1. Remove transaction from previous date section, sort it, and put it back in date section
-        // const sortedDelTransactionsData = foundPrevDelOtherTransactionsData.sort(sortTransactions)
-        // const newDateSection = { ...foundPrevDelDateSection[0], data: sortedDelTransactionsData }
-        // 2. Join [1] with other date section in same logbook, sort it
-        // const mergeLogbookTransactions = [...foundPrevDelOtherDateSection, newDateSection]
-        const sortedLogbookTransactions = foundPrevDelOtherDateSection.sort(
-          sortLogbookTransactions
-        );
-        const logbookToBeReplaced = {
-          ...foundPrevDelLogbook[0],
-          transactions: sortedLogbookTransactions,
-        };
-        // 3. Join [2] with other logbook
-        groupSortedToBeReplaced = [
-          ...foundPrevDelOtherLogbooks,
-          logbookToBeReplaced,
-        ];
-        console.log(groupSortedToBeReplaced);
-      }
-
-      return {
-        ...state,
-        groupSorted: groupSortedToBeReplaced,
-        sortedTransactionsDeleteCounter:
-          state.sortedTransactionsDeleteCounter + 1,
-        logbookToOpen: action.payload.logbookToOpen,
-      };
+      return state;
 
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET:
       return action.payload;

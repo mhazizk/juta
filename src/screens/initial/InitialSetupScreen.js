@@ -43,8 +43,13 @@ import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
 
 const InitialSetupScreen = ({ route, navigation }) => {
+  const userId = uuid.v4();
+  const logbookId = uuid.v4();
+  const onboardingRef = useRef(null);
+
   const { transactions, dispatchTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -102,23 +107,21 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const [newLogbook, setNewLogbook] = useState({
     _timestamps: {
       created_at: null,
+      created_by: userAccount.uid,
+      updated_by: userAccount.uid,
       updated_at: null,
     },
-    _id: "12234",
+    _id: logbookId,
     uid: userAccount.uid,
-    group_id: null,
     logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
     logbook_type: "basic",
-    logbook_id: uuid.v4(),
+    logbook_id: logbookId,
     logbook_name: "",
     logbook_records: [],
     logbook_categories: [],
     group_id: null,
     __v: 0,
   });
-
-  const userId = uuid.v4();
-  const onboardingRef = useRef(null);
 
   useEffect(() => {}, [appSettings, newLogbook]);
 
@@ -166,29 +169,50 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const finalizeSetup = async () => {
     // Check Logbook
     const logbookToDispatch = {
+      ...newLogbook,
+      logbook_name: newLogbook.logbook_name || "My Logbook",
       _timestamps: {
+        ...newLogbook._timestamps,
         created_at: Date.now(),
         updated_at: Date.now(),
       },
-      _id: newLogbook.logbook_id,
-      uid: newLogbook.uid,
-      logbook_currency: newLogbook.logbook_currency,
-      logbook_type: "basic",
-      logbook_id: newLogbook.logbook_id,
-      logbook_name: newLogbook.logbook_name || "My Logbook",
-      logbook_records: [],
-      logbook_categories: [],
-      __v: 0,
     };
+
+    // const logbookToDispatcha = {
+    //   _timestamps: {
+    //     created_at: Date.now(),
+    //     updated_at: Date.now(),
+    //   },
+    //   _id: newLogbook.logbook_id,
+    //   uid: newLogbook.uid,
+    //   logbook_currency: newLogbook.logbook_currency,
+    //   logbook_type: "basic",
+    //   logbook_id: newLogbook.logbook_id,
+    //   logbook_name: newLogbook.logbook_name || "My Logbook",
+    //   logbook_records: [],
+    //   logbook_categories: [],
+    //   __v: 0,
+    // };
 
     dispatchAppSettings({
       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
       payload: selectedAppSettings,
     });
 
+    // dispatchCategories({
+    //   type: ACTIONS.CATEGORIES.SET,
+    //   payload: userCategories,
+    // });
+
+    const newCategories = categoriesFallback({
+      uid: userAccount.uid,
+      created_by: userAccount.uid,
+      updated_by: userAccount.uid,
+    });
+
     dispatchCategories({
-      type: ACTIONS.CATEGORIES.SET,
-      payload: userCategories,
+      type: REDUCER_ACTIONS.CATEGORIES.SET,
+      payload: newCategories,
     });
 
     dispatchLogbooks({
@@ -210,7 +234,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     const saveCategories = await firestore.setData(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
       userAccount.uid,
-      initialCategories.categories
+      newCategories
+      // initialCategories.categories
     );
 
     const saveAppSettings = await firestore.setData(

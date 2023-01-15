@@ -27,7 +27,7 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const { userAccount } = useGlobalUserAccount();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -143,7 +143,9 @@ const ActionScreen = ({ route, navigation }) => {
                     const newLogbook = {
                       _timestamps: {
                         created_at: Date.now(),
+                        created_by: userAccount.uid,
                         updated_at: Date.now(),
+                        updated_by: userAccount.uid,
                       },
                       _id: uuid.v4(),
                       uid: userAccount.uid,

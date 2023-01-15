@@ -6,35 +6,47 @@ import ListSection from "../../../components/List/ListSection";
 import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
+  useGlobalLogbooks,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import subscriptionFeaturesModel from "../model/subscriptionFeaturesModel";
 
-const SubscriptionFeatures = ({ subscription }) => {
+const SubscriptionFeatures = ({ subscription, showCurrent = false }) => {
   // const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   // const statHeight = StatusBar.currentHeight;
   return (
     <>
-      <View>{subscription.plan === "free" && freeSubscription()}</View>
+      <View>
+        {subscription.plan === "free" &&
+          !showCurrent &&
+          freeSubscription({ subscription, showCurrent })}
+        {subscription.plan === "free" &&
+          showCurrent &&
+          freeSubscription({ subscription, showCurrent })}
+      </View>
     </>
   );
 };
 
 export default SubscriptionFeatures;
 
-const freeSubscription = () => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+const freeSubscription = ({ subscription, showCurrent = false }) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { logbooks } = useGlobalLogbooks();
+  const { budgets } = useGlobalBudgets();
+
   const checkmark = require("../../../assets/img/checkmark.png");
 
   return (
     <>
-      <TextPrimary
+      {/* <TextPrimary
         label="Free Features"
         style={{
           paddingVertical: 16,
           paddingHorizontal: 32,
         }}
-      />
+      /> */}
       <View
         style={{
           // display: "flex",
@@ -45,11 +57,31 @@ const freeSubscription = () => {
           // alignItems: "center",
         }}
       >
+        <View
+          style={{
+            paddingHorizontal: 16,
+          }}
+        >
+          <ListTable
+            titleMode={true}
+            // iconLeftName="ribbon"
+            // iconLeftColor="transparent"
+            leftLabel="Features"
+            middleLabel={showCurrent ? "Current" : "Premium"}
+            rightLabel={
+              !showCurrent || subscription.plan === "free"
+                ? "Free"
+                : showCurrent && subscription.plan === "premium"
+                ? "premium"
+                : "free"
+            }
+          />
+        </View>
         <ListSection>
           {subscriptionFeaturesModel.map((feature) => {
             return (
               <ListTable
-                iconLeftName="checkmark"
+                iconLeftName={feature.iconName}
                 leftLabel={feature.name}
                 middleLabelColor={
                   feature.premium > feature.free

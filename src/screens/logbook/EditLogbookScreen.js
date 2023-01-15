@@ -15,6 +15,7 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
@@ -26,6 +27,7 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
+  const {userAccount} = useGlobalUserAccount();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -392,6 +394,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                       _timestamps: {
                         ...logbook._timestamps,
                         updated_at: Date.now(),
+                        updated_by: userAccount.uid,
                       },
                     };
 

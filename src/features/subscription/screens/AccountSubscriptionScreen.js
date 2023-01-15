@@ -29,10 +29,9 @@ import SubscriptionStatus from "../components/SubscriptionStatus";
 const AccountSubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { logbooks } = useGlobalLogbooks();
+  const { budgets } = useGlobalBudgets();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
-  const { dispatchCategories } = useGlobalCategories();
-  const { dispatchLogbooks } = useGlobalLogbooks();
-  const { dispatchBudgets } = useGlobalBudgets();
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
@@ -60,7 +59,10 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
           <>
             <UserHeaderComponent />
             <SubscriptionStatus subscription={userAccount?.subscription} />
-            <SubscriptionFeatures subscription={userAccount?.subscription} />
+            <SubscriptionFeatures
+              subscription={userAccount?.subscription}
+              showCurrent={true}
+            />
             {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}

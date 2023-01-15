@@ -122,6 +122,7 @@ export const ListTable = ({
   symbol,
   pressable,
   iconPack,
+  titleMode,
   // left
   leftLabel,
   iconLeftName,
@@ -200,16 +201,22 @@ export const ListTable = ({
               name={iconLeftName}
               size={18}
               color={
+                iconLeftColor ||
                 appSettings.theme.style.colors.foreground ||
                 lightTheme.colors.foreground
               }
-              style={{ paddingRight: 16 }}
+              style={{
+                paddingRight: 16,
+                // flex: titleMode ? 1 : 0,
+              }}
             />
           )}
           <View style={appSettings.theme.style.list.listItem}>
             <View
               style={{
-                flex: 4,
+                paddingRight: titleMode ? 34 : 0,
+                flex: 3,
+                alignItems: titleMode ? "center" : "flex-start",
               }}
             >
               {leftLabel && <TextPrimary label={leftLabel} />}
@@ -221,9 +228,13 @@ export const ListTable = ({
               }}
             >
               {middleLabel && (
-                <TextSecondary
+                <TextPrimary
                   label={middleLabel}
-                  style={{ color: middleLabelColor }}
+                  style={{
+                    color:
+                      middleLabelColor ||
+                      appSettings.theme.style.colors.foreground,
+                  }}
                 />
               )}
             </View>
@@ -234,9 +245,13 @@ export const ListTable = ({
               }}
             >
               {rightLabel && (
-                <TextSecondary
+                <TextPrimary
                   label={rightLabel}
-                  style={{ color: rightLabelColor }}
+                  style={{
+                    color:
+                      rightLabelColor ||
+                      appSettings.theme.style.colors.foreground,
+                  }}
                 />
               )}
             </View>
@@ -263,6 +278,7 @@ export const TransactionListItem = ({
   transactionHour,
   transactionNotes,
   transactionAmount,
+  transactionId,
   logbookCurrency,
   secondaryCurrency,
   showSecondaryCurrency,
@@ -347,6 +363,7 @@ export const TransactionListItem = ({
                 )}
               </View>
               {/* Bottom Left Side */}
+              <TextSecondary label={transactionId} />
               {transactionNotes && (
                 <TextSecondary
                   label={transactionNotes}
