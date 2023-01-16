@@ -217,7 +217,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             finalTransaction.transaction_id,
             finalTransaction
           );
-        }, 1);
+        }, 5000);
 
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Transction ...",

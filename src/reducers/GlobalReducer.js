@@ -1048,37 +1048,63 @@ export const globalSortedTransactions = (state, action) => {
           });
         });
       }
-      const customPatchDate = `${new Date(
-        newPatchTransaction.details.date
-      ).getFullYear()}/${(
-        "0" +
-        (new Date(newPatchTransaction.details.date).getMonth() + 1)
-      ).slice(-2)}/${(
-        "0" + new Date(newPatchTransaction.details.date).getDate()
-      ).slice(-2)}`;
-      const customPrevDate = `${new Date(
-        prevTransaction.details.date
-      ).getFullYear()}/${(
-        "0" +
-        (new Date(prevTransaction.details.date).getMonth() + 1)
-      ).slice(-2)}/${(
-        "0" + new Date(prevTransaction.details.date).getDate()
-      ).slice(-2)}`;
+
+      // Prevent duplicate action from being dispatched by same device
+
+      let isTimestampSame = true;
+      let customPatchDate = null;
+      let customPrevDate = null;
+      if (prevTransaction) {
+        isTimestampSame =
+          newPatchTransaction._timestamps.updated_at ===
+          prevTransaction._timestamps.updated_at;
+
+        customPatchDate = `${new Date(
+          newPatchTransaction.details.date
+        ).getFullYear()}/${(
+          "0" +
+          (new Date(newPatchTransaction.details.date).getMonth() + 1)
+        ).slice(-2)}/${(
+          "0" + new Date(newPatchTransaction.details.date).getDate()
+        ).slice(-2)}`;
+        customPrevDate = `${new Date(
+          prevTransaction.details.date
+        ).getFullYear()}/${(
+          "0" +
+          (new Date(prevTransaction.details.date).getMonth() + 1)
+        ).slice(-2)}/${(
+          "0" + new Date(prevTransaction.details.date).getDate()
+        ).slice(-2)}`;
+      }
+
+      let logbookToOpen = null;
+      if (action.payload.logbookToOpen) {
+        logbookToOpen = action.payload.logbookToOpen;
+      }
+      // else {
+      //   logbookToOpen = state.logbooks.find((logbook) => {
+      //     if (logbook.logbook_id === newPatchTransaction.logbook_id) {
+      //       return {
+      //         name: logbook.logbook_name,
+      //         logbook_id: logbook.logbook_id,
+      //         logbook_currency: logbook.logbook_currency,
+      //       };
+      //     }
+      //   });
+      // }
+
       let groupSortPatched;
       let mergeLogbookTransactions;
       let sortedLogbookTransactions;
       let prevLogbookToBeReplaced;
       let targetLogbookToBeReplaced;
 
-      let isTimestampSame;
-
-      if (prevTransaction) {
-        isTimestampSame =
-          newPatchTransaction._timestamps.updated_at ===
-          prevTransaction._timestamps.updated_at;
-      }
-
-      if (prevTransaction && !isTimestampSame) {
+      if (
+        prevTransaction &&
+        !isTimestampSame &&
+        customPatchDate &&
+        customPrevDate
+      ) {
         // TAG : Create new date section
         const newDateSection = {
           title: new Date(
@@ -1952,7 +1978,7 @@ export const globalSortedTransactions = (state, action) => {
           groupSorted: groupSortedToBeReplaced,
           sortedTransactionsPatchCounter:
             state.sortedTransactionsPatchCounter + 1,
-          logbookToOpen: action.payload.logbookToOpen,
+          logbookToOpen: logbookToOpen,
         };
       }
       return state;

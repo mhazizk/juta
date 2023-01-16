@@ -19,8 +19,14 @@
     "axios": "^1.2.2",
     "date-fns": "^2.29.3",
     "expo": "~47.0.8",
+    "expo-application": "~5.0.1",
+    "expo-device": "~5.0.0",
+    "expo-file-system": "~15.1.1",
     "expo-localization": "~14.0.0",
+    "expo-media-library": "~15.0.0",
+    "expo-print": "^12.0.0",
     "expo-secure-store": "~12.0.0",
+    "expo-sharing": "~11.0.1",
     "expo-status-bar": "~1.4.2",
     "firebase": "^9.15.0",
     "lottie-react-native": "5.1.4",
@@ -32,6 +38,7 @@
     "react-native-dropdown-picker": "^5.4.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.8.0",
+    "react-native-html-to-pdf": "^0.12.0",
     "react-native-onboarding-swiper": "^1.2.0",
     "react-native-pager-view": "6.0.1",
     "react-native-reanimated": "~2.12.0",
@@ -42,9 +49,7 @@
     "react-native-text-ticker": "^1.14.0",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.2.0",
-    "victory-native": "^36.6.8",
-    "expo-device": "~5.0.0",
-    "expo-application": "~5.0.1"
+    "victory-native": "^36.6.8"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

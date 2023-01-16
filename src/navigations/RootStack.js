@@ -3,10 +3,8 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { setSortedTransactions } from "../utils/FetchData";
-import persistStorage from "../reducers/persist/persistStorage";
-import PERSIST_ACTIONS from "../reducers/persist/persist.actions";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
@@ -52,8 +50,7 @@ import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogBookScreen from "../screens/logbook/LogBookScreen";
-import { Alert, BackHandler, TouchableOpacity } from "react-native";
-import REDUCER_ACTIONS from "../reducers/reducer.action";
+import { Alert, TouchableOpacity } from "react-native";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
@@ -75,6 +72,8 @@ import uuid from "react-native-uuid";
 import useFirestoreSubscriptions from "../hooks/useFirestoreSubscriptions";
 import SubscriptionPlanScreen from "../features/subscription/screens/SubscriptionPlanScreen";
 import AccountSubscriptionScreen from "../features/subscription/screens/AccountSubscriptionScreen";
+import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
+import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -539,69 +538,87 @@ const RootStack = () => {
                   alignItems: "center",
                 }}
                 onPress={() => {
-                  // console.log(navigation);
-                  navigation.navigate(screenList.modalScreen, {
-                    modalType: "textInput",
-                    title: "Create New Log Book",
-                    placeholder: "Enter new log book name ...",
-                    selected: (item) => {
-                      const newLogbook = {
-                        _timestamps: {
-                          created_at: Date.now(),
-                          created_by: userAccount.uid,
-                          updated_at: Date.now(),
-                          updated_by: userAccount.uid,
-                        },
-                        _id: uuid.v4(),
-                        uid: userAccount.uid,
-                        logbook_currency: {
-                          name: "IDR",
-                          symbol: "Rp",
-                          isoCode: "id",
-                        },
-                        logbook_type: "basic",
-                        group_id: null,
-                        logbook_id: uuid.v4(),
-                        logbook_name: item,
-                        logbook_records: [],
-                        logbook_categories: [],
-                        __v: 0,
-                      };
+                  // get logbook limit from subscription plan
+                  const logbookLimit = getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.LOGBOOKS
+                  );
 
-                      setTimeout(async () => {
-                        await firestore.setData(
-                          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                          newLogbook.logbook_id,
-                          newLogbook
-                        );
-                      }, 1);
+                  // check if user has reached the limit
+                  if (logbookLimit === logbooks.logbooks?.length) {
+                    // show alert
+                    Alert.alert(
+                      "Logbook Limit Reached",
+                      `You have reached the limit of ${logbookLimit} logbooks. Please upgrade your subscription to add more logbooks.`
+                    );
+                  }
 
-                      dispatchLogbooks({
-                        type: ACTIONS.LOGBOOKS.INSERT,
-                        payload: newLogbook,
-                      });
-
-                      dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                          .INSERT_LOGBOOK,
-                        payload: {
-                          newLogbook: {
-                            logbook_id: newLogbook.logbook_id,
-                            transactions: [],
+                  // if not, show modal to create new logbook
+                  if (logbookLimit > logbooks.logbooks?.length) {
+                    // console.log(navigation);
+                    navigation.navigate(screenList.modalScreen, {
+                      modalType: "textInput",
+                      title: "Create New Log Book",
+                      placeholder: "Enter new log book name ...",
+                      selected: (item) => {
+                        const newLogbook = {
+                          _timestamps: {
+                            created_at: Date.now(),
+                            created_by: userAccount.uid,
+                            updated_at: Date.now(),
+                            updated_by: userAccount.uid,
                           },
-                          logbookToOpen: {
-                            name: newLogbook.logbook_name,
-                            logbook_id: newLogbook.logbook_id,
-                            logbook_currency: {
-                              name: "IDR",
-                              symbol: "Rp",
-                              isoCode: "id",
+                          _id: uuid.v4(),
+                          uid: userAccount.uid,
+                          logbook_currency: {
+                            name: "IDR",
+                            symbol: "Rp",
+                            isoCode: "id",
+                          },
+                          logbook_type: "basic",
+                          group_id: null,
+                          logbook_id: uuid.v4(),
+                          logbook_name: item,
+                          logbook_records: [],
+                          logbook_categories: [],
+                          __v: 0,
+                        };
+
+                        setTimeout(async () => {
+                          await firestore.setData(
+                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                            newLogbook.logbook_id,
+                            newLogbook
+                          );
+                        }, 5000);
+
+                        dispatchLogbooks({
+                          type: ACTIONS.LOGBOOKS.INSERT,
+                          payload: newLogbook,
+                        });
+
+                        dispatchSortedTransactions({
+                          type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                            .INSERT_LOGBOOK,
+                          payload: {
+                            newLogbook: {
+                              logbook_id: newLogbook.logbook_id,
+                              transactions: [],
+                            },
+                            logbookToOpen: {
+                              name: newLogbook.logbook_name,
+                              logbook_id: newLogbook.logbook_id,
+                              logbook_currency: {
+                                name: "IDR",
+                                symbol: "Rp",
+                                isoCode: "id",
+                              },
                             },
                           },
-                        },
-                      });
-                    },
-                  });
+                        });
+                      },
+                    });
+                  }
                 }}
               >
                 <IonIcons

@@ -2,6 +2,7 @@ const PERSIST_ACTIONS = {
   SET: "SET",
   GET: "GET",
   DELETE: "DELETE",
+  DELETE_ALL: "DELETE_ALL",
 };
 
 export default PERSIST_ACTIONS;

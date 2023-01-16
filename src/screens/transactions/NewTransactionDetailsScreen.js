@@ -226,7 +226,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             transaction.transaction_id,
             transaction
           );
-        }, 1);
+        }, 5000);
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving ...",
           loadingType: "insertTransaction",

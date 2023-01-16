@@ -121,15 +121,6 @@ const useFirestoreSubscriptions = ({
       let prevTransaction = null;
       switch (type) {
         case "added":
-          sortedTransactions.groupSorted.forEach((logbook) => {
-            logbook.transactions.forEach((section) => {
-              section.data.forEach((transaction) => {
-                if (transaction.transaction_id === data.transaction_id) {
-                  prevTransaction = transaction;
-                }
-              });
-            });
-          });
           // Check duplicate between new and prev transaction
           // if (prevTransaction) {
           //   isTimestampSame =
@@ -138,41 +129,27 @@ const useFirestoreSubscriptions = ({
           // }
           // console.log({ prevTransaction, isTimestampSame });
 
-          if (!prevTransaction) {
-            dispatchBadgeCounter({
-              type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-              payload: 1,
-            });
+          dispatchBadgeCounter({
+            type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+            payload: 1,
+          });
 
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .INSERT_TRANSACTION,
-              payload: {
-                transaction: data,
-                logbookToOpen: logbooks.logbooks.find((logbook) => {
-                  if (logbook.logbook_id === data.logbook_id) {
-                    return {
-                      name: logbook.logbook_name,
-                      logbook_id: logbook.logbook_id,
-                      logbook_currency: logbook.logbook_currency,
-                    };
-                  }
-                }),
-              },
-            });
-            // TODO : problem transaction are late 1 step after addition, so we dont get the added transaction in this function
-            setTimeout(() => {
-              let added = [];
-              sortedTransactions.groupSorted.forEach((logbook) => {
-                logbook.transactions.forEach((section) => {
-                  section.data.forEach((transaction) => {
-                    added.push(transaction.transaction_id);
-                  });
-                });
-              });
-              console.log({ added });
-            }, 2000);
-          }
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .INSERT_TRANSACTION,
+            payload: {
+              transaction: data,
+              logbookToOpen: logbooks.logbooks.find((logbook) => {
+                if (logbook.logbook_id === data.logbook_id) {
+                  return {
+                    name: logbook.logbook_name,
+                    logbook_id: logbook.logbook_id,
+                    logbook_currency: logbook.logbook_currency,
+                  };
+                }
+              }),
+            },
+          });
           break;
         case "modified":
           // TODO : fix patch transaction with different target logbook
@@ -186,16 +163,6 @@ const useFirestoreSubscriptions = ({
               .PATCH_TRANSACTION,
             payload: {
               patchTransaction: data,
-              // prevTransaction: prevTransaction,
-              logbookToOpen: logbooks.logbooks.find((logbook) => {
-                if (logbook.logbook_id === data.logbook_id) {
-                  return {
-                    name: logbook.logbook_name,
-                    logbook_id: logbook.logbook_id,
-                    logbook_currency: logbook.logbook_currency,
-                  };
-                }
-              }),
             },
           });
           // }

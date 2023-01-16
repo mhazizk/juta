@@ -336,6 +336,19 @@ const DeveloperScreen = ({ item, navigation }) => {
               </View>
             </View>
           </TouchableNativeFeedback>
+          {/* // SECTION : Async Storage */}
+          <TextPrimary label="Async Storage" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Remove all async storage"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={async () => {
+              await persistStorage.asyncStorage({
+                action: PERSIST_ACTIONS.DELETE_ALL,
+              });
+            }}
+          />
           {/* // SECTION : Categories */}
           <TextPrimary label="Categories" style={{ padding: 16 }} />
           <ListItem

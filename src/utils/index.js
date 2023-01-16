@@ -14,3 +14,5 @@ export { default as HandleUserSignUp } from "./HandleUserSignUp";
 export { default as getDeviceId } from "./GetDeviceId";
 export { default as getDeviceName } from "./GetDeviceName";
 export { default as getDeviceOSName } from "./GetDeviceOSName";
+export { default as exportData } from "./ExportData";
+export { default as shareData } from "./ShareData";

@@ -70,6 +70,15 @@ const asyncStorage = async ({ action, key, rawValue }) => {
       alert(error);
     }
   }
+
+  if (action === PERSIST_ACTIONS.DELETE_ALL) {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      await AsyncStorage.multiRemove(keys);
+    } catch (error) {
+      alert(error);
+    }
+  }
 };
 
 export default {

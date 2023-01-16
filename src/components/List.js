@@ -278,7 +278,7 @@ export const TransactionListItem = ({
   transactionHour,
   transactionNotes,
   transactionAmount,
-  transactionId,
+  // transactionId,
   logbookCurrency,
   secondaryCurrency,
   showSecondaryCurrency,
@@ -363,7 +363,7 @@ export const TransactionListItem = ({
                 )}
               </View>
               {/* Bottom Left Side */}
-              <TextSecondary label={transactionId} />
+              {/* <TextSecondary label={transactionId} /> */}
               {transactionNotes && (
                 <TextSecondary
                   label={transactionNotes}

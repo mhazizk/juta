@@ -5,6 +5,7 @@ import { TextPrimary, TextSecondary } from "./Text";
 const CheckList = ({
   checkboxPlacement = "right",
   singleChecklist = false,
+  disabled = false,
   viewOnly,
   primaryLabel,
   secondaryLabel,
@@ -117,6 +118,93 @@ const CheckList = ({
           </View>
         </TouchableNativeFeedback>
       )}
+      {!singleChecklist && disabled && (
+        <TouchableNativeFeedback
+          onPress={() => {
+            onPress(item);
+          }}
+        >
+          {/* // TAG : Container */}
+          <View
+            style={{
+              ...appSettings.theme.style.list.listContainer,
+              width: "100%",
+              flexDirection: "row",
+              paddingHorizontal: 16,
+              minHeight: 48,
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* // TAG : Checkbox */}
+            {checkboxPlacement === "left" && (
+              <View
+                style={{
+                  borderColor:
+                    selected === item
+                      ? "transparent"
+                      : appSettings.theme.style.colors.secondary,
+                  backgroundColor:
+                    selected === item
+                      ? appSettings.theme.style.colors.secondary
+                      : "transparent",
+                  height: 20,
+                  width: 20,
+                  borderWidth: 1.3,
+                  borderRadius: 8,
+                  // marginRight: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              ></View>
+            )}
+
+            <View
+              style={{
+                ...appSettings.theme.style.list.listItem,
+                flex: 1,
+                maxWidth: "80%",
+                paddingVertical: 8,
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "flex-start",
+              }}
+            >
+              {primaryLabel && (
+                <TextSecondary
+                  label={primaryLabel}
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                />
+              )}
+              {secondaryLabel && (
+                <TextSecondary
+                  label={secondaryLabel}
+                  style={{ fontSize: 14 }}
+                />
+              )}
+            </View>
+            {/* // TAG : Checkbox */}
+            {checkboxPlacement === "right" && (
+              <View
+                style={{
+                  borderColor: appSettings.theme.style.colors.secondary,
+                  backgroundColor: "transparent",
+                  height: 20,
+                  width: 20,
+                  borderWidth: 1.3,
+                  borderRadius: 8,
+                  // marginRight: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              ></View>
+            )}
+          </View>
+        </TouchableNativeFeedback>
+      )}
+
       {singleChecklist && pressable && (
         <TouchableOpacity
           onPress={() => {

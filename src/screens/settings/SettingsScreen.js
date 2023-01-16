@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import CheckList from "../../components/CheckList";
 import { ListItem } from "../../components/List";
 import RadioButtonList from "../../components/List/RadioButtonList";
@@ -23,6 +23,9 @@ import { signOut } from "firebase/auth/react-native";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { StatusBar } from "expo-status-bar";
+import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import createPDF from "../../utils/CreatePDF";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -390,20 +393,40 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   logbookSettings.secondaryCurrency.symbol
                 }
               />
-
               {/* // TAG : Show secondary currency */}
               <CheckList
-                pressable
+                pressable={getSubscriptionLimit(
+                  userAccount.subscription.plan,
+                  SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
+                )}
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
+                  )
+                }
                 primaryLabel="Show secondary currency"
                 secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
                 item={true}
                 selected={logbookSettings.showSecondaryCurrency}
                 onPress={() => {
-                  setLogbookSettings({
-                    ...logbookSettings,
-                    showSecondaryCurrency:
-                      !logbookSettings.showSecondaryCurrency,
-                  });
+                  if (
+                    getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
+                    )
+                  ) {
+                    setLogbookSettings({
+                      ...logbookSettings,
+                      showSecondaryCurrency:
+                        !logbookSettings.showSecondaryCurrency,
+                    });
+                  } else {
+                    Alert.alert(
+                      "Upgrade your subscription",
+                      "This feature is only available for premium users. Please upgrade your subscription to unlock this feature."
+                    );
+                  }
                 }}
               />
 
@@ -512,7 +535,12 @@ const CurrencySettingsScreen = ({ navigation }) => {
               {/* // TAG : Export */}
               <ListItem
                 pressable
-                onPress={() => alert("Feature in progress ...")}
+                onPress={async () => {
+                  // TODO : Show Exported File list, create export screen
+                  const fileName = "test.pdf";
+                  const printPDF = await createPDF(fileName);
+                  await utils.shareData(printPDF);
+                }}
                 iconPack="IonIcons"
                 iconLeftName="share-outline"
                 leftLabel="Export Data"

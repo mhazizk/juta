@@ -35,7 +35,7 @@ const MyCategoriesScreen = ({ navigation }) => {
           categories.categories.uid,
           categories.categories
         );
-      }, 1);
+      }, 5000);
     }
   }, [categories.categories]);
 

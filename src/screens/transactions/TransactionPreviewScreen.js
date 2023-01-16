@@ -497,7 +497,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                                 FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
                                 transaction.transaction_id
                               );
-                            }, 1);
+                            }, 5000);
                             navigation.navigate(screenList.loadingScreen, {
                               label: "Deleting Transaction ...",
                               loadingType: "deleteOneTransaction",
