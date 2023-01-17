@@ -18,7 +18,7 @@ import uuid from "react-native-uuid";
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const [date, setDate] = useState(new Date());
+  // const [date, setDate] = useState(new Date());
 
   const [newBudget, setNewBudget] = useState({
     uid: appSettings.uid,

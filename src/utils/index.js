@@ -16,3 +16,4 @@ export { default as getDeviceName } from "./GetDeviceName";
 export { default as getDeviceOSName } from "./GetDeviceOSName";
 export { default as exportData } from "./ExportData";
 export { default as shareData } from "./ShareData";
+export { default as createPDF } from "./CreatePDF";

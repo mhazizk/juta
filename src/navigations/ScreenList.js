@@ -76,6 +76,9 @@ const screenList = {
   subscriptionPlanScreen: "Subscription Plan Screen",
   accountSubscriptionScreen: "Account Subscription Screen",
 
+  // Export Screen
+  exportScreen: "Export Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",

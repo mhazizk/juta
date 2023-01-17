@@ -74,6 +74,7 @@ import SubscriptionPlanScreen from "../features/subscription/screens/Subscriptio
 import AccountSubscriptionScreen from "../features/subscription/screens/AccountSubscriptionScreen";
 import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
+import ExportScreen from "../features/export/screens/ExportScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -834,18 +835,26 @@ const RootStack = () => {
         component={ChangeAccountPasswordScreen}
       />
 
-      {/* // SECTION : PRICING */}
-      {/* // TAG : Pricing Screen */}
-      {/* // TAG : Premium Screen */}
+      {/* // SECTION : SUBSCRIPTION */}
+      {/* // TAG : Account Subscription Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "My Subscription" }}
         name={screenList.accountSubscriptionScreen}
         component={AccountSubscriptionScreen}
       />
+      {/* // TAG : Subscription Plan Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Subscription Plan" }}
         name={screenList.subscriptionPlanScreen}
         component={SubscriptionPlanScreen}
+      />
+
+      {/* // SECTION : EXPORT */}
+      {/* // TAG : Subscription Plan Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Export Data" }}
+        name={screenList.exportScreen}
+        component={ExportScreen}
       />
 
       {/* // SECTION : SETTINGS */}

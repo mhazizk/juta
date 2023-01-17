@@ -657,7 +657,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
 
-            {/* // TAG : Log Book Section */}
+            {/* // TAG : Logbook Section */}
             <TouchableNativeFeedback
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {

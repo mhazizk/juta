@@ -535,11 +535,8 @@ const CurrencySettingsScreen = ({ navigation }) => {
               {/* // TAG : Export */}
               <ListItem
                 pressable
-                onPress={async () => {
-                  // TODO : Show Exported File list, create export screen
-                  const fileName = "test.pdf";
-                  const printPDF = await createPDF(fileName);
-                  await utils.shareData(printPDF);
+                onPress={() => {
+                  navigation.navigate(screenList.exportScreen);
                 }}
                 iconPack="IonIcons"
                 iconLeftName="share-outline"
