@@ -68,6 +68,7 @@ const MyLogbooksScreen = ({ navigation }) => {
                 <>
                   <ListItem
                     pressable
+                    key={item.logbook_id}
                     leftLabel={
                       item?.logbook_name[0]?.toUpperCase() +
                       item?.logbook_name?.substring(1)
@@ -85,101 +86,6 @@ const MyLogbooksScreen = ({ navigation }) => {
               );
             })}
           </ListSection>
-          {/* <FlatList
-            data={loadedLogbooks}
-            keyExtractor={(item) => item.logbook_id}
-            style={{ flex: 1 }}
-            renderItem={({ item }) => (
-              <>
-                <ListItem
-                  pressable
-                  leftLabel={
-                    item?.logbook_name[0]?.toUpperCase() +
-                    item?.logbook_name?.substring(1)
-                  }
-                  iconLeftName="book"
-                  iconRightName="chevron-forward"
-                  iconPack="IonIcons"
-                  onPress={() => {
-                    navigation.navigate(screenList.logbookPreviewScreen, {
-                      logbook: item,
-                    });
-                  }}
-                />
-              </>
-            )}
-            ListFooterComponent={() => (
-              <>
-                <ListItem
-                  pressable
-                  leftLabel="Add New Logbook"
-                  iconPack="IonIcons"
-                  iconLeftName="add-circle"
-                  onPress={() =>
-                    navigation.navigate(screenList.modalScreen, {
-                      modalType: "textInput",
-                      title: "Create New Log Book",
-                      placeholder: "Enter new log book name ...",
-                      selected: (item) => {
-                        const newLogbook = {
-                          _timestamps: {
-                            created_at: Date.now(),
-                            updated_at: Date.now(),
-                          },
-                          _id: uuid.v4(),
-                          uid: userAccount.uid,
-                          logbook_currency: {
-                            name: "IDR",
-                            symbol: "Rp",
-                            isoCode: "id",
-                          },
-                          logbook_type: "basic",
-                          logbook_id: uuid.v4(),
-                          logbook_name: item,
-                          logbook_records: [],
-                          logbook_categories: [],
-                          __v: 0,
-                        };
-
-                        setTimeout(async () => {
-                          await firestore.setData(
-                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                            newLogbook.logbook_id,
-                            newLogbook
-                          );
-                        }, 1);
-
-                        dispatchLogbooks({
-                          type: ACTIONS.LOGBOOKS.INSERT,
-                          payload: newLogbook,
-                        });
-
-                        dispatchSortedTransactions({
-                          type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                            .INSERT_LOGBOOK,
-                          payload: {
-                            newLogbook: {
-                              logbook_id: newLogbook.logbook_id,
-                              transactions: [],
-                            },
-                            logbookToOpen: {
-                              name: newLogbook.logbook_name,
-                              logbook_id: newLogbook.logbook_id,
-                              logbook_currency: {
-                                name: "IDR",
-                                symbol: "Rp",
-                                isoCode: "id",
-                              },
-                            },
-                          },
-                        });
-                      },
-                    })
-                  }
-                />
-              </>
-            )}
-          /> */}
         </ScrollView>
       )}
     </>

@@ -19,6 +19,7 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
@@ -27,6 +28,7 @@ const UserScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { budgets } = useGlobalBudgets();
+  const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const isFocus = useIsFocused();
 
@@ -62,13 +64,13 @@ const UserScreen = ({ navigation }) => {
             }
           />
           {/* // TAG : My Groups */}
-          <ListItem
+          {/* <ListItem
             pressable
             leftLabel="My Groups"
             iconLeftName="people"
             iconPack="IonIcons"
             onPress={() => navigation.navigate(screenList.myGroupsScreen)}
-          />
+          /> */}
           {/* // TAG : My Logbooks */}
           <ListItem
             pressable
@@ -102,6 +104,19 @@ const UserScreen = ({ navigation }) => {
             iconLeftName="piggy-bank"
             iconPack="FontAwesome5"
             onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
+          />
+          {/* // TAG : My Repeated Transactions */}
+          <ListItem
+            pressable
+            leftLabel="My Repeated Transactions"
+            iconLeftName="repeat"
+            rightLabel={
+              (repeatedTransactions.length || "No") + " transaction(s)"
+            }
+            iconPack="IonIcons"
+            onPress={() =>
+              navigation.navigate(screenList.myRepeatedTransactionsScreen)
+            }
           />
         </ListSection>
         <ListSection>

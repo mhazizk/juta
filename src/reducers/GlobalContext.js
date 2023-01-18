@@ -13,11 +13,13 @@ import {
   initialTransactions,
   initialUserAccount,
 } from "./GlobalReducer";
+import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
 import initialAppSettings from "./initial-state/InitialAppSettings";
 import initialBadgeCounter from "./initial-state/InitialBadgeCounter";
 import { InitialBudgets } from "./initial-state/InitialBudgets";
 import initialCategories from "./initial-state/InitialCategories";
 import initialLogbooks from "./initial-state/InitialLogbooks";
+import initialRepeatedTransactions from "./initial-state/InitialRepeatedTransactions";
 import InitialSortedTransactions from "./initial-state/InitialSortedTransactions";
 
 // TAG : Create Context //
@@ -30,6 +32,8 @@ const GlobalLoadingContext = createContext();
 const GlobalLogbooksContext = createContext();
 const GlobalCategoriesContext = createContext();
 const GlobalBadgeCounterContext = createContext();
+const GlobalGroupsContext = createContext();
+const GlobalRepeatedTransactionsContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -68,6 +72,14 @@ export const useGlobalBadgeCounter = () => {
   return useContext(GlobalBadgeCounterContext);
 };
 
+export const useGlobalGroups = () => {
+  return useContext(GlobalGroupsContext);
+};
+
+export const useGlobalRepeatedTransactions = () => {
+  return useContext(GlobalRepeatedTransactionsContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -101,11 +113,18 @@ export const GlobalStateProvider = ({ children }) => {
 
   const [budgets, dispatchBudgets] = useReducer(globalBudgets, InitialBudgets);
 
-  const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
   const [badgeCounter, dispatchBadgeCounter] = useReducer(
     globalBadgeCounter,
     initialBadgeCounter
   );
+
+  const [repeatedTransactions, dispatchRepeatedTransactions] = useReducer(
+    globalRepeatedTransactionsReducer,
+    initialRepeatedTransactions
+  );
+
+  // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
+  const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
 
   return (
     <>
@@ -160,7 +179,15 @@ export const GlobalStateProvider = ({ children }) => {
                           dispatchBadgeCounter: dispatchBadgeCounter,
                         }}
                       >
-                        {children}
+                        <GlobalRepeatedTransactionsContext.Provider
+                          value={{
+                            repeatedTransactions: repeatedTransactions,
+                            dispatchRepeatedTransactions:
+                              dispatchRepeatedTransactions,
+                          }}
+                        >
+                          {children}
+                        </GlobalRepeatedTransactionsContext.Provider>
                       </GlobalBadgeCounterContext.Provider>
                     </GlobalBudgetsContext.Provider>
                   </GlobalSortedTransactionsContext.Provider>

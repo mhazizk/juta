@@ -22,6 +22,8 @@ import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
 import { TextPrimary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
+import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -127,7 +129,8 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                   navigation.navigate(screenList.changeAccountPasswordScreen)
                 }
               />
-
+            </ListSection>
+            <ListSection>
               {/* // TAG : Premium Subscription */}
               <ListItem
                 pressable
@@ -143,8 +146,34 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                   navigation.navigate(screenList.accountSubscriptionScreen)
                 }
               />
-            </ListSection>
-            <ListSection>
+              {/* // TAG : Export Data */}
+              <ListItem
+                pressable
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.EXPORT_DATA
+                  )
+                }
+                iconPack="IonIcons"
+                iconLeftName="share-outline"
+                leftLabel="Export Data"
+                onPress={() => {
+                  if (
+                    getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.EXPORT_DATA
+                    )
+                  ) {
+                    navigation.navigate(screenList.exportScreen);
+                  } else {
+                    Alert.alert(
+                      "Export Data",
+                      "Upgrade to premium to export your data"
+                    );
+                  }
+                }}
+              />
               {/* // TAG : Active Devices */}
               <ListItem
                 pressable

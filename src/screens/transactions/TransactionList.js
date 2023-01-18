@@ -313,6 +313,7 @@ const TransactionList = ({
                       id: item.details.category_id,
                       categories: categories,
                     })}
+                    isRepeated={item.repeat_id ? true : false}
                     // categoryType={findCategoryTypeById(
                     //   item.details.category_id
                     // )}

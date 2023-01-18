@@ -67,6 +67,7 @@ const MyCategoriesScreen = ({ navigation }) => {
             return (
               <ListItem
                 pressable
+                key={item.id}
                 leftLabel={
                   item?.name[0].toUpperCase() + item?.name.substring(1)
                 }
@@ -98,6 +99,7 @@ const MyCategoriesScreen = ({ navigation }) => {
             return (
               <ListItem
                 pressable
+                key={item.id}
                 leftLabel={
                   item?.name[0].toUpperCase() + item?.name.substring(1)
                 }

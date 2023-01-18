@@ -13,6 +13,7 @@ import {
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -50,6 +51,8 @@ const SplashScreen = ({ route, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { repeatedTransactions, dispatchRepeatedTransactions } =
+    useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [user, loading, error] = useAuthState(auth);
 
@@ -143,6 +146,7 @@ const SplashScreen = ({ route, navigation }) => {
             },
           ],
         };
+
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
           payload: loggedInUserAccount,
@@ -267,6 +271,11 @@ const SplashScreen = ({ route, navigation }) => {
       currUser.uid
     );
 
+    const loadRepeatedTransactionsFromFirestore = firestore.queryData(
+      FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+      currUser.uid
+    );
+
     Promise.all([
       deviceId,
       deviceName,
@@ -277,6 +286,7 @@ const SplashScreen = ({ route, navigation }) => {
       loadLogbooksFromFirestore,
       loadCategoriesFromFirestore,
       loadBudgetsFromFirestore,
+      loadRepeatedTransactionsFromFirestore,
     ])
       .then((data) => {
         const deviceIdData = data[0];
@@ -288,6 +298,7 @@ const SplashScreen = ({ route, navigation }) => {
         const logbooksData = data[6];
         const categoriesData = data[7];
         const budgetsData = data[8];
+        const repeatedTransactionsData = data[9];
         const otherDevicesLoggedIn = userAccountData.devicesLoggedIn.filter(
           (device) => device.device_id !== deviceIdData
         );
@@ -389,21 +400,37 @@ const SplashScreen = ({ route, navigation }) => {
             payload: newBudget || budgetsData[0],
           });
         }
+
+        dispatchRepeatedTransactions({
+          type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.FORCE_SET,
+          payload: repeatedTransactionsData || [],
+        });
+
         useFirestoreSubscriptions({
           uid: userAccountData.uid,
           subscribeAll: true,
+
           appSettings: appSettings,
           dispatchAppSettings: dispatchAppSettings,
+
           userAccount: userAccount,
           dispatchUserAccount: dispatchUserAccount,
+
           logbooks: logbooks,
           dispatchLogbooks: dispatchLogbooks,
+
           sortedTransactions: sortedTransactions,
           dispatchSortedTransactions: dispatchSortedTransactions,
+
           categories: categories,
           dispatchCategories: dispatchCategories,
+
           budgets: budgets,
           dispatchBudgets: dispatchBudgets,
+
+          repeatedTransactions: repeatedTransactions,
+          dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+
           badgeCounter: badgeCounter,
           dispatchBadgeCounter: dispatchBadgeCounter,
         });

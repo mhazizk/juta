@@ -81,6 +81,7 @@ const freeSubscription = ({ subscription, showCurrent = false }) => {
           {subscriptionFeaturesModel.map((feature) => {
             return (
               <ListTable
+                key={feature.name}
                 iconLeftName={feature.iconName}
                 leftLabel={feature.name}
                 middleLabelColor={

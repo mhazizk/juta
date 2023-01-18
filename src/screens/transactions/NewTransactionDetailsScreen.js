@@ -1,11 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 // import Intl from "intl";
 // import "intl/locale-data/jsonp/en";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -13,15 +11,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Octicons from "react-native-vector-icons/Octicons";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
-import {
-  ButtonPrimary,
-  ButtonSecondary,
-  ButtonSwitch,
-} from "../../components/Button";
+import { globalStyles } from "../../assets/themes/globalStyles";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -29,6 +21,7 @@ import {
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -38,21 +31,51 @@ import * as utils from "../../utils";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import { ListItem } from "../../components/List";
+import ListSection from "../../components/List/ListSection";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
+  const repeatId = uuid.v4();
   // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { isLoading, dispatchLoading } = useGlobalLoading();
   const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
-  const { sortedTransactions, dispatchSortedTransactions } =
-    useGlobalSortedTransactions();
-  const { categories, dispathCategories } = useGlobalCategories();
-  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { sortedTransactions } = useGlobalSortedTransactions();
+  const { categories } = useGlobalCategories();
+  const { logbooks } = useGlobalLogbooks();
+  const { repeatedTransactions, dispatchRepeatedTransactions } =
+    useGlobalRepeatedTransactions();
   const { userAccount } = useGlobalUserAccount();
 
   // TAG : useState Section //
 
   // Loading State
+
+  // Repated Transaction State
+  const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
+    uid: null,
+    repeat_id: null,
+    repeat_status: "active",
+    repeat_amount: 0,
+    repeat_in_out: "expense",
+    repeat_category_id: null,
+    repeat_logbook_id: null,
+    next_repeat_date: null,
+    repeat_notes: null,
+    repeat_type: {
+      name: "no repeat",
+      id: "no_repeat",
+      range: 0,
+    },
+    transactions: [],
+    _timestamps: {
+      created_at: Date.now(),
+      created_by: userAccount.uid,
+      updated_at: Date.now(),
+      updated_by: userAccount.uid,
+    },
+  });
 
   // Transaction State
   const [transaction, setTransaction] = useState(null);
@@ -92,6 +115,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         updated_by: userAccount.uid,
       },
       _id: Date.now(),
+      repeat_id: null,
       logbook_id: logbooks.logbooks[0].logbook_id,
       transaction_id: uuid.v4(),
       uid: userAccount.uid,
@@ -107,17 +131,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // refresh
-    console.log(transaction);
-  }, [transaction]);
+    // console.log(transaction);
+    if (localRepeatedTransactions.repeat_id && transaction.repeat_id) {
+      console.log(localRepeatedTransactions.repeat_id);
+      console.log(transaction.repeat_id);
+    }
+  }, [transaction, localRepeatedTransactions]);
 
   useEffect(() => {
     // refresh
-    console.log(selectedCategory);
+    // console.log(selectedCategory);
   }, [selectedCategory]);
 
   useEffect(() => {
     // refresh
-    console.log({ selectedLogbook });
+    // console.log({ selectedLogbook });
   }, [selectedLogbook]);
 
   useEffect(() => {
@@ -220,6 +248,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       case !transaction.details.category_id:
         return alert("Please select transaction category");
       default:
+        setTimeout(() => {
+          if (transaction.repeat_id && localRepeatedTransactions.uid) {
+            dispatchRepeatedTransactions({
+              type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
+              payload: localRepeatedTransactions,
+            });
+            setTimeout(async () => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+                localRepeatedTransactions.repeat_id,
+                localRepeatedTransactions
+              );
+            }, 5000);
+          }
+        }, 1);
         setTimeout(async () => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
@@ -265,7 +308,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
           ]}
         >
           <ScrollView
-            contentContainerStyle={{ flex: 1, justifyContent: "center" }}
+            contentContainerStyle={{
+              minHeight: "100%",
+              justifyContent: "center",
+            }}
           >
             {/* // TAG : Amount Section */}
             <TouchableOpacity
@@ -385,592 +431,576 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   transaction.details.in_out[0].toUpperCase() +
                   transaction.details.in_out.substring(1)
                 } Details`}
-                style={{ fontSize: 24 }}
+                style={{
+                  fontSize: 24,
+                  paddingHorizontal: 16,
+                }}
               />
             </View>
 
-            {/* // TAG : Transaction Type Section */}
-            <TouchableNativeFeedback
-              onPress={() =>
-                navigation.navigate(screenList.modalScreen, {
-                  title: "Transaction",
-                  props: [{ name: "expense" }, { name: "income" }],
-                  modalType: "list",
-                  selected: (item) => {
-                    setTransaction({
-                      ...transaction,
-                      details: {
-                        ...transaction.details,
-                        in_out: item.name,
-                        type: null,
-                      },
-                    });
-                    setSelectedCategory({});
-                  },
-                  default: { name: transaction.details.in_out },
-                })
-              }
-            >
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <IonIcons
-                    name="swap-horizontal-sharp"
-                    size={18}
-                    style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                  <TextPrimary label="Transaction" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  <View
-                    style={[
-                      {
-                        flexDirection: "row",
-                        flex: 0,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 8,
-                        borderRadius: 8,
-                      },
-                      {
-                        backgroundColor:
-                          transaction.details.in_out === "income"
-                            ? "#c3f4f4"
-                            : appSettings.theme.style.colors.secondary,
-                      },
-                    ]}
-                  >
-                    {/* // TAG : Transaction Picker */}
-                    <TextPrimary
-                      label={
-                        transaction.details.in_out[0].toUpperCase() +
-                        transaction.details.in_out.substring(1)
-                      }
-                      style={{
-                        color:
-                          transaction.details.in_out === "income"
-                            ? "#00695c"
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                    />
-                  </View>
-                  <IonIcons
-                    name="chevron-forward"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-
-            {/* // TAG : Type Section */}
-            <TouchableNativeFeedback
-              onPress={() =>
-                navigation.navigate(screenList.modalScreen, {
-                  title: "Type",
-                  modalType: "list",
-                  props:
-                    transaction?.details?.in_out === "expense"
-                      ? [{ name: "cash" }, { name: "loan" }]
-                      : [{ name: "cash" }],
-                  selected: (item) => {
-                    setTransaction({
-                      ...transaction,
-                      details: { ...transaction.details, type: item.name },
-                    });
-                  },
-                  default: { name: transaction.details.type },
-                })
-              }
-            >
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <FontAwesome5
-                    name="coins"
-                    size={18}
-                    style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                  <TextPrimary label="Type" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  <View
-                    style={[
-                      {
-                        flexDirection: "row",
-                        flex: 0,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 8,
-                        borderRadius: 8,
-                      },
-                      {
-                        backgroundColor:
-                          transaction.details.in_out === "income"
-                            ? "#c3f4f4"
-                            : appSettings.theme.style.colors.secondary,
-                      },
-                    ]}
-                  >
-                    {/* // TAG : Type Picker */}
-                    <TextPrimary
-                      label={
-                        !transaction?.details?.type
-                          ? "Pick type"
-                          : transaction?.details?.type[0].toUpperCase() +
-                            transaction?.details?.type?.substring(1)
-                      }
-                      style={{
-                        color:
-                          transaction.details.in_out === "income"
-                            ? "#00695c"
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                    />
-                  </View>
-                  <IonIcons
-                    name="chevron-forward"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-
-            {/* // TAG : Date Section */}
-            <TouchableNativeFeedback onPress={showDatePicker}>
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <IonIcons
-                    name="calendar"
-                    size={18}
-                    style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                  {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-                  <TextPrimary label="Date" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  <View
-                    style={[
-                      {
-                        flexDirection: "row",
-                        flex: 0,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 8,
-                        borderRadius: 8,
-                      },
-                      {
-                        backgroundColor:
-                          transaction.details.in_out === "income"
-                            ? "#c3f4f4"
-                            : appSettings.theme.style.colors.secondary,
-                      },
-                    ]}
-                  >
-                    {/* // TAG : Date Picker */}
-                    <TextPrimary
-                      label={
-                        !transaction?.details?.date
-                          ? "Pick date"
-                          : new Date(transaction.details.date).toDateString()
-                      }
-                      style={{
-                        color:
-                          transaction.details.in_out === "income"
-                            ? "#00695c"
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                    />
-                  </View>
-                  {transaction.details.date && (
-                    <View
-                      style={[
-                        {
-                          flexDirection: "row",
-                          flex: 0,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: 8,
-                          marginLeft: 8,
-                          borderRadius: 8,
+            <ListSection>
+              {/* // TAG : Transaction */}
+              <ListItem
+                pressable
+                leftLabel="Transaction"
+                rightLabel={
+                  transaction.details.in_out[0].toUpperCase() +
+                  transaction.details.in_out.substring(1)
+                }
+                iconPack="IonIcons"
+                iconLeftName="swap-horizontal"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName='book'
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                // iconColorInContainer={
+                //   selectedCategory?.icon?.color === "default"
+                //     ? appSettings.theme.style.colors.foreground
+                //     : selectedCategory?.icon?.color
+                //   // transaction.details.in_out === "income"
+                //   //   ? "#00695c"
+                //   //   : appSettings.theme.style.text.textPrimary.color
+                // }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() =>
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Transaction",
+                    props: [{ name: "expense" }, { name: "income" }],
+                    modalType: "list",
+                    selected: (item) => {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          in_out: item.name,
+                          type: null,
                         },
-                        {
-                          backgroundColor:
-                            transaction.details.in_out === "income"
-                              ? "#c3f4f4"
-                              : appSettings.theme.style.colors.secondary,
+                      });
+                      setSelectedCategory({});
+                    },
+                    default: { name: transaction.details.in_out },
+                  })
+                }
+              />
+              {/* // TAG : Type */}
+              <ListItem
+                pressable
+                leftLabel="Type"
+                rightLabel={
+                  !transaction?.details?.type
+                    ? "Pick type"
+                    : transaction?.details?.type[0].toUpperCase() +
+                      transaction?.details?.type?.substring(1)
+                }
+                iconPack="FontAwesome5"
+                iconLeftName="coins"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName='book'
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                // iconColorInContainer={
+                //   selectedCategory?.icon?.color === "default"
+                //     ? appSettings.theme.style.colors.foreground
+                //     : selectedCategory?.icon?.color
+                //   // transaction.details.in_out === "income"
+                //   //   ? "#00695c"
+                //   //   : appSettings.theme.style.text.textPrimary.color
+                // }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() =>
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Type",
+                    modalType: "list",
+                    props:
+                      transaction?.details?.in_out === "expense"
+                        ? [{ name: "cash" }, { name: "loan" }]
+                        : [{ name: "cash" }],
+                    selected: (item) => {
+                      setTransaction({
+                        ...transaction,
+                        details: { ...transaction.details, type: item.name },
+                      });
+                    },
+                    default: { name: transaction.details.type },
+                  })
+                }
+              />
+              {/* // TAG : Date */}
+              <ListItem
+                pressable
+                leftLabel="Date"
+                rightLabel={`${
+                  !transaction?.details?.date
+                    ? "Pick date"
+                    : new Date(transaction.details.date).toDateString()
+                }, ${
+                  !transaction?.details?.date
+                    ? "Pick date"
+                    : new Date(transaction.details.date)
+                        .getHours()
+                        .toString()
+                        .padStart(2, "0") +
+                      ":" +
+                      new Date(transaction.details.date)
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, "0")
+                }`}
+                iconPack="IonIcons"
+                iconLeftName="calendar"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName='book'
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                // iconColorInContainer={
+                //   selectedCategory?.icon?.color === "default"
+                //     ? appSettings.theme.style.colors.foreground
+                //     : selectedCategory?.icon?.color
+                //   // transaction.details.in_out === "income"
+                //   //   ? "#00695c"
+                //   //   : appSettings.theme.style.text.textPrimary.color
+                // }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={showDatePicker}
+              />
+              {/* // TAG : From Logbook */}
+              <ListItem
+                pressable
+                leftLabel="From Logbook"
+                rightLabel={
+                  !selectedLogbook?.name
+                    ? "Pick Logbook"
+                    : selectedLogbook?.name[0].toUpperCase() +
+                      selectedLogbook?.name?.substring(1)
+                }
+                iconPack="IonIcons"
+                iconLeftName="book"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName='book'
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                // iconColorInContainer={
+                //   selectedCategory?.icon?.color === "default"
+                //     ? appSettings.theme.style.colors.foreground
+                //     : selectedCategory?.icon?.color
+                //   // transaction.details.in_out === "income"
+                //   //   ? "#00695c"
+                //   //   : appSettings.theme.style.text.textPrimary.color
+                // }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() =>
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Logbooks",
+                    modalType: "list",
+                    props: loadedLogbooks,
+                    iconProps: {
+                      name: "book",
+                      pack: "IonIcons",
+                    },
+                    selected: (item) => {
+                      setSelectedLogbook({
+                        name: item.name,
+                        logbook_id: item.logbook_id,
+                        logbook_currency: item.logbook_currency,
+                      });
+                      setTransaction({
+                        ...transaction,
+                        logbook_id: item.logbook_id,
+                      });
+                    },
+                    default: { name: selectedLogbook?.name },
+                  })
+                }
+              />
+              {/* // TAG : Category */}
+              <ListItem
+                pressable
+                leftLabel="Category"
+                rightLabel={
+                  selectedCategory?.name
+                    ? selectedCategory?.name[0].toUpperCase() +
+                      selectedCategory?.name.substring(1)
+                    : "Pick Category"
+                }
+                iconPack="IonIcons"
+                iconLeftName="pricetags"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                iconInRightContainerName={selectedCategory?.icon?.name}
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                iconColorInContainer={
+                  selectedCategory?.icon?.color === "default"
+                    ? appSettings.theme.style.colors.foreground
+                    : selectedCategory?.icon?.color
+                  // transaction.details.in_out === "income"
+                  //   ? "#00695c"
+                  //   : appSettings.theme.style.text.textPrimary.color
+                }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() =>
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Category",
+                    modalType: "list",
+                    props:
+                      transaction.details.in_out === "expense"
+                        ? categories.categories.expense
+                        : categories.categories.income,
+                    selected: (item) => {
+                      setSelectedCategory(item);
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          category_id: item.id,
                         },
-                      ]}
-                    >
-                      <TextPrimary
-                        label={
-                          !transaction?.details?.date
-                            ? "Pick date"
-                            : new Date(transaction.details.date)
-                                .getHours()
-                                .toString()
-                                .padStart(2, "0") +
-                              ":" +
-                              new Date(transaction.details.date)
-                                .getMinutes()
-                                .toString()
-                                .padStart(2, "0")
-                        }
-                        style={{
-                          color:
-                            transaction.details.in_out === "income"
-                              ? "#00695c"
-                              : appSettings.theme.style.text.textPrimary.color,
-                        }}
-                      />
-                    </View>
-                  )}
-                  <IonIcons
-                    name="chevron-forward"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-
-            {/* // TAG : Logbook Section */}
-            <TouchableNativeFeedback
-              onPress={() =>
-                navigation.navigate(screenList.modalScreen, {
-                  title: "Logbooks",
-                  modalType: "list",
-                  props: loadedLogbooks,
-                  iconProps: {
-                    name: "book",
-                    pack: "IonIcons",
-                  },
-                  selected: (item) => {
-                    setSelectedLogbook({
-                      name: item.name,
-                      logbook_id: item.logbook_id,
-                      logbook_currency: item.logbook_currency,
-                    });
-                    setTransaction({
-                      ...transaction,
-                      logbook_id: item.logbook_id,
-                    });
-                  },
-                  default: { name: selectedLogbook?.name },
-                })
-              }
-            >
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <IonIcons
-                    name="book"
-                    size={18}
-                    style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                  <TextPrimary label="From Book" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  <View
-                    style={[
-                      {
-                        flexDirection: "row",
-                        maxWidth: "50%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 8,
-                        borderRadius: 8,
-                      },
-                      {
-                        backgroundColor:
-                          transaction.details.in_out === "income"
-                            ? "#c3f4f4"
-                            : appSettings.theme.style.colors.secondary,
-                      },
-                    ]}
-                  >
-                    {/* // TAG : Book Picker */}
-                    <TextPrimary
-                      label={
-                        !selectedLogbook?.name
-                          ? "Pick Logbook"
-                          : selectedLogbook?.name[0].toUpperCase() +
-                            selectedLogbook?.name?.substring(1)
-                      }
-                      style={{
-                        color:
-                          transaction.details.in_out === "income"
-                            ? "#00695c"
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                      numberOfLines={1}
-                    />
-                  </View>
-                  <IonIcons
-                    name="chevron-forward"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-
-            {/* // TAG : Category Section */}
-            <TouchableNativeFeedback
-              onPress={() =>
-                navigation.navigate(screenList.modalScreen, {
-                  title: "Category",
-                  modalType: "list",
-                  props:
-                    transaction.details.in_out === "expense"
-                      ? categories.categories.expense
-                      : categories.categories.income,
-                  selected: (item) => {
-                    setSelectedCategory(item);
-                    setTransaction({
-                      ...transaction,
-                      details: {
-                        ...transaction.details,
-                        category_id: item.id,
-                      },
-                    });
-                  },
-                  default: selectedCategory,
-                })
-              }
-            >
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <IonIcons
-                    name="pricetags"
-                    size={18}
-                    style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                  <TextPrimary label="Category" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  <View
-                    style={[
-                      {
-                        flexDirection: "row",
-                        maxWidth: "50%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 8,
-                        borderRadius: 8,
-                      },
-                      {
-                        backgroundColor:
-                          transaction.details.in_out === "income"
-                            ? "#c3f4f4"
-                            : appSettings.theme.style.colors.secondary,
-                      },
-                    ]}
-                  >
-                    {/* // TAG : Category Picker */}
-                    <IonIcons
-                      name={selectedCategory?.icon?.name}
-                      size={18}
-                      style={{
-                        display:
-                          selectedCategory?.icon?.pack === "IonIcons"
-                            ? "flex"
-                            : "none",
-                        paddingRight: 8,
-                      }}
-                      color={
-                        selectedCategory?.icon?.color === "default"
-                          ? appSettings.theme.style.colors.foreground
-                          : selectedCategory?.icon?.color
-                      }
-                    />
-
-                    <TextPrimary
-                      label={
-                        selectedCategory?.name
-                          ? selectedCategory?.name[0].toUpperCase() +
-                            selectedCategory?.name.substring(1)
-                          : "Pick Category"
-                      }
-                      style={{
-                        color:
-                          transaction.details.in_out === "income"
-                            ? "#00695c"
-                            : appSettings.theme.style.text.textPrimary.color,
-                      }}
-                      numberOfLines={1}
-                    />
-                  </View>
-                  <IonIcons
-                    name="chevron-forward"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                </View>
-              </View>
-            </TouchableNativeFeedback>
-
-            {/* // TAG : Notes Section */}
-            <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
-              <View style={appSettings.theme.style.list.listContainer}>
-                <View
-                  style={{
-                    ...appSettings.theme.style.list.listItem,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                      });
+                    },
+                    default: selectedCategory,
+                  })
+                }
+              />
+            </ListSection>
+            <ListSection>
+              {/* // TAG : Notes Section */}
+              <TouchableNativeFeedback
+                onPress={() => inputNotes.current.focus()}
+              >
+                <View style={appSettings.theme.style.list.listContainer}>
                   <IonIcons
                     name="document-text"
                     size={18}
                     style={{ paddingRight: 16 }}
                     color={appSettings.theme.style.colors.foreground}
                   />
-                  <TextPrimary label="Notes" style={{ flex: 1 }} />
-
-                  {/* // TAG : Container */}
-                  {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
-
-                  {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
-                  {/* // TAG : Notes Input */}
-                  <TextInput
-                    ref={inputNotes}
-                    textAlign="right"
-                    returnKeyType="done"
-                    keyboardType="default"
-                    placeholder="Add additional notes ..."
-                    placeholderTextColor={
-                      appSettings.theme.style.text.textSecondary.color
-                    }
+                  <View
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
-                      flex: 5,
-                      height: 48,
-                      borderRadius: 8,
-                      fontSize: 16,
+                      ...appSettings.theme.style.list.listItem,
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
-                    onChangeText={(string) => {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          notes: string,
-                        },
-                      });
-                    }}
-                    clearButtonMode="while-editing"
-                    defaultValue={transaction.details.notes}
-                    value={transaction.details.notes}
-                  />
+                  >
+                    <TextPrimary label="Notes" style={{ flex: 1 }} />
+
+                    {/* // TAG : Container */}
+                    {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
+
+                    {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
+                    {/* // TAG : Notes Input */}
+                    <TextInput
+                      ref={inputNotes}
+                      textAlign="right"
+                      returnKeyType="done"
+                      keyboardType="default"
+                      placeholder="Add additional notes ..."
+                      placeholderTextColor={
+                        appSettings.theme.style.text.textSecondary.color
+                      }
+                      style={{
+                        ...appSettings.theme.style.text.textPrimary,
+                        flex: 5,
+                        height: 48,
+                        borderRadius: 8,
+                        fontSize: 16,
+                      }}
+                      onChangeText={(string) => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            notes: string,
+                          },
+                        });
+                      }}
+                      clearButtonMode="while-editing"
+                      defaultValue={transaction.details.notes}
+                      value={transaction.details.notes}
+                    />
+                  </View>
+                  {transaction.details.notes && (
+                    <IonIcons
+                      onPress={() => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            notes: "",
+                          },
+                        });
+                      }}
+                      name="close-circle"
+                      size={18}
+                      style={{ paddingLeft: 16 }}
+                      color={appSettings.theme.style.colors.foreground}
+                    />
+                  )}
+
+                  {/* </View> */}
+                  {/* <IonIcons name='pencil' size={18} style={{ paddingLeft: 16 }} /> */}
                 </View>
-                {transaction.details.notes && (
-                  <IonIcons
-                    onPress={() => {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          notes: "",
-                        },
-                      });
-                    }}
-                    name="close-circle"
-                    size={18}
-                    style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
-                  />
-                )}
+              </TouchableNativeFeedback>
+            </ListSection>
+            <ListSection>
+              {/* // TAG : Repeat */}
+              <ListItem
+                pressable
+                leftLabel="Repeat"
+                rightLabel={
+                  !localRepeatedTransactions.repeat_type?.name
+                    ? "None"
+                    : localRepeatedTransactions.repeat_type.name[0].toUpperCase() +
+                      localRepeatedTransactions.repeat_type.name.substring(1)
+                }
+                iconPack="IonIcons"
+                iconLeftName="repeat"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName="repeat"
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                iconColorInContainer={
+                  transaction.details.in_out === "income"
+                    ? "#00695c"
+                    : appSettings.theme.style.text.textPrimary.color
+                }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Repeat Transaction",
+                    modalType: "list",
+                    iconProps: {
+                      name: "repeat",
+                      pack: "IonIcons",
+                    },
+                    props: [
+                      {
+                        name: "no repeat",
+                        id: "no_repeat",
+                        range: 0,
+                      },
+                      {
+                        name: "every day",
+                        id: "every_day",
+                        range: 60 * 60 * 24 * 1000,
+                      },
+                      {
+                        name: "every week",
+                        id: "every_week",
+                        range: 60 * 60 * 24 * 7 * 1000,
+                      },
+                      {
+                        name: "every 2 weeks",
+                        id: "every_2_weeks",
+                        range: 60 * 60 * 24 * 14 * 1000,
+                      },
+                      {
+                        name: "every month",
+                        id: "every_month",
+                        range: 60 * 60 * 24 * 30 * 1000,
+                      },
+                      {
+                        name: "every year",
+                        id: "every_year",
+                        range: 60 * 60 * 24 * 365 * 1000,
+                      },
+                    ],
+                    selected: (item) => {
+                      if (item.id === "no_repeat") {
+                        setLocalRepeatedTransactions({
+                          uid: userAccount.uid,
+                          repeat_id: null,
+                          repeat_type: item,
+                          transactions: [],
+                        });
+                        setTransaction({
+                          ...transaction,
+                          repeat_id: null,
+                        });
+                      } else {
+                        const repeat_id = uuid.v4();
 
-                {/* </View> */}
-                {/* <IonIcons name='pencil' size={18} style={{ paddingLeft: 16 }} /> */}
+                        setLocalRepeatedTransactions({
+                          ...localRepeatedTransactions,
+                          uid: userAccount.uid,
+                          repeat_id: repeat_id,
+                          repeat_amount: transaction.details.amount,
+                          repeat_in_out: transaction.details.in_out,
+                          repeat_category_id: transaction.details.category_id,
+                          repeat_status: "active",
+                          repeat_logbook_id: transaction.logbook_id,
+                          repeat_notes: transaction.details.notes,
+                          next_repeat_date:
+                            transaction.details.date + item.range,
+                          repeat_type: item,
+                          transactions: [transaction.transaction_id],
+                        });
+                        setTransaction({
+                          ...transaction,
+                          repeat_id: repeat_id,
+                        });
+                      }
+                    },
+                    default: localRepeatedTransactions.repeat_type,
+                  });
+                }}
+              />
+              {localRepeatedTransactions.repeat_type.id !== "no_repeat" && (
+                <TextPrimary
+                  label={
+                    "Next repeat in " +
+                    new Date(
+                      localRepeatedTransactions.next_repeat_date
+                    ).toDateString()
+                  }
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 50,
+                  }}
+                />
+              )}
+            </ListSection>
+
+            {/* // TAG : Line Separator */}
+            <View
+              style={{
+                borderColor: "#bbb",
+                borderBottomWidth: 1,
+                height: 0,
+                width: "80%",
+                alignSelf: "center",
+                paddingTop: 16,
+              }}
+            ></View>
+
+            {/* // TAG : Action Button */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 16,
+              }}
+            >
+              {/* // TAG : Cancel Button */}
+              <View style={{ paddingRight: 8 }}>
+                <ButtonSecondary
+                  label="Cancel"
+                  width={150}
+                  theme={appSettings.theme}
+                  onPress={() => {
+                    // setRawTransactionsLength(null)
+                    navigation.navigate(screenList.bottomTabNavigator);
+                  }}
+                />
               </View>
-            </TouchableNativeFeedback>
+
+              {/* // TAG : Save Button */}
+              <View style={{ paddingLeft: 8 }}>
+                <ButtonPrimary
+                  label="Save"
+                  theme={appSettings.theme}
+                  width={150}
+                  onPress={() => {
+                    checkFinalTransaction();
+                  }}
+                />
+              </View>
+            </View>
           </ScrollView>
-
-          {/* // TAG : Line Separator */}
-          <View
-            style={{
-              borderColor: "#bbb",
-              borderBottomWidth: 1,
-              height: 0,
-              width: "80%",
-              alignSelf: "center",
-              paddingTop: 16,
-            }}
-          ></View>
-
-          {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 16,
-            }}
-          >
-            {/* // TAG : Cancel Button */}
-            <View style={{ paddingRight: 8 }}>
-              <ButtonSecondary
-                label="Cancel"
-                width={150}
-                theme={appSettings.theme}
-                onPress={() => {
-                  // setRawTransactionsLength(null)
-                  navigation.navigate(screenList.bottomTabNavigator);
-                }}
-              />
-            </View>
-
-            {/* // TAG : Save Button */}
-            <View style={{ paddingLeft: 8 }}>
-              <ButtonPrimary
-                label="Save"
-                theme={appSettings.theme}
-                width={150}
-                onPress={() => {
-                  checkFinalTransaction();
-                }}
-              />
-            </View>
-          </View>
         </View>
       )}
 

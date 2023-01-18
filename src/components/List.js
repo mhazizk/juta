@@ -9,12 +9,20 @@ import Loading from "./Loading";
 export const ListItem = ({
   leftLabel,
   rightLabel,
+  secondaryLabel,
+  thirdLabel,
   iconPack,
+  useRightLabelContainer = false,
+  rightLabelContainerStyle,
+  iconColorInContainer,
+  iconInRightContainerName,
+  rightLabelStyle,
   isLoading = false,
   props,
   theme,
   symbol,
   pressable,
+  disabled = false,
   iconLeftName,
   iconLeftColor,
   iconRightName,
@@ -34,7 +42,11 @@ export const ListItem = ({
                 name={iconLeftName}
                 size={18}
                 color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
+                  iconLeftColor
+                    ? iconLeftColor
+                    : !disabled
+                    ? appSettings.theme.style.colors.foreground
+                    : appSettings.theme.style.text.textSecondary.color
                 }
                 style={{ paddingRight: 16 }}
               />
@@ -43,7 +55,9 @@ export const ListItem = ({
               <FontAwesome5Icon
                 name={iconLeftName}
                 color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
+                  iconLeftColor || disabled
+                    ? appSettings.theme.style.text.textSecondary.color
+                    : appSettings.theme.style.colors.foreground
                 }
                 size={18}
                 style={{
@@ -52,11 +66,60 @@ export const ListItem = ({
                 }}
               />
             )}
-            <View style={appSettings.theme.style.list.listItem}>
-              {leftLabel && <TextPrimary label={leftLabel} />}
-              {rightLabel && <TextSecondary label={rightLabel} />}
+            <View
+              style={{
+                ...appSettings.theme.style.list.listItem,
+                flexDirection: "row",
+                // maxWidth: "100%",
+              }}
+            >
+              <View>
+                {leftLabel && !disabled && <TextPrimary label={leftLabel} />}
+                {secondaryLabel && !disabled && (
+                  <TextSecondary label={secondaryLabel} />
+                )}
+                {thirdLabel && !disabled && (
+                  <TextSecondary label={thirdLabel} />
+                )}
+                {leftLabel && disabled && <TextSecondary label={leftLabel} />}
+              </View>
+              {rightLabel && !useRightLabelContainer && (
+                <TextSecondary label={rightLabel} />
+              )}
+              {rightLabel && useRightLabelContainer && (
+                <>
+                  <View
+                    style={[
+                      { ...rightLabelContainerStyle },
+                      { maxWidth: "70%" },
+                    ]}
+                  >
+                    {iconInRightContainerName && (
+                      <IonIcons
+                        name={iconInRightContainerName}
+                        size={
+                          iconRightSize ||
+                          (iconRightName === "checkmark-circle" ? 22 : 18)
+                        }
+                        color={
+                          iconColorInContainer ||
+                          appSettings.theme.style.colors.foreground ||
+                          lightTheme.colors.foreground
+                        }
+                        style={{ paddingRight: 8 }}
+                      />
+                    )}
+
+                    <TextPrimary
+                      label={rightLabel}
+                      style={{ ...(rightLabelStyle || null) }}
+                    />
+                  </View>
+                </>
+              )}
             </View>
             {/* {iconPack === "IonIcons" && ( */}
+
             {iconRightName && !isLoading && (
               <IonIcons
                 name={iconRightName}
@@ -278,6 +341,7 @@ export const TransactionListItem = ({
   transactionHour,
   transactionNotes,
   transactionAmount,
+  isRepeated,
   // transactionId,
   logbookCurrency,
   secondaryCurrency,
@@ -332,14 +396,21 @@ export const TransactionListItem = ({
                 }}
               >
                 {categoryName && <TextPrimary label={categoryName} />}
+                <IonIcons
+                  name={isRepeated ? "repeat" : "ellipse"}
+                  color={
+                    isRepeated
+                      ? appSettings.theme.style.colors.foreground
+                      : appSettings.theme.style.colors.secondary
+                  }
+                  size={isRepeated ? 16 : 8}
+                  style={{
+                    display: transactionHour || isRepeated ? "flex" : "none",
+                    paddingHorizontal: 8,
+                  }}
+                />
                 {transactionHour && (
                   <>
-                    <IonIcons
-                      name="ellipse"
-                      color={appSettings.theme.style.colors.secondary}
-                      size={8}
-                      style={{ paddingHorizontal: 8 }}
-                    />
                     <TextSecondary
                       // label={new Date(transactionHour).toLocaleTimeString(
                       //   appSettings.locale,

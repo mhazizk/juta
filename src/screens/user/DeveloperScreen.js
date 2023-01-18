@@ -15,6 +15,7 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -42,6 +43,8 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { repeatedTransactions, dispatchRepeatedTransactions } =
+    useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [loaded, setLoaded] = useState(null);
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
@@ -358,6 +361,18 @@ const DeveloperScreen = ({ item, navigation }) => {
             iconPack="IonIcons"
             onPress={() => {
               console.log(JSON.stringify(categories));
+            }}
+          />
+
+          {/* // SECTION : Repeated Transactions */}
+          <TextPrimary label="Repeated Transactions" style={{ padding: 16 }} />
+          <ListItem
+            pressable
+            leftLabel="// TAG : Log repeated transactions in state"
+            iconLeftName="document"
+            iconPack="IonIcons"
+            onPress={() => {
+              console.log(JSON.stringify(repeatedTransactions));
             }}
           />
 

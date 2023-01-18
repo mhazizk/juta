@@ -18,6 +18,14 @@ const subscriptionFeaturesModel = [
     premium: 5,
   },
   {
+    id: 6,
+    identifier: SUBSCRIPTION_LIMIT.BUDGETS,
+    name: "Budgets",
+    iconName: "pie-chart",
+    free: 1,
+    premium: 5,
+  },
+  {
     id: 3,
     identifier: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
     name: "Secondary currency",
@@ -41,22 +49,14 @@ const subscriptionFeaturesModel = [
     free: false,
     premium: true,
   },
-  {
-    id: 6,
-    identifier: SUBSCRIPTION_LIMIT.BUDGETS,
-    name: "Budgets",
-    iconName: "pie-chart",
-    free: 1,
-    premium: 5,
-  },
-  {
-    id: 7,
-    identifier: SUBSCRIPTION_LIMIT.GROUPS,
-    name: "Groups and sharing logbooks",
-    iconName: "people",
-    free: false,
-    premium: true,
-  },
+  // {
+  //   id: 7,
+  //   identifier: SUBSCRIPTION_LIMIT.GROUPS,
+  //   name: "Groups and sharing logbooks",
+  //   iconName: "people",
+  //   free: false,
+  //   premium: true,
+  // },
 ];
 
 export default subscriptionFeaturesModel;

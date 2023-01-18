@@ -1,34 +1,33 @@
-import {
-  useGlobalAppSettings,
-  useGlobalBadgeCounter,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalUserAccount,
-} from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import firestore from "../api/firebase/firestore";
-import { Transaction } from "firebase/firestore";
-import { useRef } from "react";
 
 const useFirestoreSubscriptions = ({
   uid,
   subscribeAll,
   unsubscribeAll,
+
   appSettings,
   dispatchAppSettings,
+
   userAccount,
   dispatchUserAccount,
+
   logbooks,
   dispatchLogbooks,
+
   sortedTransactions,
   dispatchSortedTransactions,
+
   categories,
   dispatchCategories,
+
   budgets,
   dispatchBudgets,
+
+  repeatedTransactions,
+  dispatchRepeatedTransactions,
+
   badgeCounter,
   dispatchBadgeCounter,
 }) => {
@@ -200,6 +199,39 @@ const useFirestoreSubscriptions = ({
   );
   // unsubscribeTransactions = transactionsSubscription;
 
+  // TAG : Repeated Transactions Subscription //
+  const unsubscribeRepeatedTransactions = firestore.getAndListenMultipleDocs(
+    FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+    uid,
+    (error) => alert(error),
+    (data) => {},
+    (data, type) => {
+      switch (type) {
+        case "added":
+          dispatchRepeatedTransactions({
+            type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
+            payload: data,
+          });
+          break;
+        case "modified":
+          dispatchRepeatedTransactions({
+            type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
+            payload: data,
+          });
+          break;
+        case "removed":
+          dispatchRepeatedTransactions({
+            type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
+            payload: data,
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
+  );
+
   // TAG : Categories Subscription //
   const unsubscribeCategories = firestore.getAndListenOneDoc(
     FIRESTORE_COLLECTION_NAMES.CATEGORIES,
@@ -235,8 +267,7 @@ const useFirestoreSubscriptions = ({
     unsubscribeTransactions;
     unsubscribeCategories;
     unsubscribeBudgets;
-    // return {
-    // };
+    unsubscribeRepeatedTransactions;
   }
   if (unsubscribeAll) {
     console.log("unsubscribeAll");
@@ -246,8 +277,7 @@ const useFirestoreSubscriptions = ({
     unsubscribeTransactions();
     unsubscribeCategories();
     unsubscribeBudgets();
-    // return () => {
-    // };
+    unsubscribeRepeatedTransactions();
   }
 };
 

@@ -12,6 +12,7 @@ import {
   useGlobalCategories,
   useGlobalLoading,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTransactions,
   useGlobalUserAccount,
@@ -75,6 +76,8 @@ import AccountSubscriptionScreen from "../features/subscription/screens/AccountS
 import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
 import ExportScreen from "../features/export/screens/ExportScreen";
+import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactions";
+import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -87,6 +90,8 @@ const RootStack = () => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { repeatedTransactions, dispatchRepeatedTransactions } =
+    useGlobalRepeatedTransactions();
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
@@ -97,24 +102,35 @@ const RootStack = () => {
   const sortedTransactionsRef = useRef(sortedTransactions);
   const categoriesRef = useRef(categories);
   const budgetsRef = useRef(budgets);
+  const repeatedTransactionsRef = useRef(repeatedTransactions);
   const badgeCounterRef = useRef(badgeCounter);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
       uid: userAccount.uid,
       subscribeAll: true,
+
       appSettings: appSettingsRef,
       dispatchAppSettings: dispatchAppSettings,
+
       userAccount: userAccountRef,
       dispatchUserAccount: dispatchUserAccount,
+
       logbooks: logbooksRef,
       dispatchLogbooks: dispatchLogbooks,
+
       sortedTransactions: sortedTransactionsRef,
       dispatchSortedTransactions: dispatchSortedTransactions,
+
       categories: categoriesRef,
       dispatchCategories: dispatchCategories,
+
+      repeatedTransactions: repeatedTransactionsRef,
+      dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+
       budgets: budgetsRef,
       dispatchBudgets: dispatchBudgets,
+
       badgeCounter: badgeCounterRef,
       dispatchBadgeCounter: dispatchBadgeCounter,
     });
@@ -812,11 +828,25 @@ const RootStack = () => {
       />
 
       {/* // SECTION : USER */}
-      {/* // TAG : User Settings Screen */}
+      {/* // TAG : User Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "User" }}
         name={screenList.userScreen}
         component={UserScreen}
+      />
+
+      {/* // SECTION : REPEATED TRANSACTIONS */}
+      {/* // TAG : My Repeated Transactions Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "My Repeated Transactions" }}
+        name={screenList.myRepeatedTransactionsScreen}
+        component={MyRepeatedTransactionsScreen}
+      />
+      {/* // TAG : Repeated Transaction Details Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Repeated Transaction Details" }}
+        name={screenList.repeatedTransactionDetailsScreen}
+        component={RepeatedTransactionsDetailsScreen}
       />
 
       {/* // SECTION : DEVICES */}

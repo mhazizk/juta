@@ -53,6 +53,11 @@ const screenList = {
   editBudgetScreen: "Edit Budget Screen",
   budgetPreviewScreen: "Budget Preview Screen",
 
+  // Repeated Transaction Screen
+  myRepeatedTransactionsScreen: "My Repeated Transactions Screen",
+  newRepeatedTransactionScreen: "New Repeated Transaction Screen",
+  repeatedTransactionDetailsScreen : 'Repeated Transaction Details Screen',
+
   // Search Screen
   searchScreen: "Search Screen",
 

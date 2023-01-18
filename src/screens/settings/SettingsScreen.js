@@ -526,36 +526,6 @@ const CurrencySettingsScreen = ({ navigation }) => {
             </ListSection>
           </>
         )}
-        {/* // SECTION : Data Section */}
-        {userAccount && (
-          <>
-            <SettingsHeaderList label="Data Settings" iconName="cube" />
-            {/* // TAG : Other */}
-            <ListSection>
-              {/* // TAG : Export */}
-              <ListItem
-                pressable
-                onPress={() => {
-                  navigation.navigate(screenList.exportScreen);
-                }}
-                iconPack="IonIcons"
-                iconLeftName="share-outline"
-                leftLabel="Export Data"
-                // rightLabel="Export all log books and transactions"
-              />
-
-              {/* // TAG : Sync */}
-              <ListItem
-                pressable
-                onPress={() => alert("Feature in progress ...")}
-                iconPack="IonIcons"
-                iconLeftName="sync"
-                leftLabel="Sync Data"
-                rightLabel="Last sync : 17 Nov 2022"
-              />
-            </ListSection>
-          </>
-        )}
       </Animated.ScrollView>
     </>
   );
