@@ -148,6 +148,7 @@ export const ListItem = ({
               name={iconLeftName}
               size={18}
               color={
+                iconLeftColor ||
                 appSettings.theme.style.colors.foreground ||
                 lightTheme.colors.foreground
               }

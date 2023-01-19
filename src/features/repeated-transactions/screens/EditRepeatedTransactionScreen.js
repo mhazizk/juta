@@ -23,6 +23,9 @@ import {
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
+import CheckList from "../../../components/CheckList";
+import RadioButtonList from "../../../components/List/RadioButtonList";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   // TAG : useRef State //
@@ -35,6 +38,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   const { logbooks } = useGlobalLogbooks();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedLogbook, setSelectedLogbook] = useState(null);
+  const [apply, setApply] = useState({
+    applyTo: "next",
+    options: [
+      { name: "Next repeated transactions only", value: "next" },
+      { name: "All repeated transactions", value: "all" },
+    ],
+  });
   const [localRepeatedTransaction, setLocalRepeatedTransaction] =
     useState(null);
 
@@ -58,6 +68,82 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
       });
     }
   }, []);
+
+  const onChangeStart = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    switch (event.type) {
+      case "dismissed":
+        break;
+      case "set":
+        setLocalRepeatedTransaction({
+          ...localRepeatedTransaction,
+          repeat_start_date: new Date(currentDate).getTime(),
+        });
+        break;
+      case "neutralButtonPressed":
+        setLocalRepeatedTransaction({
+          ...localRepeatedTransaction,
+          repeat_start_date: Date.now(),
+        });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  // Set Date in Date Picker
+  const onChangeFinish = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    switch (event.type) {
+      case "dismissed":
+        break;
+
+      case "set":
+        setLocalRepeatedTransaction({
+          ...localRepeatedTransaction,
+          repeat_finish_date: new Date(currentDate).getTime(),
+        });
+        break;
+
+      case "neutralButtonPressed":
+        setLocalRepeatedTransaction({
+          ...localRepeatedTransaction,
+          repeat_finish_date: null,
+        });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  // Date Picker
+  const showMode = ({ currentMode, mode }) => {
+    DateTimePickerAndroid.open({
+      value:
+        mode === "start"
+          ? new Date(localRepeatedTransaction.repeat_start_date)
+          : new Date(localRepeatedTransaction.repeat_finish_date),
+      onChange: mode === "start" ? onChangeStart : onChangeFinish,
+      mode: currentMode,
+      is24Hour: true,
+      neutralButtonLabel: mode === "start" ? "today" : "forever",
+      positiveButtonLabel: "select",
+      minimumDate:
+        mode === "start"
+          ? new Date().setHours(0, 0, 0, 0)
+          : new Date(
+              localRepeatedTransaction.repeat_start_date + 1000 * 60 * 60 * 24
+            ),
+    });
+  };
+
+  // Date Picker
+  const showDatePicker = ({ mode }) => {
+    showMode({ currentMode: "date", mode: mode });
+  };
+
   return (
     <>
       {localRepeatedTransaction && selectedCategory && selectedLogbook && (
@@ -219,6 +305,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Status",
                   modalType: "list",
+                  mainButtonLabel: "Select",
                   props: [
                     {
                       name: "active",
@@ -293,6 +380,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Logbooks",
                   modalType: "list",
+                  mainButtonLabel: "Select",
                   props: logbooks.logbooks.map((logbook) => {
                     return {
                       name: logbook.logbook_name,
@@ -366,6 +454,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Category",
                   modalType: "list",
+                  mainButtonLabel: "Select",
                   props:
                     localRepeatedTransaction?.repeat_in_out === "expense"
                       ? categories?.categories.expense
@@ -461,6 +550,11 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 localRepeatedTransaction.repeat_start_date
               ).toDateString()}
               iconRightName="chevron-forward"
+              onPress={() =>
+                showDatePicker({
+                  mode: "start",
+                })
+              }
             />
             {/* // TAG : Repeat finish date */}
             <ListItem
@@ -476,12 +570,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     ).toDateString()
               }
               iconRightName="chevron-forward"
+              onPress={() => showDatePicker({ mode: "finish" })}
             />
             {/* // TAG : Repeat Frequency */}
             <ListItem
               pressable
               iconPack="IonIcons"
-              leftLabel="Repeat Frequency"
+              leftLabel="Repeat frequency"
               iconLeftName="repeat"
               rightLabel={
                 localRepeatedTransaction?.repeat_type.name[0].toUpperCase() +
@@ -492,6 +587,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Repeat Transaction",
                   modalType: "list",
+                  mainButtonLabel: "Select",
                   iconProps: {
                     name: "repeat",
                     pack: "IonIcons",
@@ -561,18 +657,90 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               }}
             />
           </ListSection>
-          <ListSection>
-            <ButtonPrimary label="Save and apply for next repeated transactions" />
+          {/* // TAG : Apply Changes */}
+          <TextPrimary
+            label="Apply changes to"
+            style={{
+              paddingVertical: 8,
+              paddingHorizontal: 32,
+            }}
+          />
+          <ListSection noMargin>
+            <RadioButtonList
+              items={apply.options.map((option) => {
+                return {
+                  name: option.name,
+                  value: option.value,
+                };
+              })}
+              selected={apply.applyTo}
+              onChange={(item) => {
+                setApply({
+                  ...apply,
+                  applyTo: item.value,
+                });
+              }}
+            />
           </ListSection>
-          <ListSection>
-            <ButtonPrimary label="Save and apply for all repeated transactions" />
-          </ListSection>
-          <ListSection>
-            <ButtonSecondaryDanger label="Delete all of this repeated transactions" />
-          </ListSection>
-          <ListSection>
-            <ButtonSecondaryDanger label="Delete all of this previous repeated transactions" />
-          </ListSection>
+          {apply.applyTo === "all" && (
+            <>
+              <View
+                style={{
+                  paddingHorizontal: 16,
+                }}
+              >
+                <ListItem
+                  iconLeftColor={appSettings.theme.style.colors.warn}
+                  iconLeftName="warning"
+                  leftLabel="Earlier logged transactions date will be adjusted to the new changes"
+                />
+              </View>
+            </>
+          )}
+          {/* // TAG : Buttons */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingTop: 16,
+              paddingBottom: 24,
+              paddingHorizontal: 48,
+            }}
+          >
+            <View style={{ flex: 1, paddingRight: 8 }}>
+              <ButtonSecondaryDanger
+                label="Delete"
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Delete Repeated Transaction",
+                    modalType: "list",
+                    mainButtonLabel: "Delete",
+                    iconProps: {
+                      name: "trash",
+                      //   color: appSettings.theme.style.colors.danger,
+                      pack: "IonIcons",
+                    },
+                    props: [
+                      {
+                        name: "Stop and delete all repeated transactions",
+                        id: "delete_all",
+                      },
+                      {
+                        name: "Delete previous repeated transactions only",
+                        id: "delete_previous",
+                      },
+                    ],
+                    selected: (item) => {},
+                    default: null,
+                  });
+                }}
+              />
+            </View>
+            <View style={{ flex: 2, paddingRight: 8 }}>
+              <ButtonPrimary label="Save and apply" />
+            </View>
+          </View>
         </ScrollView>
       )}
     </>

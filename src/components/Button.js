@@ -25,7 +25,7 @@ export const ButtonPrimary = ({
   width,
   style,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
 
   return (
     <>
@@ -34,6 +34,46 @@ export const ButtonPrimary = ({
           style={[
             { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
             {
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {/* <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}> */}
+          <TextButtonPrimary label={label} />
+          {/* </View> */}
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
+// TAG : Button Primary Danger
+export const ButtonPrimaryDanger = ({
+  label,
+  props,
+  onPress,
+  condition,
+  theme,
+  width,
+  style,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
+            {
+              backgroundColor: appSettings.theme.style.colors.danger,
               minWidth: 80,
               minHeight: 48,
               width: width || null,
@@ -133,7 +173,7 @@ export const ButtonSecondary = ({
   );
 };
 
-// TAG : Button Secondary
+// TAG : Button Secondary Danger
 export const ButtonSecondaryDanger = ({
   label,
   props,

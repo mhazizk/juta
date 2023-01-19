@@ -12,7 +12,12 @@ import {
 import CountryFlag from "react-native-country-flag";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
-import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import {
+  ButtonPrimary,
+  ButtonPrimaryDanger,
+  ButtonSecondary,
+  ButtonSecondaryDanger,
+} from "../../components/Button";
 import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
@@ -119,7 +124,9 @@ const ModalScreen = ({ route, navigation }) => {
                   }
                   iconPack={item?.icon?.pack || route?.params?.iconProps?.pack}
                   iconLeftColor={
-                    item?.icon?.color === "default"
+                    route?.params?.iconProps?.color
+                      ? route?.params?.iconProps?.color
+                      : item?.icon?.color === "default"
                       ? appSettings.theme.style.colors.foreground
                       : item?.icon?.color
                   }
@@ -400,10 +407,10 @@ const ModalScreen = ({ route, navigation }) => {
             {/* } */}
 
             {/* {!localLoading && */}
-            <ButtonPrimary
-              label="Save"
-              onPress={
-                () => {
+            {route.params?.mainButtonLabel?.toLowerCase() !== "delete" && (
+              <ButtonPrimary
+                label={route.params?.mainButtonLabel || "Save"}
+                onPress={() => {
                   if (route.params?.modalType === "textInput" && !textInput) {
                     Alert.alert(
                       "Error",
@@ -427,24 +434,41 @@ const ModalScreen = ({ route, navigation }) => {
                     onPressReturn();
                     navigation.goBack();
                   }
-                }
-                // route.params?.modalType === 'list' ?
-                // () => {
-                // dispatchLoading({
-                //     type: ACTIONS.LOADING.SET,
-                //     payload: true
-                // })
-                // setLocalLoading(true)
-                //     route.params.selected(selected); navigation.goBack()
-                // } :
-                // route.params?.modalType === 'textInput' ?
-                //     () => {
-                //         route.params.selected(textInput); navigation.goBack()
-                //     } :
-                //     () => { navigation.goBack() }
-              }
-              theme={appSettings.theme.style}
-            />
+                }}
+                theme={appSettings.theme.style}
+              />
+            )}
+            {route.params?.mainButtonLabel?.toLowerCase() === "delete" && (
+              <ButtonPrimaryDanger
+                label={route.params?.mainButtonLabel}
+                onPress={() => {
+                  if (route.params?.modalType === "textInput" && !textInput) {
+                    Alert.alert(
+                      "Error",
+                      "Please enter a value",
+                      [
+                        {
+                          text: "OK",
+                          onPress: () => console.log("OK Pressed"),
+                        },
+                      ],
+                      { cancelable: false }
+                    );
+                  }
+
+                  if (route.params?.modalType === "textInput" && textInput) {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
+
+                  if (route.params?.modalType !== "textInput") {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
+                }}
+                theme={appSettings.theme.style}
+              />
+            )}
             {/* } */}
           </View>
         </View>
