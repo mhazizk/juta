@@ -55,8 +55,9 @@ const screenList = {
 
   // Repeated Transaction Screen
   myRepeatedTransactionsScreen: "My Repeated Transactions Screen",
+  editRepeatedTransactionScreen: "Edit Repeated Transaction Screen",
   newRepeatedTransactionScreen: "New Repeated Transaction Screen",
-  repeatedTransactionDetailsScreen : 'Repeated Transaction Details Screen',
+  repeatedTransactionDetailsScreen: "Repeated Transaction Details Screen",
 
   // Search Screen
   searchScreen: "Search Screen",

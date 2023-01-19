@@ -92,7 +92,11 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
         </ScrollView>
       )}
       {!repeatedTransactions.length && (
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(screenList.newTransactionDetailsScreen);
+          }}
+        >
           <View
             style={{
               height: "100%",

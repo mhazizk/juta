@@ -22,7 +22,9 @@ const globalRepeatedTransactionsReducer = (state, action) => {
 
       if (!transactionInState && !updateTimeStamp) {
         if (state.length > 0) {
-          return [...state, newRepeatedTransaction];
+          return [...state, newRepeatedTransaction].sort((a, b) => {
+            return a.next_repeat_date - b.next_repeat_date;
+          });
         } else {
           return [newRepeatedTransaction];
         }
@@ -54,7 +56,11 @@ const globalRepeatedTransactionsReducer = (state, action) => {
             repeatTransaction.repeat_id !== patchRepeatedTransaction.repeat_id
         );
         if (otherRepeatTransactions.length > 0) {
-          return [...otherRepeatTransactions, patchRepeatedTransaction];
+          return [...otherRepeatTransactions, patchRepeatedTransaction].sort(
+            (a, b) => {
+              return a.next_repeat_date - b.next_repeat_date;
+            }
+          );
         } else {
           return [patchRepeatedTransaction];
         }
@@ -70,7 +76,9 @@ const globalRepeatedTransactionsReducer = (state, action) => {
           repeatTransaction.repeat_id !== deleteRepeatedTransaction.repeat_id
       );
       if (otherNotDeletedRepeatTransactions.length > 0) {
-        return [...otherNotDeletedRepeatTransactions];
+        return [...otherNotDeletedRepeatTransactions].sort((a, b) => {
+          return a.next_repeat_date - b.next_repeat_date;
+        });
       } else {
         return [];
       }

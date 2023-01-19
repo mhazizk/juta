@@ -29,6 +29,7 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
@@ -42,6 +43,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const [category, setCategory] = useState();
 
   // TAG : useState Section //
@@ -60,6 +62,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
   const [logbookToOpen, setLogbookToOpen] = useState(null);
 
+  const [selectedRepeatSection, setSelectedRepeatSection] = useState(null);
+
   // logbook_id : null
   // logbook_name: null
 
@@ -71,6 +75,14 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {
     setTransaction(route?.params?.transaction);
     setSelectedLogbook(route?.params?.selectedLogbook);
+    if (route?.params?.repeat_id) {
+      setSelectedRepeatSection(
+        utils.findRepeatedTransactionSectionById({
+          repeatID: route?.params?.repeat_id,
+          repeatedTransactions: repeatedTransactions,
+        })
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -99,59 +111,6 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {}, [categories]);
 
   // TAG : Function Section //
-  //   // Find Category
-
-  //   // Find Category Name by Id
-  //   const findCategoryNameById = useMemo(() => {
-  //     return () => {
-  //       if (transaction) {
-  //         const id = transaction.details.category_id;
-  //         const foundExpenseCategory = categories.expense.filter((category) => {
-  //           return category.id === id;
-  //         });
-  //         const foundIncomeCategory = categories.income.filter((category) => {
-  //           return category.id === id;
-  //         });
-
-  //         if (foundExpenseCategory.length) {
-  //           setSelectedCategory(foundExpenseCategory[0]);
-  //         } else {
-  //           setSelectedCategory(foundIncomeCategory[0]);
-  //         }
-  //       }
-  //     };
-  //   }, [transaction]);
-
-  // Find Category Icon Name by Id
-  // const findCategoryIconNameById = useMemo(() => {
-  //     return (() => {
-  //         if (transaction) {
-  //             const filteredExpenseCategory = categories.expense.filter((category) => { return category.id === transaction.details.category_id })
-  //             const filteredIncomeCategory = categories.income.filter((category) => { return category.id === transaction.details.category_id })
-
-  //             if (filteredExpenseCategory.length) {
-  //                 return setSelectedCategory(filteredExpenseCategory[0])
-  //                 // return filteredExpenseCategory.map((item => item.icon.name));
-  //             } else {
-  //                 return setSelectedCategory(filteredIncomeCategory[0])
-  //                 // return filteredIncomeCategory.map((item) => item.icon.name);
-  //             }
-  //         }
-  //     })
-  // }, [transaction])
-
-  // Find Log Book Name by Id
-  // const findLogbookNamebyId = useMemo(() => {
-  //     return (
-  //         () => {
-  //             if (transaction) {
-  //                 const found = logbooks.logbooks.filter((logbook) => { return logbook.logbook_id === transaction.logbook_id })
-  //                 setSelectedLogbook({ logbook_id: found[0].logbook_id, name: found[0].logbook_name, logbook_currency: found[0].logbook_currency })
-  //                 // setLogbookToOpen({ logbook_id: found[0].logbook_id, name: found[0].logbook_name })
-  //             }
-  //         }
-  //     )
-  // })
 
   return (
     <>
@@ -458,6 +417,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                       transaction: transaction,
                       selectedLogbook: route?.params?.selectedLogbook,
                       selectedCategory: selectedCategory,
+                      selectedRepeatSection: selectedRepeatSection,
                     })
                   }
                   theme={theme.theme}

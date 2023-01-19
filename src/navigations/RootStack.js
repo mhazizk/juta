@@ -76,8 +76,9 @@ import AccountSubscriptionScreen from "../features/subscription/screens/AccountS
 import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
 import ExportScreen from "../features/export/screens/ExportScreen";
-import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactions";
+import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
+import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -838,7 +839,52 @@ const RootStack = () => {
       {/* // SECTION : REPEATED TRANSACTIONS */}
       {/* // TAG : My Repeated Transactions Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "My Repeated Transactions" }}
+        options={{
+          ...showHeader,
+          title: "My Repeated Transactions",
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                style={{
+                  marginRight: 20,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  // get repeat limit from subscription plan
+                  const repeatLimit = getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                  );
+
+                  // check if user has reached the limit
+                  if (!repeatLimit) {
+                    // show alert
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      `Upgrade your subscription to add repeated transactions.`
+                    );
+                  }
+
+                  // if not, show modal to create new transaction
+                  if (repeatLimit) {
+                    navigation.navigate(screenList.newTransactionDetailsScreen);
+                  }
+                }}
+              >
+                <IonIcons
+                  name="add"
+                  size={20}
+                  color={appSettings.theme.style.colors.textHeader}
+                />
+                <TextPrimary
+                  label="Add"
+                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
         name={screenList.myRepeatedTransactionsScreen}
         component={MyRepeatedTransactionsScreen}
       />
@@ -847,6 +893,12 @@ const RootStack = () => {
         options={{ ...showHeader, title: "Repeated Transaction Details" }}
         name={screenList.repeatedTransactionDetailsScreen}
         component={RepeatedTransactionsDetailsScreen}
+      />
+      {/* // TAG : Edit Repeated Transaction Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Edit Repeated Transaction" }}
+        name={screenList.editRepeatedTransactionScreen}
+        component={EditRepeatedTransactionScreen}
       />
 
       {/* // SECTION : DEVICES */}

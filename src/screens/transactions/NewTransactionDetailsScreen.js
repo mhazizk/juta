@@ -4,6 +4,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -34,6 +35,8 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -464,14 +467,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#c3f4f4"
                       : appSettings.theme.style.colors.secondary,
                 }}
-                // iconColorInContainer={
-                //   selectedCategory?.icon?.color === "default"
-                //     ? appSettings.theme.style.colors.foreground
-                //     : selectedCategory?.icon?.color
-                //   // transaction.details.in_out === "income"
-                //   //   ? "#00695c"
-                //   //   : appSettings.theme.style.text.textPrimary.color
-                // }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
@@ -525,14 +520,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#c3f4f4"
                       : appSettings.theme.style.colors.secondary,
                 }}
-                // iconColorInContainer={
-                //   selectedCategory?.icon?.color === "default"
-                //     ? appSettings.theme.style.colors.foreground
-                //     : selectedCategory?.icon?.color
-                //   // transaction.details.in_out === "income"
-                //   //   ? "#00695c"
-                //   //   : appSettings.theme.style.text.textPrimary.color
-                // }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
@@ -595,14 +582,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#c3f4f4"
                       : appSettings.theme.style.colors.secondary,
                 }}
-                // iconColorInContainer={
-                //   selectedCategory?.icon?.color === "default"
-                //     ? appSettings.theme.style.colors.foreground
-                //     : selectedCategory?.icon?.color
-                //   // transaction.details.in_out === "income"
-                //   //   ? "#00695c"
-                //   //   : appSettings.theme.style.text.textPrimary.color
-                // }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
@@ -638,14 +617,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#c3f4f4"
                       : appSettings.theme.style.colors.secondary,
                 }}
-                // iconColorInContainer={
-                //   selectedCategory?.icon?.color === "default"
-                //     ? appSettings.theme.style.colors.foreground
-                //     : selectedCategory?.icon?.color
-                //   // transaction.details.in_out === "income"
-                //   //   ? "#00695c"
-                //   //   : appSettings.theme.style.text.textPrimary.color
-                // }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
@@ -830,6 +801,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     : localRepeatedTransactions.repeat_type.name[0].toUpperCase() +
                       localRepeatedTransactions.repeat_type.name.substring(1)
                 }
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                  )
+                }
                 iconPack="IonIcons"
                 iconLeftName="repeat"
                 iconRightName="chevron-forward"
@@ -859,83 +836,95 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       : appSettings.theme.style.text.textPrimary.color,
                 }}
                 onPress={() => {
-                  navigation.navigate(screenList.modalScreen, {
-                    title: "Repeat Transaction",
-                    modalType: "list",
-                    iconProps: {
-                      name: "repeat",
-                      pack: "IonIcons",
-                    },
-                    props: [
-                      {
-                        name: "no repeat",
-                        id: "no_repeat",
-                        range: 0,
+                  if (
+                    getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                    )
+                  ) {
+                    navigation.navigate(screenList.modalScreen, {
+                      title: "Repeat Transaction",
+                      modalType: "list",
+                      iconProps: {
+                        name: "repeat",
+                        pack: "IonIcons",
                       },
-                      {
-                        name: "every day",
-                        id: "every_day",
-                        range: 60 * 60 * 24 * 1000,
-                      },
-                      {
-                        name: "every week",
-                        id: "every_week",
-                        range: 60 * 60 * 24 * 7 * 1000,
-                      },
-                      {
-                        name: "every 2 weeks",
-                        id: "every_2_weeks",
-                        range: 60 * 60 * 24 * 14 * 1000,
-                      },
-                      {
-                        name: "every month",
-                        id: "every_month",
-                        range: 60 * 60 * 24 * 30 * 1000,
-                      },
-                      {
-                        name: "every year",
-                        id: "every_year",
-                        range: 60 * 60 * 24 * 365 * 1000,
-                      },
-                    ],
-                    selected: (item) => {
-                      if (item.id === "no_repeat") {
-                        setLocalRepeatedTransactions({
-                          uid: userAccount.uid,
-                          repeat_id: null,
-                          repeat_type: item,
-                          transactions: [],
-                        });
-                        setTransaction({
-                          ...transaction,
-                          repeat_id: null,
-                        });
-                      } else {
-                        const repeat_id = uuid.v4();
+                      props: [
+                        {
+                          name: "no repeat",
+                          id: "no_repeat",
+                          range: 0,
+                        },
+                        {
+                          name: "every day",
+                          id: "every_day",
+                          range: 60 * 60 * 24 * 1000,
+                        },
+                        {
+                          name: "every week",
+                          id: "every_week",
+                          range: 60 * 60 * 24 * 7 * 1000,
+                        },
+                        {
+                          name: "every 2 weeks",
+                          id: "every_2_weeks",
+                          range: 60 * 60 * 24 * 14 * 1000,
+                        },
+                        {
+                          name: "every month",
+                          id: "every_month",
+                          range: 60 * 60 * 24 * 30 * 1000,
+                        },
+                        {
+                          name: "every year",
+                          id: "every_year",
+                          range: 60 * 60 * 24 * 365 * 1000,
+                        },
+                      ],
+                      selected: (item) => {
+                        if (item.id === "no_repeat") {
+                          setLocalRepeatedTransactions({
+                            uid: userAccount.uid,
+                            repeat_id: null,
+                            repeat_type: item,
+                            transactions: [],
+                          });
+                          setTransaction({
+                            ...transaction,
+                            repeat_id: null,
+                          });
+                        } else {
+                          const repeat_id = uuid.v4();
 
-                        setLocalRepeatedTransactions({
-                          ...localRepeatedTransactions,
-                          uid: userAccount.uid,
-                          repeat_id: repeat_id,
-                          repeat_amount: transaction.details.amount,
-                          repeat_in_out: transaction.details.in_out,
-                          repeat_category_id: transaction.details.category_id,
-                          repeat_status: "active",
-                          repeat_logbook_id: transaction.logbook_id,
-                          repeat_notes: transaction.details.notes,
-                          next_repeat_date:
-                            transaction.details.date + item.range,
-                          repeat_type: item,
-                          transactions: [transaction.transaction_id],
-                        });
-                        setTransaction({
-                          ...transaction,
-                          repeat_id: repeat_id,
-                        });
-                      }
-                    },
-                    default: localRepeatedTransactions.repeat_type,
-                  });
+                          setLocalRepeatedTransactions({
+                            ...localRepeatedTransactions,
+                            uid: userAccount.uid,
+                            repeat_id: repeat_id,
+                            repeat_amount: transaction.details.amount,
+                            repeat_in_out: transaction.details.in_out,
+                            repeat_category_id: transaction.details.category_id,
+                            repeat_status: "active",
+                            repeat_logbook_id: transaction.logbook_id,
+                            repeat_notes: transaction.details.notes,
+                            next_repeat_date:
+                              transaction.details.date + item.range,
+                            repeat_type: item,
+                            transactions: [transaction.transaction_id],
+                          });
+                          setTransaction({
+                            ...transaction,
+                            repeat_id: repeat_id,
+                          });
+                        }
+                      },
+                      default: localRepeatedTransactions.repeat_type,
+                    });
+                  } else {
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      "Upgrade your subscription to use repeating transactions"
+                    );
+                  }
                 }}
               />
               {localRepeatedTransactions.repeat_type.id !== "no_repeat" && (
@@ -955,7 +944,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </ListSection>
 
             {/* // TAG : Line Separator */}
-            <View
+            {/* <View
               style={{
                 borderColor: "#bbb",
                 borderBottomWidth: 1,
@@ -964,22 +953,24 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 alignSelf: "center",
                 paddingTop: 16,
               }}
-            ></View>
+            ></View> */}
 
             {/* // TAG : Action Button */}
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "center",
-                padding: 16,
+                justifyContent: "space-between",
+                paddingTop: 8,
+                paddingBottom: 24,
+                paddingHorizontal: 48,
               }}
             >
               {/* // TAG : Cancel Button */}
-              <View style={{ paddingRight: 8 }}>
+              <View style={{ flex: 1, paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Cancel"
-                  width={150}
+                  // width={150}
                   theme={appSettings.theme}
                   onPress={() => {
                     // setRawTransactionsLength(null)
@@ -989,11 +980,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
 
               {/* // TAG : Save Button */}
-              <View style={{ paddingLeft: 8 }}>
+              <View style={{ flex: 2, paddingLeft: 8 }}>
                 <ButtonPrimary
                   label="Save"
                   theme={appSettings.theme}
-                  width={150}
+                  // width={150}
                   onPress={() => {
                     checkFinalTransaction();
                   }}

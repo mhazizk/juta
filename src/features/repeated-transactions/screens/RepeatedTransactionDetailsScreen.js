@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { ListItem, TransactionListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
+import { TextPrimary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -12,6 +13,7 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
+import RepeatedTransactionHeader from "../components/RepeatedTransactionHeader";
 
 const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -58,6 +60,12 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
+        <RepeatedTransactionHeader
+          repeatSection={route.params.repeatSection}
+          onPress={() => {
+            navigation.navigate(screenList.editRepeatedTransactionScreen);
+          }}
+        />
         {transactionsInRepeat.length > 0 && (
           <>
             <ListSection>
