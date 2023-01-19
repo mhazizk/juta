@@ -63,7 +63,9 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
         <RepeatedTransactionHeader
           repeatSection={route.params.repeatSection}
           onPress={() => {
-            navigation.navigate(screenList.editRepeatedTransactionScreen);
+              navigation.navigate(screenList.editRepeatedTransactionScreen, {
+                repeatSection: route.params.repeatSection,
+            });
           }}
         />
         {transactionsInRepeat.length > 0 && (

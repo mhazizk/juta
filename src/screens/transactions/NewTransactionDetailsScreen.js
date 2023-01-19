@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   ScrollView,
   Text,
   TextInput,
@@ -64,6 +65,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     repeat_in_out: "expense",
     repeat_category_id: null,
     repeat_logbook_id: null,
+    repeat_start_date: null,
+    repeat_finish_date: null,
     next_repeat_date: null,
     repeat_notes: null,
     repeat_type: {
@@ -139,6 +142,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       console.log(localRepeatedTransactions.repeat_id);
       console.log(transaction.repeat_id);
     }
+    console.log(localRepeatedTransactions);
   }, [transaction, localRepeatedTransactions]);
 
   useEffect(() => {
@@ -189,15 +193,27 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   };
   const onChangeTime = (event, selectedDate) => {
     const currentDate = selectedDate;
-    event.type === "dismissed";
-    event.type === "set" &&
-      setTransaction({
-        ...transaction,
-        details: {
-          ...transaction.details,
-          date: new Date(currentDate).getTime(),
-        },
-      });
+    switch (event.type) {
+      case "dismissed":
+        break;
+
+      case "set":
+        setTransaction({
+          ...transaction,
+          details: {
+            ...transaction.details,
+            date: new Date(currentDate).getTime(),
+          },
+        });
+        setLocalRepeatedTransactions({
+          ...localRepeatedTransactions,
+          repeat_start_date: new Date(currentDate).getTime(),
+        });
+        break;
+
+      default:
+        break;
+    }
   };
 
   // Date Picker
@@ -324,6 +340,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 flex: 1,
+                // minHeight: Dimensions.get("window").height / 3,
               }}
             >
               <View
@@ -906,6 +923,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             repeat_status: "active",
                             repeat_logbook_id: transaction.logbook_id,
                             repeat_notes: transaction.details.notes,
+                            repeat_start_date: transaction.details.date,
+                            repeat_finish_date: null,
                             next_repeat_date:
                               transaction.details.date + item.range,
                             repeat_type: item,
