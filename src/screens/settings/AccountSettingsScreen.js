@@ -1,22 +1,14 @@
-import * as Application from "expo-application";
-import * as Device from "expo-device";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
   Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableNativeFeedback,
-  View,
+  ScrollView, View
 } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
@@ -34,10 +26,6 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
-import initialCategories from "../../reducers/initial-state/InitialCategories";
-import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
-import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import { getDeviceId } from "../../utils";
 

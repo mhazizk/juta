@@ -1,23 +1,16 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { setSortedTransactions } from "../utils/FetchData";
+import { useCallback, useEffect, useRef } from "react";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLoading,
-  useGlobalLogbooks,
+  useGlobalCategories, useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalUserAccount
 } from "../reducers/GlobalContext";
-import { ACTIONS } from "../reducers/GlobalReducer";
 import MyCategoriesScreen from "../screens/categories/MyCategoriesScreen";
 import EditLogbookScreen from "../screens/logbook/EditLogbookScreen";
 import MyLogbooksScreen from "../screens/logbook/MyLogbooksScreen";
@@ -50,7 +43,7 @@ import SearchScreen from "../screens/search/SearchScreen";
 import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
-import LogBookScreen from "../screens/logbook/LogBookScreen";
+import LogbookScreen from "../screens/logbook/LogbookScreen";
 import { Alert, TouchableOpacity } from "react-native";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
@@ -79,11 +72,11 @@ import ExportScreen from "../features/export/screens/ExportScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
+import REDUCER_ACTIONS from "../reducers/reducer.action";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
-  const { isLoading, dispatchLoading } = useGlobalLoading();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -155,64 +148,12 @@ const RootStack = () => {
 
   // TAG : useEffect for state
   useEffect(() => {
-    // let unsubscribeAppSettings;
-    // let unsubscribeUserAccount;
-    // let unsubscribeLogbooks;
-    // let unsubscribeTransactions;
-    // let unsubscribeCategories;
-    // let unsubscribeBudgets;
-
-    // Subscribe to firestore
-    // if (userAccount.uid) {
-    //   // TAG : Subscription Section
-    //   subscription({ subscribeAll: true });
-    // }
-    // console.log({ userAccount, user, isLoading });
     if (userAccount && user && !loading) {
-      // if (userAccount) {
       console.log("here");
-      // useFirestoreSubscriptions({
-      //   uid: userAccount.uid,
-      //   subscribeAll: true,
-      //   appSettings: appSettings,
-      //   dispatchAppSettings: dispatchAppSettings,
-      //   userAccount: userAccount,
-      //   dispatchUserAccount: dispatchUserAccount,
-      //   logbooks: logbooks,
-      //   dispatchLogbooks: dispatchLogbooks,
-      //   sortedTransactions: sortedTransactions,
-      //   dispatchSortedTransactions: dispatchSortedTransactions,
-      //   categories: categories,
-      //   dispatchCategories: dispatchCategories,
-      //   budgets: budgets,
-      //   dispatchBudgets: dispatchBudgets,
-      //   badgeCounter: badgeCounter,
-      //   dispatchBadgeCounter: dispatchBadgeCounter,
-      // });
     }
     return () => {
-      // Unsubscribe from firestore
       if (userAccount && user && !loading) {
         console.log("here unsubscribe");
-        // if (userAccount) {
-        // useFirestoreSubscriptions({
-        //   uid: userAccount.uid,
-        //   unsubscribeAll: true,
-        //   appSettings: appSettings,
-        //   dispatchAppSettings: dispatchAppSettings,
-        //   userAccount: userAccount,
-        //   dispatchUserAccount: dispatchUserAccount,
-        //   logbooks: logbooks,
-        //   dispatchLogbooks: dispatchLogbooks,
-        //   sortedTransactions: sortedTransactions,
-        //   dispatchSortedTransactions: dispatchSortedTransactions,
-        //   categories: categories,
-        //   dispatchCategories: dispatchCategories,
-        //   budgets: budgets,
-        //   dispatchBudgets: dispatchBudgets,
-        //   badgeCounter: badgeCounter,
-        //   dispatchBadgeCounter: dispatchBadgeCounter,
-        // });
       }
     };
   }, []);
@@ -303,35 +244,35 @@ const RootStack = () => {
   }, [categories]);
 
   // const dispatchInitSortedTransactions = () => {
-  const getSortedTransactions = useMemo(() => {
-    return async () => {
-      try {
-        dispatchSortedTransactions({
-          type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-          payload: await setSortedTransactions(),
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  }, [rawTransactions]);
+  // const getSortedTransactions = useMemo(() => {
+  //   return async () => {
+  //     try {
+  //       dispatchSortedTransactions({
+  //         type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
+  //         payload: await setSortedTransactions(),
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  // }, [rawTransactions]);
   // }
 
   // Get Transaction File from storage
-  const getFileFromStorage = async () => {
-    try {
-      const json = await AsyncStorage.getItem("trx");
-      if (json !== null) {
-        const parsed = JSON.parse(json);
-        dispatchRawTransactions({
-          type: ACTIONS.TRANSACTIONS.SET,
-          payload: parsed,
-        });
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
+  // const getFileFromStorage = async () => {
+  //   try {
+  //     const json = await AsyncStorage.getItem("trx");
+  //     if (json !== null) {
+  //       const parsed = JSON.parse(json);
+  //       dispatchRawTransactions({
+  //         type: REDUCER_ACTIONS.TRANSACTIONS.SET,
+  //         payload: parsed,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // };
 
   const noHeader = {
     headerShown: false,
@@ -540,7 +481,7 @@ const RootStack = () => {
           title: "Logbooks",
         }}
         name={screenList.logbookScreen}
-        component={LogBookScreen}
+        component={LogbookScreen}
       />
       {/* // TAG : My Logbooks Screen */}
       <Stack.Screen
@@ -611,12 +552,12 @@ const RootStack = () => {
                         }, 5000);
 
                         dispatchLogbooks({
-                          type: ACTIONS.LOGBOOKS.INSERT,
+                          type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
                           payload: newLogbook,
                         });
 
                         dispatchSortedTransactions({
-                          type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                             .INSERT_LOGBOOK,
                           payload: {
                             newLogbook: {

@@ -1,12 +1,6 @@
 // TODO : Create a login screen
 
-import {
-  View,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import { TextPrimary } from "../../components/Text";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
@@ -22,14 +16,13 @@ import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import userAccountModel from "../../model/userAccountModel";
-import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  // const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
-  const [agreeTerms, setAgreeTerms] = useState(false);
+  // const [agreeTerms, setAgreeTerms] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [checkPassword, setCheckPassword] = useState("");
@@ -325,7 +318,8 @@ const SignUpScreen = ({ route, navigation }) => {
             }, 1000);
           })
           .catch((error) => {
-            alert(error);
+            // alert(error);
+            console.log(error);
             setScreenLoading(false);
           });
       }, 1);

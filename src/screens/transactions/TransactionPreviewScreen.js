@@ -1,27 +1,16 @@
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 // import Intl from "intl";
 // import "intl/locale-data/jsonp/en";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Alert,
-  Button,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+  Alert, ScrollView, View
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
-  ButtonIconDanger,
-  ButtonPrimary,
   ButtonSecondary,
-  ButtonSecondaryDanger,
-  ButtonSwitch,
+  ButtonSecondaryDanger
 } from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
@@ -30,14 +19,13 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
+  useGlobalSortedTransactions
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -463,8 +451,9 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                               loadingType: "deleteOneTransaction",
                               deleteTransaction: transaction,
                               logbookToOpen: selectedLogbook,
-                              initialSortedTransactionsDeleteCounter:
-                                sortedTransactions.sortedTransactionsDeleteCounter,
+                              reducerUpdatedAt: Date.now(),
+                              // initialSortedTransactionsDeleteCounter:
+                              //   sortedTransactions.sortedTransactionsDeleteCounter,
                             });
                           },
                         },

@@ -9,22 +9,20 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalUserAccount
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -181,12 +179,12 @@ const ActionScreen = ({ route, navigation }) => {
                       }, 1);
 
                       dispatchLogbooks({
-                        type: ACTIONS.LOGBOOKS.INSERT,
-                        payload: newLogbook,
+                        type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
+                        payload: { newLogbook, reducerUpdatedAt: Date.now() },
                       });
 
                       dispatchSortedTransactions({
-                        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                           .INSERT_LOGBOOK,
                         payload: {
                           newLogbook: {

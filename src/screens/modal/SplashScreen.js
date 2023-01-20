@@ -1,49 +1,39 @@
-import * as Device from "expo-device";
-import * as Application from "expo-application";
-
 import { useEffect } from "react";
-import { ActivityIndicator, Linking, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
-import { lightTheme } from "../../assets/themes/lightTheme";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
-  useGlobalLoading,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
-  useGlobalTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
-import uuid from "react-native-uuid";
-import Loading from "../../components/Loading";
 import auth from "../../api/firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import devAppSettings from "../../dev/devAppSettings";
 import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
 import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
 import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
-import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
-import initialCategories from "../../reducers/initial-state/InitialCategories";
-import initialLogbooks from "../../reducers/initial-state/InitialLogbooks";
+import initialSortedTransactions from "../../reducers/initial-state/initialSortedTransactions";
+import initialCategories from "../../reducers/initial-state/initialCategories";
+import initialLogbooks from "../../reducers/initial-state/initialLogbooks";
 import { getDeviceId, getDeviceOSName } from "../../utils";
 import getDeviceName from "../../utils/GetDeviceName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
+import initialRepeatedTransactions from "../../reducers/initial-state/initialRepeatedTransactions";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
-  const { isLoading, dispatchLoading } = useGlobalLoading();
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -87,8 +77,6 @@ const SplashScreen = ({ route, navigation }) => {
   useEffect(() => {
     // refresh state
   }, [appSettings, userAccount, sortedTransactions, logbooks, categories]);
-
-  useEffect(() => {}, [isLoading]);
 
   // useEffect(() => {
   //   if (sortedTransactions.sortedTransactionsInitCounter) {
@@ -365,7 +353,7 @@ const SplashScreen = ({ route, navigation }) => {
 
         dispatchSortedTransactions({
           type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET,
-          payload: { ...InitialSortedTransactions, groupSorted: groupSorted },
+          payload: { ...initialSortedTransactions, groupSorted: groupSorted },
         });
 
         dispatchLogbooks({
@@ -403,7 +391,10 @@ const SplashScreen = ({ route, navigation }) => {
 
         dispatchRepeatedTransactions({
           type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.FORCE_SET,
-          payload: repeatedTransactionsData || [],
+          payload: {
+            ...initialRepeatedTransactions,
+            repeatedTransactions: repeatedTransactionsData || [],
+          },
         });
 
         useFirestoreSubscriptions({
@@ -439,7 +430,7 @@ const SplashScreen = ({ route, navigation }) => {
       })
       .catch((err) => {
         console.log(err);
-        navigation.replace(screenList.login);
+        navigation.replace(screenList.loginScreen);
       });
   };
 
@@ -447,7 +438,7 @@ const SplashScreen = ({ route, navigation }) => {
   const getSortedTransactions = async () => {
     try {
       dispatchSortedTransactions({
-        type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
+        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
         payload: await setSortedTransactions(),
       });
     } catch (error) {

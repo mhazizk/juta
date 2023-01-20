@@ -29,7 +29,7 @@ const MyLogbooks = ({ route, navigation, onPress }) => {
 
   useEffect(() => {
     sortingLogbooks();
-  }, [logbooks.logbookPatchCounter]);
+  }, [logbooks.reducerUpdatedAt]);
 
   useEffect(() => {}, [loadedLogbooks]);
 

@@ -1,4 +1,5 @@
 const InitialGroups = {
+  reducerUpdatedAt: Date.now(),
   group: {
     _timestamps: {
       created_at: 0,

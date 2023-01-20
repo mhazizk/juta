@@ -1,12 +1,14 @@
 import REDUCER_ACTIONS from "./reducer.action";
 
 const globalRepeatedTransactionsReducer = (state, action) => {
+  let reducerUpdatedAt;
   switch (action.type) {
     case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.FORCE_SET:
       return action.payload;
 
     case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT:
-      const newRepeatedTransaction = action.payload;
+      const newRepeatedTransaction = action.payload.repeatedTransaction;
+      reducerUpdatedAt = action.payload.reducerUpdatedAt;
 
       // check if the repeat transaction is already in the state
       const transactionInState = state.find((repeatTransaction) => {
@@ -15,24 +17,35 @@ const globalRepeatedTransactionsReducer = (state, action) => {
 
       let updateTimeStamp = false;
       if (repeatedTransactionInState) {
-        timestamp =
+        isTimestampNewer =
           patchRepeatedTransaction._timestamps.updated_at ===
           repeatedTransactionInState._timestamps.updated_at;
       }
 
       if (!transactionInState && !updateTimeStamp) {
         if (state.length > 0) {
-          return [...state, newRepeatedTransaction].sort((a, b) => {
-            return a.next_repeat_date - b.next_repeat_date;
-          });
+          return {
+            ...state,
+            reducerUpdatedAt: reducerUpdatedAt,
+            repeatedTransactions: [...state, newRepeatedTransaction].sort(
+              (a, b) => {
+                return a.next_repeat_date - b.next_repeat_date;
+              }
+            ),
+          };
         } else {
-          return [newRepeatedTransaction];
+          return {
+            ...state,
+            reducerUpdatedAt: reducerUpdatedAt,
+            repeatedTransactions: [newRepeatedTransaction],
+          };
         }
       }
       return state;
 
     case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH:
-      const patchRepeatedTransaction = action.payload;
+      const patchRepeatedTransaction = action.payload.repeatedTransaction;
+      reducerUpdatedAt = action.payload.reducerUpdatedAt;
       // get other repeat transactions
 
       // check if the repeat transaction is already in the state
@@ -43,44 +56,104 @@ const globalRepeatedTransactionsReducer = (state, action) => {
       });
 
       // check timestamp
-      let timestamp = true;
+      let isTimestampNewer = false;
       if (repeatedTransactionInState) {
-        timestamp =
-          patchRepeatedTransaction._timestamps.updated_at ===
+        isTimestampNewer =
+          patchRepeatedTransaction._timestamps.updated_at >
           repeatedTransactionInState._timestamps.updated_at;
       }
 
-      if (repeatedTransactionInState && !timestamp) {
+      if (repeatedTransactionInState && isTimestampNewer) {
         const otherRepeatTransactions = state.filter(
           (repeatTransaction) =>
             repeatTransaction.repeat_id !== patchRepeatedTransaction.repeat_id
         );
         if (otherRepeatTransactions.length > 0) {
-          return [...otherRepeatTransactions, patchRepeatedTransaction].sort(
-            (a, b) => {
+          return {
+            ...state,
+            reducerUpdatedAt,
+            repeatedTransactions: [
+              ...otherRepeatTransactions,
+              patchRepeatedTransaction,
+            ].sort((a, b) => {
               return a.next_repeat_date - b.next_repeat_date;
-            }
-          );
+            }),
+          };
         } else {
-          return [patchRepeatedTransaction];
+          return {
+            ...state,
+            reducerUpdatedAt,
+            repeatedTransactions: [patchRepeatedTransaction],
+          };
         }
       }
 
       return state;
 
+    // case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH_MANY:
+    //   const repeatedTransactions = action.payload.repeatedTransactions;
+    //   // const patchedTransactions = action.payload.patchedTransactions;
+
+    //   // get other repeat transactions
+
+    //   // check if the repeat transaction is already in the state
+    //   const repeatedTransactionInState = state.find((repeatTransaction) => {
+    //     return (
+    //       repeatTransaction.repeat_id === patchRepeatedTransaction.repeat_id
+    //     );
+    //   });
+
+    //   // check timestamp
+    //   let timestamp = true;
+    //   if (repeatedTransactionInState) {
+    //     timestamp =
+    //       patchRepeatedTransaction._timestamps.updated_at ===
+    //       repeatedTransactionInState._timestamps.updated_at;
+    //   }
+
+    //   if (repeatedTransactionInState && !timestamp) {
+    //     const otherRepeatTransactions = state.filter(
+    //       (repeatTransaction) =>
+    //         repeatTransaction.repeat_id !== patchRepeatedTransaction.repeat_id
+    //     );
+    //     if (otherRepeatTransactions.length > 0) {
+    //       return [...otherRepeatTransactions, patchRepeatedTransaction].sort(
+    //         (a, b) => {
+    //           return a.next_repeat_date - b.next_repeat_date;
+    //         }
+    //       );
+    //     } else {
+    //       return [patchRepeatedTransaction];
+    //     }
+    //   }
+
+    //   return state;
+
     case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE:
-      const deleteRepeatedTransaction = action.payload;
+      const deleteRepeatedTransaction =
+        action.payload.deleteRepeatedTransaction;
+      reducerUpdatedAt = action.payload.reducerUpdatedAt;
       // get other repeat transactions
       const otherNotDeletedRepeatTransactions = state.filter(
         (repeatTransaction) =>
           repeatTransaction.repeat_id !== deleteRepeatedTransaction.repeat_id
       );
       if (otherNotDeletedRepeatTransactions.length > 0) {
-        return [...otherNotDeletedRepeatTransactions].sort((a, b) => {
-          return a.next_repeat_date - b.next_repeat_date;
-        });
+        return {
+          ...state,
+          reducerUpdatedAt: reducerUpdatedAt,
+          repeatedTransactions: [...otherNotDeletedRepeatTransactions].sort(
+            (a, b) => {
+              return a.next_repeat_date - b.next_repeat_date;
+            }
+          ),
+        };
       } else {
-        return [];
+        return {
+          ...state,
+          reducerUpdatedAt: reducerUpdatedAt,
+          repeatedTransactions: [],
+        };
       }
       return state;
     default:

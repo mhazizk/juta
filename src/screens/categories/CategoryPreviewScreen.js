@@ -7,8 +7,7 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
+  useGlobalSortedTransactions
 } from "../../reducers/GlobalContext";
 import {
   ButtonSecondary,
@@ -20,7 +19,7 @@ import screenList from "../../navigations/ScreenList";
 
 const CategoryPreviewScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -400,8 +399,9 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                                 label: "Deleting Category ...",
                                 loadingType: "deleteCategory",
                                 deleteCategory: category,
-                                initialCategoryDeleteCounter:
-                                  categories.categoryDeleteCounter,
+                                reducerUpdatedAt: Date.now(),
+                                // initialCategoryDeleteCounter:
+                                //   categories.categoryDeleteCounter,
                               });
                             },
                           },

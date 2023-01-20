@@ -437,10 +437,11 @@ const EditCategoryScreen = ({ route, navigation }) => {
                         prevCategoryType: category.prevCategoryType,
                         targetCategoryType: category.targetCategoryType,
                         patchCategory: newPatchCategory,
-                        initialCategoryPatchCounter:
-                          categories.categoryPatchCounter,
-                        initialSortedTransactionsPatchCounter:
-                          sortedTransactions.sortedTransactionsPatchCounter,
+                        reducerUpdatedAt: Date.now(),
+                        // initialCategoryPatchCounter:
+                        //   categories.categoryPatchCounter,
+                        // initialSortedTransactionsPatchCounter:
+                        //   sortedTransactions.sortedTransactionsPatchCounter,
                       });
                     }
                   }}

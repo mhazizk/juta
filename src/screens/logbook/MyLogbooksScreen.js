@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../../src/assets/themes/globalStyles";
+import { ScrollView } from "react-native";
 import { ListItem } from "../../components/List";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -11,10 +8,6 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
-import uuid from "react-native-uuid";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import ListSection from "../../components/List/ListSection";
 
 const MyLogbooksScreen = ({ navigation }) => {
@@ -35,7 +28,7 @@ const MyLogbooksScreen = ({ navigation }) => {
 
   useEffect(() => {
     sortingLogbooks();
-  }, [logbooks.logbookPatchCounter]);
+  }, [logbooks.reducerUpdatedAt]);
 
   useEffect(() => {}, [loadedLogbooks]);
 

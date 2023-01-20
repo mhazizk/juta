@@ -13,7 +13,7 @@ import {
 import ActionScreen from "../screens/modal/ActionScreen";
 import UserScreen from "../screens/user/UserScreen";
 import DashboardScreen from "../screens/dashboard/DashboardScreen";
-import LogBookScreen from "../screens/logbook/LogBookScreen";
+import LogbookScreen from "../screens/logbook/LogbookScreen";
 import SearchScreen from "../screens/search/SearchScreen";
 import screenList from "./ScreenList";
 import { TextPrimary } from "../components/Text";
@@ -175,7 +175,7 @@ const BottomTab = ({ route, navigation }) => {
                   : badgeCounter?.tab?.logbookTab,
             }}
             name={screenList.logbookScreen}
-            component={LogBookScreen}
+            component={LogbookScreen}
           />
           {/* // TAG : Action Screen */}
           <Tab.Screen

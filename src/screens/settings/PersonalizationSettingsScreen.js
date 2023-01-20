@@ -8,7 +8,6 @@ import {
   useGlobalAppSettings,
   useGlobalTransactions,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const PersonalizationSettingsScreen = ({ item, navigation }) => {
@@ -50,7 +49,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
                 default: appSettings.theme,
                 selected: (item) =>
                   dispatchAppSettings({
-                    type: ACTIONS.APP_SETTINGS.THEME.SET,
+                    type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
                     payload: item,
                   }),
               })
@@ -75,7 +74,7 @@ const PersonalizationSettingsScreen = ({ item, navigation }) => {
                 }),
                 selected: (item) =>
                   dispatchAppSettings({
-                    type: ACTIONS.APP_SETTINGS.FONT_SIZE.SET,
+                    type: REDUCER_ACTIONS.APP_SETTINGS.FONT_SIZE.SET,
                     payload: item.name,
                   }),
                 default: { name: appSettings.fontSize },

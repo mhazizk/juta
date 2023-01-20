@@ -99,7 +99,8 @@ const NewBudgetScreen = ({ navigation }) => {
           label: "Saving Budget ...",
           loadingType: "insertBudget",
           insertBudget: newBudget,
-          initialBudgetInsertCounter: budgets.budgetInsertCounter,
+          reducerUpdatedAt: Date.now(),
+          // initialBudgetInsertCounter: budgets.budgetInsertCounter,
         });
     }
   };

@@ -1,10 +1,7 @@
 import { useEffect } from "react";
-import { ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import IonIcons from "react-native-vector-icons/Ionicons";
+import { ScrollView } from "react-native";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { globalStyles } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import { TextPrimary } from "../../components/Text";
@@ -16,7 +13,6 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 
 const MyCategoriesScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();

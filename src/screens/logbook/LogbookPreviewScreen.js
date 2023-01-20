@@ -13,8 +13,7 @@ import * as utils from "../../utils";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
+  useGlobalSortedTransactions
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
@@ -22,7 +21,7 @@ import firestore from "../../api/firebase/firestore";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -175,9 +174,10 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                   loadingType: "deleteOneLogbook",
                   deleteLogbook: logbook,
                   logbookToOpen: null,
-                  initialLogbookDeleteCounter: logbooks.logbookDeleteCounter,
-                  initialSortedLogbookDeleteCounter:
-                    sortedTransactions.sortedLogbookDeleteCounter,
+                  reducerUpdatedAt: Date.now(),
+                  // initialLogbookDeleteCounter: logbooks.logbookDeleteCounter,
+                  // initialSortedLogbookDeleteCounter:
+                  //   sortedTransactions.sortedLogbookDeleteCounter,
                 });
               },
             },

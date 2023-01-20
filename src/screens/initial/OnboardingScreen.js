@@ -8,7 +8,6 @@ import OnboardingImg5 from "../../assets/img/onboarding5.png";
 import { lightTheme } from "../../assets/themes/lightTheme";
 import screenList from "../../navigations/ScreenList";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const OnboardingScreen = ({ navigation }) => {

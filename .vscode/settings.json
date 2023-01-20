@@ -1,8 +1,0 @@
-{
-    "grammarly.selectors": [
-        {
-            "language": "javascript",
-            "scheme": "file"
-        }
-    ]
-}

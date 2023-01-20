@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Text,
-  TextInput,
-  TouchableNativeFeedback,
-  View,
-} from "react-native";
+import { FlatList, Image, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -17,12 +10,8 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
-import persistStorage from "../../reducers/persist/persistStorage";
-import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 
 // Image Import
 import Onboarding from "react-native-onboarding-swiper";
@@ -35,9 +24,6 @@ import light from "../../../src/assets/img/light.png";
 import medium from "../../../src/assets/img/medium.png";
 import small from "../../../src/assets/img/small.png";
 import { lightTheme } from "../../../src/assets/themes/lightTheme";
-import userCategories from "../../database/userCategories";
-import initialCategories from "../../reducers/initial-state/InitialCategories";
-import InitialSortedTransactions from "../../reducers/initial-state/InitialSortedTransactions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import uuid from "react-native-uuid";
@@ -50,7 +36,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const logbookId = uuid.v4();
   const onboardingRef = useRef(null);
 
-  const { transactions, dispatchTransactions } = useGlobalTransactions();
+  // const { transactions, dispatchTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -200,7 +186,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     });
 
     // dispatchCategories({
-    //   type: ACTIONS.CATEGORIES.SET,
+    //   type: REDUCER_ACTIONS.CATEGORIES.SET,
     //   payload: userCategories,
     // });
 
@@ -216,13 +202,12 @@ const InitialSetupScreen = ({ route, navigation }) => {
     });
 
     dispatchLogbooks({
-      type: ACTIONS.LOGBOOKS.SET,
+      type: REDUCER_ACTIONS.LOGBOOKS.SET,
       payload: logbookToDispatch,
     });
 
     dispatchSortedTransactions({
-      type: ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
-      // type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET_MULTI_ACTIONS,
+      type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
       payload: [
         {
           logbook_id: newLogbook.logbook_id,
@@ -340,8 +325,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                           </View>
                           <Text
                             style={[
-                              globalStyles.lightTheme.textPrimary,
-                              { color: "#000" },
+                              selectedAppSettings.theme.style.text.textPrimary,
                             ]}
                           >
                             {item.name}
@@ -542,8 +526,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                           </View>
                           <Text
                             style={[
-                              globalStyles.lightTheme.textPrimary,
-                              { color: "#000" },
+                              selectedAppSettings.theme.style.text.textPrimary,
                             ]}
                           >
                             {item.name} / {item.symbol}
@@ -626,12 +609,30 @@ const InitialSetupScreen = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              <IonIcons name="book" size={80} />
+              <IonIcons
+                name="book"
+                size={80}
+                color={selectedAppSettings.theme.style.colors.foreground}
+              />
               <Text
-                style={{ fontSize: 24, color: "#000", textAlign: "center" }}
+                style={[
+                  {
+                    ...selectedAppSettings.theme.style.text.textPrimary,
+                  },
+                  {
+                    paddingVertical: 16,
+                    fontSize: 24,
+                    textAlign: "center",
+                  },
+                ]}
               >
                 {newLogbook.logbook_name || "Create New Logbook"}
               </Text>
+              <IonIcons
+                name="add"
+                size={32}
+                color={selectedAppSettings.theme.style.colors.foreground}
+              />
               {/* <TextInput
                             placeholder="Type new logbook name ..."
                             textAlign='center'
@@ -647,7 +648,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     },
 
     {
-      backgroundColor: "#fff",
+      backgroundColor: selectedAppSettings.theme.style.colors.background,
       image: <Image source={doneSetup} style={{ width: 250, height: 250 }} />,
       title: "Everything is Set !",
       subtitle: "Finish Setup and start using Cash Log App",

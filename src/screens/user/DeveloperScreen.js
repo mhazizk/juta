@@ -16,9 +16,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalUserAccount
 } from "../../reducers/GlobalContext";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
@@ -35,7 +33,7 @@ import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactio
 import testing from "../../dev/testing";
 
 const DeveloperScreen = ({ item, navigation }) => {
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -718,7 +716,7 @@ const DeveloperScreen = ({ item, navigation }) => {
           />
 
           {/* // TAG : Log global raw transactions */}
-          <TouchableNativeFeedback onPress={() => console.log(rawTransactions)}>
+          <TouchableNativeFeedback onPress={() => {}}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
               <View style={globalStyles.lightTheme.listItem}>

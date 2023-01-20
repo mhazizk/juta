@@ -1,21 +1,12 @@
 import { signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableNativeFeedback,
-  View,
+  Alert, View
 } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../../../api/firebase/auth";
-import firestore from "../../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import { globalStyles, globalTheme } from "../../../assets/themes/globalStyles";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
-import Loading from "../../../components/Loading";
 import UserHeaderComponent from "../../../components/UserHeader";
 import screenList from "../../../navigations/ScreenList";
 import {
@@ -26,10 +17,6 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
-import { ACTIONS } from "../../../reducers/GlobalReducer";
-import initialCategories from "../../../reducers/initial-state/InitialCategories";
-import initialLogbooks from "../../../reducers/initial-state/InitialLogbooks";
-import InitialSortedTransactions from "../../../reducers/initial-state/InitialSortedTransactions";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 
 const MyGroupsScreen = ({ item, navigation }) => {

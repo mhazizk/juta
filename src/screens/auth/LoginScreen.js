@@ -1,40 +1,30 @@
-import * as Device from "expo-device";
-import * as Application from "expo-application";
 import {
-  View,
-  Text,
-  Dimensions,
+  View, Dimensions,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import { TextPrimary } from "../../components/Text";
-import { lightTheme } from "../../assets/themes/lightTheme";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import {
   ButtonDisabled,
-  ButtonPrimary,
-  ButtonSecondary,
+  ButtonPrimary
 } from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
 import handleUserLogin from "../../utils/HandlUserLogin";
-import handleUserSignUp from "../../utils/HandleUserSignUp";
 import CheckList from "../../components/CheckList";
 import Loading from "../../components/Loading";
-import Carousel from "react-native-reanimated-carousel";
 import LottieView from "lottie-react-native";
-import { wave } from "../../assets/animation/wave.json";
 import AnimatedLoginText from "../../components/AnimatedLoginText";
 import screenList from "../../navigations/ScreenList";
 import Footer from "../../components/Footer";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import useAuth from "../../hooks/useAuth";
 import {
-  useAuthState,
-  useSignInWithEmailAndPassword,
+  useAuthState
 } from "react-firebase-hooks/auth";
 import auth from "../../api/firebase/auth";
 import persistStorage from "../../reducers/persist/persistStorage";

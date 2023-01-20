@@ -4,14 +4,12 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
-  Dimensions,
-  ScrollView,
+  Alert, ScrollView,
   Text,
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../assets/themes/globalStyles";
@@ -20,15 +18,10 @@ import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalCategories,
-  useGlobalLoading,
-  useGlobalLogbooks,
+  useGlobalCategories, useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalUserAccount
 } from "../../reducers/GlobalContext";
-import { ACTIONS } from "../../reducers/GlobalReducer";
 import * as utils from "../../utils";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
@@ -43,8 +36,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
   // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const { isLoading, dispatchLoading } = useGlobalLoading();
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
@@ -55,6 +47,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useState Section //
 
   // Loading State
+  const [isLoading, setIsLoading] = useState(true);
 
   // Repated Transaction State
   const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
@@ -127,10 +120,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       uid: userAccount.uid,
     });
 
-    dispatchLoading({
-      type: ACTIONS.LOADING.SET,
-      payload: false,
-    });
+    setIsLoading(false);
 
     // setRawTransactionsLength(null)
   }, []);
@@ -271,7 +261,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
           if (transaction.repeat_id && localRepeatedTransactions.uid) {
             dispatchRepeatedTransactions({
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
-              payload: localRepeatedTransactions,
+              payload: {
+                repeatedTransaction: localRepeatedTransactions,
+                reducerUpdatedAt: Date.now(),
+              },
             });
             setTimeout(async () => {
               await firestore.setData(
@@ -294,8 +287,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
           loadingType: "insertTransaction",
           transaction: transaction,
           logbookToOpen: selectedLogbook,
-          initialSortedTransactionsInsertCounter:
-            sortedTransactions.sortedTransactionsInsertCounter,
+          reducerUpdatedAt: Date.now(),
+          // initialSortedTransactionsInsertCounter:
+          //   sortedTransactions.sortedTransactionsInsertCounter,
         });
     }
   };

@@ -399,8 +399,9 @@ const NewCategoryScreen = ({ route, navigation }) => {
                         loadingType: "insertCategory",
                         categoryType: category.type,
                         insertCategory: newCategory,
-                        initialCategoryInsertCounter:
-                          categories.categoryInsertCounter,
+                        reducerUpdatedAt: Date.now(),
+                        // initialCategoryInsertCounter:
+                        //   categories.categoryInsertCounter,
                       });
                     }
                   }}

@@ -1,120 +1,113 @@
 import { createContext, useContext, useReducer, useState } from "react";
-import {
-  globalAppSettings,
-  globalBadgeCounter,
-  globalBudgets,
-  globalCategories,
-  GlobalLoading,
-  globalLogbooks,
-  globalSortedTransactions,
-  globalTransactions,
-  globalUserAccount,
-  initialLoading,
-  initialTransactions,
-  initialUserAccount,
-} from "./GlobalReducer";
+import globalAppSettingsReducer from "./globalAppSettingsReducer";
+import globalBadgeCounterReducer from "./globalBadgeCounterReducer";
+import globalBudgetsReducer from "./globalBudgetsReducer";
+import globalCategoriesReducer from "./globalCategoriesReducer";
+import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
-import initialAppSettings from "./initial-state/InitialAppSettings";
-import initialBadgeCounter from "./initial-state/InitialBadgeCounter";
-import { InitialBudgets } from "./initial-state/InitialBudgets";
-import initialCategories from "./initial-state/InitialCategories";
-import initialLogbooks from "./initial-state/InitialLogbooks";
-import initialRepeatedTransactions from "./initial-state/InitialRepeatedTransactions";
-import InitialSortedTransactions from "./initial-state/InitialSortedTransactions";
+import globalSortedTransactionsReducer from "./globalSortedTransactionsReducer";
+import globalUserAccountReducer from "./globalUserAccountReducer";
+import initialAppSettings from "./initial-state/initialAppSettings";
+import initialBadgeCounter from "./initial-state/initialBadgeCounter";
+import initialBudgets from "./initial-state/initialBudgets";
+import initialCategories from "./initial-state/initialCategories";
+import initialLogbooks from "./initial-state/initialLogbooks";
+import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
+import initialSortedTransactions from "./initial-state/initialSortedTransactions";
+import initialUserAccount from "./initial-state/initialUserAccount";
 
 // TAG : Create Context //
-const GlobalTransactionsContext = createContext();
-const GlobalBudgetsContext = createContext();
-const GlobalSortedTransactionsContext = createContext();
-const GlobalSettingsContext = createContext();
-const GlobalUserAccountContext = createContext();
-const GlobalLoadingContext = createContext();
-const GlobalLogbooksContext = createContext();
-const GlobalCategoriesContext = createContext();
-const GlobalBadgeCounterContext = createContext();
-const GlobalGroupsContext = createContext();
-const GlobalRepeatedTransactionsContext = createContext();
+const globalTransactionsContext = createContext();
+const globalBudgetsContext = createContext();
+const globalSortedTransactionsContext = createContext();
+const globalSettingsContext = createContext();
+const globalUserAccountContext = createContext();
+const globalLoadingContext = createContext();
+const globalLogbooksContext = createContext();
+const globalCategoriesContext = createContext();
+const globalBadgeCounterContext = createContext();
+const globalGroupsContext = createContext();
+const globalRepeatedTransactionsContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
-  return useContext(GlobalTransactionsContext);
+  return useContext(globalTransactionsContext);
 };
 
 export const useGlobalLogbooks = () => {
-  return useContext(GlobalLogbooksContext);
+  return useContext(globalLogbooksContext);
 };
 
 export const useGlobalCategories = () => {
-  return useContext(GlobalCategoriesContext);
+  return useContext(globalCategoriesContext);
 };
 
 export const useGlobalSortedTransactions = () => {
-  return useContext(GlobalSortedTransactionsContext);
+  return useContext(globalSortedTransactionsContext);
 };
 
 export const useGlobalBudgets = () => {
-  return useContext(GlobalBudgetsContext);
+  return useContext(globalBudgetsContext);
 };
 
 export const useGlobalAppSettings = () => {
-  return useContext(GlobalSettingsContext);
+  return useContext(globalSettingsContext);
 };
 
 export const useGlobalUserAccount = () => {
-  return useContext(GlobalUserAccountContext);
+  return useContext(globalUserAccountContext);
 };
 
 export const useGlobalLoading = () => {
-  return useContext(GlobalLoadingContext);
+  return useContext(globalLoadingContext);
 };
 
 export const useGlobalBadgeCounter = () => {
-  return useContext(GlobalBadgeCounterContext);
+  return useContext(globalBadgeCounterContext);
 };
 
 export const useGlobalGroups = () => {
-  return useContext(GlobalGroupsContext);
+  return useContext(globalGroupsContext);
 };
 
 export const useGlobalRepeatedTransactions = () => {
-  return useContext(GlobalRepeatedTransactionsContext);
+  return useContext(globalRepeatedTransactionsContext);
 };
 
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
-    globalUserAccount,
+    globalUserAccountReducer,
     initialUserAccount
   );
   const [appSettings, dispatchAppSettings] = useReducer(
-    globalAppSettings,
+    globalAppSettingsReducer,
     initialAppSettings
   );
-  const [isLoading, dispatchLoading] = useReducer(
-    GlobalLoading,
-    initialLoading
-  );
   const [sortedTransactions, dispatchSortedTransactions] = useReducer(
-    globalSortedTransactions,
-    InitialSortedTransactions
+    globalSortedTransactionsReducer,
+    initialSortedTransactions
   );
   const [logbooks, dispatchLogbooks] = useReducer(
-    globalLogbooks,
+    globalLogbooksReducer,
     initialLogbooks
   );
   const [categories, dispatchCategories] = useReducer(
-    globalCategories,
+    globalCategoriesReducer,
     initialCategories
   );
-  const [rawTransactions, dispatchRawTransactions] = useReducer(
-    globalTransactions,
-    initialTransactions
+  // const [rawTransactions, dispatchRawTransactions] = useReducer(
+  //   globalTransactionsReducer,
+  //   initialTransactions
+  // );
+
+  const [budgets, dispatchBudgets] = useReducer(
+    globalBudgetsReducer,
+    initialBudgets
   );
 
-  const [budgets, dispatchBudgets] = useReducer(globalBudgets, InitialBudgets);
-
   const [badgeCounter, dispatchBadgeCounter] = useReducer(
-    globalBadgeCounter,
+    globalBadgeCounterReducer,
     initialBadgeCounter
   );
 
@@ -128,75 +121,64 @@ export const GlobalStateProvider = ({ children }) => {
 
   return (
     <>
-      <GlobalLoadingContext.Provider
-        value={{ isLoading: isLoading, dispatchLoading: dispatchLoading }}
+      <globalSettingsContext.Provider
+        value={{
+          appSettings: appSettings,
+          dispatchAppSettings: dispatchAppSettings,
+        }}
       >
-        <GlobalSettingsContext.Provider
+        <globalUserAccountContext.Provider
           value={{
-            appSettings: appSettings,
-            dispatchAppSettings: dispatchAppSettings,
+            userAccount: userAccount,
+            dispatchUserAccount: dispatchUserAccount,
           }}
         >
-          <GlobalUserAccountContext.Provider
+          <globalLogbooksContext.Provider
             value={{
-              userAccount: userAccount,
-              dispatchUserAccount: dispatchUserAccount,
+              logbooks: logbooks,
+              dispatchLogbooks: dispatchLogbooks,
             }}
           >
-            <GlobalTransactionsContext.Provider
+            <globalCategoriesContext.Provider
               value={{
-                rawTransactions: rawTransactions,
-                dispatchRawTransactions: dispatchRawTransactions,
+                categories: categories,
+                dispatchCategories: dispatchCategories,
               }}
             >
-              <GlobalLogbooksContext.Provider
+              <globalSortedTransactionsContext.Provider
                 value={{
-                  logbooks: logbooks,
-                  dispatchLogbooks: dispatchLogbooks,
+                  sortedTransactions: sortedTransactions,
+                  dispatchSortedTransactions: dispatchSortedTransactions,
                 }}
               >
-                <GlobalCategoriesContext.Provider
+                <globalBudgetsContext.Provider
                   value={{
-                    categories: categories,
-                    dispatchCategories: dispatchCategories,
+                    budgets: budgets,
+                    dispatchBudgets: dispatchBudgets,
                   }}
                 >
-                  <GlobalSortedTransactionsContext.Provider
+                  <globalBadgeCounterContext.Provider
                     value={{
-                      sortedTransactions: sortedTransactions,
-                      dispatchSortedTransactions: dispatchSortedTransactions,
+                      badgeCounter: badgeCounter,
+                      dispatchBadgeCounter: dispatchBadgeCounter,
                     }}
                   >
-                    <GlobalBudgetsContext.Provider
+                    <globalRepeatedTransactionsContext.Provider
                       value={{
-                        budgets: budgets,
-                        dispatchBudgets: dispatchBudgets,
+                        repeatedTransactions: repeatedTransactions,
+                        dispatchRepeatedTransactions:
+                          dispatchRepeatedTransactions,
                       }}
                     >
-                      <GlobalBadgeCounterContext.Provider
-                        value={{
-                          badgeCounter: badgeCounter,
-                          dispatchBadgeCounter: dispatchBadgeCounter,
-                        }}
-                      >
-                        <GlobalRepeatedTransactionsContext.Provider
-                          value={{
-                            repeatedTransactions: repeatedTransactions,
-                            dispatchRepeatedTransactions:
-                              dispatchRepeatedTransactions,
-                          }}
-                        >
-                          {children}
-                        </GlobalRepeatedTransactionsContext.Provider>
-                      </GlobalBadgeCounterContext.Provider>
-                    </GlobalBudgetsContext.Provider>
-                  </GlobalSortedTransactionsContext.Provider>
-                </GlobalCategoriesContext.Provider>
-              </GlobalLogbooksContext.Provider>
-            </GlobalTransactionsContext.Provider>
-          </GlobalUserAccountContext.Provider>
-        </GlobalSettingsContext.Provider>
-      </GlobalLoadingContext.Provider>
+                      {children}
+                    </globalRepeatedTransactionsContext.Provider>
+                  </globalBadgeCounterContext.Provider>
+                </globalBudgetsContext.Provider>
+              </globalSortedTransactionsContext.Provider>
+            </globalCategoriesContext.Provider>
+          </globalLogbooksContext.Provider>
+        </globalUserAccountContext.Provider>
+      </globalSettingsContext.Provider>
     </>
   );
 };

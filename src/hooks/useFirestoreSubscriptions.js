@@ -87,19 +87,25 @@ const useFirestoreSubscriptions = ({
         case "added":
           dispatchLogbooks({
             type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-            payload: data,
+            payload: {
+              newLogbook: data,
+              reducerUpdatedAt: Date.now(),
+            },
           });
           break;
         case "modified":
           dispatchLogbooks({
             type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
-            payload: data,
+            payload: {
+              patchLogbook: data,
+              reducerUpdatedAt: Date.now(),
+            },
           });
           break;
         case "removed":
           dispatchLogbooks({
             type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
-            payload: data,
+            payload: { deleteLogbook: data, reducerUpdatedAt: Date.now() },
           });
 
           break;
@@ -138,6 +144,7 @@ const useFirestoreSubscriptions = ({
               .INSERT_TRANSACTION,
             payload: {
               transaction: data,
+              reducerUpdatedAt: Date.now(),
               logbookToOpen: logbooks.logbooks.find((logbook) => {
                 if (logbook.logbook_id === data.logbook_id) {
                   return {
@@ -162,6 +169,7 @@ const useFirestoreSubscriptions = ({
               .PATCH_TRANSACTION,
             payload: {
               patchTransaction: data,
+              reducerUpdatedAt: Date.now(),
             },
           });
           // }
@@ -178,6 +186,7 @@ const useFirestoreSubscriptions = ({
               .DELETE_ONE_TRANSACTION,
             payload: {
               deleteTransaction: data,
+              reducerUpdatedAt: Date.now(),
               logbookToOpen: logbooks.logbooks.find((logbook) => {
                 if (logbook.logbook_id === data.logbook_id) {
                   return {
@@ -210,19 +219,28 @@ const useFirestoreSubscriptions = ({
         case "added":
           dispatchRepeatedTransactions({
             type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
-            payload: data,
+            payload: {
+              repeatedTransaction: data,
+              reducerUpdatedAt: Date.now(),
+            },
           });
           break;
         case "modified":
           dispatchRepeatedTransactions({
             type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
-            payload: data,
+            payload: {
+              reducerUpdatedAt: data,
+              reducerUpdatedAt: Date.now(),
+            },
           });
           break;
         case "removed":
           dispatchRepeatedTransactions({
             type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
-            payload: data,
+            payload: {
+              deleteRepeatedTransaction: data,
+              reducerUpdatedAt: Date.now(),
+            },
           });
           break;
 

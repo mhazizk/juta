@@ -748,3 +748,85 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
 };
 
 export default EditRepeatedTransactionScreen;
+
+const handleSave = ({
+  uid,
+  applyTo,
+  localRepeatedTransaction,
+  navigation,
+  groupSorted,
+}) => {
+  const repeatSection = {
+    ...localRepeatedTransaction,
+    _timestamps: {
+      ...localRepeatedTransaction._timestamps,
+      updated_at: Date.now(),
+      updated_by: uid,
+    },
+  };
+  switch (true) {
+    case applyTo === "next" || !localRepeatedTransaction.transactions.length:
+      return navigation.navigate(screenList.loadingScreen, {
+        label: "Saving ...",
+        loadingType: "patchRepeatedTransactions",
+        repeatedTransaction: repeatSection,
+        // transaction: transaction,
+        // initialSortedTransactionsInsertCounter:
+        //   sortedTransactions.sortedTransactionsInsertCounter,
+      });
+
+    case applyTo === "all" && localRepeatedTransaction.transactions.length:
+      const transactionsToBePatched = [];
+      //   find all transactions that are in the repeat section to be patched
+      groupSorted.forEach((logbook) => {
+        logbook.transactions.forEach((section) => {
+          section.data.forEach((transaction) => {
+            if (transaction.repeat_id === repeatSection.repeat_id) {
+              transactionsToBePatched.push(transaction);
+            }
+          });
+        });
+      });
+
+      //   sort transactions by date
+      transactionsToBePatched = transactionsToBePatched.sort((a, b) => {
+        return a.details.date - b.details.date;
+      });
+
+      const newPatchedTransactions = [];
+      //   patch all transactions
+      for (let i = 0; i < transactionsToBePatched.length; i++) {
+        const n = i + 1;
+        const transaction = transactionsToBePatched[i];
+        const patchedTransaction = {
+          ...transaction,
+          details: {
+            ...transaction.details,
+            date:
+              repeatSection.repeat_start_date +
+              n * repeatSection.repeat_type.range,
+          },
+          _timestamps: {
+            ...transaction._timestamps,
+            updated_at: Date.now(),
+            updated_by: uid,
+          },
+        };
+        newPatchedTransactions.push(patchedTransaction);
+      }
+
+      return navigation.navigate(screenList.loadingScreen, {
+        label: "Saving ...",
+        loadingType: "patchRepeatedTransactions",
+        repeatedTransaction: repeatSection,
+        patchedTransactions: newPatchedTransactions,
+        reducerUpdatedAt: Date.now(),
+        // initialSortedTransactionsPatchManyCounter:
+        //   sortedTransactions.sortedTransactionsPatchManyCounter,
+      });
+    //   TODO : change all counter method to timestamp method
+
+    default:
+      break;
+  }
+};

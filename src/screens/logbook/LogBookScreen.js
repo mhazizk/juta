@@ -1,42 +1,30 @@
 import { useIsFocused } from "@react-navigation/native";
 // import "intl/locale-data/jsonp/en";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Dimensions,
-  SectionList,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
+  Dimensions, TouchableOpacity,
+  View
 } from "react-native";
-import Entypo from "react-native-vector-icons/Entypo";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { TransactionListItem } from "../../components/List";
 import Loading from "../../components/Loading";
 import {
-  TextButtonPrimary,
-  TextPrimary,
-  TextSecondary,
+  TextButtonPrimary, TextSecondary
 } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
-  useGlobalCategories,
-  useGlobalLoading,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
+  useGlobalCategories, useGlobalLogbooks,
+  useGlobalSortedTransactions
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
-import * as utils from "../../utils";
 import TransactionList from "../transactions/TransactionList";
 const { width, height } = Dimensions.get("screen");
 
-const LogBookScreen = ({ route, navigation }) => {
+const LogbookScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const { isLoading, dispatchLoading } = useGlobalLoading();
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -54,10 +42,10 @@ const LogBookScreen = ({ route, navigation }) => {
     mode: false,
     length: 0,
   });
-  const [counter, setCounter] = useState({
-    logbookDeleteCounter: 0,
-    logbookPatchCounter: 0,
-  });
+  // const [counter, setCounter] = useState({
+  //   logbookDeleteCounter: 0,
+  //   logbookPatchCounter: 0,
+  // });
   const [screenLoading, setScreenLoading] = useState(false);
   const [componentLoading, setComponentLoading] = useState(false);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
@@ -155,10 +143,10 @@ const LogBookScreen = ({ route, navigation }) => {
       );
     }
 
-    setCounter({
-      logbookDeleteCounter: logbooks.logbookDeleteCounter,
-      logbookPatchCounter: logbooks.logbookPatchCounter,
-    });
+    // setCounter({
+    //   logbookDeleteCounter: logbooks.logbookDeleteCounter,
+    //   logbookPatchCounter: logbooks.logbookPatchCounter,
+    // });
   };
 
   const filterTransactions = () => {
@@ -337,4 +325,4 @@ const LogBookScreen = ({ route, navigation }) => {
   );
 };
 
-export default LogBookScreen;
+export default LogbookScreen;

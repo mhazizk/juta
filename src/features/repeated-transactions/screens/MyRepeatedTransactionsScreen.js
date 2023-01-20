@@ -40,53 +40,55 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
               }}
             />
             <ListSection>
-              {repeatedTransactions.map((repeatSection) => {
-                return (
-                  <ListItem
-                    key={repeatSection.repeat_id}
-                    pressable
-                    leftLabel={utils.FindById.findCategoryNameById({
-                      id: repeatSection.repeat_category_id,
-                      categories: categories.categories,
-                    })}
-                    secondaryLabel={repeatSection.repeat_notes}
-                    thirdLabel={
-                      "Next : " +
-                      new Date(repeatSection.next_repeat_date).toDateString()
-                    }
-                    iconLeftName={utils.FindById.findCategoryIconNameById({
-                      id: repeatSection.repeat_category_id,
-                      categories: categories.categories,
-                    })}
-                    iconLeftColor={utils.FindById.findCategoryColorById({
-                      id: repeatSection.repeat_category_id,
-                      categories: categories.categories,
-                      defaultColor: appSettings.theme.style.colors.foreground,
-                    })}
-                    iconRightName="ellipse"
-                    iconRightColor={
-                      repeatSection.repeat_status === "active"
-                        ? appSettings.theme.style.colors.success
-                        : appSettings.theme.style.colors.danger
-                    }
-                    iconRightSize={12}
-                    rightLabel={utils.GetFormattedNumber({
-                      value: repeatSection.repeat_amount,
-                      currency: utils.FindById.findLogbookById({
-                        id: repeatSection.repeat_logbook_id,
-                        logbooks: logbooks.logbooks,
-                      }).logbook_currency?.name,
-                    })}
-                    iconPack="IonIcons"
-                    onPress={() => {
-                      navigation.navigate(
-                        screenList.repeatedTransactionDetailsScreen,
-                        { repeatSection }
-                      );
-                    }}
-                  />
-                );
-              })}
+              {repeatedTransactions.repeatedTransactions.map(
+                (repeatSection) => {
+                  return (
+                    <ListItem
+                      key={repeatSection.repeat_id}
+                      pressable
+                      leftLabel={utils.FindById.findCategoryNameById({
+                        id: repeatSection.repeat_category_id,
+                        categories: categories.categories,
+                      })}
+                      secondaryLabel={repeatSection.repeat_notes}
+                      thirdLabel={
+                        "Next : " +
+                        new Date(repeatSection.next_repeat_date).toDateString()
+                      }
+                      iconLeftName={utils.FindById.findCategoryIconNameById({
+                        id: repeatSection.repeat_category_id,
+                        categories: categories.categories,
+                      })}
+                      iconLeftColor={utils.FindById.findCategoryColorById({
+                        id: repeatSection.repeat_category_id,
+                        categories: categories.categories,
+                        defaultColor: appSettings.theme.style.colors.foreground,
+                      })}
+                      iconRightName="ellipse"
+                      iconRightColor={
+                        repeatSection.repeat_status === "active"
+                          ? appSettings.theme.style.colors.success
+                          : appSettings.theme.style.colors.danger
+                      }
+                      iconRightSize={12}
+                      rightLabel={utils.GetFormattedNumber({
+                        value: repeatSection.repeat_amount,
+                        currency: utils.FindById.findLogbookById({
+                          id: repeatSection.repeat_logbook_id,
+                          logbooks: logbooks.logbooks,
+                        }).logbook_currency?.name,
+                      })}
+                      iconPack="IonIcons"
+                      onPress={() => {
+                        navigation.navigate(
+                          screenList.repeatedTransactionDetailsScreen,
+                          { repeatSection }
+                        );
+                      }}
+                    />
+                  );
+                }
+              )}
             </ListSection>
           </>
         </ScrollView>

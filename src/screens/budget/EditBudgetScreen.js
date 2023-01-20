@@ -5,7 +5,11 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { ButtonPrimary, ButtonSecondary, ButtonSecondaryDanger } from "../../components/Button";
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+  ButtonSecondaryDanger,
+} from "../../components/Button";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -107,7 +111,8 @@ const EditBudgetScreen = ({ navigation, route }) => {
           label: "Saving Budget ...",
           loadingType: "patchBudget",
           patchBudget: patchBudget,
-          initialBudgetPatchCounter: budgets.budgetPatchCounter,
+          reducerUpdatedAt: Date.now(),
+          // initialBudgetPatchCounter: budgets.budgetPatchCounter,
         });
     }
   };
@@ -502,7 +507,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             }}
           >
             {/* // TAG : Cancel Button */}
-            <View style={{ paddingRight: 8, flex:1 }}>
+            <View style={{ paddingRight: 8, flex: 1 }}>
               <ButtonSecondary
                 label="Cancel"
                 // width={150}
@@ -511,7 +516,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             </View>
 
             {/* // TAG : Delete Button */}
-            <View style={{flex:1}}>
+            <View style={{ flex: 1 }}>
               <ButtonSecondaryDanger
                 label="Delete"
                 // width={150}
@@ -539,8 +544,9 @@ const EditBudgetScreen = ({ navigation, route }) => {
                             label: "Deleting Budget...",
                             loadingType: "deleteBudget",
                             deleteBudget: patchBudget,
-                            initialBudgetDeleteCounter:
-                              budgets.budgetDeleteCounter,
+                            reducerUpdatedAt: Date.now(),
+                            // initialBudgetDeleteCounter:
+                            //   budgets.budgetDeleteCounter,
                           });
                         },
                       },
@@ -552,7 +558,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
             </View>
 
             {/* // TAG : Save Button */}
-            <View style={{ paddingLeft: 8, flex:2 }}>
+            <View style={{ paddingLeft: 8, flex: 2 }}>
               <ButtonPrimary
                 label="Save"
                 // width={150}

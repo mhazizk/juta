@@ -43,8 +43,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
-  const { isLoading, dispatchLoading } = useGlobalLoading();
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispathCategories } = useGlobalCategories();
@@ -234,8 +232,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           logbookToOpen: logbookToOpen,
           patchTransaction: finalTransaction,
           prevTransaction: prevTransaction,
-          initialSortedTransactionsPatchCounter:
-            sortedTransactions.sortedTransactionsPatchCounter,
+          reducerUpdatedAt: Date.now(),
+          // initialSortedTransactionsPatchCounter:
+          //   sortedTransactions.sortedTransactionsPatchCounter,
         });
     }
   };

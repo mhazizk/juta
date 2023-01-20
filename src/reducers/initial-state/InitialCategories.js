@@ -1,7 +1,8 @@
 const initialCategories = {
-  categoryPatchCounter: 0,
-  categoryInsertCounter: 0,
-  categoryDeleteCounter: 0,
+  // categoryPatchCounter: 0,
+  // categoryInsertCounter: 0,
+  // categoryDeleteCounter: 0,
+  reducerUpdatedAt: Date.now(),
   categories: {
     uid: null,
     expense: [

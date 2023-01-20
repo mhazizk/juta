@@ -13,9 +13,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTransactions,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalUserAccount
 } from "../../reducers/GlobalContext";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
@@ -27,8 +25,8 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
-  const {userAccount} = useGlobalUserAccount();
-  const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { userAccount } = useGlobalUserAccount();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -411,7 +409,8 @@ const EditLogbookScreen = ({ route, navigation }) => {
                       loadingType: "patchLogbook",
                       logbookToOpen: logbookToOpen,
                       patchLogbook: finalLogbook,
-                      initialLogbookPatchCounter: logbooks.logbookPatchCounter,
+                      reducerUpdatedAt: Date.now(),
+                      // initialLogbookPatchCounter: logbooks.logbookPatchCounter,
                       // initialSortedLogbookPatchCounter: sortedTransactions.sortedLogbookPatchCounter
                     });
                   }}

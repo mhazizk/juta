@@ -390,3 +390,30 @@ const tset = {
     },
   ],
 };
+
+const logs = {
+  logbooks: [
+    {
+      newLogbook: {
+        logbook_currency: { name: "IDR", isoCode: "id", symbol: "Rp" },
+        logbook_name: "My Logbook",
+        uid: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+        logbook_type: "basic",
+        _id: "a27a63db-bfcb-4b43-8b22-62bf54bb2104",
+        group_id: null,
+        logbook_records: [],
+        _timestamps: {
+          created_at: 1674233649587,
+          updated_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+          created_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+          updated_at: 1674233649587,
+        },
+        __v: 0,
+        logbook_id: "a27a63db-bfcb-4b43-8b22-62bf54bb2104",
+        logbook_categories: [],
+      },
+      reducerUpdatedAt: 1674234013157,
+    },
+  ],
+  reducerUpdatedAt: 1674234013157,
+};

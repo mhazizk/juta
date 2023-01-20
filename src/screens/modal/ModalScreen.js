@@ -27,7 +27,6 @@ import {
 } from "../../reducers/GlobalContext";
 
 const ModalScreen = ({ route, navigation }) => {
-  const { isLoading, dispatchLoading } = useGlobalLoading();
   const { appSettings, dispathAppSettings } = useGlobalAppSettings();
   const [localLoading, setLocalLoading] = useState(false);
   const [selected, setSelected] = useState(null);
