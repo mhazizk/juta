@@ -229,7 +229,7 @@ const useFirestoreSubscriptions = ({
           dispatchRepeatedTransactions({
             type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
             payload: {
-              reducerUpdatedAt: data,
+              repeatedTransaction: data,
               reducerUpdatedAt: Date.now(),
             },
           });

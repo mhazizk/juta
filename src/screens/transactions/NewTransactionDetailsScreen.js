@@ -56,6 +56,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
     uid: null,
     repeat_id: null,
+    repeat_transaction_type: "cash",
     repeat_status: "active",
     repeat_amount: 0,
     repeat_in_out: "expense",
@@ -141,6 +142,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         uid: userAccount.uid,
         repeat_amount: transaction.details.amount,
         repeat_in_out: transaction.details.in_out,
+        repeat_transaction_type: transaction.details.type,
         repeat_category_id: transaction.details.category_id,
         repeat_logbook_id: transaction.logbook_id,
         repeat_notes: transaction.details.notes,

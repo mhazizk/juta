@@ -818,14 +818,16 @@ const handleSave = ({
   };
   switch (true) {
     case applyTo === "next" || !repeatSection.transactions.length:
-      return navigation.navigate(screenList.loadingScreen, {
-        label: "Saving ...",
-        loadingType: "patchRepeatedTransactions",
-        repeatedTransaction: repeatSection,
-        // transaction: transaction,
-        // initialSortedTransactionsInsertCounter:
-        //   sortedTransactions.sortedTransactionsInsertCounter,
-      });
+
+    //   TODO : commented for testing
+    //   return navigation.navigate(screenList.loadingScreen, {
+    //     label: "Saving ...",
+    //     loadingType: "patchRepeatedTransactions",
+    //     repeatedTransaction: repeatSection,
+    //     // transaction: transaction,
+    //     // initialSortedTransactionsInsertCounter:
+    //     //   sortedTransactions.sortedTransactionsInsertCounter,
+    //   });
 
     case applyTo === "all" && !!repeatSection.transactions.length:
       const existingTransactionsInSection = [];
@@ -933,7 +935,9 @@ const handleSave = ({
               uid,
               transaction_id: uuid.v4(),
               logbook_id: repeatSection.repeat_logbook_id,
+              repeat_id: repeatSection.repeat_id,
               details: {
+                type: repeatSection.repeat_transaction_type,
                 amount: repeatSection.repeat_amount,
                 category_id: repeatSection.repeat_category_id,
                 in_out: repeatSection.repeat_in_out,
@@ -959,22 +963,22 @@ const handleSave = ({
           break;
       }
 
-      //   TODO : continue this to loading screen and reducer
-      console.log(
-        JSON.stringify({
-          newInsertedTransactions,
-        })
-      );
-      console.log(
-        JSON.stringify({
-          newPatchedTransactions,
-        })
-      );
-      console.log(
-        JSON.stringify({
-          newDeletedTransactions,
-        })
-      );
+      // //   TODO : continue this to loading screen and reducer
+      // console.log(
+      //   JSON.stringify({
+      //     newInsertedTransactions,
+      //   })
+      // );
+      // console.log(
+      //   JSON.stringify({
+      //     newPatchedTransactions,
+      //   })
+      // );
+      // console.log(
+      //   JSON.stringify({
+      //     newDeletedTransactions,
+      //   })
+      // );
 
       console.log({
         insert: newInsertedTransactions.length,
@@ -982,17 +986,27 @@ const handleSave = ({
         delete: newDeletedTransactions.length,
       });
 
-    //   return navigation.navigate(screenList.loadingScreen, {
-    //     label: "Saving ...",
-    //     loadingType: "patchRepeatedTransactions",
-    //     repeatedTransaction: repeatSection,
-    //     insertedTransactions: newInsertedTransactions,
-    //     patchedTransactions: newPatchedTransactions,
-    //     deletedTransactions: newDeletedTransactions,
-    //     reducerUpdatedAt: Date.now(),
-    //     // initialSortedTransactionsPatchManyCounter:
-    //     //   sortedTransactions.sortedTransactionsPatchManyCounter,
-    //   });
+      return navigation.navigate(screenList.loadingScreen, {
+        label: "Saving ...",
+        loadingType: "patchRepeatedTransactions",
+        repeatedTransaction: {
+          ...repeatSection,
+          transactions: [
+            ...newInsertedTransactions.map(
+              (transaction) => transaction.transaction_id
+            ),
+            ...newPatchedTransactions.map(
+              (transaction) => transaction.transaction_id
+            ),
+          ],
+        },
+        insertedTransactions: newInsertedTransactions,
+        patchedTransactions: newPatchedTransactions,
+        deletedTransactions: newDeletedTransactions,
+        reducerUpdatedAt: Date.now(),
+      });
+
+    // TODO : continue 'next' case
 
     default:
       console.log("masuk default");

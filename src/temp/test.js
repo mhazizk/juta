@@ -124,3 +124,72 @@ const patchTransaction = {
     },
   ],
 };
+
+const finalState = {
+  finalState: {
+    logbookToOpen: null,
+    reducerUpdatedAt: 1674326302557,
+    groupSorted: [
+      { logbook_id: "6f1ede31-8a44-4f09-9213-52f5917ac063", transactions: [] },
+      {
+        logbook_id: "a27a63db-bfcb-4b43-8b22-62bf54bb2104",
+        transactions: [
+          {
+            title: "Sat Jan 21 2023",
+            customDate: "2023/01/21",
+            data: [
+              {
+                _timestamps: {
+                  updated_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                  updated_at: 1674294141228,
+                  created_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                  created_at: 1674294141228,
+                },
+                repeat_id: null,
+                logbook_id: "a27a63db-bfcb-4b43-8b22-62bf54bb2104",
+                transaction_id: "99a34ec2-e29b-49a2-8b2c-11a951ab7630",
+                _id: 1674294141228,
+                uid: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                details: {
+                  in_out: "expense",
+                  type: "cash",
+                  amount: 333,
+                  date: 1674294141228,
+                  category_id: "2",
+                  notes: "Not repeated",
+                },
+              },
+            ],
+          },
+          {
+            title: "Thu Jan 19 2023",
+            customDate: "2023/01/19",
+            data: [
+              {
+                logbook_id: "a27a63db-bfcb-4b43-8b22-62bf54bb2104",
+                repeat_id: "6ebce551-07a7-4164-b814-3d52e688e12d",
+                _id: 1674296463429,
+                transaction_id: "9a245c9f-b9a0-43cf-922e-b455d4bc0df6",
+                uid: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                details: {
+                  amount: 999,
+                  notes: "Listrik",
+                  type: "cash",
+                  in_out: "expense",
+                  category_id: "2",
+                  date: 1674123663429,
+                },
+                _timestamps: {
+                  created_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                  created_at: 1674296463429,
+                  updated_by: "Ueig1wSa5RXaEyjiC5S8cxRI53c2",
+                  updated_at: 1674326302550,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};

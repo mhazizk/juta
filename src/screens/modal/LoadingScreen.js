@@ -421,6 +421,12 @@ const LoadingScreen = ({ route, navigation }) => {
         navigation.navigate(screenList.myLogbooksScreen);
         break;
 
+      // Patch repeated transactions
+      case isReducerTimestampSame &&
+        loadingType === "patchRepeatedTransactions":
+        navigation.navigate(screenList.myRepeatedTransactionsScreen);
+        break;
+
       default:
         break;
     }
@@ -561,7 +567,9 @@ const LoadingScreen = ({ route, navigation }) => {
       loadingType,
       reducerUpdatedAt,
       repeatedTransaction,
+      insertedTransactions,
       patchedTransactions,
+      deletedTransactions,
     } = route?.params;
 
     const isReducerTimestampSame =
@@ -599,7 +607,9 @@ const LoadingScreen = ({ route, navigation }) => {
             type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
               .PATCH_MANY_TRANSACTIONS,
             payload: {
+              insertedTransactions,
               patchedTransactions,
+              deletedTransactions,
               reducerUpdatedAt,
             },
           });
