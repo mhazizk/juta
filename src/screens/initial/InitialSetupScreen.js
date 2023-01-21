@@ -97,7 +97,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
       updated_by: userAccount.uid,
       updated_at: null,
     },
-    _id: logbookId,
     uid: userAccount.uid,
     logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
     logbook_type: "basic",
@@ -106,7 +105,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
     logbook_records: [],
     logbook_categories: [],
     group_id: null,
-    __v: 0,
   });
 
   useEffect(() => {}, [appSettings, newLogbook]);

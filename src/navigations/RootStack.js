@@ -7,9 +7,11 @@ import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
-  useGlobalCategories, useGlobalLogbooks,
+  useGlobalCategories,
+  useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import MyCategoriesScreen from "../screens/categories/MyCategoriesScreen";
 import EditLogbookScreen from "../screens/logbook/EditLogbookScreen";
@@ -527,7 +529,6 @@ const RootStack = () => {
                             updated_at: Date.now(),
                             updated_by: userAccount.uid,
                           },
-                          _id: uuid.v4(),
                           uid: userAccount.uid,
                           logbook_currency: {
                             name: "IDR",
@@ -540,7 +541,6 @@ const RootStack = () => {
                           logbook_name: item,
                           logbook_records: [],
                           logbook_categories: [],
-                          __v: 0,
                         };
 
                         setTimeout(async () => {

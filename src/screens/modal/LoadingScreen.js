@@ -181,7 +181,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Insert One Budget Method
           case reducerUpdatedAt !== budgetsReducerUpdatedAt &&
             loadingType === "insertBudget":
-            console.log('start insert budget')
+            console.log("start insert budget");
             dispatchBudgets({
               type: REDUCER_ACTIONS.BUDGETS.INSERT,
               payload: { insertBudget, reducerUpdatedAt },
@@ -211,7 +211,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Patch repeated transactions
           case repeatedTransaction &&
             patchedTransactions &&
-            loadingType === "patchRepeatedTransaction":
+            loadingType === "patchRepeatedTransactions":
             dispatchRepeatedTransactions({
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
               payload: {
@@ -502,12 +502,11 @@ const LoadingScreen = ({ route, navigation }) => {
       reducerUpdatedAt === budgets.reducerUpdatedAt;
 
     switch (true) {
-
       // Insert One Budget
       case isReducerTimestampSame && loadingType === "insertBudget":
         navigation.navigate(screenList.myBudgetsScreen);
         break;
-      
+
       // Patch One Budget
       case isReducerTimestampSame && loadingType === "patchBudget":
         navigation.navigate(screenList.myBudgetsScreen);
@@ -568,23 +567,23 @@ const LoadingScreen = ({ route, navigation }) => {
     const isReducerTimestampSame =
       reducerUpdatedAt === repeatedTransactions.reducerUpdatedAt;
 
-    if (loadingType === "patchRepeatedTransaction") {
+    if (loadingType === "patchRepeatedTransactions") {
       // sync updated repeated transaction to firestore
       setTimeout(async () => {
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-          repeatedTransaction.repeat_id,
-          repeatedTransaction
-        );
+        // TODO : commented for testing
+        // await firestore.setData(
+        //   FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+        //   repeatedTransaction.repeat_id,
+        //   repeatedTransaction
+        // );
       }, 5000);
 
       if (isReducerTimestampSame && repeatedTransaction?.transactions?.length) {
         // check timestamp of patched repeated transaction
-        const foundPatchedRepeatSection = repeatedTransactions.find(
-          (repeatSection) => {
+        const foundPatchedRepeatSection =
+          repeatedTransactions.repeatedTransactions.find((repeatSection) => {
             return repeatSection.repeat_id === repeatedTransaction.repeat_id;
-          }
-        );
+          });
 
         // if timestamp is same, it means that the patched repeated transaction has been updated in state
         let isTimestampSame = false;
@@ -595,7 +594,7 @@ const LoadingScreen = ({ route, navigation }) => {
         }
 
         // proceeds patching transactions
-        if (repeatedTransactions && isTimestampSame) {
+        if (!!repeatedTransaction.transactions.length && isTimestampSame) {
           dispatchSortedTransactions({
             type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
               .PATCH_MANY_TRANSACTIONS,

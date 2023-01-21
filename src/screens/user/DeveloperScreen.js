@@ -16,7 +16,8 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
@@ -388,7 +389,6 @@ const DeveloperScreen = ({ item, navigation }) => {
                     created_at: 1673276098432,
                     updated_at: 1673276098432,
                   },
-                  _id: 1673276098432,
                   logbook_id: "ef756b9f-9f3c-4723-a99c-40bb5d265cf3",
                   transaction_id: "bbb21e92-0d0a-4658-adc0-cea5791936e3",
                   details: {
@@ -497,7 +497,6 @@ const DeveloperScreen = ({ item, navigation }) => {
                     created_at: 1673263349998,
                     updated_at: 1673263349998,
                   },
-                  _id: "3bcdcaba-90c9-4b6f-8337-33ef0345ccbd",
                   uid: "5eiznx0wC5UhVjJhPp7VWl3ihD93",
                   logbook_currency: {
                     name: "IDR",
@@ -509,7 +508,6 @@ const DeveloperScreen = ({ item, navigation }) => {
                   logbook_name: "Logbook ku",
                   logbook_records: [],
                   logbook_categories: [],
-                  __v: 0,
                 })
                 .then(() => alert("logbook posted"));
             }}

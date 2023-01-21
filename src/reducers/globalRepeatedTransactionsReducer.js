@@ -49,7 +49,7 @@ const globalRepeatedTransactionsReducer = (state, action) => {
       // get other repeat transactions
 
       // check if the repeat transaction is already in the state
-      const repeatedTransactionInState = state.find((repeatTransaction) => {
+      const repeatedTransactionInState = state.repeatedTransactions.find((repeatTransaction) => {
         return (
           repeatTransaction.repeat_id === patchRepeatedTransaction.repeat_id
         );
@@ -64,7 +64,7 @@ const globalRepeatedTransactionsReducer = (state, action) => {
       }
 
       if (repeatedTransactionInState && isTimestampNewer) {
-        const otherRepeatTransactions = state.filter(
+        const otherRepeatTransactions = state.repeatedTransactions.filter(
           (repeatTransaction) =>
             repeatTransaction.repeat_id !== patchRepeatedTransaction.repeat_id
         );
@@ -134,7 +134,7 @@ const globalRepeatedTransactionsReducer = (state, action) => {
         action.payload.deleteRepeatedTransaction;
       reducerUpdatedAt = action.payload.reducerUpdatedAt;
       // get other repeat transactions
-      const otherNotDeletedRepeatTransactions = state.filter(
+      const otherNotDeletedRepeatTransactions = state.repeatedTransactions.filter(
         (repeatTransaction) =>
           repeatTransaction.repeat_id !== deleteRepeatedTransaction.repeat_id
       );

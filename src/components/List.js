@@ -128,9 +128,12 @@ export const ListItem = ({
                   (iconRightName === "checkmark-circle" ? 22 : 18)
                 }
                 color={
-                  iconRightColor ||
-                  appSettings.theme.style.colors.foreground ||
-                  lightTheme.colors.foreground
+                  disabled
+                    ? appSettings.theme.style.colors.secondary
+                    : iconRightColor
+                    ? iconRightColor
+                    : appSettings.theme.style.colors.foreground ||
+                      lightTheme.colors.foreground
                 }
                 style={{ paddingLeft: 16 }}
               />

@@ -9,7 +9,8 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
@@ -157,7 +158,6 @@ const ActionScreen = ({ route, navigation }) => {
                           updated_at: Date.now(),
                           updated_by: userAccount.uid,
                         },
-                        _id: uuid.v4(),
                         uid: userAccount.uid,
                         group_id: null,
                         logbook_currency:
@@ -167,7 +167,6 @@ const ActionScreen = ({ route, navigation }) => {
                         logbook_name: item,
                         logbook_records: [],
                         logbook_categories: [],
-                        __v: 0,
                       };
 
                       setTimeout(async () => {

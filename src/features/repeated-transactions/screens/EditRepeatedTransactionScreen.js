@@ -18,14 +18,15 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
+  useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
-import CheckList from "../../../components/CheckList";
 import RadioButtonList from "../../../components/List/RadioButtonList";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import uuid from "react-native-uuid";
 
 const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   // TAG : useRef State //
@@ -33,6 +34,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   const inputAmount = useRef(null);
 
   const { appSettings } = useGlobalAppSettings();
+  const { sortedTransactions } = useGlobalSortedTransactions();
   const { userAccount } = useGlobalUserAccount();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
@@ -78,12 +80,21 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         setLocalRepeatedTransaction({
           ...localRepeatedTransaction,
           repeat_start_date: new Date(currentDate).getTime(),
+          next_repeat_date:
+            new Date(currentDate).getTime() +
+            localRepeatedTransaction.repeat_type.range *
+              (localRepeatedTransaction.transactions.length + 1),
         });
         break;
       case "neutralButtonPressed":
+        const now = Date.now();
         setLocalRepeatedTransaction({
           ...localRepeatedTransaction,
-          repeat_start_date: Date.now(),
+          repeat_start_date: now,
+          next_repeat_date:
+            now +
+            localRepeatedTransaction.repeat_type.range *
+              (localRepeatedTransaction.transactions.length + 1),
         });
         break;
 
@@ -132,7 +143,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
       positiveButtonLabel: "select",
       minimumDate:
         mode === "start"
-          ? new Date().setHours(0, 0, 0, 0)
+          ? //   ? new Date().setHours(0, 0, 0, 0)
+            null
           : new Date(
               localRepeatedTransaction.repeat_start_date + 1000 * 60 * 60 * 24
             ),
@@ -538,11 +550,37 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
           </ListSection>
+          {/* // TAG : Apply Changes */}
+          <TextPrimary
+            label="Apply changes to"
+            style={{
+              paddingVertical: 8,
+              paddingHorizontal: 32,
+            }}
+          />
+          <ListSection>
+            <RadioButtonList
+              items={apply.options.map((option) => {
+                return {
+                  name: option.name,
+                  value: option.value,
+                };
+              })}
+              selected={apply.applyTo}
+              onChange={(item) => {
+                setApply({
+                  ...apply,
+                  applyTo: item.value,
+                });
+              }}
+            />
+          </ListSection>
 
           <ListSection>
             {/* // TAG : Repeat start date */}
             <ListItem
               pressable
+              disabled={apply.applyTo === "next"}
               iconPack="IonIcons"
               leftLabel="Repeat start date"
               iconLeftName="calendar"
@@ -550,11 +588,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 localRepeatedTransaction.repeat_start_date
               ).toDateString()}
               iconRightName="chevron-forward"
-              onPress={() =>
-                showDatePicker({
-                  mode: "start",
-                })
-              }
+              onPress={() => {
+                if (apply.applyTo === "all") {
+                  showDatePicker({
+                    mode: "start",
+                  });
+                }
+              }}
             />
             {/* // TAG : Repeat finish date */}
             <ListItem
@@ -637,6 +677,10 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     setLocalRepeatedTransaction({
                       ...localRepeatedTransaction,
                       repeat_type: item,
+                      next_repeat_date:
+                        localRepeatedTransaction.repeat_start_date +
+                        item.range *
+                          (localRepeatedTransaction.transactions.length + 1),
                       //   transactions: [transaction.transaction_id],
                     });
                   },
@@ -645,58 +689,55 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               }}
             />
             <TextPrimary
-              label={
-                "Next transaction : " +
-                new Date(
-                  localRepeatedTransaction.next_repeat_date
-                ).toDateString()
-              }
+              label={`Next transaction : ${
+                localRepeatedTransaction.next_repeat_date < Date.now()
+                  ? new Date(
+                      (
+                        (Date.now() -
+                          localRepeatedTransaction.repeat_start_date) /
+                        localRepeatedTransaction.repeat_type.range
+                      ).toFixed(0) *
+                        localRepeatedTransaction.repeat_type.range +
+                        localRepeatedTransaction.repeat_start_date
+                    ).toDateString()
+                  : new Date(
+                      localRepeatedTransaction.next_repeat_date
+                    ).toDateString()
+              }`}
               style={{
                 paddingVertical: 8,
                 paddingHorizontal: 50,
               }}
             />
           </ListSection>
-          {/* // TAG : Apply Changes */}
-          <TextPrimary
-            label="Apply changes to"
-            style={{
-              paddingVertical: 8,
-              paddingHorizontal: 32,
-            }}
-          />
-          <ListSection noMargin>
-            <RadioButtonList
-              items={apply.options.map((option) => {
-                return {
-                  name: option.name,
-                  value: option.value,
-                };
-              })}
-              selected={apply.applyTo}
-              onChange={(item) => {
-                setApply({
-                  ...apply,
-                  applyTo: item.value,
-                });
-              }}
-            />
-          </ListSection>
           {apply.applyTo === "all" && (
             <>
-              <View
-                style={{
-                  paddingHorizontal: 16,
-                }}
-              >
-                <ListItem
-                  iconLeftColor={appSettings.theme.style.colors.warn}
-                  iconLeftName="warning"
-                  leftLabel="Earlier logged transactions date will be adjusted to the new changes"
-                />
-              </View>
+              <ListSection>
+                <View
+                  style={
+                    {
+                      // paddingHorizontal: 16,
+                    }
+                  }
+                >
+                  <ListItem
+                    iconLeftColor={appSettings.theme.style.colors.warn}
+                    iconLeftName="warning"
+                    leftLabel="Earlier logged transactions date will be adjusted to the new changes"
+                  />
+                  <ListItem
+                    iconLeftColor={appSettings.theme.style.colors.warn}
+                    iconLeftName="warning"
+                    leftLabel={
+                      route.params.repeatSection.transactions.length +
+                      " transaction(s) will be affected"
+                    }
+                  />
+                </View>
+              </ListSection>
             </>
           )}
+
           {/* // TAG : Buttons */}
           <View
             style={{
@@ -738,7 +779,18 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               />
             </View>
             <View style={{ flex: 2, paddingRight: 8 }}>
-              <ButtonPrimary label="Save and apply" />
+              <ButtonPrimary
+                label="Save and apply"
+                onPress={() =>
+                  handleSave({
+                    uid: userAccount.uid,
+                    applyTo: apply.applyTo,
+                    localRepeatedTransaction,
+                    navigation,
+                    groupSorted: sortedTransactions.groupSorted,
+                  })
+                }
+              />
             </View>
           </View>
         </ScrollView>
@@ -765,7 +817,7 @@ const handleSave = ({
     },
   };
   switch (true) {
-    case applyTo === "next" || !localRepeatedTransaction.transactions.length:
+    case applyTo === "next" || !repeatSection.transactions.length:
       return navigation.navigate(screenList.loadingScreen, {
         label: "Saving ...",
         loadingType: "patchRepeatedTransactions",
@@ -775,58 +827,175 @@ const handleSave = ({
         //   sortedTransactions.sortedTransactionsInsertCounter,
       });
 
-    case applyTo === "all" && localRepeatedTransaction.transactions.length:
-      const transactionsToBePatched = [];
+    case applyTo === "all" && !!repeatSection.transactions.length:
+      const existingTransactionsInSection = [];
       //   find all transactions that are in the repeat section to be patched
       groupSorted.forEach((logbook) => {
         logbook.transactions.forEach((section) => {
           section.data.forEach((transaction) => {
             if (transaction.repeat_id === repeatSection.repeat_id) {
-              transactionsToBePatched.push(transaction);
+              existingTransactionsInSection.push(transaction);
             }
           });
         });
       });
 
       //   sort transactions by date
-      transactionsToBePatched = transactionsToBePatched.sort((a, b) => {
+      existingTransactionsInSection.sort((a, b) => {
         return a.details.date - b.details.date;
       });
 
+      //   get number of transactions to be logged
+      const numberOfTransactionsToBeLogged = (
+        (Date.now() - repeatSection.repeat_start_date) /
+        repeatSection.repeat_type.range
+      ).toFixed(0);
+
+      const existingTransactionsLength = existingTransactionsInSection.length;
+      const newTransactionsLength =
+        numberOfTransactionsToBeLogged - existingTransactionsLength;
+
+      const newInsertedTransactions = [];
       const newPatchedTransactions = [];
-      //   patch all transactions
-      for (let i = 0; i < transactionsToBePatched.length; i++) {
-        const n = i + 1;
-        const transaction = transactionsToBePatched[i];
-        const patchedTransaction = {
-          ...transaction,
-          details: {
-            ...transaction.details,
-            date:
-              repeatSection.repeat_start_date +
-              n * repeatSection.repeat_type.range,
-          },
-          _timestamps: {
-            ...transaction._timestamps,
-            updated_at: Date.now(),
-            updated_by: uid,
-          },
-        };
-        newPatchedTransactions.push(patchedTransaction);
+      const newDeletedTransactions = [];
+
+      switch (true) {
+        case newTransactionsLength <= 0:
+          //   patch all existing transactions
+          for (let i = 0; i < existingTransactionsLength; i++) {
+            // const n = i + 1;
+            const n = i;
+
+            const transaction = existingTransactionsInSection[i];
+            const patchedTransaction = {
+              ...transaction,
+              logbook_id: repeatSection.repeat_logbook_id,
+              details: {
+                ...transaction.details,
+                amount: repeatSection.repeat_amount,
+                category_id: repeatSection.repeat_category_id,
+                in_out: repeatSection.repeat_in_out,
+                notes: repeatSection.repeat_notes,
+                date:
+                  repeatSection.repeat_start_date +
+                  n * repeatSection.repeat_type.range,
+              },
+              _timestamps: {
+                ...transaction._timestamps,
+                updated_at: Date.now(),
+                updated_by: uid,
+              },
+            };
+
+            if (patchedTransaction.details.date <= Date.now()) {
+              newPatchedTransactions.push(patchedTransaction);
+            } else {
+              newDeletedTransactions.push(patchedTransaction);
+            }
+          }
+
+          break;
+
+        case newTransactionsLength > 0:
+          //   patch existing transactions
+          for (let i = 0; i < existingTransactionsLength; i++) {
+            // const n = i + 1;
+            const n = i;
+
+            const transaction = existingTransactionsInSection[i];
+            const patchedTransaction = {
+              ...transaction,
+              logbook_id: repeatSection.repeat_logbook_id,
+              details: {
+                ...transaction.details,
+                amount: repeatSection.repeat_amount,
+                category_id: repeatSection.repeat_category_id,
+                in_out: repeatSection.repeat_in_out,
+                notes: repeatSection.repeat_notes,
+                date:
+                  repeatSection.repeat_start_date +
+                  n * repeatSection.repeat_type.range,
+              },
+              _timestamps: {
+                ...transaction._timestamps,
+                updated_at: Date.now(),
+                updated_by: uid,
+              },
+            };
+
+            newPatchedTransactions.push(patchedTransaction);
+          }
+          //   create new transactions
+          for (let i = 0; i < newTransactionsLength; i++) {
+            const n = i + existingTransactionsLength;
+
+            const newTransaction = {
+              uid,
+              transaction_id: uuid.v4(),
+              logbook_id: repeatSection.repeat_logbook_id,
+              details: {
+                amount: repeatSection.repeat_amount,
+                category_id: repeatSection.repeat_category_id,
+                in_out: repeatSection.repeat_in_out,
+                notes: repeatSection.repeat_notes,
+                date:
+                  repeatSection.repeat_start_date +
+                  n * repeatSection.repeat_type.range,
+              },
+              _timestamps: {
+                created_at: Date.now(),
+                created_by: uid,
+                updated_at: Date.now(),
+                updated_by: uid,
+              },
+            };
+
+            newInsertedTransactions.push(newTransaction);
+          }
+
+          break;
+
+        default:
+          break;
       }
 
-      return navigation.navigate(screenList.loadingScreen, {
-        label: "Saving ...",
-        loadingType: "patchRepeatedTransactions",
-        repeatedTransaction: repeatSection,
-        patchedTransactions: newPatchedTransactions,
-        reducerUpdatedAt: Date.now(),
-        // initialSortedTransactionsPatchManyCounter:
-        //   sortedTransactions.sortedTransactionsPatchManyCounter,
+      //   TODO : continue this to loading screen and reducer
+      console.log(
+        JSON.stringify({
+          newInsertedTransactions,
+        })
+      );
+      console.log(
+        JSON.stringify({
+          newPatchedTransactions,
+        })
+      );
+      console.log(
+        JSON.stringify({
+          newDeletedTransactions,
+        })
+      );
+
+      console.log({
+        insert: newInsertedTransactions.length,
+        patch: newPatchedTransactions.length,
+        delete: newDeletedTransactions.length,
       });
-    //   TODO : change all counter method to timestamp method
+
+    //   return navigation.navigate(screenList.loadingScreen, {
+    //     label: "Saving ...",
+    //     loadingType: "patchRepeatedTransactions",
+    //     repeatedTransaction: repeatSection,
+    //     insertedTransactions: newInsertedTransactions,
+    //     patchedTransactions: newPatchedTransactions,
+    //     deletedTransactions: newDeletedTransactions,
+    //     reducerUpdatedAt: Date.now(),
+    //     // initialSortedTransactionsPatchManyCounter:
+    //     //   sortedTransactions.sortedTransactionsPatchManyCounter,
+    //   });
 
     default:
+      console.log("masuk default");
       break;
   }
 };

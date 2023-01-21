@@ -116,7 +116,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         updated_at: Date.now(),
         updated_by: userAccount.uid,
       },
-      _id: Date.now(),
       repeat_id: null,
       logbook_id: logbooks.logbooks[0].logbook_id,
       transaction_id: uuid.v4(),

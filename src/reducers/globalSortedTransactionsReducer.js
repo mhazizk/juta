@@ -385,6 +385,7 @@ export const globalSortedTransactionsReducer = (state, action) => {
 
       let groupSortedHasBeenReplaced = null;
       newPatchedTransactions.forEach((newPatchedTransaction) => {
+        console.log(newPatchedTransaction);
         // 1. create new custom date
         customPatchDate = `${new Date(
           newPatchedTransaction.details.date
@@ -396,13 +397,16 @@ export const globalSortedTransactionsReducer = (state, action) => {
         ).slice(-2)}`;
 
         // 2. get previous transaction
-        const prevTransaction = state.groupSorted.forEach((logbook) => {
+        let prevTransaction = null;
+        state.groupSorted.forEach((logbook) => {
           logbook.transactions.forEach((section) => {
-            section.data.find((transaction) => {
-              return (
+            section.data.forEach((transaction) => {
+              if (
                 transaction.transaction_id ===
                 newPatchedTransaction.transaction_id
-              );
+              ) {
+                prevTransaction = transaction;
+              }
             });
           });
         });
@@ -508,55 +512,84 @@ export const globalSortedTransactionsReducer = (state, action) => {
               ...state.groupSorted.find(
                 (logbook) => logbook.logbook_id === prevLogbookId
               ),
-              transactions: [
-                ...state.groupSorted
-                  .find((logbook) => logbook.logbook_id === prevLogbookId)
-                  .transactions.filter(
-                    (section) => section.customDate !== customPrevDate
-                  ),
-                newPreviousSection,
-              ],
+              transactions: newPreviousSection.data.length
+                ? [
+                    ...state.groupSorted
+                      .find((logbook) => logbook.logbook_id === prevLogbookId)
+                      .transactions.filter(
+                        (section) => section.customDate !== customPrevDate
+                      ),
+                    newPreviousSection,
+                  ]
+                : [],
             };
 
-            // 7. find the section
-            const foundSectionToBePatched =
-              newPreviousLogbook.transactions.find((section) => {
-                if (section.customDate === customPatchDate) {
-                  return section;
-                }
-              });
+            console.log(newPreviousLogbook);
+            // 7. find target section
+            const foundSectionToBePatched = !newPreviousLogbook.transactions
+              .length
+              ? null
+              : newPreviousLogbook.transactions.find((section) => {
+                  if (section.customDate === customPatchDate) {
+                    return section;
+                  }
+                });
 
-            // 8. insert the transaction to the section
-            const newPatchedSection = {
-              ...foundSectionToBePatched,
-              data: [
-                ...foundSectionToBePatched.data,
-                newPatchedTransaction,
-              ].sort(sortTransactionsDate),
-            };
-
-            // 9. put the new patched section back to the logbook
-            const newPatchedLogbook = {
-              ...newPreviousLogbook,
-              transactions: [
-                ...newPreviousLogbook.transactions.filter(
-                  (section) => section.customDate !== customPatchDate
+            //   8. if the section is not found, then create a new section
+            if (!foundSectionToBePatched) {
+              const newSectionToBePatched = {
+                title: new Date(
+                  newPatchedTransaction.details.date
+                ).toDateString(),
+                customDate: customPatchDate,
+                data: [newPatchedTransaction],
+              };
+              const newPatchedLogbook = {
+                ...newPreviousLogbook,
+                transactions: [
+                  ...newPreviousLogbook.transactions,
+                  newSectionToBePatched,
+                ].sort(sortLogbookTransactions),
+              };
+              groupSortedHasBeenReplaced = [
+                ...state.groupSorted.filter(
+                  (logbook) => logbook.logbook_id !== prevLogbookId
                 ),
-                newPatchedSection,
-              ].sort(sortLogbookTransactions),
-            };
+                newPatchedLogbook,
+              ];
+            } else {
+              // 9. insert the transaction to the section
+              const newPatchedSection = {
+                ...foundSectionToBePatched,
+                data: [
+                  ...foundSectionToBePatched.data,
+                  newPatchedTransaction,
+                ].sort(sortTransactionsDate),
+              };
 
-            // 10. put the new patched logbook back to the group
-            groupSortedHasBeenReplaced = [
-              ...state.groupSorted.filter(
-                (logbook) => logbook.logbook_id !== prevLogbookId
-              ),
-              newPatchedLogbook,
-            ];
-            // TODO : sort the logbook by logbook name
-            //   .sort((a, b) => {
-            //   return a.logbook_name - b.logbook_name;
-            // });
+              // 10. put the new patched section back to the logbook
+              const newPatchedLogbook = {
+                ...newPreviousLogbook,
+                transactions: [
+                  ...newPreviousLogbook.transactions.filter(
+                    (section) => section.customDate !== customPatchDate
+                  ),
+                  newPatchedSection,
+                ].sort(sortLogbookTransactions),
+              };
+
+              // 11. put the new patched logbook back to the group
+              groupSortedHasBeenReplaced = [
+                ...state.groupSorted.filter(
+                  (logbook) => logbook.logbook_id !== prevLogbookId
+                ),
+                newPatchedLogbook,
+              ];
+              // TODO : sort the logbook by logbook name
+              //   .sort((a, b) => {
+              //   return a.logbook_name - b.logbook_name;
+              // });
+            }
           }
         } else {
           // if logbook id is different
@@ -588,68 +621,113 @@ export const globalSortedTransactionsReducer = (state, action) => {
             ...state.groupSorted.find(
               (logbook) => logbook.logbook_id === prevLogbookId
             ),
-            transactions: [
-              ...state.groupSorted
-                .find((logbook) => logbook.logbook_id === prevLogbookId)
-                .transactions.filter(
-                  (section) => section.customDate !== customPrevDate
-                ),
-              newPreviousSection,
-            ],
+            transactions: newPreviousSection.data.length
+              ? [
+                  ...state.groupSorted
+                    .find((logbook) => logbook.logbook_id === prevLogbookId)
+                    .transactions.filter(
+                      (section) => section.customDate !== customPrevDate
+                    ),
+                  newPreviousSection,
+                ]
+              : [],
           };
 
           // 7. find the target section
-          const foundSectionToBePatched = state.groupSorted
-            .forEach((logbook) => {
-              logbook.logbook_id === newPatchedTransaction.logbook_id;
-            })
-            .transactions.find((section) => {
+          const targetLogbook = state.groupSorted.find(
+            (logbook) => logbook.logbook_id === newPatchedTransaction.logbook_id
+          );
+          const foundSectionToBePatched = targetLogbook.transactions.find(
+            (section) => {
               if (section.customDate === customPatchDate) {
                 return section;
               }
-            });
+            }
+          );
 
-          // 8. insert the transaction to the section
-          const newPatchedSection = {
-            ...foundSectionToBePatched,
-            data: [...foundSectionToBePatched.data, newPatchedTransaction].sort(
-              sortTransactionsDate
-            ),
-          };
-
-          // 9. put the new patched section back to the logbook
-          const newPatchedLogbook = {
-            ...newPreviousLogbook,
-            transactions: [
-              ...newPreviousLogbook.transactions.filter(
-                (section) => section.customDate !== customPatchDate
+          //   8. if the section is not found, then create a new section
+          if (!foundSectionToBePatched) {
+            const newSectionToBePatched = {
+              title: new Date(
+                newPatchedTransaction.details.date
+              ).toDateString(),
+              customDate: customPatchDate,
+              data: [newPatchedTransaction],
+            };
+            const newPatchedLogbook = {
+              ...targetLogbook,
+              transactions: [
+                ...targetLogbook.transactions,
+                newSectionToBePatched,
+              ].sort(sortLogbookTransactions),
+            };
+            groupSortedHasBeenReplaced = [
+              ...state.groupSorted.filter(
+                (logbook) =>
+                  logbook.logbook_id !== prevLogbookId &&
+                  logbook.logbook_id !== newPatchedTransaction.logbook_id
               ),
-              newPatchedSection,
-            ].sort(sortLogbookTransactions),
-          };
+              newPreviousLogbook,
+              newPatchedLogbook,
+            ];
+          } else {
+            // 8. insert the transaction to the section
+            const newPatchedSection = {
+              ...foundSectionToBePatched,
+              data: [
+                ...foundSectionToBePatched.data,
+                newPatchedTransaction,
+              ].sort(sortTransactionsDate),
+            };
 
-          // 10. put the new patched logbook back to the group
-          groupSortedHasBeenReplaced = [
-            ...state.groupSorted.filter(
-              (logbook) =>
-                logbook.logbook_id !== prevLogbookId &&
-                logbook.logbook_id !== newPatchedTransaction.logbook_id
-            ),
-            newPreviousLogbook,
-            newPatchedLogbook,
-          ];
-          // TODO : sort the logbook by logbook name
-          //   .sort((a, b) => {
-          //   return a.logbook_name - b.logbook_name;
-          // });
+            // 9. put the new patched section back to the logbook
+            const newPatchedLogbook = {
+              ...newPreviousLogbook,
+              transactions: [
+                ...newPreviousLogbook.transactions.filter(
+                  (section) => section.customDate !== customPatchDate
+                ),
+                newPatchedSection,
+              ].sort(sortLogbookTransactions),
+            };
+
+            // 10. put the new patched logbook back to the group
+            groupSortedHasBeenReplaced = [
+              ...state.groupSorted.filter(
+                (logbook) =>
+                  logbook.logbook_id !== prevLogbookId &&
+                  logbook.logbook_id !== newPatchedTransaction.logbook_id
+              ),
+              newPreviousLogbook,
+              newPatchedLogbook,
+            ];
+            // TODO : sort the logbook by logbook name
+            //   .sort((a, b) => {
+            //   return a.logbook_name - b.logbook_name;
+            // });
+          }
         }
       });
 
-      return {
-        ...state,
-        reducerUpdatedAt,
-        groupSorted: groupSortedHasBeenReplaced,
-      };
+      //   TODO : commented for testing
+      //   return {
+      //     ...state,
+      //     reducerUpdatedAt,
+      //     groupSorted: groupSortedHasBeenReplaced.sort((a, b) => {
+      //       return a.logbook_name < b.logbook_name ? -1 : 1;
+      //     }),
+      //   };
+      console.log(
+        JSON.stringify({
+          ...state,
+          reducerUpdatedAt,
+          groupSorted: groupSortedHasBeenReplaced.sort((a, b) => {
+            return a.logbook_name < b.logbook_name ? -1 : 1;
+          }),
+        })
+      );
+
+      return state;
 
     // TAG : Patch One Transaction Method
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:
