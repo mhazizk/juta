@@ -24,7 +24,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
 
   return (
     <>
-      {repeatedTransactions.length > 0 && (
+      {repeatedTransactions.repeatedTransactions.length > 0 && (
         <ScrollView
           style={{
             minHeight: "100%",
@@ -93,7 +93,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
           </>
         </ScrollView>
       )}
-      {!repeatedTransactions.length && (
+      {!repeatedTransactions.repeatedTransactions.length && (
         <TouchableOpacity
           onPress={() => {
             navigation.navigate(screenList.newTransactionDetailsScreen);

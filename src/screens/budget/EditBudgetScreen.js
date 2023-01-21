@@ -507,13 +507,13 @@ const EditBudgetScreen = ({ navigation, route }) => {
             }}
           >
             {/* // TAG : Cancel Button */}
-            <View style={{ paddingRight: 8, flex: 1 }}>
+            {/* <View style={{ paddingRight: 8, flex: 1 }}>
               <ButtonSecondary
                 label="Cancel"
                 // width={150}
                 onPress={() => navigation.goBack()}
               />
-            </View>
+            </View> */}
 
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1 }}>
@@ -538,7 +538,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                               FIRESTORE_COLLECTION_NAMES.BUDGETS,
                               patchBudget.budget_id
                             );
-                          }, 1);
+                          }, 5000);
 
                           navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting Budget...",

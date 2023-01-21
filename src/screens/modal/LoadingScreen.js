@@ -47,11 +47,13 @@ const LoadingScreen = ({ route, navigation }) => {
           // logbooks
           patchLogbook,
           deleteLogbook,
+          logbookToOpen,
 
           // categories
           insertCategory,
           patchCategory,
           deleteCategory,
+          targetCategoryType,
 
           // budgets
           insertBudget,
@@ -70,6 +72,7 @@ const LoadingScreen = ({ route, navigation }) => {
         switch (true) {
           // TAG : Insert One Transaction Method
           case transaction && loadingType === "insertTransaction":
+            console.log("start insert transaction");
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                 .INSERT_TRANSACTION,
@@ -110,10 +113,11 @@ const LoadingScreen = ({ route, navigation }) => {
             });
             break;
 
-          // TAG : Patch Logbook Method
+          // TAG : Patch One Logbook Method
           case patchLogbook &&
             reducerUpdatedAt !== logbooksReducerUpdatedAt &&
             loadingType === "patchLogbook":
+            console.log("start patch logbook");
             dispatchLogbooks({
               type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
               payload: {
@@ -174,9 +178,10 @@ const LoadingScreen = ({ route, navigation }) => {
             });
             break;
 
-          // TAG : Insert Budget Method
+          // TAG : Insert One Budget Method
           case reducerUpdatedAt !== budgetsReducerUpdatedAt &&
             loadingType === "insertBudget":
+            console.log('start insert budget')
             dispatchBudgets({
               type: REDUCER_ACTIONS.BUDGETS.INSERT,
               payload: { insertBudget, reducerUpdatedAt },
@@ -497,6 +502,12 @@ const LoadingScreen = ({ route, navigation }) => {
       reducerUpdatedAt === budgets.reducerUpdatedAt;
 
     switch (true) {
+
+      // Insert One Budget
+      case isReducerTimestampSame && loadingType === "insertBudget":
+        navigation.navigate(screenList.myBudgetsScreen);
+        break;
+      
       // Patch One Budget
       case isReducerTimestampSame && loadingType === "patchBudget":
         navigation.navigate(screenList.myBudgetsScreen);
@@ -523,6 +534,7 @@ const LoadingScreen = ({ route, navigation }) => {
     switch (true) {
       // Patch One Logbook
       case isReducerTimestampSame && loadingType === "patchLogbook":
+        console.log("going back to logbook preview screen");
         navigation.navigate(screenList.logbookPreviewScreen, {
           logbook: patchLogbook,
         });
@@ -556,41 +568,43 @@ const LoadingScreen = ({ route, navigation }) => {
     const isReducerTimestampSame =
       reducerUpdatedAt === repeatedTransactions.reducerUpdatedAt;
 
-    // sync updated repeated transaction to firestore
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-        repeatedTransaction.repeat_id,
-        repeatedTransaction
-      );
-    }, 5000);
+    if (loadingType === "patchRepeatedTransaction") {
+      // sync updated repeated transaction to firestore
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+          repeatedTransaction.repeat_id,
+          repeatedTransaction
+        );
+      }, 5000);
 
-    if (isReducerTimestampSame && repeatedTransaction?.transactions?.length) {
-      // check timestamp of patched repeated transaction
-      const foundPatchedRepeatSection = repeatedTransactions.find(
-        (repeatSection) => {
-          return repeatSection.repeat_id === repeatedTransaction.repeat_id;
+      if (isReducerTimestampSame && repeatedTransaction?.transactions?.length) {
+        // check timestamp of patched repeated transaction
+        const foundPatchedRepeatSection = repeatedTransactions.find(
+          (repeatSection) => {
+            return repeatSection.repeat_id === repeatedTransaction.repeat_id;
+          }
+        );
+
+        // if timestamp is same, it means that the patched repeated transaction has been updated in state
+        let isTimestampSame = false;
+        if (foundPatchedRepeatSection) {
+          isTimestampSame =
+            foundPatchedRepeatSection._timestamps.updated_at ===
+            repeatedTransaction?._timestamps.updated_at;
         }
-      );
 
-      // if timestamp is same, it means that the patched repeated transaction has been updated in state
-      let isTimestampSame = false;
-      if (foundPatchedRepeatSection) {
-        isTimestampSame =
-          foundPatchedRepeatSection._timestamps.updated_at ===
-          repeatedTransaction?._timestamps.updated_at;
-      }
-
-      // proceeds patching transactions
-      if (repeatedTransactions && isTimestampSame) {
-        dispatchSortedTransactions({
-          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-            .PATCH_MANY_TRANSACTIONS,
-          payload: {
-            patchedTransactions,
-            reducerUpdatedAt,
-          },
-        });
+        // proceeds patching transactions
+        if (repeatedTransactions && isTimestampSame) {
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .PATCH_MANY_TRANSACTIONS,
+            payload: {
+              patchedTransactions,
+              reducerUpdatedAt,
+            },
+          });
+        }
       }
     }
   }, [repeatedTransactions.reducerUpdatedAt]);

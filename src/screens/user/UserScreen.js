@@ -111,7 +111,7 @@ const UserScreen = ({ navigation }) => {
             leftLabel="My Repeated Transactions"
             iconLeftName="repeat"
             rightLabel={
-              (repeatedTransactions.length || "No") + " transaction(s)"
+              (repeatedTransactions.repeatedTransactions.length || "No") + " transaction(s)"
             }
             iconPack="IonIcons"
             onPress={() =>

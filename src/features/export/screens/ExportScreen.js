@@ -27,13 +27,18 @@ const ExportScreen = ({ navigation }) => {
   //   const [transactionData, setTransactionData] = useState([]);
   const [startDate, setStartDate] = useState(+new Date().setHours(0, 0, 0, 0));
   const [finishDate, setFinishDate] = useState(
-    new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(0, 0, 0, 0)
+    new Date(startDate + 24 * 60 * 60 * 1000).setHours(0, 0, 0, 0)
   );
   const [showButton, setShowButton] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
 
   useEffect(() => {}, []);
   useEffect(() => {
+    finishDate < startDate
+      ? setFinishDate(
+          new Date(startDate + 24 * 60 * 60 * 1000).setHours(0, 0, 0, 0)
+        )
+      : null;
     if (selectedLogbook && startDate && finishDate) {
       setShowButton(true);
     } else {

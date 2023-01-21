@@ -4,12 +4,13 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert, ScrollView,
+  Alert,
+  ScrollView,
   Text,
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles } from "../../assets/themes/globalStyles";
@@ -18,9 +19,11 @@ import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalCategories, useGlobalLogbooks,
+  useGlobalCategories,
+  useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 import uuid from "react-native-uuid";
@@ -128,12 +131,25 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   useEffect(() => {
     // refresh
     // console.log(transaction);
-    if (localRepeatedTransactions.repeat_id && transaction.repeat_id) {
-      console.log(localRepeatedTransactions.repeat_id);
-      console.log(transaction.repeat_id);
+    // if (localRepeatedTransactions.repeat_id && transaction.repeat_id) {
+    //   console.log(localRepeatedTransactions.repeat_id);
+    //   console.log(transaction.repeat_id);
+    // }
+    // console.log(localRepeatedTransactions);
+    if (transaction) {
+      setLocalRepeatedTransactions({
+        ...localRepeatedTransactions,
+        uid: userAccount.uid,
+        repeat_amount: transaction.details.amount,
+        repeat_in_out: transaction.details.in_out,
+        repeat_category_id: transaction.details.category_id,
+        repeat_logbook_id: transaction.logbook_id,
+        repeat_notes: transaction.details.notes,
+        repeat_start_date: transaction.details.date,
+        repeat_finish_date: null,
+      });
     }
-    console.log(localRepeatedTransactions);
-  }, [transaction, localRepeatedTransactions]);
+  }, [transaction]);
 
   useEffect(() => {
     // refresh

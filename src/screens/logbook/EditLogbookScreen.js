@@ -13,7 +13,8 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
@@ -402,7 +403,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                         finalLogbook.logbook_id,
                         finalLogbook
                       );
-                    }, 1);
+                    }, 5000);
 
                     navigation.navigate(screenList.loadingScreen, {
                       label: "Saving Logbook ...",

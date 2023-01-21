@@ -94,7 +94,7 @@ const NewBudgetScreen = ({ navigation }) => {
             newBudget.budget_id,
             newBudget
           );
-        }, 1);
+        }, 5000);
         return navigation.navigate(screenList.loadingScreen, {
           label: "Saving Budget ...",
           loadingType: "insertBudget",

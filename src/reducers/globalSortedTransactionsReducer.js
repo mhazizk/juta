@@ -195,6 +195,7 @@ export const globalSortedTransactionsReducer = (state, action) => {
 
     // TAG : Insert New Transaction Method
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INSERT_TRANSACTION:
+      console.log("start inset transaction 2");
       const newTransaction = action.payload.transaction;
       reducerUpdatedAt = action.payload.reducerUpdatedAt;
       const customDate = `${new Date(

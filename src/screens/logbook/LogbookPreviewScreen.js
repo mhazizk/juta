@@ -13,7 +13,7 @@ import * as utils from "../../utils";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
-  useGlobalSortedTransactions
+  useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
@@ -167,7 +167,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                     FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
                     logbook.logbook_id
                   );
-                }, 1);
+                }, 5000);
 
                 navigation.navigate(screenList.loadingScreen, {
                   label: "Deleting Logbook ...",

@@ -1,21 +1,17 @@
 import { useIsFocused } from "@react-navigation/native";
 // import "intl/locale-data/jsonp/en";
 import { useEffect, useState } from "react";
-import {
-  Dimensions, TouchableOpacity,
-  View
-} from "react-native";
+import { Dimensions, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Loading from "../../components/Loading";
-import {
-  TextButtonPrimary, TextSecondary
-} from "../../components/Text";
+import { TextButtonPrimary, TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
-  useGlobalCategories, useGlobalLogbooks,
-  useGlobalSortedTransactions
+  useGlobalCategories,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -33,7 +29,6 @@ const LogbookScreen = ({ route, navigation }) => {
   // const [logbooks, setLogbooks] = useState(null);
   // const [categories, setCategories] = useState(null);
   const [transactions, setTransactions] = useState(null);
-  const [data, setData] = useState(null);
   const [selectedLogbook, setSelectedLogbooks] = useState(null);
   const [targetLogbook, setTargetLogbook] = useState(null);
   const [selectedLogbooksCurrency, setSelectedLogbookCurrency] = useState(null);
@@ -132,15 +127,6 @@ const LogbookScreen = ({ route, navigation }) => {
             break;
         }
       }
-      // set data to be passed in modal
-      setData(
-        logbooks.logbooks.map((logbook) => ({
-          name: logbook.logbook_name,
-          logbook_id: logbook.logbook_id,
-          logbook_currency: logbook.logbook_currency,
-          key: logbook.logbook_id,
-        }))
-      );
     }
 
     // setCounter({
@@ -228,7 +214,13 @@ const LogbookScreen = ({ route, navigation }) => {
                       name: "book",
                       pack: "IonIcons",
                     },
-                    props: data,
+                    props: logbooks.logbooks.map((logbook) => {
+                      return {
+                        ...logbook,
+                        name: logbook.logbook_name,
+                        key: logbook.logbook_id,
+                      };
+                    }),
                     modalType: "list",
                     selected: (item) => {
                       setTargetLogbook(item);

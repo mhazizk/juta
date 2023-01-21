@@ -16,7 +16,9 @@ const globalLogbooksReducer = (state, action) => {
       return {
         ...state,
         reducerUpdatedAt: Date.now(),
-        logbooks: [action.payload],
+        logbooks: [action.payload].sort((a, b) => {
+          return a.logbook_name < b.logbook_name ? -1 : 1;
+        }),
       };
 
     case REDUCER_ACTIONS.LOGBOOKS.INSERT:
@@ -27,7 +29,9 @@ const globalLogbooksReducer = (state, action) => {
       );
       return {
         ...state,
-        logbooks: [...foundOtherLogbooks, newLogbook],
+        logbooks: [...foundOtherLogbooks, newLogbook].sort((a, b) => {
+          return a.logbook_name < b.logbook_name ? -1 : 1;
+        }),
         reducerUpdatedAt,
         // logbookInsertCounter: state.logbookInsertCounter + 1,
       };
@@ -50,12 +54,15 @@ const globalLogbooksReducer = (state, action) => {
 
       return {
         ...state,
-        logbooks: [...foundOtherLogbook],
+        logbooks: [...foundOtherLogbook].sort((a, b) => {
+          return a.logbook_name < b.logbook_name ? -1 : 1;
+        }),
         reducerUpdatedAt,
         // logbookDeleteCounter: state.logbookDeleteCounter + 1,
       };
 
     case REDUCER_ACTIONS.LOGBOOKS.PATCH:
+      console.log("1. patch logbook");
       reducerUpdatedAt = action.payload.reducerUpdatedAt;
       let patchLogbook = action.payload.patchLogbook;
       // console.log(patchLogbook)
@@ -75,6 +82,7 @@ const globalLogbooksReducer = (state, action) => {
       // console.log({ existingLogbook });
       // Check duplicate between new and prev transaction
       if (existingLogbook && isPatchedLogbookHasNewerTimestamp) {
+        console.log("2. patch logbook");
         // const foundLogbook = state.logbooks.filter(
         //   (logbook) => logbook.logbook_id === patchLogbook.logbook_id
         // );
@@ -82,10 +90,11 @@ const globalLogbooksReducer = (state, action) => {
           (logbook) => logbook.logbook_id !== patchLogbook.logbook_id
         );
 
+        console.log("3. patched logbook");
         return {
           ...state,
           logbooks: [...foundOtherLogbook, patchLogbook].sort((a, b) => {
-            return a.logbook_name > b.logbook_name ? 1 : -1;
+            return a.logbook_name < b.logbook_name ? -1 : 1;
           }),
           reducerUpdatedAt,
           // logbookPatchCounter: state.logbookPatchCounter + 1,

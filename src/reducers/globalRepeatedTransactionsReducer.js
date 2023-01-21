@@ -11,7 +11,7 @@ const globalRepeatedTransactionsReducer = (state, action) => {
       reducerUpdatedAt = action.payload.reducerUpdatedAt;
 
       // check if the repeat transaction is already in the state
-      const transactionInState = state.find((repeatTransaction) => {
+      const transactionInState = state.repeatedTransactions.find((repeatTransaction) => {
         return repeatTransaction.repeat_id === newRepeatedTransaction.repeat_id;
       });
 
