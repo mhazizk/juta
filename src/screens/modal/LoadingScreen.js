@@ -13,6 +13,7 @@ import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import LOADING_TYPES from "./loading.type";
 
 const LoadingScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -29,7 +30,7 @@ const LoadingScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log({ onLoad: route.params.initialRawTransactionsLength })
-    console.log(route?.params);
+    console.log("loadingScreenParams :" + JSON.stringify(route?.params));
 
     // TAG : Transaction Timeout
     setTimeout(
@@ -63,6 +64,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // repeatedTransactions
           repeatedTransaction,
           patchedTransactions,
+          deletedTransactions,
         } = route?.params;
 
         const logbooksReducerUpdatedAt = logbooks.reducerUpdatedAt;
@@ -208,12 +210,32 @@ const LoadingScreen = ({ route, navigation }) => {
             });
             break;
 
-          // TAG : Patch repeated transactions
+          // TAG : Patch one repeated transactions
           case repeatedTransaction &&
-            patchedTransactions &&
-            loadingType === "patchRepeatedTransactions":
+            (patchedTransactions || deletedTransactions) &&
+            (loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL ||
+              loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT ||
+              loadingType ===
+                LOADING_TYPES.REPEATED_TRANSACTIONS
+                  .DELETE_PREVIOUS_TRANSACTIONS_INSIDE_THIS_ONE):
+            console.log("start patch repeated transaction");
             dispatchRepeatedTransactions({
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
+              payload: {
+                repeatedTransaction,
+                reducerUpdatedAt,
+              },
+            });
+            break;
+
+          // TAG : Delete one repeated transactions
+          case repeatedTransaction &&
+            loadingType ===
+              LOADING_TYPES.REPEATED_TRANSACTIONS
+                .DELETE_THIS_ONE_AND_ALL_TRANSACTIONS_INSIDE:
+            console.log("sini");
+            dispatchRepeatedTransactions({
+              type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
               payload: {
                 repeatedTransaction,
                 reducerUpdatedAt,
@@ -231,151 +253,9 @@ const LoadingScreen = ({ route, navigation }) => {
           default:
             break;
         }
-
-        // TAG : New Patch Logbook Method
-        // if (
-        //   route?.params?.patchLogbook &&
-        //   logbooks.logbookPatchCounter ===
-        //     route?.params?.initialLogbookPatchCounter &&
-        //   route?.params?.loadingType === "patchLogbook"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchLogbooks({
-        //     type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
-        //     payload: route?.params?.patchLogbook,
-        //   });
-        // }
-
-        // TAG : New Delete One Logbook Method
-        // if (
-        //   route?.params?.deleteLogbook &&
-        //   logbooks.logbookDeleteCounter ===
-        //     route?.params?.initialLogbookDeleteCounter &&
-        //   route?.params?.loadingType === "deleteOneLogbook"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchLogbooks({
-        //     type: REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE,
-        //     payload: route?.params?.deleteLogbook,
-        //   });
-        // }
-
-        // TAG : New Patch One Category Method
-        // if (
-        //   route?.params?.patchCategory &&
-        //   categories.categoryPatchCounter ===
-        //     route?.params?.initialCategoryPatchCounter &&
-        //   route?.params?.loadingType === "patchCategory"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchCategories({
-        //     type: REDUCER_ACTIONS.CATEGORIES.PATCH,
-        //     payload: {
-        //       targetCategoryType: route?.params?.targetCategoryType,
-        //       patchCategory: route?.params?.patchCategory,
-        //     },
-        //   });
-        // }
-
-        // TAG : New Insert Category Method
-        // if (
-        //   route?.params?.insertCategory &&
-        //   categories.categoryInsertCounter ===
-        //     route?.params?.initialCategoryInsertCounter &&
-        //   route?.params?.loadingType === "insertCategory"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchCategories({
-        //     type: REDUCER_ACTIONS.CATEGORIES.INSERT,
-        //     payload: {
-        //       categoryType: route?.params?.categoryType,
-        //       insertCategory: route?.params?.insertCategory,
-        //     },
-        //   });
-        // }
-
-        // TAG : New Delete One Category Method
-        // if (
-        //   route?.params?.deleteCategory &&
-        //   categories.categoryDeleteCounter ===
-        //     route?.params?.initialCategoryDeleteCounter &&
-        //   route?.params?.loadingType === "deleteCategory"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchCategories({
-        //     type: REDUCER_ACTIONS.CATEGORIES.DELETE_ONE,
-        //     payload: route?.params?.deleteCategory,
-        //   });
-        // }
-        // TAG : New Insert Budget Method
-        // if (
-        //   budgets.budgetInsertCounter ===
-        //     route?.params?.initialBudgetInsertCounter &&
-        //   route?.params?.loadingType === "insertBudget"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchBudgets({
-        //     type: REDUCER_ACTIONS.BUDGETS.INSERT,
-        //     payload: route?.params?.insertBudget,
-        //   });
-        // }
-
-        // TAG : New Patch One Budget Method
-        // if (
-        //   route?.params?.patchBudget &&
-        //   budgets.budgetPatchCounter ===
-        //     route?.params?.initialBudgetPatchCounter &&
-        //   route?.params?.loadingType === "patchBudget"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchBudgets({
-        //     type: REDUCER_ACTIONS.BUDGETS.PATCH,
-        //     payload: route?.params?.patchBudget,
-        //   });
-        // }
-
-        // TAG : New Delete One Budget Method
-        // if (
-        //   route?.params?.deleteBudget &&
-        //   budgets.budgetDeleteCounter ===
-        //     route?.params?.initialBudgetDeleteCounter &&
-        //   route?.params?.loadingType === "deleteBudget"
-        // ) {
-        //   console.log("mulai dispatch");
-        //   dispatchBudgets({
-        //     type: REDUCER_ACTIONS.BUDGETS.DELETE_ONE,
-        //     payload: route?.params?.deleteBudget,
-        //   });
-        // }
-
-        // TAG : New Patch Repeated Transactions Method
-        // if (
-        //   route?.params?.loadingType === "patchRepeatedTransactions" &&
-        //   route?.params?.repeatedTransaction &&
-        //   route?.params?.patchedTransactions
-        // ) {
-        //   dispatchRepeatedTransactions({
-        //     type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
-        //     payload: {
-        //       repeatedTransaction: route?.params?.repeatedTransaction,
-        //       reducerUpdatedAt: route?.params?.reducerUpdatedAt,
-        //     },
-        //     // {
-        //     //   repeatedTransactions: route?.params?.repeatedTransactions,
-        //     //   patchedTransactions: route?.params?.patchedTransactions,
-        //     // },
-        //   });
-        // }
-
-        // TAG : Switch LogBook Timeout
-        // if (route?.params?.loadingType === "switchLogBook") {
-        //   setTimeout(() => {
-        //     navigation.navigate(screenList.bottomTabNavigator);
-        //   }, 1000);
-        // }
       },
 
-      100
+      1
     );
   }, []);
 
@@ -389,10 +269,13 @@ const LoadingScreen = ({ route, navigation }) => {
   useEffect(() => {
     const {
       loadingType,
+      reducerUpdatedAt,
+      insertedTransactions,
+      patchedTransactions,
+      deletedTransactions,
       prevCategoryType,
       targetCategoryType,
       patchCategory,
-      reducerUpdatedAt,
     } = route?.params;
 
     const isReducerTimestampSame =
@@ -421,47 +304,67 @@ const LoadingScreen = ({ route, navigation }) => {
         navigation.navigate(screenList.myLogbooksScreen);
         break;
 
-      // Patch repeated transactions
+      // Delete many transactions
       case isReducerTimestampSame &&
-        loadingType === "patchRepeatedTransactions":
+        (loadingType ===
+          LOADING_TYPES.REPEATED_TRANSACTIONS
+            .DELETE_THIS_ONE_AND_ALL_TRANSACTIONS_INSIDE ||
+          loadingType ===
+            LOADING_TYPES.REPEATED_TRANSACTIONS
+              .DELETE_PREVIOUS_TRANSACTIONS_INSIDE_THIS_ONE):
+        setTimeout(async () => {
+          deletedTransactions.length > 0 &&
+            deletedTransactions.forEach(async (transaction) => {
+              await firestore.deleteData(
+                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                transaction.transaction_id,
+                transaction
+              );
+            });
+        }, 5000);
         navigation.navigate(screenList.myRepeatedTransactionsScreen);
+
+        break;
+
+      // Patch all repeated transactions
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL:
+        console.log(LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL);
+        // Sync all patched transactions to firebase
+        setTimeout(() => {
+          insertedTransactions.length > 0 &&
+            insertedTransactions.forEach(async (transaction) => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                transaction.transaction_id,
+                transaction
+              );
+            });
+          patchedTransactions.length > 0 &&
+            patchedTransactions.forEach(async (transaction) => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                transaction.transaction_id,
+                transaction
+              );
+            });
+          deletedTransactions.length > 0 &&
+            deletedTransactions.forEach(async (transaction) => {
+              await firestore.deleteData(
+                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                transaction.transaction_id,
+                transaction
+              );
+            });
+        }, 5000);
+
+        navigation.navigate(screenList.myRepeatedTransactionsScreen);
+
         break;
 
       default:
         break;
     }
-    // if (
-    //   // sortedTransactions.sortedTransactionsInsertCounter >
-    //   //   route?.params?.initialSortedTransactionsInsertCounter &&
-    //   route?.params.reducerUpdatedAt === sortedTransactions.reducerUpdatedAt &&
-    //   route?.params?.loadingType === "insertTransaction"
-    // ) {
-    //   // convertAndSaveTransctions(sortedTransactions);
-    // }
-
-    // Patch One Transaction
-    // if (
-    //   // sortedTransactions.sortedTransactionsPatchCounter >
-    //   //   route?.params?.initialSortedTransactionsPatchCounter &&
-    //   route?.params?.reducerUpdatedAt === sortedTransactions.reducerUpdatedAt &&
-    //   route?.params?.loadingType === "patchTransaction"
-    // ) {
-    //   // console.log(route?.params?.logbookToOpen)
-    //   navigation.navigate(screenList.bottomTabNavigator);
-    // }
-
-    // Patch Category
-    // if (
-    //   sortedTransactions.sortedTransactionsPatchCounter >
-    //     route?.params?.initialSortedTransactionsPatchCounter &&
-    //   route?.params?.loadingType === "patchCategory"
-    // ) {
-    //   navigation.navigate(screenList.categoryPreviewScreen, {
-    //     prevCategoryType: route?.params?.prevCategoryType,
-    //     targetCategoryType: route?.params?.targetCategoryType,
-    //     category: route?.params?.patchCategory,
-    //   });
-    // }
   }, [sortedTransactions.reducerUpdatedAt]);
 
   // TAG : Categories Listener
@@ -575,82 +478,102 @@ const LoadingScreen = ({ route, navigation }) => {
     const isReducerTimestampSame =
       reducerUpdatedAt === repeatedTransactions.reducerUpdatedAt;
 
-    if (loadingType === "patchRepeatedTransactions") {
-      // sync updated repeated transaction to firestore
-      setTimeout(async () => {
-        // TODO : commented for testing
-        // await firestore.setData(
-        //   FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-        //   repeatedTransaction.repeat_id,
-        //   repeatedTransaction
-        // );
-      }, 5000);
+    switch (true) {
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL:
+        if (loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL) {
+          // sync updated repeated transaction to firestore
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+              repeatedTransaction.repeat_id,
+              repeatedTransaction
+            );
+          }, 5000);
 
-      if (isReducerTimestampSame && repeatedTransaction?.transactions?.length) {
-        // check timestamp of patched repeated transaction
-        const foundPatchedRepeatSection =
-          repeatedTransactions.repeatedTransactions.find((repeatSection) => {
-            return repeatSection.repeat_id === repeatedTransaction.repeat_id;
-          });
+          if (repeatedTransaction?.transactions?.length) {
+            // check timestamp of patched repeated transaction
+            const foundPatchedRepeatSection =
+              repeatedTransactions.repeatedTransactions.find(
+                (repeatSection) => {
+                  return (
+                    repeatSection.repeat_id === repeatedTransaction.repeat_id
+                  );
+                }
+              );
 
-        // if timestamp is same, it means that the patched repeated transaction has been updated in state
-        let isTimestampSame = false;
-        if (foundPatchedRepeatSection) {
-          isTimestampSame =
-            foundPatchedRepeatSection._timestamps.updated_at ===
-            repeatedTransaction?._timestamps.updated_at;
+            // if timestamp is same, it means that the patched repeated transaction has been updated in state
+            let isTimestampSame = false;
+            if (foundPatchedRepeatSection) {
+              isTimestampSame =
+                foundPatchedRepeatSection._timestamps.updated_at ===
+                repeatedTransaction?._timestamps.updated_at;
+            }
+
+            // proceeds patching transactions
+            if (!!repeatedTransaction.transactions.length && isTimestampSame) {
+              dispatchSortedTransactions({
+                type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                  .PATCH_MANY_TRANSACTIONS,
+                payload: {
+                  insertedTransactions,
+                  patchedTransactions,
+                  deletedTransactions,
+                  reducerUpdatedAt,
+                },
+              });
+            }
+          }
         }
 
-        // proceeds patching transactions
-        if (!!repeatedTransaction.transactions.length && isTimestampSame) {
-          dispatchSortedTransactions({
-            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-              .PATCH_MANY_TRANSACTIONS,
-            payload: {
-              insertedTransactions,
-              patchedTransactions,
-              deletedTransactions,
-              reducerUpdatedAt,
-            },
-          });
-        }
-      }
+        break;
+      case isReducerTimestampSame &&
+        loadingType ===
+          LOADING_TYPES.REPEATED_TRANSACTIONS
+            .DELETE_THIS_ONE_AND_ALL_TRANSACTIONS_INSIDE:
+        setTimeout(async () => {
+          await firestore.deleteData(
+            FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+            repeatedTransaction.repeat_id,
+            repeatedTransaction
+          );
+        }, 5000);
+
+        dispatchSortedTransactions({
+          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+            .DELETE_MANY_TRANSACTIONS,
+          payload: {
+            deletedTransactions,
+            reducerUpdatedAt,
+          },
+        });
+        break;
+      case isReducerTimestampSame &&
+        loadingType ===
+          LOADING_TYPES.REPEATED_TRANSACTIONS
+            .DELETE_PREVIOUS_TRANSACTIONS_INSIDE_THIS_ONE:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+            repeatedTransaction.repeat_id,
+            repeatedTransaction
+          );
+        }, 5000);
+
+        dispatchSortedTransactions({
+          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+            .DELETE_MANY_TRANSACTIONS,
+          payload: {
+            deletedTransactions,
+            reducerUpdatedAt,
+          },
+        });
+        break;
+
+      default:
+        break;
     }
   }, [repeatedTransactions.reducerUpdatedAt]);
-
-  // TAG : New Patch Logbook Method
-  useEffect(() => {
-    // console.log({ counter: logbooks.logbookPatchCounter })
-  }, [logbooks.logbookPatchCounter]);
-
-  // TAG : New Patch One Category Method
-  useEffect(() => {}, [categories.categoryPatchCounter]);
-
-  // TAG : New Insert Category Method
-  useEffect(() => {}, [categories.categoryInsertCounter]);
-
-  // TAG : New Insert Budget Method
-  useEffect(() => {}, [budgets.budgetInsertCounter]);
-
-  // TAG : New Patch Budget Method
-  useEffect(() => {}, [budgets.budgetPatchCounter]);
-
-  // TAG : New Delete One Budget Method
-  useEffect(() => {}, [budgets.budgetDeleteCounter]);
-
-  // TAG : New Delete One Category Method
-  useEffect(() => {}, [categories.categoryDeleteCounter]);
-
-  // TAG : New Delete One Transaction Method
-  useEffect(() => {}, [sortedTransactions.sortedTransactionsDeleteCounter]);
-
-  // TAG : New Delete One Logbook Method (Logbook Reducer)
-  useEffect(() => {
-    // console.log({ counter: logbooks.logbookPatchCounter })
-  }, [logbooks.logbookDeleteCounter]);
-
-  // TAG : New Delete One Logbook Method (Sorted Transactions Reducer)
-  useEffect(() => {}, [sortedTransactions.sortedLogbookDeleteCounter]);
 
   // TAG : Save Async Storage && dispatch Sorted Transactions
   // const saveAndLoad = async () => {

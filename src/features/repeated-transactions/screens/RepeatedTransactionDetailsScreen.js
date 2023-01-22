@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import { Dimensions, ScrollView, View } from "react-native";
 import { ListItem, TransactionListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
-import { TextPrimary } from "../../../components/Text";
+import { TextPrimary, TextSecondary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -14,6 +14,7 @@ import {
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import RepeatedTransactionHeader from "../components/RepeatedTransactionHeader";
+import IonIcons from "react-native-vector-icons/Ionicons";
 
 const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -54,20 +55,30 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <ScrollView
+      <View
         style={{
-          minHeight: "100%",
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         <RepeatedTransactionHeader
           repeatSection={route.params.repeatSection}
           onPress={() => {
-              navigation.navigate(screenList.editRepeatedTransactionScreen, {
-                repeatSection: route.params.repeatSection,
+            navigation.navigate(screenList.editRepeatedTransactionScreen, {
+              repeatSection: route.params.repeatSection,
             });
           }}
         />
+      </View>
+      <ScrollView
+        contentContainerStyle={{
+          // width: Dimensions.get("window").width,
+          // width: "100%",
+          flex: !transactionsInRepeat.length ? 1 : 0,
+          // alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: appSettings.theme.style.colors.background,
+        }}
+      >
         {transactionsInRepeat.length > 0 && (
           <>
             <ListSection>
@@ -76,6 +87,8 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
                   <>
                     <TransactionListItem
                       key={item.transaction_id}
+                      showDate
+                      transactionDate={item.details.date}
                       // transactionId={item.transaction_id}
                       categoryName={utils.FindById.findCategoryNameById({
                         id: item.details.category_id,
@@ -140,6 +153,37 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
               })}
             </ListSection>
           </>
+        )}
+
+        {transactionsInRepeat.length === 0 && (
+          <View
+            style={{
+              // height: Dimensions.get("window").height - 0,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: appSettings.theme.style.colors.background,
+            }}
+          >
+            <IonIcons
+              name="repeat"
+              color={appSettings.theme.style.colors.secondary}
+              size={36}
+              style={{
+                // transform: [{ scaleX: -1 }],
+                paddingBottom: 8,
+              }}
+            />
+            <TextSecondary
+              label="No transactions yet in this repeat."
+              style={{ textAlign: "center", paddingBottom: 0 }}
+            />
+            <TextSecondary
+              label={`Next repeat in ${new Date(
+                route.params.repeatSection.next_repeat_date
+              ).toDateString()}`}
+              style={{ textAlign: "center" }}
+            />
+          </View>
         )}
       </ScrollView>
     </>

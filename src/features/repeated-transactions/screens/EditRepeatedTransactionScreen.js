@@ -27,6 +27,7 @@ import { TextPrimary, TextSecondary } from "../../../components/Text";
 import RadioButtonList from "../../../components/List/RadioButtonList";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import uuid from "react-native-uuid";
+import LOADING_TYPES from "../../../screens/modal/loading.type";
 
 const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   // TAG : useRef State //
@@ -270,7 +271,14 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               />
             )}
           </TouchableOpacity>
-
+          {/* // TAG : Apply Changes */}
+          <TextPrimary
+            label="Transaction Details"
+            style={{
+              paddingVertical: 8,
+              paddingHorizontal: 32,
+            }}
+          />
           <ListSection>
             {/* // TAG : Repeat status */}
             <ListItem
@@ -772,7 +780,17 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                         id: "delete_previous",
                       },
                     ],
-                    selected: (item) => {},
+                    selected: (item) => {
+                      setTimeout(() => {
+                        handleDelete({
+                          deleteId: item.id,
+                          navigation,
+                          groupSorted: sortedTransactions.groupSorted,
+                          localRepeatedTransaction,
+                          uid: userAccount.uid,
+                        });
+                      }, 1);
+                    },
                     default: null,
                   });
                 }}
@@ -801,6 +819,66 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
 
 export default EditRepeatedTransactionScreen;
 
+const handleDelete = ({
+  deleteId,
+  navigation,
+  groupSorted,
+  localRepeatedTransaction,
+  uid,
+}) => {
+  let opt;
+  let transactionsToBeDeleted = [];
+
+  localRepeatedTransaction.transactions.forEach((transactionId) => {
+    groupSorted.forEach((logbook) => {
+      logbook.transactions.forEach((section) => {
+        section.data.forEach((transaction) => {
+          if (transaction.transaction_id === transactionId) {
+            transactionsToBeDeleted.push(transaction);
+          }
+        });
+      });
+    });
+  });
+
+  switch (true) {
+    case deleteId === "delete_all":
+      opt = {
+        label: "Deleting ...",
+        loadingType:
+          LOADING_TYPES.REPEATED_TRANSACTIONS
+            .DELETE_THIS_ONE_AND_ALL_TRANSACTIONS_INSIDE,
+        repeatedTransaction: localRepeatedTransaction,
+        deletedTransactions: transactionsToBeDeleted,
+        reducerUpdatedAt: Date.now(),
+      };
+      break;
+
+    case deleteId === "delete_previous":
+      opt = {
+        label: "Deleting ...",
+        loadingType:
+          LOADING_TYPES.REPEATED_TRANSACTIONS
+            .DELETE_PREVIOUS_TRANSACTIONS_INSIDE_THIS_ONE,
+        repeatedTransaction: {
+          ...localRepeatedTransaction,
+          transactions: [],
+          _timestamps: {
+            ...localRepeatedTransaction._timestamps,
+            updated_at: Date.now(),
+            updated_by: uid,
+          },
+        },
+        deletedTransactions: transactionsToBeDeleted,
+        reducerUpdatedAt: Date.now(),
+      };
+      break;
+    default:
+      break;
+  }
+  navigation.navigate(screenList.loadingScreen, opt);
+};
+
 const handleSave = ({
   uid,
   applyTo,
@@ -817,19 +895,16 @@ const handleSave = ({
     },
   };
   switch (true) {
-    case applyTo === "next" || !repeatSection.transactions.length:
+    case applyTo === "next":
+      navigation.navigate(screenList.loadingScreen, {
+        label: "Saving ...",
+        loadingType: LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT,
+        repeatedTransaction: repeatSection,
+        reducerUpdatedAt: Date.now(),
+      });
+      break;
 
-    //   TODO : commented for testing
-    //   return navigation.navigate(screenList.loadingScreen, {
-    //     label: "Saving ...",
-    //     loadingType: "patchRepeatedTransactions",
-    //     repeatedTransaction: repeatSection,
-    //     // transaction: transaction,
-    //     // initialSortedTransactionsInsertCounter:
-    //     //   sortedTransactions.sortedTransactionsInsertCounter,
-    //   });
-
-    case applyTo === "all" && !!repeatSection.transactions.length:
+    case applyTo === "all":
       const existingTransactionsInSection = [];
       //   find all transactions that are in the repeat section to be patched
       groupSorted.forEach((logbook) => {
@@ -988,7 +1063,7 @@ const handleSave = ({
 
       return navigation.navigate(screenList.loadingScreen, {
         label: "Saving ...",
-        loadingType: "patchRepeatedTransactions",
+        loadingType: LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL,
         repeatedTransaction: {
           ...repeatSection,
           transactions: [

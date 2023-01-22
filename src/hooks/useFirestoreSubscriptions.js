@@ -238,7 +238,7 @@ const useFirestoreSubscriptions = ({
           dispatchRepeatedTransactions({
             type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
             payload: {
-              deleteRepeatedTransaction: data,
+              repeatedTransaction: data,
               reducerUpdatedAt: Date.now(),
             },
           });

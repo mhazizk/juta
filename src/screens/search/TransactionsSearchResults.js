@@ -195,8 +195,17 @@ const TransactionsSearchResults = ({
           ListHeaderComponent={() => (
             <>
               <TextSecondary
-                label="Found Transactions"
+                label={`Found ${searchResult.result.length} result(s)`}
                 style={{ padding: 16 }}
+              />
+            </>
+          )}
+          ListFooterComponent={() => (
+            <>
+              <View
+                style={{
+                  padding: 48,
+                }}
               />
             </>
           )}
@@ -206,6 +215,7 @@ const TransactionsSearchResults = ({
               {searchResult.status === "done" && searchResult.result.length && (
                 <SearchResultListItem
                   pressable
+                  repeatId={item.transaction.repeat_id}
                   transactionType={item.transaction.details.in_out}
                   transaction={item.transaction}
                   logbook={item.logbook}

@@ -13,6 +13,7 @@ import CountryFlag from "react-native-country-flag";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
+  ButtonDisabled,
   ButtonPrimary,
   ButtonPrimaryDanger,
   ButtonSecondary,
@@ -62,13 +63,14 @@ const ModalScreen = ({ route, navigation }) => {
   }, []);
 
   const onPressReturn = () => {
+    const { modalType } = route.params;
     switch (true) {
-      case route?.params.modalType === "list" ||
-        route?.params.modalType === "currencyList" ||
-        route?.params.modalType === "colorPicker" ||
-        route?.params.modalType === "iconPicker":
+      case modalType === "list" ||
+        modalType === "currencyList" ||
+        modalType === "colorPicker" ||
+        modalType === "iconPicker":
         return route.params.selected(selected);
-      case route?.params.modalType === "textInput":
+      case modalType === "textInput":
         return route.params.selected(textInput);
 
       // return !textInput ? route.params.selected(route.params?.placeholder) : route.params.selected(textInput);
@@ -406,68 +408,77 @@ const ModalScreen = ({ route, navigation }) => {
             {/* } */}
 
             {/* {!localLoading && */}
-            {route.params?.mainButtonLabel?.toLowerCase() !== "delete" && (
-              <ButtonPrimary
-                label={route.params?.mainButtonLabel || "Save"}
-                onPress={() => {
-                  if (route.params?.modalType === "textInput" && !textInput) {
-                    Alert.alert(
-                      "Error",
-                      "Please enter a value",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("OK Pressed"),
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-
-                  if (route.params?.modalType === "textInput" && textInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-
-                  if (route.params?.modalType !== "textInput") {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-                }}
-                theme={appSettings.theme.style}
-              />
+            {!selected && (
+              <>
+                <ButtonDisabled
+                  label={route.params?.mainButtonLabel || "Save"}
+                />
+              </>
             )}
-            {route.params?.mainButtonLabel?.toLowerCase() === "delete" && (
-              <ButtonPrimaryDanger
-                label={route.params?.mainButtonLabel}
-                onPress={() => {
-                  if (route.params?.modalType === "textInput" && !textInput) {
-                    Alert.alert(
-                      "Error",
-                      "Please enter a value",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("OK Pressed"),
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
+            {route.params?.mainButtonLabel?.toLowerCase() !== "delete" &&
+              selected && (
+                <ButtonPrimary
+                  label={route.params?.mainButtonLabel || "Save"}
+                  onPress={() => {
+                    if (route.params?.modalType === "textInput" && !textInput) {
+                      Alert.alert(
+                        "Error",
+                        "Please enter a value",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => console.log("OK Pressed"),
+                          },
+                        ],
+                        { cancelable: false }
+                      );
+                    }
 
-                  if (route.params?.modalType === "textInput" && textInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
+                    if (route.params?.modalType === "textInput" && textInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
 
-                  if (route.params?.modalType !== "textInput") {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-                }}
-                theme={appSettings.theme.style}
-              />
-            )}
+                    if (route.params?.modalType !== "textInput") {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+                  }}
+                  theme={appSettings.theme.style}
+                />
+              )}
+            {route.params?.mainButtonLabel?.toLowerCase() === "delete" &&
+              selected && (
+                <ButtonPrimaryDanger
+                  label={route.params?.mainButtonLabel}
+                  onPress={() => {
+                    if (route.params?.modalType === "textInput" && !textInput) {
+                      Alert.alert(
+                        "Error",
+                        "Please enter a value",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => console.log("OK Pressed"),
+                          },
+                        ],
+                        { cancelable: false }
+                      );
+                    }
+
+                    if (route.params?.modalType === "textInput" && textInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+
+                    if (route.params?.modalType !== "textInput") {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+                  }}
+                  theme={appSettings.theme.style}
+                />
+              )}
             {/* } */}
           </View>
         </View>

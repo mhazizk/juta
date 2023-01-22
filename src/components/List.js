@@ -341,9 +341,11 @@ export const ListTable = ({
 };
 
 export const TransactionListItem = ({
+  showDate = false,
   transactionType,
   transactionHour,
   transactionNotes,
+  transactionDate,
   transactionAmount,
   isRepeated,
   // transactionId,
@@ -439,6 +441,13 @@ export const TransactionListItem = ({
               </View>
               {/* Bottom Left Side */}
               {/* <TextSecondary label={transactionId} /> */}
+              {showDate && (
+                <TextSecondary
+                  label={new Date(transactionDate).toDateString()}
+                  numberOfLines={1}
+                  style={{ fontSize: 14 }}
+                />
+              )}
               {transactionNotes && (
                 <TextSecondary
                   label={transactionNotes}
@@ -571,6 +580,8 @@ export const SearchResultListItem = ({
   transactionType,
   transactionDate,
   transactionNotes,
+  // repeat id
+  repeatId = null,
   categoryName,
   logbook,
   logbookName,
@@ -626,6 +637,16 @@ export const SearchResultListItem = ({
                   }}
                 >
                   {categoryName && <TextPrimary label={categoryName} />}
+                  {repeatId && (
+                    <IonIcons
+                      name="repeat"
+                      color={appSettings.theme.style.colors.foreground}
+                      size={16}
+                      style={{
+                        paddingLeft: 8,
+                      }}
+                    />
+                  )}
                   <IonIcons
                     name="at"
                     color={appSettings.theme.style.text.textSecondary.color}

@@ -173,7 +173,7 @@ const LogbookScreen = ({ route, navigation }) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
       let array = [];
-      filtered.transactions.forEach((section) =>
+      filtered?.transactions?.forEach((section) =>
         section.data.forEach((transaction) =>
           array.push(transaction.transaction_id)
         )
@@ -210,6 +210,7 @@ const LogbookScreen = ({ route, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Logbooks",
+                    mainButtonLabel: "Select",
                     iconProps: {
                       name: "book",
                       pack: "IonIcons",

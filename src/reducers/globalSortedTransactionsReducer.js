@@ -361,22 +361,47 @@ export const globalSortedTransactionsReducer = (state, action) => {
       let insertedTransactions = action.payload.insertedTransactions;
       patchedTransactions = action.payload.patchedTransactions;
       let deletedTransactions = action.payload.deletedTransactions;
-      let finalState;
+      let finalState = null;
 
-      finalState =
-        insertedTransactions && insertedManyTransactionsHandler(state, action);
+      if (insertedTransactions.length > 0) {
+        finalState = insertedManyTransactionsHandler(
+          finalState || state,
+          action
+        );
+      }
 
-      finalState =
-        patchedTransactions &&
-        patchedManyTransactionsHandler(finalState || state, action);
+      if (patchedTransactions.length > 0) {
+        finalState = patchedManyTransactionsHandler(
+          finalState || state,
+          action
+        );
+      }
 
-      finalState =
-        deletedTransactions &&
-        deletedManyTransactionsHandler(finalState || state, action);
+      if (deletedTransactions.length > 0) {
+        finalState = deletedManyTransactionsHandler(
+          finalState || state,
+          action
+        );
+      }
 
+      // console.log("line379 reducer");
       console.log(JSON.stringify({ finalState }));
-      return { ...state, reducerUpdatedAt };
-    // return finalState;
+      return finalState;
+
+    // SECTION : Delete many transactions method
+    case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+      .DELETE_MANY_TRANSACTIONS:
+      reducerUpdatedAt = action.payload.reducerUpdatedAt;
+      deletedTransactions = action.payload.deletedTransactions;
+      finalState = null;
+      console.log({ length: deletedTransactions.length });
+      if (deletedTransactions.length > 0) {
+        finalState = deletedManyTransactionsHandler(state, action);
+      }
+
+      // console.log("line379 reducer");
+      // console.log(JSON.stringify({ finalState }));
+      return finalState;
 
     // TAG : Patch One Transaction Method
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:

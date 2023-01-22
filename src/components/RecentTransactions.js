@@ -193,6 +193,7 @@ const RecentTransactions = ({
                     // transactionType={findCategoryTypeById(
                     //   item.category.categoryId
                     // )}
+                    repeatId={item.transaction.repeat_id}
                     transactionType={item.transaction.details.in_out}
                     transaction={item.transaction}
                     logbook={item.logbook}

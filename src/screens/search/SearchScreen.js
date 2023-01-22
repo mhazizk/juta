@@ -126,16 +126,18 @@ const SearchScreen = ({ navigation }) => {
         </View>
         {/* {searchQuery && <SearchResultTab />} */}
         {searchQuery && (
-          <TransactionsSearchResults
-            searchQuery={searchQuery}
-            onPress={({ transaction, selectedLogbook }) => {
-              console.log(selectedLogbook);
-              navigation.navigate(screenList.transactionPreviewScreen, {
-                transaction: transaction,
-                selectedLogbook: selectedLogbook,
-              });
-            }}
-          />
+          <>
+            <TransactionsSearchResults
+              searchQuery={searchQuery}
+              onPress={({ transaction, selectedLogbook }) => {
+                console.log(selectedLogbook);
+                navigation.navigate(screenList.transactionPreviewScreen, {
+                  transaction: transaction,
+                  selectedLogbook: selectedLogbook,
+                });
+              }}
+            />
+          </>
         )}
         {/* // TODO : Create settings search result */}
         {/* {console.log(searchQuery)} */}
