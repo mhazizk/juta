@@ -673,23 +673,16 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     },
                   ],
                   selected: (item) => {
-                    // if (item.id === "no_repeat") {
-                    //   setLocalRepeatedTransaction({
-                    //     uid: userAccount.uid,
-                    //     repeat_id: null,
-                    //     repeat_type: item,
-                    //     transactions: [],
-                    //   });
-                    // } else {
-                    // }
                     setLocalRepeatedTransaction({
                       ...localRepeatedTransaction,
                       repeat_type: item,
-                      next_repeat_date:
-                        localRepeatedTransaction.repeat_start_date +
-                        item.range *
-                          (localRepeatedTransaction.transactions.length + 1),
-                      //   transactions: [transaction.transaction_id],
+                      next_repeat_date: getNextRepeatDate(
+                        apply.applyTo,
+                        localRepeatedTransaction.next_repeat_date,
+                        localRepeatedTransaction.transactions,
+                        sortedTransactions.groupSorted,
+                        item.range
+                      ),
                     });
                   },
                   default: localRepeatedTransaction.repeat_type,
@@ -697,21 +690,15 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               }}
             />
             <TextPrimary
-              label={`Next transaction : ${
-                localRepeatedTransaction.next_repeat_date < Date.now()
-                  ? new Date(
-                      (
-                        (Date.now() -
-                          localRepeatedTransaction.repeat_start_date) /
-                        localRepeatedTransaction.repeat_type.range
-                      ).toFixed(0) *
-                        localRepeatedTransaction.repeat_type.range +
-                        localRepeatedTransaction.repeat_start_date
-                    ).toDateString()
-                  : new Date(
-                      localRepeatedTransaction.next_repeat_date
-                    ).toDateString()
-              }`}
+              label={`Next transaction : ${new Date(
+                getNextRepeatDate(
+                  apply.applyTo,
+                  localRepeatedTransaction.next_repeat_date,
+                  localRepeatedTransaction.transactions,
+                  sortedTransactions.groupSorted,
+                  localRepeatedTransaction.repeat_type.range
+                )
+              ).toDateString()}`}
               style={{
                 paddingVertical: 8,
                 paddingHorizontal: 50,
@@ -896,13 +883,12 @@ const handleSave = ({
   };
   switch (true) {
     case applyTo === "next":
-      navigation.navigate(screenList.loadingScreen, {
+      return navigation.navigate(screenList.loadingScreen, {
         label: "Saving ...",
         loadingType: LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT,
         repeatedTransaction: repeatSection,
         reducerUpdatedAt: Date.now(),
       });
-      break;
 
     case applyTo === "all":
       const existingTransactionsInSection = [];
@@ -1086,5 +1072,45 @@ const handleSave = ({
     default:
       console.log("masuk default");
       break;
+  }
+};
+
+const getNextRepeatDate = (
+  applyTo,
+  existingNextRepeatDate,
+  transactions,
+  groupSorted,
+  newRepeatRange
+) => {
+  switch (true) {
+    // TODO : fix this next date show
+    case applyTo === "next" && transactions?.length > 0:
+      // console.log(applyTo);
+      // get latest date of transactions
+      // const latestDate = transactionsId?.reduce((a, b) => {
+      //   return a > b.details.date ? a : b.details.date;
+      // }, 0);
+      let latestDate = 0;
+      transactions.forEach((transactionId) => {
+        const transaction = groupSorted.forEach((logbook) => {
+          logbook.transactions.forEach((section) => {
+            section.data.find((transaction) => {
+              return transaction.transaction_id === transactionId;
+            });
+          });
+        });
+        const transactionDate = transaction?.details.date;
+        if (transactionDate > latestDate) {
+          latestDate = transactionDate;
+        }
+      });
+
+      return latestDate + newRepeatRange;
+
+    case applyTo === "all":
+      return existingNextRepeatDate + newRepeatRange;
+
+    default:
+      return 1674405411283;
   }
 };

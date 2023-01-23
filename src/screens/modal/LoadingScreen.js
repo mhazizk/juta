@@ -480,49 +480,57 @@ const LoadingScreen = ({ route, navigation }) => {
 
     switch (true) {
       case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+            repeatedTransaction.repeat_id,
+            repeatedTransaction
+          );
+        }, 5000);
+
+        navigation.navigate(screenList.myRepeatedTransactionsScreen);
+
+        break;
+
+      case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL:
-        if (loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL) {
-          // sync updated repeated transaction to firestore
-          setTimeout(async () => {
-            await firestore.setData(
-              FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-              repeatedTransaction.repeat_id,
-              repeatedTransaction
-            );
-          }, 5000);
+        // sync updated repeated transaction to firestore
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+            repeatedTransaction.repeat_id,
+            repeatedTransaction
+          );
+        }, 5000);
 
-          if (repeatedTransaction?.transactions?.length) {
-            // check timestamp of patched repeated transaction
-            const foundPatchedRepeatSection =
-              repeatedTransactions.repeatedTransactions.find(
-                (repeatSection) => {
-                  return (
-                    repeatSection.repeat_id === repeatedTransaction.repeat_id
-                  );
-                }
-              );
+        if (repeatedTransaction?.transactions?.length) {
+          // check timestamp of patched repeated transaction
+          const foundPatchedRepeatSection =
+            repeatedTransactions.repeatedTransactions.find((repeatSection) => {
+              return repeatSection.repeat_id === repeatedTransaction.repeat_id;
+            });
 
-            // if timestamp is same, it means that the patched repeated transaction has been updated in state
-            let isTimestampSame = false;
-            if (foundPatchedRepeatSection) {
-              isTimestampSame =
-                foundPatchedRepeatSection._timestamps.updated_at ===
-                repeatedTransaction?._timestamps.updated_at;
-            }
+          // if timestamp is same, it means that the patched repeated transaction has been updated in state
+          let isTimestampSame = false;
+          if (foundPatchedRepeatSection) {
+            isTimestampSame =
+              foundPatchedRepeatSection._timestamps.updated_at ===
+              repeatedTransaction?._timestamps.updated_at;
+          }
 
-            // proceeds patching transactions
-            if (!!repeatedTransaction.transactions.length && isTimestampSame) {
-              dispatchSortedTransactions({
-                type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                  .PATCH_MANY_TRANSACTIONS,
-                payload: {
-                  insertedTransactions,
-                  patchedTransactions,
-                  deletedTransactions,
-                  reducerUpdatedAt,
-                },
-              });
-            }
+          // proceeds patching transactions
+          if (!!repeatedTransaction.transactions.length && isTimestampSame) {
+            dispatchSortedTransactions({
+              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                .PATCH_MANY_TRANSACTIONS,
+              payload: {
+                insertedTransactions,
+                patchedTransactions,
+                deletedTransactions,
+                reducerUpdatedAt,
+              },
+            });
           }
         }
 

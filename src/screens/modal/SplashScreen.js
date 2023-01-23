@@ -26,7 +26,11 @@ import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactio
 import initialSortedTransactions from "../../reducers/initial-state/initialSortedTransactions";
 import initialCategories from "../../reducers/initial-state/initialCategories";
 import initialLogbooks from "../../reducers/initial-state/initialLogbooks";
-import { getDeviceId, getDeviceOSName } from "../../utils";
+import {
+  createNewTransactionFromActiveRepeatedTransaction,
+  getDeviceId,
+  getDeviceOSName,
+} from "../../utils";
 import getDeviceName from "../../utils/GetDeviceName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import initialRepeatedTransactions from "../../reducers/initial-state/initialRepeatedTransactions";
@@ -345,9 +349,16 @@ const SplashScreen = ({ route, navigation }) => {
           payload: categories,
         });
 
+        // check if there is an active subscription
+        const checkedTransactionsAndRepeatedTransactions =
+          createNewTransactionFromActiveRepeatedTransaction(
+            repeatedTransactionsData,
+            transactionsData
+          );
+
         // Merge transactions into sorted transactions
         const groupSorted = mergeTransactionsIntoSortedTransactions(
-          transactionsData,
+          checkedTransactionsAndRepeatedTransactions.getAllTransactions,
           logbooksData
         );
 
@@ -393,38 +404,64 @@ const SplashScreen = ({ route, navigation }) => {
           type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.FORCE_SET,
           payload: {
             ...initialRepeatedTransactions,
-            repeatedTransactions: repeatedTransactionsData || [],
+            repeatedTransactions:
+              checkedTransactionsAndRepeatedTransactions.getAllRepeatedTransactions ||
+              [],
           },
         });
 
-        useFirestoreSubscriptions({
-          uid: userAccountData.uid,
-          subscribeAll: true,
+        // push new transaction to firestore
+        checkedTransactionsAndRepeatedTransactions.getNewTransactionsOnly.forEach(
+          async (newTransaction) => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+              newTransaction.transaction_id,
+              newTransaction
+            );
+          }
+        );
 
-          appSettings: appSettings,
-          dispatchAppSettings: dispatchAppSettings,
+        // push modified repeat section to firestore
+        checkedTransactionsAndRepeatedTransactions.getModifiedRepeatedTransactionsOnly.forEach(
+          async (modifiedRepeatSection) => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+              modifiedRepeatSection.repeat_id,
+              modifiedRepeatSection
+            );
+          }
+        );
 
-          userAccount: userAccount,
-          dispatchUserAccount: dispatchUserAccount,
+        setTimeout(() => {
+          useFirestoreSubscriptions({
+            uid: userAccountData.uid,
+            subscribeAll: true,
 
-          logbooks: logbooks,
-          dispatchLogbooks: dispatchLogbooks,
+            appSettings: appSettings,
+            dispatchAppSettings: dispatchAppSettings,
 
-          sortedTransactions: sortedTransactions,
-          dispatchSortedTransactions: dispatchSortedTransactions,
+            userAccount: userAccount,
+            dispatchUserAccount: dispatchUserAccount,
 
-          categories: categories,
-          dispatchCategories: dispatchCategories,
+            logbooks: logbooks,
+            dispatchLogbooks: dispatchLogbooks,
 
-          budgets: budgets,
-          dispatchBudgets: dispatchBudgets,
+            sortedTransactions: sortedTransactions,
+            dispatchSortedTransactions: dispatchSortedTransactions,
 
-          repeatedTransactions: repeatedTransactions,
-          dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+            categories: categories,
+            dispatchCategories: dispatchCategories,
 
-          badgeCounter: badgeCounter,
-          dispatchBadgeCounter: dispatchBadgeCounter,
-        });
+            budgets: budgets,
+            dispatchBudgets: dispatchBudgets,
+
+            repeatedTransactions: repeatedTransactions,
+            dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+
+            badgeCounter: badgeCounter,
+            dispatchBadgeCounter: dispatchBadgeCounter,
+          });
+        }, 1000);
 
         navigation.replace(screenList.bottomTabNavigator);
       })

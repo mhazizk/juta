@@ -18,4 +18,5 @@ export { default as exportData } from "./ExportData";
 export { default as shareData } from "./ShareData";
 export { default as createPDF } from "./CreatePDF";
 export { default as repeatTransactionsHandler } from "./RepeatTransactionsHandler";
-export {default as findRepeatedTransactionSectionById} from './FindRepeatedTransactionSectionById'
+export { default as findRepeatedTransactionSectionById } from "./FindRepeatedTransactionSectionById";
+export { default as createNewTransactionFromActiveRepeatedTransaction } from "./CreateNewTransactionFromActiveRepeatedTransaction";
