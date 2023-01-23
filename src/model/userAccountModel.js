@@ -19,6 +19,7 @@ const userAccountModel = ({
     emailVerified: emailVerified,
     photoURL: photoURL,
     devicesLoggedIn: [],
+    featureWishlist: [],
     groups: [],
   };
   return userAccountObject;

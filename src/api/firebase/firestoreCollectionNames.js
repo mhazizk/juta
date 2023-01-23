@@ -7,6 +7,7 @@ const FIRESTORE_COLLECTION_NAMES = {
   BUDGETS: "budgets",
   SETTINGS: "settings",
   APP_SETTINGS: "appSettings",
+  FEATURE_WISHLIST: "featureWishlist",
 };
 
 export default FIRESTORE_COLLECTION_NAMES;

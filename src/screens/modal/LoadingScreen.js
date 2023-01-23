@@ -5,6 +5,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalFeatureWishlist,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -23,6 +24,8 @@ const LoadingScreen = ({ route, navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { globalFeatureWishlist, dispatchGlobalFeatureWishlist } =
+    useGlobalFeatureWishlist();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
 
@@ -65,11 +68,16 @@ const LoadingScreen = ({ route, navigation }) => {
           repeatedTransaction,
           patchedTransactions,
           deletedTransactions,
+
+          // feature wishlist
+          featureWishlist,
         } = route?.params;
 
         const logbooksReducerUpdatedAt = logbooks.reducerUpdatedAt;
         const categoriesReducerUpdatedAt = categories.reducerUpdatedAt;
         const budgetsReducerUpdatedAt = budgets.reducerUpdatedAt;
+        const featureWishlistReducerUpdatedAt =
+          featureWishlist.reducerUpdatedAt;
 
         switch (true) {
           // TAG : Insert One Transaction Method
@@ -238,6 +246,18 @@ const LoadingScreen = ({ route, navigation }) => {
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
               payload: {
                 repeatedTransaction,
+                reducerUpdatedAt,
+              },
+            });
+            break;
+
+          // TAG : Insert one feature wishlist
+          case reducerUpdatedAt !== featureWishlistReducerUpdatedAt &&
+            loadingType === LOADING_TYPES.FEATURE_WISHLIST.INSERT_ONE:
+            dispatchGlobalFeatureWishlist({
+              type: REDUCER_ACTIONS.FEATURE_WISHLIST.INSERT,
+              payload: {
+                featureWishlist,
                 reducerUpdatedAt,
               },
             });
@@ -582,6 +602,23 @@ const LoadingScreen = ({ route, navigation }) => {
         break;
     }
   }, [repeatedTransactions.reducerUpdatedAt]);
+
+  useEffect(() => {
+    const { reducerUpdatedAt, featureWishlist, loadingType } = route?.params;
+
+    const isReducerTimestampSame =
+      reducerUpdatedAt === featureWishlist.reducerUpdatedAt;
+
+    switch (true) {
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.FEATURE_WISHLIST.INSERT_ONE:
+        navigation.navigate(screenList.featureWishlistScreen);
+        break;
+
+      default:
+        break;
+    }
+  }, [globalFeatureWishlist.reeducerUpdatedAt]);
 
   // TAG : Save Async Storage && dispatch Sorted Transactions
   // const saveAndLoad = async () => {

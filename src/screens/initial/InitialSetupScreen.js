@@ -248,7 +248,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Select Theme
     {
       backgroundColor:
-        selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        selectedAppSettings.theme.style.colors.background,
       image: <Image />,
       title: (
         <>
@@ -449,7 +450,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Select Default Currency
     {
       backgroundColor:
-        selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        selectedAppSettings.theme.style.colors.background,
       image: <Image />,
       title: (
         <>
@@ -545,7 +547,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Create First Logbook
     {
       backgroundColor:
-        selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+        selectedAppSettings.theme.style.colors.background,
       image: <Image />,
       title: (
         <>

@@ -17,21 +17,22 @@ const SubscriptionFeatures = ({ subscription, showCurrent = false }) => {
   // const statHeight = StatusBar.currentHeight;
   return (
     <>
-      <View>
-        {subscription.plan === "free" &&
-          !showCurrent &&
-          freeSubscription({ subscription, showCurrent })}
-        {subscription.plan === "free" &&
-          showCurrent &&
-          freeSubscription({ subscription, showCurrent })}
-      </View>
+      <View>{mapSubscription({ subscription, showCurrent })}</View>
     </>
   );
 };
 
+/* {subscription.plan === "free" &&
+  showCurrent &&
+  mapSubscription({ subscription, showCurrent })} */
+
+// {subscription.plan === "free" &&
+//   !showCurrent &&
+//   freeSubscription({ subscription, showCurrent })}
+
 export default SubscriptionFeatures;
 
-const freeSubscription = ({ subscription, showCurrent = false }) => {
+const mapSubscription = ({ subscription, showCurrent = false }) => {
   const { appSettings } = useGlobalAppSettings();
   const { logbooks } = useGlobalLogbooks();
   const { budgets } = useGlobalBudgets();

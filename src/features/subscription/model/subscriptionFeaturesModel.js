@@ -49,6 +49,14 @@ const subscriptionFeaturesModel = [
     free: false,
     premium: true,
   },
+  {
+    id: 6,
+    identifier: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+    name: "Feature wishlist",
+    iconName: "star",
+    free: false,
+    premium: true,
+  },
   // {
   //   id: 7,
   //   identifier: SUBSCRIPTION_LIMIT.GROUPS,

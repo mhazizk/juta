@@ -3,6 +3,7 @@ import globalAppSettingsReducer from "./globalAppSettingsReducer";
 import globalBadgeCounterReducer from "./globalBadgeCounterReducer";
 import globalBudgetsReducer from "./globalBudgetsReducer";
 import globalCategoriesReducer from "./globalCategoriesReducer";
+import globalFeatureWishlistReducer from "./globalFeatureWishlistReducer";
 import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
 import globalSortedTransactionsReducer from "./globalSortedTransactionsReducer";
@@ -11,6 +12,7 @@ import initialAppSettings from "./initial-state/initialAppSettings";
 import initialBadgeCounter from "./initial-state/initialBadgeCounter";
 import initialBudgets from "./initial-state/initialBudgets";
 import initialCategories from "./initial-state/initialCategories";
+import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
 import initialSortedTransactions from "./initial-state/initialSortedTransactions";
@@ -28,6 +30,7 @@ const globalCategoriesContext = createContext();
 const globalBadgeCounterContext = createContext();
 const globalGroupsContext = createContext();
 const globalRepeatedTransactionsContext = createContext();
+const globalFeatureWishlistContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -74,6 +77,10 @@ export const useGlobalRepeatedTransactions = () => {
   return useContext(globalRepeatedTransactionsContext);
 };
 
+export const useGlobalFeatureWishlist = () => {
+  return useContext(globalFeatureWishlistContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -96,10 +103,11 @@ export const GlobalStateProvider = ({ children }) => {
     globalCategoriesReducer,
     initialCategories
   );
-  // const [rawTransactions, dispatchRawTransactions] = useReducer(
-  //   globalTransactionsReducer,
-  //   initialTransactions
-  // );
+
+  const [globalFeatureWishlist, dispatchGlobalFeatureWishlist] = useReducer(
+    globalFeatureWishlistReducer,
+    initialFeatureWishlist
+  );
 
   const [budgets, dispatchBudgets] = useReducer(
     globalBudgetsReducer,
@@ -170,7 +178,15 @@ export const GlobalStateProvider = ({ children }) => {
                           dispatchRepeatedTransactions,
                       }}
                     >
-                      {children}
+                      <globalFeatureWishlistContext.Provider
+                        value={{
+                          globalFeatureWishlist: globalFeatureWishlist,
+                          dispatchGlobalFeatureWishlist:
+                            dispatchGlobalFeatureWishlist,
+                        }}
+                      >
+                        {children}
+                      </globalFeatureWishlistContext.Provider>
                     </globalRepeatedTransactionsContext.Provider>
                   </globalBadgeCounterContext.Provider>
                 </globalBudgetsContext.Provider>

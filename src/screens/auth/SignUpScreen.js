@@ -283,6 +283,7 @@ const SignUpScreen = ({ route, navigation }) => {
               email: user.email,
               emailVerified: user.emailVerified,
               photoURL: user.photoURL,
+              
             });
 
             // const account = {

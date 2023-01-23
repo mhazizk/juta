@@ -25,6 +25,8 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import { getDeviceId } from "../../../utils";
 import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
+import SubscriptionTypeCard from "../components/SubscriptionTypeCard";
+import subscriptionTypes from "../model/subscriptionType";
 
 const SubscriptionPlanScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -77,6 +79,16 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
                 }
               />
             </ListSection>
+
+            {subscriptionTypes.map((subscriptionType) => (
+              <>
+                <SubscriptionTypeCard
+                  currentSubscriptionType={userAccount?.subscription?.type}
+                  subscriptionType={subscriptionType}
+                  index={subscriptionType.id}
+                />
+              </>
+            ))}
           </>
         )}
         {isLoading && (
