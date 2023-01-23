@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Image, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
 import { setSortedTransactions } from "../../utils/FetchData";
 import {
@@ -34,6 +34,7 @@ import {
 import getDeviceName from "../../utils/GetDeviceName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import initialRepeatedTransactions from "../../reducers/initial-state/initialRepeatedTransactions";
+import JutaLogo from "../../assets/icons/juta-app-icon.png";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -489,12 +490,19 @@ const SplashScreen = ({ route, navigation }) => {
       <View
         style={{
           ...globalStyles.lightTheme.view,
-          backgroundColor: "maroon",
+          backgroundColor: "#000000",
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
         }}
       >
+        <Image
+          source={JutaLogo}
+          style={{
+            width: 200,
+            height: 200,
+          }}
+        />
         <ActivityIndicator size={48} color="#000" />
 
         {/* App Version */}

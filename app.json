@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "CashLog",
-    "slug": "CashLog",
-    "version": "1.0.0",
+    "name": "Juta",
+    "slug": "Juta",
+    "version": "0.5.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icons/icon.png",
+    "icon": "./src/assets/icons/juta-app-icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./src/assets/splash.png",
@@ -21,8 +21,8 @@
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/icons/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./src/assets/icons/juta-icon-foreground.png",
+        "backgroundColor": "#000000"
       }
     },
     "web": {
