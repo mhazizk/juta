@@ -84,7 +84,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
   }, [newWishlist]);
 
   useEffect(() => {
-    if (newWishlist.title && newWishlist.description) {
+    if (newWishlist?.title && newWishlist?.description) {
       Promise.all([
         filterBadWords(newWishlist?.title),
         filterBadWords(newWishlist?.description),
