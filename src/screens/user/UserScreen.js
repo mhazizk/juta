@@ -151,21 +151,32 @@ const UserScreen = ({ navigation }) => {
                 iconLeftName="bulb"
                 iconPack="IonIcons"
                 onPress={() => {
-                  Alert.alert(
-                    "Upgrade to premium",
-                    "This feature is only available for premium users.",
-                    [
-                      {
-                        text: "Cancel",
-                        style: "cancel",
-                      },
-                      {
-                        text: "Upgrade",
-                        onPress: () =>
-                          navigation.navigate(screenList.accountSubscriptionScreen),
-                      },
-                    ]
-                  );
+                  if (
+                    !getSubscriptionLimit(
+                      userAccount?.subscription?.plan,
+                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                    )
+                  ) {
+                    Alert.alert(
+                      "Upgrade to premium",
+                      "This feature is only available for premium users.",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Upgrade",
+                          onPress: () =>
+                            navigation.navigate(
+                              screenList.accountSubscriptionScreen
+                            ),
+                        },
+                      ]
+                    );
+                  } else {
+                    navigation.navigate(screenList.featureWishlistScreen);
+                  }
                 }}
               />
               {/* // TAG : About */}

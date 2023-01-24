@@ -8,6 +8,7 @@ const CustomTextInput = ({
   inputQuery,
   inputRef,
   //   secureTextEntry = false,
+  maxLength = null,
   onChange,
   onEndEditing,
   placeholder,
@@ -119,6 +120,7 @@ const CustomTextInput = ({
           paddingLeft: 0,
           height: 48,
         }}
+        maxLength={maxLength}
         secureTextEntry={inputType === "password" && secureTextEntry}
         onChangeText={(searchText) => onChange(searchText)}
         onEndEditing={onEndEditing}

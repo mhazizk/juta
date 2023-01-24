@@ -17,6 +17,9 @@ import {
   query,
   where,
   orderBy,
+  startAt,
+  startAfter,
+  limit,
 
   // collection
   doc,
@@ -175,6 +178,26 @@ const queryData = async (collectionName, uid) => {
   }
 };
 
+const paginationQuery = async (collectionName, uid, limit) => {
+  try {
+    const q = query(
+      collection(db, collectionName),
+      orderBy("voters_count", "desc"),
+      // limit(limit)
+    );
+    const querySnapshot = await getDocs(q);
+    console.log(querySnapshot.docs);
+    return querySnapshot.docs.map((doc) => doc.data());
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+    });
+  } catch (error) {
+    Alert.alert("Error", error.message);
+    return Promise.reject(error);
+  }
+};
+
 const firestore = {
   getOneDoc,
   getAndListenMultipleDocs,
@@ -182,6 +205,7 @@ const firestore = {
   setData,
   deleteData,
   queryData,
+  paginationQuery,
 };
 
 export default firestore;

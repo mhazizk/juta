@@ -877,7 +877,47 @@ const RootStack = () => {
       {/* // SECTION : FEATURE WISHLIST */}
       {/* // TAG : Feature Wishlist Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Feature Wishlist" }}
+        options={{
+          ...showHeader,
+          title: "Feature Wishlist",
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                style={{
+                  marginRight: 20,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  if (
+                    !getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                    )
+                  ) {
+                    // show alert
+                    Alert.alert(
+                      "Upgrade to Premium",
+                      `Upgrade your subscription to add new feature wishlist.`
+                    );
+                  } else {
+                    navigation.navigate(screenList.newFeatureWishlistScreen);
+                  }
+                }}
+              >
+                <IonIcons
+                  name="add"
+                  size={20}
+                  color={appSettings.theme.style.colors.textHeader}
+                />
+                <TextPrimary
+                  label="Add"
+                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
         name={screenList.featureWishlistScreen}
         component={FeatureWishlistScreen}
       />
