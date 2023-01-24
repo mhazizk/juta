@@ -13,8 +13,8 @@ const Footer = () => {
           justifyContent: "center",
         }}
       >
-        <TextPrimary label="Cash Log" />
-        <TextPrimary label="v.1.0.0" />
+        <TextPrimary label="Juta" />
+        <TextPrimary label="v.0.5.0" />
       </View>
     </>
   );

@@ -70,30 +70,26 @@ const globalRepeatedTransactionsReducer = (state, action) => {
       }
 
       if (repeatedTransactionInState && isTimestampNewer) {
+        console.log("line 73");
         const otherRepeatTransactions = state.repeatedTransactions.filter(
           (repeatTransaction) =>
             repeatTransaction.repeat_id !== patchRepeatedTransaction.repeat_id
         );
-        if (otherRepeatTransactions.length > 0) {
-          return {
-            ...state,
-            reducerUpdatedAt,
-            repeatedTransactions: [
-              ...otherRepeatTransactions,
-              patchRepeatedTransaction,
-            ].sort((a, b) => {
-              return a.next_repeat_date - b.next_repeat_date;
-            }),
-          };
-        } else {
-          return {
-            ...state,
-            reducerUpdatedAt,
-            repeatedTransactions: [patchRepeatedTransaction],
-          };
-        }
-      }
 
+        console.log({ patchRepeatedTransaction });
+
+        return {
+          ...state,
+          reducerUpdatedAt,
+          repeatedTransactions: [
+            ...otherRepeatTransactions,
+            patchRepeatedTransaction,
+          ].sort((a, b) => {
+            return a.next_repeat_date - b.next_repeat_date;
+          }),
+        };
+      }
+      console.log("line 97");
       return state;
 
     // case REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH_MANY:

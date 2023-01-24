@@ -77,7 +77,7 @@ const LoadingScreen = ({ route, navigation }) => {
         const categoriesReducerUpdatedAt = categories.reducerUpdatedAt;
         const budgetsReducerUpdatedAt = budgets.reducerUpdatedAt;
         const featureWishlistReducerUpdatedAt =
-          featureWishlist.reducerUpdatedAt;
+          globalFeatureWishlist.reducerUpdatedAt;
 
         switch (true) {
           // TAG : Insert One Transaction Method
@@ -222,11 +222,22 @@ const LoadingScreen = ({ route, navigation }) => {
           case repeatedTransaction &&
             (patchedTransactions || deletedTransactions) &&
             (loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_ALL ||
-              loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT ||
               loadingType ===
                 LOADING_TYPES.REPEATED_TRANSACTIONS
                   .DELETE_PREVIOUS_TRANSACTIONS_INSIDE_THIS_ONE):
             console.log("start patch repeated transaction");
+            dispatchRepeatedTransactions({
+              type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
+              payload: {
+                repeatedTransaction,
+                reducerUpdatedAt,
+              },
+            });
+            break;
+
+          // TAG : Patch one repeated transaction for next occurence
+          case repeatedTransaction &&
+            loadingType === LOADING_TYPES.REPEATED_TRANSACTIONS.PATCH_NEXT:
             dispatchRepeatedTransactions({
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.PATCH,
               payload: {
@@ -241,7 +252,7 @@ const LoadingScreen = ({ route, navigation }) => {
             loadingType ===
               LOADING_TYPES.REPEATED_TRANSACTIONS
                 .DELETE_THIS_ONE_AND_ALL_TRANSACTIONS_INSIDE:
-            console.log("sini");
+            console.log("line 254 hapus sini");
             dispatchRepeatedTransactions({
               type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.DELETE_ONE,
               payload: {
@@ -509,8 +520,9 @@ const LoadingScreen = ({ route, navigation }) => {
           );
         }, 5000);
 
-        navigation.navigate(screenList.myRepeatedTransactionsScreen);
-
+        navigation.navigate(screenList.repeatedTransactionDetailsScreen, {
+          repeatSection: repeatedTransaction,
+        });
         break;
 
       case isReducerTimestampSame &&
@@ -524,7 +536,7 @@ const LoadingScreen = ({ route, navigation }) => {
           );
         }, 5000);
 
-        if (repeatedTransaction?.transactions?.length) {
+        if (repeatedTransaction?.transactions?.length > 0) {
           // check timestamp of patched repeated transaction
           const foundPatchedRepeatSection =
             repeatedTransactions.repeatedTransactions.find((repeatSection) => {
@@ -607,7 +619,7 @@ const LoadingScreen = ({ route, navigation }) => {
     const { reducerUpdatedAt, featureWishlist, loadingType } = route?.params;
 
     const isReducerTimestampSame =
-      reducerUpdatedAt === featureWishlist.reducerUpdatedAt;
+      reducerUpdatedAt === globalFeatureWishlist.reducerUpdatedAt;
 
     switch (true) {
       case isReducerTimestampSame &&

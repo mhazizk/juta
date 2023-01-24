@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
@@ -13,14 +13,19 @@ import {
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import screenList from "../../../navigations/ScreenList";
+import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit";
+import SUBSCRIPTION_LIMIT from "../../subscription/model/subscriptionLimit";
+import { useEffect } from "react";
 
 const MyRepeatedTransactionsScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
-  const { repeatedTransactions, dispatchRepeatedTransactions } =
+  const { repeatedTransactions } =
     useGlobalRepeatedTransactions();
+
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -96,7 +101,32 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
       {!repeatedTransactions.repeatedTransactions.length && (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate(screenList.newTransactionDetailsScreen);
+            if (
+              !getSubscriptionLimit(
+                userAccount.subscription.plan,
+                SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+              )
+            ) {
+              Alert.alert(
+                "Upgrade to Premium",
+                "You can create repeated transactions only in Premium Account",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                  },
+                  {
+                    text: "Upgrade",
+                    onPress: () =>
+                      navigation.navigate(screenList.accountSubscriptionScreen),
+                  },
+                ],
+                { cancelable: false }
+              );
+            } else {
+              navigation.navigate(screenList.newTransactionDetailsScreen);
+            }
           }}
         >
           <View

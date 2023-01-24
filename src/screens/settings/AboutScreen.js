@@ -11,6 +11,7 @@ import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import JutaLogo from "../../assets/icons/juta-app-icon.png";
 
 const AboutScreen = ({ item, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -23,7 +24,22 @@ const AboutScreen = ({ item, navigation }) => {
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
-        <UserHeaderComponent />
+        {/* <UserHeaderComponent /> */}
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 48,
+          }}
+        >
+          <Image
+            source={JutaLogo}
+            style={{
+              height: 128,
+              width: 128,
+            }}
+          />
+        </View>
         {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
                 </View> */}
@@ -32,7 +48,7 @@ const AboutScreen = ({ item, navigation }) => {
           <ListItem
             pressable
             leftLabel="Made by"
-            rightLabel="Haziz"
+            rightLabel="mhazizk"
             iconLeftName="information-circle"
             iconPack="IonIcons"
             onPress={() =>
@@ -55,7 +71,7 @@ const AboutScreen = ({ item, navigation }) => {
           <ListItem
             pressable
             leftLabel="App Version"
-            rightLabel="v.1.0.0"
+            rightLabel="v.0.5.0"
             iconLeftName="phone-portrait"
             iconPack="IonIcons"
             onPress={() => alert("OTW")}

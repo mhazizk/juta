@@ -34,6 +34,11 @@ const getSubscriptionLimit = (subscriptionPlan, subscriptionLimit) => {
         return plan.identifier === SUBSCRIPTION_LIMIT.BUDGETS;
       });
       break;
+    case SUBSCRIPTION_LIMIT.FEATURE_WISHLIST:
+      foundLimit = subscriptionFeaturesModel.find((plan) => {
+        return plan.identifier === SUBSCRIPTION_LIMIT.FEATURE_WISHLIST;
+      });
+      break;
     case SUBSCRIPTION_LIMIT.GROUPS:
       foundLimit = subscriptionFeaturesModel.find((plan) => {
         return plan.identifier === SUBSCRIPTION_LIMIT.GROUPS;

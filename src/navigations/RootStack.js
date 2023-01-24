@@ -75,6 +75,8 @@ import MyRepeatedTransactionsScreen from "../features/repeated-transactions/scre
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
+import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureWishlistScreen";
+import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -870,6 +872,20 @@ const RootStack = () => {
         options={{ ...showHeader, title: "Subscription Plan" }}
         name={screenList.subscriptionPlanScreen}
         component={SubscriptionPlanScreen}
+      />
+
+      {/* // SECTION : FEATURE WISHLIST */}
+      {/* // TAG : Feature Wishlist Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Feature Wishlist" }}
+        name={screenList.featureWishlistScreen}
+        component={FeatureWishlistScreen}
+      />
+      {/* // TAG : New Wishlist Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "New Feature Wishlist" }}
+        name={screenList.newFeatureWishlistScreen}
+        component={NewFeatureWishlistScreen}
       />
 
       {/* // SECTION : EXPORT */}

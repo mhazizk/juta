@@ -19,18 +19,20 @@ const createNewTransactionFromActiveRepeatedTransaction = (
             repeatSection.repeat_type.range
         );
 
-        for (number of numberOfNewTransactions) {
+        for (let i = 0; i < numberOfNewTransactions; i++) {
           // create new transaction
           const newTransaction = {
             uid: repeatSection.uid,
             transaction_id: uuid.v4(),
             logbook_id: repeatSection.repeat_logbook_id,
+            repeat_id: repeatSection.repeat_id,
             details: {
               amount: repeatSection.repeat_amount,
               category_id: repeatSection.repeat_category_id,
               notes: repeatSection.repeat_notes,
-              date: repeatSection.next_repeat_date,
-              repeat_id: repeatSection.repeat_id,
+              date:
+                repeatSection.next_repeat_date +
+                i * repeatSection.repeat_type.range,
               in_out: repeatSection.repeat_in_out,
               type: repeatSection.repeat_transaction_type,
             },
@@ -70,11 +72,19 @@ const createNewTransactionFromActiveRepeatedTransaction = (
     );
   });
 
+  // TODO : move repeat feature to server
+  // return {
+  //   getAllRepeatedTransactions: filteredOutRepeatedTransactions,
+  //   getAllTransactions: [...newTransactions, ...transactions],
+  //   getModifiedRepeatedTransactionsOnly: modifiedRepeatedTransactions,
+  //   getNewTransactionsOnly: newTransactions,
+  // };
+  // TAG :temporary fix : return original repeated transactions
   return {
-    getAllRepeatedTransactions: filteredOutRepeatedTransactions,
-    getAllTransactions: [...newTransactions, ...transactions],
-    getModifiedRepeatedTransactionsOnly: modifiedRepeatedTransactions,
-    getNewTransactionsOnly: newTransactions,
+    getAllRepeatedTransactions: repeatedTransactions,
+    getAllTransactions: transactions,
+    getModifiedRepeatedTransactionsOnly: [],
+    getNewTransactionsOnly: [],
   };
 };
 

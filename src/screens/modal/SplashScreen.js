@@ -350,7 +350,6 @@ const SplashScreen = ({ route, navigation }) => {
           payload: categories,
         });
 
-        // check if there is an active subscription
         const checkedTransactionsAndRepeatedTransactions =
           createNewTransactionFromActiveRepeatedTransaction(
             repeatedTransactionsData,

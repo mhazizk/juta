@@ -73,84 +73,90 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
         contentContainerStyle={{
           // width: Dimensions.get("window").width,
           // width: "100%",
+          height: "100%",
           flex: !transactionsInRepeat.length ? 1 : 0,
           // alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         {transactionsInRepeat.length > 0 && (
           <>
             <ListSection>
-              {transactionsInRepeat.map((item) => {
-                return (
-                  <>
-                    <TransactionListItem
-                      key={item.transaction_id}
-                      showDate
-                      transactionDate={item.details.date}
-                      // transactionId={item.transaction_id}
-                      categoryName={utils.FindById.findCategoryNameById({
-                        id: item.details.category_id,
-                        categories: categories.categories,
-                      })}
-                      isRepeated={item.repeat_id ? true : false}
-                      // categoryType={findCategoryTypeById(
-                      //   item.details.category_id
-                      // )}
-                      transactionHour={
-                        appSettings.logbookSettings.showTransactionTime &&
-                        item.details.date
-                      }
-                      transactionType={item.details.in_out}
-                      transactionNotes={
-                        appSettings.logbookSettings.showTransactionNotes &&
-                        item.details.notes
-                      }
-                      iconLeftName={utils.FindById.findCategoryIconNameById({
-                        id: item.details.category_id,
-                        categories: categories.categories,
-                      })}
-                      iconLeftColor={utils.FindById.findCategoryColorById({
-                        id: item.details.category_id,
-                        categories: categories.categories,
-                        defaultColor: appSettings.theme.style.colors.foreground,
-                      })}
-                      logbookCurrency={
-                        utils.FindById.findLogbookById({
-                          id: route.params.repeatSection.repeat_logbook_id,
-                          logbooks: logbooks.logbooks,
-                        }).logbook_currency
-                      }
-                      secondaryCurrency={
-                        appSettings.logbookSettings.secondaryCurrency
-                      }
-                      showSecondaryCurrency={
-                        appSettings.logbookSettings.showSecondaryCurrency
-                      }
-                      transactionAmount={item.details.amount}
-                      onPress={() => {
-                        // console.log(item);
-                        const foundLogbook = utils.FindById.findLogbookById({
-                          id: route.params.repeatSection.repeat_logbook_id,
-                          logbooks: logbooks.logbooks,
-                        });
-                        const selectedLogbook = {
-                          ...foundLogbook,
-                          name: foundLogbook.logbook_name,
-                        };
-                        navigation.navigate(
-                          screenList.transactionPreviewScreen,
-                          {
-                            transaction: item,
-                            selectedLogbook: selectedLogbook,
-                          }
-                        );
-                      }}
-                    />
-                  </>
-                );
-              })}
+              {transactionsInRepeat
+                .sort((a, b) => {
+                  return b.details.date - a.details.date;
+                })
+                .map((item) => {
+                  return (
+                    <>
+                      <TransactionListItem
+                        key={item.transaction_id}
+                        showDate
+                        transactionDate={item.details.date}
+                        // transactionId={item.transaction_id}
+                        categoryName={utils.FindById.findCategoryNameById({
+                          id: item.details.category_id,
+                          categories: categories.categories,
+                        })}
+                        isRepeated={item.repeat_id ? true : false}
+                        // categoryType={findCategoryTypeById(
+                        //   item.details.category_id
+                        // )}
+                        transactionHour={
+                          appSettings.logbookSettings.showTransactionTime &&
+                          item.details.date
+                        }
+                        transactionType={item.details.in_out}
+                        transactionNotes={
+                          appSettings.logbookSettings.showTransactionNotes &&
+                          item.details.notes
+                        }
+                        iconLeftName={utils.FindById.findCategoryIconNameById({
+                          id: item.details.category_id,
+                          categories: categories.categories,
+                        })}
+                        iconLeftColor={utils.FindById.findCategoryColorById({
+                          id: item.details.category_id,
+                          categories: categories.categories,
+                          defaultColor:
+                            appSettings.theme.style.colors.foreground,
+                        })}
+                        logbookCurrency={
+                          utils.FindById.findLogbookById({
+                            id: route.params.repeatSection.repeat_logbook_id,
+                            logbooks: logbooks.logbooks,
+                          }).logbook_currency
+                        }
+                        secondaryCurrency={
+                          appSettings.logbookSettings.secondaryCurrency
+                        }
+                        showSecondaryCurrency={
+                          appSettings.logbookSettings.showSecondaryCurrency
+                        }
+                        transactionAmount={item.details.amount}
+                        onPress={() => {
+                          // console.log(item);
+                          const foundLogbook = utils.FindById.findLogbookById({
+                            id: route.params.repeatSection.repeat_logbook_id,
+                            logbooks: logbooks.logbooks,
+                          });
+                          const selectedLogbook = {
+                            ...foundLogbook,
+                            name: foundLogbook.logbook_name,
+                          };
+                          navigation.navigate(
+                            screenList.transactionPreviewScreen,
+                            {
+                              transaction: item,
+                              selectedLogbook: selectedLogbook,
+                            }
+                          );
+                        }}
+                      />
+                    </>
+                  );
+                })}
             </ListSection>
           </>
         )}
@@ -159,6 +165,7 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
           <View
             style={{
               // height: Dimensions.get("window").height - 0,
+              flex: 1,
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: appSettings.theme.style.colors.background,

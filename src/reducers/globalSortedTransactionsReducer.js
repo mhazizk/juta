@@ -386,7 +386,7 @@ export const globalSortedTransactionsReducer = (state, action) => {
 
       // console.log("line379 reducer");
       console.log(JSON.stringify({ finalState }));
-      return finalState;
+      return finalState || { ...state, reducerUpdatedAt };
 
     // SECTION : Delete many transactions method
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -401,7 +401,7 @@ export const globalSortedTransactionsReducer = (state, action) => {
 
       // console.log("line379 reducer");
       // console.log(JSON.stringify({ finalState }));
-      return finalState;
+      return finalState || { ...state, reducerUpdatedAt };
 
     // TAG : Patch One Transaction Method
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:

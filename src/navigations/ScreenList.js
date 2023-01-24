@@ -85,6 +85,10 @@ const screenList = {
   // Export Screen
   exportScreen: "Export Screen",
 
+  // Feature wishlist
+  featureWishlistScreen: "Feature Wishlist Screen",
+  newFeatureWishlistScreen: "New Feature Wishlist Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",

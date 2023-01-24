@@ -678,6 +678,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_type: item,
                       next_repeat_date: getNextRepeatDate(
                         apply.applyTo,
+                        localRepeatedTransaction.repeat_start_date,
                         localRepeatedTransaction.next_repeat_date,
                         localRepeatedTransaction.transactions,
                         sortedTransactions.groupSorted,
@@ -693,6 +694,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               label={`Next transaction : ${new Date(
                 getNextRepeatDate(
                   apply.applyTo,
+                  localRepeatedTransaction.repeat_start_date,
                   localRepeatedTransaction.next_repeat_date,
                   localRepeatedTransaction.transactions,
                   sortedTransactions.groupSorted,
@@ -1077,38 +1079,43 @@ const handleSave = ({
 
 const getNextRepeatDate = (
   applyTo,
+  newRepeatStartDate,
   existingNextRepeatDate,
-  transactions,
+  existingTransactionsInSection,
   groupSorted,
   newRepeatRange
 ) => {
   switch (true) {
     // TODO : fix this next date show
-    case applyTo === "next" && transactions?.length > 0:
-      // console.log(applyTo);
-      // get latest date of transactions
-      // const latestDate = transactionsId?.reduce((a, b) => {
-      //   return a > b.details.date ? a : b.details.date;
-      // }, 0);
-      let latestDate = 0;
-      transactions.forEach((transactionId) => {
+    case applyTo === "next" && existingTransactionsInSection?.length > 0:
+      const dateList = [];
+      existingTransactionsInSection.forEach((transactionId) => {
         const transaction = groupSorted.forEach((logbook) => {
           logbook.transactions.forEach((section) => {
-            section.data.find((transaction) => {
-              return transaction.transaction_id === transactionId;
+            section.data.forEach((transaction) => {
+              if (transaction.transaction_id === transactionId) {
+                dateList.push(transaction.details.date);
+              }
             });
           });
         });
-        const transactionDate = transaction?.details.date;
-        if (transactionDate > latestDate) {
-          latestDate = transactionDate;
-        }
       });
 
-      return latestDate + newRepeatRange;
+      return newRepeatRange + (Math.max(...dateList) || newRepeatStartDate);
 
     case applyTo === "all":
-      return existingNextRepeatDate + newRepeatRange;
+      //   get number of transactions to be logged
+      const numberOfTransactionsToBeLogged = Math.floor(
+        (Date.now() - newRepeatStartDate) / newRepeatRange
+      );
+      // const existingTransactionsLength = existingTransactionsInSection.length;
+      // const newTransactionsLength =
+      //   numberOfTransactionsToBeLogged - existingTransactionsLength;
+
+      return (
+        newRepeatStartDate +
+        (numberOfTransactionsToBeLogged + 1) * newRepeatRange
+      );
 
     default:
       return 1674405411283;
