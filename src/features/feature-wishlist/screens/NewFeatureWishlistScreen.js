@@ -54,51 +54,17 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    Promise.all([filterBadWords(newWishlist?.title)]).then((res) => {
-      if (res[0].includes("*")) {
-        setShowProfanityFilter({
-          ...showProfanityFilter,
-          title: true,
-        });
-      } else {
-        setShowProfanityFilter({
-          ...showProfanityFilter,
-          title: false,
-        });
-      }
-    });
-    Promise.all([filterBadWords(newWishlist?.description)]).then((res) => {
-      if (res[0].includes("*")) {
-        setShowProfanityFilter({
-          ...showProfanityFilter,
-          description: true,
-        });
-      } else {
-        setShowProfanityFilter({
-          ...showProfanityFilter,
-          description: false,
-        });
-      }
-    });
+    if (newWishlist?.title && newWishlist?.description) {
+      setShowButton(true);
+      setShowProfanityFilter({
+        title: false,
+        description: false,
+      });
+    }
     // }
   }, [newWishlist]);
 
-  useEffect(() => {
-    if (newWishlist?.title && newWishlist?.description) {
-      Promise.all([
-        filterBadWords(newWishlist?.title),
-        filterBadWords(newWishlist?.description),
-      ]).then((res) => {
-        if (res[0].includes("*") || res[1].includes("*")) {
-          setShowButton(false);
-        } else {
-          setShowButton(true);
-        }
-      });
-    } else {
-      setShowButton(false)
-    }
-  }, [showProfanityFilter]);
+  useEffect(() => {}, [showProfanityFilter]);
 
   const submitWishlist = async () => {
     const finalWishlist = {
@@ -107,28 +73,41 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
       description: await filterBadWords(newWishlist.description),
     };
 
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
-        finalWishlist.wishlist_id,
-        finalWishlist
-      );
+    if (
+      finalWishlist.title.includes("*") ||
+      finalWishlist.description.includes("*")
+    ) {
+      setIsSubmitting(false);
+      setShowButton(false);
+      return setShowProfanityFilter({
+        ...showProfanityFilter,
+        title: finalWishlist.title.includes("*") ? true : false,
+        description: finalWishlist.description.includes("*") ? true : false,
+      });
+    } else {
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+          finalWishlist.wishlist_id,
+          finalWishlist
+        );
 
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.USERS,
-        userAccount.uid,
-        {
-          ...userAccount,
-          featureWishlist: [
-            ...userAccount.featureWishlist,
-            finalWishlist.wishlist_id,
-          ],
-        }
-      );
-    }, 1);
-    setTimeout(() => {
-      navigation.goBack();
-    }, 1500);
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.USERS,
+          userAccount.uid,
+          {
+            ...userAccount,
+            featureWishlist: [
+              ...userAccount.featureWishlist,
+              finalWishlist.wishlist_id,
+            ],
+          }
+        );
+      }, 1);
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500);
+    }
 
     // navigation.navigate(screenList.loadingScreen, {
     //   label: "Submitting your wishlist...",
@@ -238,7 +217,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
                 />
               )}
               {isSubmitting && <Loading />}
-              {(!isSubmitting || !showButton) && (
+              {!isSubmitting && !showButton && (
                 <ButtonDisabled label="Submit" />
               )}
             </View>

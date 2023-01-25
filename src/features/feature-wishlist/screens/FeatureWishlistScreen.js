@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { FlatList, View, RefreshControl } from "react-native";
+import {
+  FlatList,
+  View,
+  RefreshControl,
+  TouchableNativeFeedback,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import { ListItem } from "../../../components/List";
@@ -19,57 +26,22 @@ const FeatureWishlistScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
   const { globalFeatureWishlist } = useGlobalFeatureWishlist();
-  const [publicWishlist, setPublicWishlist] = useState([
-    // {
-    //   uid: userAccount.uid,
-    //   wishlist_id: userAccount.uid,
-    //   voters: [userAccount.uid],
-    //   status: "active",
-    //   title:
-    //     "Coba ini adalah judul wishlist yang sangat panjang sekali dan sangatlah panjanggg wwwkf wwic",
-    //   description: "coba ini adalah deskripsi wishlist yang sangat panjang",
-    //   _timestamps: {
-    //     created_at: Date.now(),
-    //     updated_at: Date.now(),
-    //     created_by: userAccount.uid,
-    //     updated_by: userAccount.uid,
-    //   },
-    // },
-    // {
-    //   uid: userAccount.uid,
-    //   wishlist_id: userAccount.uid,
-    //   voters: [123, 456, 789],
-    //   status: "active",
-    //   title: "Add feature to send money",
-    //   description: "",
-    //   _timestamps: {
-    //     created_at: Date.now(),
-    //     updated_at: Date.now(),
-    //     created_by: userAccount.uid,
-    //     updated_by: userAccount.uid,
-    //   },
-    // },
-    // {
-    //   uid: userAccount.uid,
-    //   wishlist_id: userAccount.uid,
-    //   voters: [123, 456, 789],
-    //   status: "",
-    //   title: "Coba",
-    //   description: "coba",
-    //   _timestamps: {
-    //     created_at: Date.now(),
-    //     updated_at: Date.now(),
-    //     created_by: userAccount.uid,
-    //     updated_by: userAccount.uid,
-    //   },
-    // },
-  ]);
+  const [publicWishlist, setPublicWishlist] = useState([]);
+  const [privateWishlist, setPrivateWishlist] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [privateLoading, setPrivateLoading] = useState(false);
+  const [publicLoading, setPublicLoading] = useState(false);
+  const [showFeatureWishlist, setShowFeatureWishlist] = useState({
+    public: true,
+    private: false,
+  });
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
-      setIsLoading(true);
+      // setIsLoading(true);
+      setPrivateLoading(true);
+      setPublicLoading(true);
       setTimeout(() => {
         if (userAccount) {
           getPublicWishlist();
@@ -79,142 +51,386 @@ const FeatureWishlistScreen = ({ navigation }) => {
   }, [isFocused]);
 
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
+    setPrivateLoading(true);
+    setPublicLoading(true);
     setTimeout(() => {
       if (userAccount) {
         getPublicWishlist();
+        getPrivateWishlist();
       }
     }, 1);
   }, []);
 
   useEffect(() => {
+    // console.log(publicWishlist);
     if (publicWishlist.length > 0) {
-      setIsLoading(false);
+      // setIsLoading(false);
+      setPublicLoading(false);
     } else {
-      setIsLoading(false);
+      // setIsLoading(false);
+      setPublicLoading(false);
     }
   }, [publicWishlist]);
+
+  useEffect(() => {
+    console.log(privateWishlist);
+    if (privateWishlist.length > 0) {
+      // setIsLoading(false);
+      setPrivateLoading(false);
+    } else {
+      // setIsLoading(false);
+      setPrivateLoading(false);
+    }
+  }, [privateWishlist]);
 
   const getPublicWishlist = async () => {
     const publicFeatureWishlist = await firestore.paginationQuery(
       FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
-      userAccount.uid,
+      // userAccount.uid,
       20
     );
     setPublicWishlist(publicFeatureWishlist);
     // TODO : get public wishlist and set to publicWishlist in pagination mode
   };
 
+  const getPrivateWishlist = async () => {
+    const myWishlist = userAccount.featureWishlist;
+    // console.log(myWishlist);
+
+    const privateWishlist = [];
+    const wishlist = await firestore.getMyFeatureWishlist(
+      FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+      userAccount.uid
+    );
+    privateWishlist.push(...wishlist);
+    setPrivateWishlist(
+      privateWishlist.sort((a, b) => b.voters_count - a.voters_count)
+    );
+  };
+
   return (
     <>
-      <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={() => getPublicWishlist()}
-          />
-        }
-        data={publicWishlist}
+      {/* // SECTION : Tab button */}
+      <View
         style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
           backgroundColor: appSettings.theme.style.colors.background,
-          minHeight: publicWishlist.length > 0 ? "100%" : 0,
-          paddingTop: 16,
+          // padding: 16,
         }}
-        key={(item) => item.id}
-        renderItem={({ item }) => {
-          return (
-            <>
-              {!isLoading && publicWishlist.length > 0 && (
-                <>
-                  <ListSection>
-                    <WishlistItem
-                      uid={userAccount.uid}
-                      item={item}
-                      onPress={async (item) => {
-                        console.log(item);
-                        if (
-                          item?.voters.some(
-                            (voter) => voter === userAccount.uid
-                          )
-                        ) {
-                          console.log("remove vote");
-                          await firestore
-                            .setData(
-                              FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
-                              item.wishlist_id,
-                              {
-                                ...item,
-                                voters: [
-                                  ...item.voters.filter(
-                                    (voter) => voter !== userAccount.uid
-                                  ),
-                                ],
-                                voters_count: item.voters.length - 1,
-                                _timestamps: {
-                                  ...item._timestamps,
-                                  updated_at: Date.now(),
-                                  updated_by: userAccount.uid,
-                                },
-                              }
-                            )
-                            .then(async () => {
-                              setIsLoading(true);
-                              await getPublicWishlist();
-                            });
-                        } else {
-                          console.log("add vote");
-                          await firestore
-                            .setData(
-                              FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
-                              item.wishlist_id,
-                              {
-                                ...item,
-                                voters: [...item.voters, userAccount.uid],
-                                voters_count: item.voters.length + 1,
-                                _timestamps: {
-                                  ...item._timestamps,
-                                  updated_at: Date.now(),
-                                  updated_by: userAccount.uid,
-                                },
-                              }
-                            )
-                            .then(async () => {
-                              setIsLoading(true);
-                              await getPublicWishlist();
-                            });
-                        }
-                      }}
-                    />
-                  </ListSection>
-                </>
-              )}
-            </>
-          );
-        }}
-      />
-      {!isLoading && !publicWishlist.length && (
-        <View
+      >
+        <TouchableOpacity
+          onPress={() => {
+            setShowFeatureWishlist({
+              public: true,
+              private: false,
+            });
+          }}
           style={{
-            height: "100%",
-            alignItems: "center",
+            flex: 1,
+            height: 48,
+            paddingRight: 8,
             justifyContent: "center",
-            backgroundColor: appSettings.theme.style.colors.background,
+            alignItems: "flex-end",
           }}
         >
-          <IonIcons
-            name="document-text-outline"
-            size={64}
-            color={appSettings.theme.style.colors.secondary}
-          />
-          <TextSecondary
-            label="No public wishlist yet"
+          <View
             style={{
-              paddingTop: 16,
+              paddingBottom: showFeatureWishlist.public ? 8 : 0,
+              borderBottomWidth: 2,
+              borderBottomColor: showFeatureWishlist.public
+                ? appSettings.theme.style.colors.foreground
+                : "transparent",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TextPrimary
+              label="Public Wishlist"
+              style={{
+                fontWeight: showFeatureWishlist.public ? "bold" : "normal",
+              }}
+            />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setShowFeatureWishlist({
+              public: false,
+              private: true,
+            });
+          }}
+          style={{
+            flex: 1,
+            height: 48,
+            paddingLeft: 8,
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <View
+            style={{
+              paddingBottom: showFeatureWishlist.private ? 8 : 0,
+              borderBottomWidth: 2,
+              borderBottomColor: showFeatureWishlist.private
+                ? appSettings.theme.style.colors.foreground
+                : "transparent",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TextPrimary
+              label="My Wishlist"
+              style={{
+                fontWeight: showFeatureWishlist.private ? "bold" : "normal",
+              }}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+      {/* // SECTION : Public component */}
+      {showFeatureWishlist.public && (
+        <>
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={publicLoading}
+                onRefresh={() => getPublicWishlist()}
+              />
+            }
+            data={publicWishlist}
+            style={{
+              backgroundColor: appSettings.theme.style.colors.background,
+              minHeight: publicWishlist.length > 0 ? "100%" : 0,
+              paddingVertical: 16,
+            }}
+            ListFooterComponent={() => (
+              <>
+                {!publicLoading && publicWishlist.length > 0 && (
+                  <View
+                    style={{
+                      paddingBottom: 86,
+                      alignItems: "center",
+                    }}
+                  >
+                    <IonIcons
+                      name="checkmark-circle-outline"
+                      size={20}
+                      color={appSettings.theme.style.colors.foreground}
+                    />
+                    <TextPrimary label="That's all for now" />
+                  </View>
+                )}
+              </>
+            )}
+            key={(item) => item.id}
+            renderItem={({ item }) => {
+              return (
+                <>
+                  {!publicLoading && publicWishlist.length > 0 && (
+                    <>
+                      <ListSection>
+                        <WishlistItem
+                          uid={userAccount.uid}
+                          item={item}
+                          onPress={async (item) => {
+                            console.log(item);
+                            if (
+                              item?.voters.some(
+                                (voter) => voter === userAccount.uid
+                              )
+                            ) {
+                              console.log("remove vote");
+                              await firestore
+                                .setData(
+                                  FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+                                  item.wishlist_id,
+                                  {
+                                    ...item,
+                                    voters: [
+                                      ...item.voters.filter(
+                                        (voter) => voter !== userAccount.uid
+                                      ),
+                                    ],
+                                    voters_count: item.voters.length - 1,
+                                    _timestamps: {
+                                      ...item._timestamps,
+                                      updated_at: Date.now(),
+                                      updated_by: userAccount.uid,
+                                    },
+                                  }
+                                )
+                                .then(async () => {
+                                  setPublicLoading(true);
+                                  await getPublicWishlist();
+                                });
+                            } else {
+                              console.log("add vote");
+                              await firestore
+                                .setData(
+                                  FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+                                  item.wishlist_id,
+                                  {
+                                    ...item,
+                                    voters: [...item.voters, userAccount.uid],
+                                    voters_count: item.voters.length + 1,
+                                    _timestamps: {
+                                      ...item._timestamps,
+                                      updated_at: Date.now(),
+                                      updated_by: userAccount.uid,
+                                    },
+                                  }
+                                )
+                                .then(async () => {
+                                  setPublicLoading(true);
+                                  await getPublicWishlist();
+                                });
+                            }
+                          }}
+                        />
+                      </ListSection>
+                    </>
+                  )}
+                </>
+              );
             }}
           />
-        </View>
+        </>
       )}
-      {isLoading && (
+      {showFeatureWishlist.private && (
+        <>
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={privateLoading}
+                onRefresh={() => getPrivateWishlist()}
+              />
+            }
+            data={privateWishlist}
+            style={{
+              backgroundColor: appSettings.theme.style.colors.background,
+              minHeight: privateWishlist.length > 0 ? "100%" : 0,
+              paddingVertical: 16,
+            }}
+            ListFooterComponent={() => (
+              <>
+                {!privateLoading && privateWishlist.length > 0 && (
+                  <View
+                    style={{
+                      paddingBottom: 86,
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* <IonIcons
+                      name="checkmark-circle-outline"
+                      size={20}
+                      color={appSettings.theme.style.colors.foreground}
+                    /> */}
+                    {/* <TextPrimary label="That's all for now" /> */}
+                  </View>
+                )}
+              </>
+            )}
+            key={(item) => item.id}
+            renderItem={({ item }) => {
+              return (
+                <>
+                  {!privateLoading && privateWishlist.length > 0 && (
+                    <>
+                      <ListSection>
+                        <WishlistItem
+                          uid={userAccount.uid}
+                          item={item}
+                          onPress={async (item) => {
+                            console.log(item);
+                            if (
+                              item?.voters.some(
+                                (voter) => voter === userAccount.uid
+                              )
+                            ) {
+                              console.log("remove vote");
+                              await firestore
+                                .setData(
+                                  FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+                                  item.wishlist_id,
+                                  {
+                                    ...item,
+                                    voters: [
+                                      ...item.voters.filter(
+                                        (voter) => voter !== userAccount.uid
+                                      ),
+                                    ],
+                                    voters_count: item.voters.length - 1,
+                                    _timestamps: {
+                                      ...item._timestamps,
+                                      updated_at: Date.now(),
+                                      updated_by: userAccount.uid,
+                                    },
+                                  }
+                                )
+                                .then(async () => {
+                                  setPrivateLoading(true);
+                                  await getPrivateWishlist();
+                                });
+                            } else {
+                              console.log("add vote");
+                              await firestore
+                                .setData(
+                                  FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+                                  item.wishlist_id,
+                                  {
+                                    ...item,
+                                    voters: [...item.voters, userAccount.uid],
+                                    voters_count: item.voters.length + 1,
+                                    _timestamps: {
+                                      ...item._timestamps,
+                                      updated_at: Date.now(),
+                                      updated_by: userAccount.uid,
+                                    },
+                                  }
+                                )
+                                .then(async () => {
+                                  setPrivateLoading(true);
+                                  await getPrivateWishlist();
+                                });
+                            }
+                          }}
+                        />
+                      </ListSection>
+                    </>
+                  )}
+                </>
+              );
+            }}
+          />
+        </>
+      )}
+      {(!publicLoading || !privateLoading) &&
+        (!publicWishlist.length || !privateWishlist.length) && (
+          <View
+            style={{
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: appSettings.theme.style.colors.background,
+            }}
+          >
+            <IonIcons
+              name="document-text-outline"
+              size={64}
+              color={appSettings.theme.style.colors.secondary}
+            />
+            <TextSecondary
+              label="No feature wishlist yet"
+              style={{
+                paddingTop: 16,
+              }}
+            />
+          </View>
+        )}
+      {(publicLoading || privateLoading) && (
         <View
           style={{
             height: "100%",
@@ -225,7 +441,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
         >
           <Loading />
           <TextPrimary
-            label="Fetching all public wishlist..."
+            label="Fetching all wishlist..."
             style={{
               paddingTop: 16,
             }}

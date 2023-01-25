@@ -178,15 +178,29 @@ const queryData = async (collectionName, uid) => {
   }
 };
 
-const paginationQuery = async (collectionName, uid, limit) => {
+const getMyFeatureWishlist = async (collectionName, uid) => {
   try {
     const q = query(
       collection(db, collectionName),
-      orderBy("voters_count", "desc"),
-      // limit(limit)
+      where("uid", "==", uid),
+      
     );
     const querySnapshot = await getDocs(q);
-    console.log(querySnapshot.docs);
+    return querySnapshot.docs.map((doc) => doc.data());
+  } catch (error) {
+    Alert.alert("Error", error.message);
+    return Promise.reject(error);
+  }
+};
+
+const paginationQuery = async (collectionName, wishlistId = null, limit) => {
+  try {
+    let q = query(
+      collection(db, collectionName),
+      orderBy("voters_count", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    // console.log(querySnapshot.docs);
     return querySnapshot.docs.map((doc) => doc.data());
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
@@ -206,6 +220,7 @@ const firestore = {
   deleteData,
   queryData,
   paginationQuery,
+  getMyFeatureWishlist
 };
 
 export default firestore;
