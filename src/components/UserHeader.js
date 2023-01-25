@@ -43,14 +43,16 @@ const UserHeaderComponent = ({ navigation }) => {
               borderWidth: 3,
             }}
           >
-            <Image
-              source={{ uri: userAccount.photoURL }}
-              style={{
-                borderRadius: 128 / 2,
-                height: 128,
-                width: 128,
-              }}
-            />
+            {userAccount.photoURL && (
+              <Image
+                source={{ uri: userAccount.photoURL }}
+                style={{
+                  borderRadius: 128 / 2,
+                  height: 128,
+                  width: 128,
+                }}
+              />
+            )}
             <IonIcons
               name="person"
               size={64}
