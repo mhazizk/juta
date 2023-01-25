@@ -129,9 +129,9 @@ const REDUCER_ACTIONS = {
       SET: "SET_EMAIL",
       CLEAR: "CLEAR_EMAIL",
     },
-    AVATAR: {
-      SET: "SET_AVATAR",
-      CLEAR: "CLEAR_AVATAR",
+    PROFILE_PICTURE: {
+      SET: "SET_PROFILE_PICTURE",
+      CLEAR: "CLEAR_PROFILE_PICTURE",
     },
     TOKEN: {
       SET: "SET_TOKEN",

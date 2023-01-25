@@ -1,10 +1,7 @@
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  Alert,
-  ScrollView, View
-} from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
@@ -69,10 +66,12 @@ const AccountSettingsScreen = ({ item, navigation }) => {
               {/* // TAG : Profile */}
               <ListItem
                 pressable
-                leftLabel="Change Avatar"
+                leftLabel="Change Profile Picture"
                 iconLeftName="person"
                 iconPack="IonIcons"
-                onPress={() => alert("Coming soon")}
+                onPress={() =>
+                  navigation.navigate(screenList.myProfilePictureScreen)
+                }
               />
 
               {/* // TAG : Change Display Name */}

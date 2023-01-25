@@ -89,6 +89,10 @@ const screenList = {
   featureWishlistScreen: "Feature Wishlist Screen",
   newFeatureWishlistScreen: "New Feature Wishlist Screen",
 
+
+  // Profile picture screen
+  myProfilePictureScreen: "My Profile Picture Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",

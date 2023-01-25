@@ -77,6 +77,7 @@ import EditRepeatedTransactionScreen from "../features/repeated-transactions/scr
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureWishlistScreen";
 import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
+import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfilePictureScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -936,6 +937,13 @@ const RootStack = () => {
         component={ExportScreen}
       />
 
+      {/* // SECTION : MY PROFILE PICTURE */}
+      {/* // TAG : My Profile Picture Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "My Profile Picture" }}
+        name={screenList.myProfilePictureScreen}
+        component={MyProfilePictureScreen}
+      />
       {/* // SECTION : SETTINGS */}
       {/* // TAG : Settings Screen */}
       <Stack.Screen

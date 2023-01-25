@@ -6,6 +6,7 @@ import {
   TouchableNativeFeedback,
   Touchable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
@@ -235,7 +236,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
                         <WishlistItem
                           uid={userAccount.uid}
                           item={item}
-                          onPress={async (item) => {
+                          onPressVote={async (item) => {
                             console.log(item);
                             if (
                               item?.voters.some(
@@ -341,9 +342,37 @@ const FeatureWishlistScreen = ({ navigation }) => {
                     <>
                       <ListSection>
                         <WishlistItem
+                          deleteable
                           uid={userAccount.uid}
                           item={item}
-                          onPress={async (item) => {
+                          onPressDelete={() => {
+                            Alert.alert(
+                              "Delete Wishlist",
+                              "Are you sure you want to delete this wishlist?",
+                              [
+                                {
+                                  text: "Cancel",
+                                  onPress: () => {},
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Delete",
+                                  onPress: async () => {
+                                    await firestore
+                                      .deleteData(
+                                        FIRESTORE_COLLECTION_NAMES.FEATURE_WISHLIST,
+                                        item.wishlist_id
+                                      )
+                                      .then(async () => {
+                                        setPrivateLoading(true);
+                                        await getPrivateWishlist();
+                                      });
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                          onPressVote={async (item) => {
                             console.log(item);
                             if (
                               item?.voters.some(

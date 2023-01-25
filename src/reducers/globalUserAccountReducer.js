@@ -2,7 +2,7 @@ import REDUCER_ACTIONS from "./reducer.action";
 
 const globalUserAccountReducer = (state, action) => {
   switch (action.type) {
-    case REDUCER_ACTIONS.USER_ACCOUNT.AVATAR.SET:
+    case REDUCER_ACTIONS.USER_ACCOUNT.PROFILE_PICTURE.SET:
       return {
         ...state,
         photoURL: action.payload,

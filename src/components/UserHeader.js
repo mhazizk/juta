@@ -14,8 +14,8 @@ import {
 import { TextPrimary, TextSecondary } from "./Text";
 
 const UserHeaderComponent = ({ navigation }) => {
-  const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount } = useGlobalUserAccount();
+  const { appSettings } = useGlobalAppSettings();
   const checkmark = require("../assets/img/checkmark.png");
   // const statHeight = StatusBar.currentHeight;
   return (
@@ -43,7 +43,14 @@ const UserHeaderComponent = ({ navigation }) => {
               borderWidth: 3,
             }}
           >
-            {/* <Image source={checkmark} style={{ height: 128, width: 128 }} /> */}
+            <Image
+              source={{ uri: userAccount.photoURL }}
+              style={{
+                borderRadius: 128 / 2,
+                height: 128,
+                width: 128,
+              }}
+            />
             <IonIcons
               name="person"
               size={64}
