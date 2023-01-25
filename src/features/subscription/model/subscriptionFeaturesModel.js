@@ -57,6 +57,14 @@ const subscriptionFeaturesModel = [
     free: false,
     premium: true,
   },
+  {
+    id: 7,
+    identifier: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+    name: "Receipt images",
+    iconName: "image",
+    free: false,
+    premium: true,
+  },
   // {
   //   id: 7,
   //   identifier: SUBSCRIPTION_LIMIT.GROUPS,

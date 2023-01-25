@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
+  FlatList,
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -34,6 +37,11 @@ import ListSection from "../../components/List/ListSection";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import * as ImagePicker from "expo-image-picker";
+import {
+  getAttachmentImageURL,
+  uploadAttachmentImage,
+} from "../../api/firebase/cloudStorage";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -48,6 +56,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { userAccount } = useGlobalUserAccount();
 
   // TAG : useState Section //
+
+  // Image State
+  const [image, setImage] = useState([]);
 
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
@@ -110,6 +121,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         date: Date.now(),
         notes: null,
         category_id: null,
+        attachment_URL: [],
       },
       _timestamps: {
         created_at: Date.now(),
@@ -273,41 +285,103 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
+        // case transaction.details.attachment_URL.length > 0:
+        console.log("287");
+
+      // break;
       default:
-        setTimeout(() => {
-          if (transaction.repeat_id && localRepeatedTransactions.uid) {
-            dispatchRepeatedTransactions({
-              type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
-              payload: {
-                repeatedTransaction: localRepeatedTransactions,
-                reducerUpdatedAt: Date.now(),
-              },
-            });
-            setTimeout(async () => {
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-                localRepeatedTransactions.repeat_id,
-                localRepeatedTransactions
-              );
-            }, 5000);
+        const newAttachmentURL = transaction.details.attachment_URL.map(
+          (uri) => {
+            return { uri: uri, id: uuid.v4() };
           }
-        }, 1);
-        setTimeout(async () => {
-          await firestore.setData(
-            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-            transaction.transaction_id,
-            transaction
-          );
-        }, 5000);
-        return navigation.navigate(screenList.loadingScreen, {
-          label: "Saving ...",
-          loadingType: "insertTransaction",
-          transaction: transaction,
-          logbookToOpen: selectedLogbook,
-          reducerUpdatedAt: Date.now(),
-          // initialSortedTransactionsInsertCounter:
-          //   sortedTransactions.sortedTransactionsInsertCounter,
+        );
+
+        Promise.all(
+          newAttachmentURL.map((item) =>
+            uploadAttachmentImage(item.uri, item.id)
+          )
+        ).then(async (res) => {
+          const getNewURL = async () => {
+            const attachmentURL = [];
+            await newAttachmentURL.reduce(async (prev, curr) => {
+              await prev;
+              const newURL = await getAttachmentImageURL(curr.id);
+              attachmentURL.push(newURL);
+            }, Promise.resolve());
+            return attachmentURL;
+          };
+          const finalTransaction = {
+            ...transaction,
+            details: {
+              ...transaction.details,
+              attachment_URL: await getNewURL(),
+            },
+          };
+          // TODO : FIX THIS LOOP
+          console.log(finalTransaction.attachment_URL);
         });
+
+        // const getNewAttachmentURL = async () => {
+        //   let finalAttachmentURL;
+        //   if (transaction.details.attachment_URL.length > 0) {
+        //     const attachmentURL = [];
+        //     const newAttachmentURL = [
+        //       ...transaction.details.attachment_URL.map((uri) => {
+        //         return { uri: uri, id: uuid.v4() };
+        //       }),
+        //     ];
+        //     await newAttachmentURL.reduce(async (prev, curr) => {
+        //       await prev;
+        //       const newURL = await uploadAttachmentImage(curr.uri, curr.id);
+        //       attachmentURL.push(newURL);
+        //     }, Promise.resolve());
+        //   }
+
+        //   // console.log(newAttachmentURL);
+        //   return {
+        //     ...transaction,
+        //     details: {
+        //       ...transaction.details,
+        //       attachment_URL: finalAttachmentURL,
+        //     },
+        //   };
+        // };
+
+        break;
+      // setTimeout(() => {
+      //   if (transaction.repeat_id && localRepeatedTransactions.uid) {
+      //     dispatchRepeatedTransactions({
+      //       type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
+      //       payload: {
+      //         repeatedTransaction: localRepeatedTransactions,
+      //         reducerUpdatedAt: Date.now(),
+      //       },
+      //     });
+      //     setTimeout(async () => {
+      //       await firestore.setData(
+      //         FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+      //         localRepeatedTransactions.repeat_id,
+      //         localRepeatedTransactions
+      //       );
+      //     }, 5000);
+      //   }
+      // }, 1);
+      // setTimeout(async () => {
+      //   await firestore.setData(
+      //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+      //     finalTransaction.transaction_id,
+      //     finalTransaction
+      //   );
+      // }, 5000);
+      // return navigation.navigate(screenList.loadingScreen, {
+      //   label: "Saving ...",
+      //   loadingType: "insertTransaction",
+      //   transaction: finalTransaction,
+      //   logbookToOpen: selectedLogbook,
+      //   reducerUpdatedAt: Date.now(),
+      //   // initialSortedTransactionsInsertCounter:
+      //   //   sortedTransactions.sortedTransactionsInsertCounter,
+      // });
     }
   };
 
@@ -347,6 +421,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
               style={{
+                minHeight: Dimensions.get("window").height / 3,
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
@@ -970,6 +1045,147 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     paddingHorizontal: 50,
                   }}
                 />
+              )}
+            </ListSection>
+            {/* // TAG : Attachment Image */}
+            <ListSection>
+              <ListItem
+                pressable
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                  )
+                }
+                leftLabel="Attachment Images"
+                iconLeftName="image"
+                iconPack="IonIcons"
+                rightLabel={
+                  transaction?.details?.attachment_URL?.length
+                    ? transaction?.details?.attachment_URL?.length + " image(s)"
+                    : "Add attachment"
+                }
+                iconRightName="add"
+                onPress={async () => {
+                  // No permissions request is necessary for launching the image library
+                  let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    allowsMultipleSelection: true,
+                    quality: 1,
+                  });
+
+                  const { canceled, assets } = result;
+                  const uri = assets.map((asset) => asset.uri);
+                  if (!result.canceled) {
+                    setTransaction({
+                      ...transaction,
+                      details: {
+                        ...transaction.details,
+                        attachment_URL: [
+                          ...transaction.details.attachment_URL,
+                          ...uri,
+                        ],
+                      },
+                    });
+                  }
+                }}
+              />
+              <FlatList
+                horizontal
+                data={transaction?.details?.attachment_URL}
+                contentContainerStyle={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "100%",
+                }}
+                renderItem={({ item }) => (
+                  <>
+                    {item && (
+                      <>
+                        <TouchableOpacity
+                          style={{
+                            zIndex: 1,
+                            padding: 8,
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                          onPress={() =>
+                            setTransaction({
+                              ...transaction,
+                              details: {
+                                ...transaction?.details,
+                                attachment_URL: [
+                                  ...transaction.details.attachment_URL.filter(
+                                    (url) => url !== item
+                                  ),
+                                ],
+                              },
+                            })
+                          }
+                        >
+                          <IonIcons
+                            name="close-circle"
+                            size={20}
+                            style={{ padding: 16 }}
+                            color={appSettings.theme.style.colors.foreground}
+                          />
+                        </TouchableOpacity>
+
+                        <TouchableNativeFeedback
+                          onPress={() => {
+                            navigation.navigate(screenList.imageViewerScreen, {
+                              uri: item,
+                              uriList: transaction?.details?.attachment_URL,
+                            });
+                          }}
+                        >
+                          <Image
+                            source={{ uri: item }}
+                            style={{
+                              margin: 8,
+                              alignSelf: "center",
+                              borderRadius: 16,
+                              width: 200,
+                              height: 200,
+                            }}
+                          />
+                        </TouchableNativeFeedback>
+                      </>
+                    )}
+                  </>
+                )}
+              />
+              {transaction?.details?.attachment_URL.length !== 0 && (
+                <>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    onPress={() =>
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction?.details,
+                          attachment_URL: [],
+                        },
+                      })
+                    }
+                  >
+                    <IonIcons
+                      name="close-circle"
+                      size={20}
+                      style={{ padding: 16 }}
+                      color={appSettings.theme.style.colors.foreground}
+                    />
+                    <TextPrimary label="Clear all" />
+                  </TouchableOpacity>
+                </>
               )}
             </ListSection>
 

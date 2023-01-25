@@ -78,6 +78,7 @@ import REDUCER_ACTIONS from "../reducers/reducer.action";
 import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureWishlistScreen";
 import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
 import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfilePictureScreen";
+import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -943,6 +944,14 @@ const RootStack = () => {
         options={{ ...showHeader, title: "My Profile Picture" }}
         name={screenList.myProfilePictureScreen}
         component={MyProfilePictureScreen}
+      />
+
+      {/* // SECTION : IMAGE VIEWER */}
+      {/* // TAG : Image Viewer Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Attachment Image" }}
+        name={screenList.imageViewerScreen}
+        component={ImageViewerScreen}
       />
       {/* // SECTION : SETTINGS */}
       {/* // TAG : Settings Screen */}

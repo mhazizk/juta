@@ -93,6 +93,9 @@ const screenList = {
   // Profile picture screen
   myProfilePictureScreen: "My Profile Picture Screen",
 
+  // Image viewer screen
+  imageViewerScreen: "Image Viewer Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",
