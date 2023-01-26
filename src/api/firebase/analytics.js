@@ -1,4 +1,4 @@
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics, isSupported, logEvent } from "firebase/analytics";
 import app from "./app";
 
 const analytics = isSupported()
@@ -7,4 +7,10 @@ const analytics = isSupported()
     alert("Analytics is not supported on this device");
   });
 
-export default analytics;
+const logFirebaseEvent = (eventName, { ...eventParams }) => {
+  analytics.then((analytics) => {
+    logEvent(analytics, eventName, { ...eventParams });
+  });
+};
+// TODO : analytics
+export default logFirebaseEvent;

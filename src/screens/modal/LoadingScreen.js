@@ -21,6 +21,8 @@ import {
   uploadAndGetAttachmentImageURL,
 } from "../../api/firebase/cloudStorage";
 import uuid from "react-native-uuid";
+import postLogSnagEvent from "../../api/logsnag/postLogSnagEvent";
+import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
 
 const LoadingScreen = ({ route, navigation }) => {
   const { userAccount } = useGlobalUserAccount();
@@ -90,6 +92,10 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Insert One Transaction Method
           case transaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
+            postLogSnagEvent(
+              userAccount.displayName,
+              LOGSNAG_EVENT_TYPES.TRANSACTION_NEW
+            );
             if (transaction.details.attachment_URL.length > 0) {
               const newAttachmentURL = transaction.details.attachment_URL.map(
                 (uri) => {
@@ -267,6 +273,11 @@ const LoadingScreen = ({ route, navigation }) => {
 
           // TAG : Delete One Transaction Method
           case deleteTransaction && loadingType === "deleteOneTransaction":
+            postLogSnagEvent(
+              userAccount.displayName,
+              LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
+            );
+
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                 .DELETE_ONE_TRANSACTION,

@@ -16,6 +16,7 @@ import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import userAccountModel from "../../model/userAccountModel";
+import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -283,7 +284,6 @@ const SignUpScreen = ({ route, navigation }) => {
               email: user.email,
               emailVerified: user.emailVerified,
               photoURL: user.photoURL,
-              
             });
 
             // const account = {
@@ -301,6 +301,10 @@ const SignUpScreen = ({ route, navigation }) => {
                 FIRESTORE_COLLECTION_NAMES.USERS,
                 account.uid,
                 account
+              );
+              await postLogSnagEvent(
+                account.displayName,
+                LOGSNAG_EVENT_TYPES.USER_SIGNUP
               );
               await handleUserUpdateProfile({
                 displayName,

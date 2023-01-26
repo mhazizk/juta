@@ -11,15 +11,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID,
+} from "react-native-dotenv";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBa2PQkoyKDmok1qEmGGTPdZPEhy16unPQ",
-  authDomain: "cashlog-app.firebaseapp.com",
-  projectId: "cashlog-app",
-  storageBucket: "cashlog-app.appspot.com",
-  messagingSenderId: "535532688013",
-  appId: "1:535532688013:web:b664a2a9c41447218608c4",
-  measurementId: "G-4F0HF1XHQ9",
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

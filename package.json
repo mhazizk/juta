@@ -19,6 +19,7 @@
     "@react-navigation/stack": "^6.3.4",
     "axios": "^1.2.2",
     "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "expo": "~47.0.8",
     "expo-application": "~5.0.1",
     "expo-device": "~5.0.0",
@@ -54,7 +55,8 @@
     "victory-native": "^36.6.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "react-native-dotenv": "^3.4.7"
   },
   "private": true
 }
