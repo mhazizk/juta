@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { TransactionListItem } from "../../components/List";
+import { TransactionListItem } from "../../../components/List";
 import {
   TextButtonPrimary,
   TextPrimary,
   TextSecondary,
-} from "../../components/Text";
+} from "../../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalSortedTransactions,
-} from "../../reducers/GlobalContext";
+} from "../../../reducers/GlobalContext";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
-import * as utils from "../../utils";
+import * as utils from "../../../utils";
 
 const TransactionList = ({
   selectedLogbook,

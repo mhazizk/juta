@@ -1,9 +1,13 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 // import Intl from "intl";
-// import { getLocales } from 'expo-localization';
 // import "intl/locale-data/jsonp/en";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -11,59 +15,81 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Octicons from "react-native-vector-icons/Octicons";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
-import {
-  ButtonPrimary,
-  ButtonSecondary,
-  ButtonSwitch,
-} from "../../components/Button";
-import DatePicker from "../../components/DatePicker";
-import { ListItem } from "../../components/List";
-import ListSection from "../../components/List/ListSection";
-import { TextPrimary, TextSecondary } from "../../components/Text";
-import screenList from "../../navigations/ScreenList";
+import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
+import { TextPrimary } from "../../../components/Text";
+import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
-  useGlobalLoading,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
-  useGlobalTransactions,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import * as utils from "../../utils";
+} from "../../../reducers/GlobalContext";
+import * as utils from "../../../utils";
+import uuid from "react-native-uuid";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import { ListItem } from "../../../components/List";
+import ListSection from "../../../components/List/ListSection";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import SUBSCRIPTION_LIMIT from "../../../features/subscription/model/subscriptionLimit";
+import getSubscriptionLimit from "../../../features/subscription/logic/getSubscriptionLimit";
+import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStorage";
+import * as ImagePicker from "expo-image-picker";
+import LOADING_TYPES from "../../../screens/modal/loading.type";
 
-const EditTransactionDetailsScreen = ({ route, navigation }) => {
+const NewTransactionDetailsScreen = ({ route, navigation }) => {
+  const repeatId = uuid.v4();
   // TAG : useContext Section //
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const { userAccount } = useGlobalUserAccount();
-  const { sortedTransactions, dispatchSortedTransactions } =
-    useGlobalSortedTransactions();
-  const { categories, dispathCategories } = useGlobalCategories();
-  const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { sortedTransactions } = useGlobalSortedTransactions();
+  const { categories } = useGlobalCategories();
+  const { logbooks } = useGlobalLogbooks();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
-  const [logbookToOpen, setLogbookToOpen] = useState(null);
+  const { userAccount } = useGlobalUserAccount();
 
   // TAG : useState Section //
 
-  // Loading State
+  // Image State
+  const [image, setImage] = useState([]);
 
-  // Local repeated transaction
-  const [localRepeatedTransaction, setLocalRepeatedTransaction] =
-    useState(null);
+  // Loading State
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Repated Transaction State
+  const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
+    uid: null,
+    repeat_id: null,
+    repeat_transaction_type: "cash",
+    repeat_status: "active",
+    repeat_amount: 0,
+    repeat_in_out: "expense",
+    repeat_category_id: null,
+    repeat_logbook_id: null,
+    repeat_start_date: null,
+    repeat_finish_date: null,
+    next_repeat_date: null,
+    repeat_notes: null,
+    repeat_type: {
+      name: "no repeat",
+      id: "no_repeat",
+      range: 0,
+    },
+    transactions: [],
+    _timestamps: {
+      created_at: Date.now(),
+      created_by: userAccount.uid,
+      updated_at: Date.now(),
+      updated_by: userAccount.uid,
+    },
+  });
 
   // Transaction State
   const [transaction, setTransaction] = useState(null);
-
-  // Previous Transaction State
-  const [prevTransaction, setPrevTransaction] = useState(null);
 
   // Logbook State
   const [selectedLogbook, setSelectedLogbook] = useState(null);
@@ -74,54 +100,100 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // Loaded User Logbooks
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
 
+  // Transactions Length State
+  // const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
+
   // TAG : useEffect Section //
 
   useEffect(() => {
-    // setLoading(true);
-    // getFile();
-    checkInitialTransaction();
+    getFirstLogbook();
+
     insertNameInUserLogBook();
 
-    // console.log(transaction)
+    setTransaction({
+      details: {
+        in_out: "expense",
+        amount: 0,
+        type: "cash",
+        date: Date.now(),
+        notes: null,
+        category_id: null,
+        attachment_URL: [],
+      },
+      _timestamps: {
+        created_at: Date.now(),
+        created_by: userAccount.uid,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+      repeat_id: null,
+      logbook_id: logbooks.logbooks[0].logbook_id,
+      transaction_id: uuid.v4(),
+      uid: userAccount.uid,
+    });
+
+    setIsLoading(false);
+
+    // setRawTransactionsLength(null)
   }, []);
 
   useEffect(() => {
     // refresh
-    // console.log(transaction)
-    // findCategoryNameById();
-    // findCategoryNameById();
+    // console.log(transaction);
+    // if (localRepeatedTransactions.repeat_id && transaction.repeat_id) {
+    //   console.log(localRepeatedTransactions.repeat_id);
+    //   console.log(transaction.repeat_id);
+    // }
+    // console.log(localRepeatedTransactions);
+    if (transaction) {
+      setLocalRepeatedTransactions({
+        ...localRepeatedTransactions,
+        uid: userAccount.uid,
+        repeat_amount: transaction.details.amount,
+        repeat_in_out: transaction.details.in_out,
+        repeat_transaction_type: transaction.details.type,
+        repeat_category_id: transaction.details.category_id,
+        repeat_logbook_id: transaction.logbook_id,
+        repeat_notes: transaction.details.notes,
+        repeat_start_date: transaction.details.date,
+        repeat_finish_date: null,
+      });
+    }
   }, [transaction]);
 
   useEffect(() => {
-    console.log(prevTransaction);
-  }, [prevTransaction]);
-
-  useEffect(() => {
     // refresh
-    // console.log('rendered')
-    console.log(selectedCategory);
+    // console.log(selectedCategory);
   }, [selectedCategory]);
 
   useEffect(() => {
     // refresh
-    console.log(selectedLogbook);
-    if (selectedLogbook) {
-      setLogbookToOpen({
-        name: selectedLogbook.name,
-        logbook_id: transaction?.logbook_id,
-        logbook_currency: selectedLogbook.logbook_currency,
-        key: transaction.logbook_id,
-      });
-    }
+    // console.log({ selectedLogbook });
   }, [selectedLogbook]);
 
   useEffect(() => {
     // console.log(loadedLogbooks)
   }, [loadedLogbooks]);
 
-  useEffect(() => {
-    console.log(logbookToOpen);
-  }, [logbookToOpen]);
+  // useEffect(() => {
+
+  // }, [rawTransactionsLength])
+
+  // useEffect(() => {
+
+  //     if (!rawTransactionsLength) {
+  //         setRawTransactionsLength(rawTransactions.transactions.length)
+  //     }
+
+  // if (rawTransactionsLength && rawTransactionsLength < rawTransactions.transactions.length) {
+
+  //     setRawTransactionsLength(null);
+
+  //     saveFile();
+
+  // }
+
+  // }, [rawTransactions.transactions])
 
   // TAG : useRef State //
   const inputNotes = useRef(null);
@@ -137,15 +209,27 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   };
   const onChangeTime = (event, selectedDate) => {
     const currentDate = selectedDate;
-    event.type === "dismissed";
-    event.type === "set" &&
-      setTransaction({
-        ...transaction,
-        details: {
-          ...transaction.details,
-          date: new Date(currentDate).getTime(),
-        },
-      });
+    switch (event.type) {
+      case "dismissed":
+        break;
+
+      case "set":
+        setTransaction({
+          ...transaction,
+          details: {
+            ...transaction.details,
+            date: new Date(currentDate).getTime(),
+          },
+        });
+        setLocalRepeatedTransactions({
+          ...localRepeatedTransactions,
+          repeat_start_date: new Date(currentDate).getTime(),
+        });
+        break;
+
+      default:
+        break;
+    }
   };
 
   // Date Picker
@@ -184,16 +268,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     setLoadedLogbooks(inserted);
   };
 
-  // Check Initial Transaction from Preview Screen
-  const checkInitialTransaction = useMemo(() => {
-    return () => {
-      setPrevTransaction(route?.params?.transaction);
-      setTransaction(route?.params?.transaction);
-      setSelectedCategory(route?.params?.selectedCategory);
-      setSelectedLogbook(route?.params?.selectedLogbook);
-    };
-  });
-
   const checkFinalTransaction = () => {
     switch (true) {
       case !transaction.details.amount:
@@ -208,40 +282,59 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
-      default:
-        const finalTransaction = {
-          ...transaction,
-          _timestamps: {
-            ...transaction._timestamps,
-            updated_at: Date.now(),
-            updated_by: userAccount.uid,
-          },
-        };
+        // case transaction.details.attachment_URL.length > 0:
+        console.log("287");
 
+      // break;
+      default:
+        break;
+    }
+
+    setTimeout(() => {
+      if (transaction.repeat_id && localRepeatedTransactions.uid) {
+        dispatchRepeatedTransactions({
+          type: REDUCER_ACTIONS.REPEATED_TRANSACTIONS.INSERT,
+          payload: {
+            repeatedTransaction: localRepeatedTransactions,
+            reducerUpdatedAt: Date.now(),
+          },
+        });
         setTimeout(async () => {
           await firestore.setData(
-            FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-            finalTransaction.transaction_id,
-            finalTransaction
+            FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+            localRepeatedTransactions.repeat_id,
+            localRepeatedTransactions
           );
         }, 5000);
+      }
+    }, 1);
+    return navigation.navigate(screenList.loadingScreen, {
+      label: "Saving ...",
+      loadingType: LOADING_TYPES.TRANSACTIONS.INSERT_ONE,
+      transaction: transaction,
+      logbookToOpen: selectedLogbook,
+      reducerUpdatedAt: Date.now(),
+    });
+  };
 
-        return navigation.navigate(screenList.loadingScreen, {
-          label: "Saving Transction ...",
-          loadingType: "patchTransaction",
-          logbookToOpen: logbookToOpen,
-          patchTransaction: finalTransaction,
-          prevTransaction: prevTransaction,
-          reducerUpdatedAt: Date.now(),
-          // initialSortedTransactionsPatchCounter:
-          //   sortedTransactions.sortedTransactionsPatchCounter,
-        });
+  const getFirstLogbook = () => {
+    if (logbooks.logbooks.length > 0) {
+      setSelectedLogbook({
+        name: logbooks.logbooks[0].logbook_name,
+        logbook_id: logbooks.logbooks[0].logbook_id,
+        logbook_currency: logbooks.logbooks[0].logbook_currency,
+      });
+
+      // setTransaction({
+      //   ...transaction,
+      //   logbook_id: logbooks.logbooks[0].logbook_id,
+      // });
     }
   };
 
   return (
     <>
-      {transaction && selectedCategory && selectedLogbook && (
+      {!isLoading.status && transaction && (
         <View
           style={[
             {
@@ -260,10 +353,12 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
               style={{
+                minHeight: Dimensions.get("window").height / 3,
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 flex: 1,
+                // minHeight: Dimensions.get("window").height / 3,
               }}
             >
               <View
@@ -273,8 +368,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   flexDirection: "row",
                 }}
               >
-                <TextSecondary
-                  label={selectedLogbook.logbook_currency.symbol}
+                <TextPrimary
+                  label={
+                    selectedLogbook?.logbook_currency?.symbol ||
+                    appSettings.logbookSettings.defaultCurrency.symbol
+                  }
                   style={{
                     paddingRight: 8,
                     color:
@@ -285,38 +383,30 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 />
                 <TextInput
                   ref={inputAmount}
+                  keyboardAppearance={
+                    appSettings.theme.id === "dark" ? "dark" : "default"
+                  }
                   maxLength={20}
                   textAlign="center"
                   returnKeyType="done"
                   keyboardType="number-pad"
-                  // placeholder={Intl.NumberFormat("en-US", {
-                  //   style: "decimal",
-                  //   minimumFractionDigits: 2,
-                  //   maximumFractionDigits: 2,
-                  // }).format(transaction.details.amount)}
-                  // placeholderTextColor={
-                  //   appSettings.theme.style.text.textSecondary.color
-                  // }
-                  placeholder={utils.GetFormattedNumber({
-                    value: transaction.details.amount,
-                    currency: appSettings.logbookSettings.defaultCurrency.name,
-                  })}
+                  // placeholder={utils.GetFormattedNumber({
+                  //   value: transaction.details.amount,
+                  //   currency: appSettings.logbookSettings.defaultCurrency.name,
+                  // })}
                   placeholderTextColor={
                     appSettings.theme.style.text.textSecondary.color
                   }
                   style={[
                     {
                       ...appSettings.theme.style.text.textPrimary,
-                      paddingLeft: 0,
-                      paddingVertical: 16,
-                      paddingRight: 16,
-                      minHeight: 36,
+                      height: 36,
                       fontSize: 36,
                     },
                     {
                       color:
                         transaction.details.in_out === "income"
-                          ? appSettings.theme.style.colors.incomeAmount
+                          ? appSettings.theme.style.colors.incomeSymbol
                           : appSettings.theme.style.text.textPrimary.color,
                     },
                   ]}
@@ -438,7 +528,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   })
                 }
               />
-
               {/* // TAG : Type */}
               <ListItem
                 pressable
@@ -657,7 +746,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 }
               />
             </ListSection>
-
             <ListSection>
               {/* // TAG : Notes Section */}
               <TouchableNativeFeedback
@@ -737,18 +825,313 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 </View>
               </TouchableNativeFeedback>
             </ListSection>
+            <ListSection>
+              {/* // TAG : Repeat */}
+              <ListItem
+                pressable
+                leftLabel="Repeat"
+                rightLabel={
+                  !localRepeatedTransactions.repeat_type?.name
+                    ? "None"
+                    : localRepeatedTransactions.repeat_type.name[0].toUpperCase() +
+                      localRepeatedTransactions.repeat_type.name.substring(1)
+                }
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                  )
+                }
+                iconPack="IonIcons"
+                iconLeftName="repeat"
+                iconRightName="chevron-forward"
+                useRightLabelContainer
+                // iconInRightContainerName="repeat"
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : appSettings.theme.style.colors.secondary,
+                }}
+                iconColorInContainer={
+                  transaction.details.in_out === "income"
+                    ? "#00695c"
+                    : appSettings.theme.style.text.textPrimary.color
+                }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : appSettings.theme.style.text.textPrimary.color,
+                }}
+                onPress={() => {
+                  if (
+                    getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                    )
+                  ) {
+                    navigation.navigate(screenList.modalScreen, {
+                      title: "Repeat Transaction",
+                      modalType: "list",
+                      iconProps: {
+                        name: "repeat",
+                        pack: "IonIcons",
+                      },
+                      props: [
+                        {
+                          name: "no repeat",
+                          id: "no_repeat",
+                          range: 0,
+                        },
+                        {
+                          name: "every day",
+                          id: "every_day",
+                          range: 60 * 60 * 24 * 1000,
+                        },
+                        {
+                          name: "every week",
+                          id: "every_week",
+                          range: 60 * 60 * 24 * 7 * 1000,
+                        },
+                        {
+                          name: "every 2 weeks",
+                          id: "every_2_weeks",
+                          range: 60 * 60 * 24 * 14 * 1000,
+                        },
+                        {
+                          name: "every month",
+                          id: "every_month",
+                          range: 60 * 60 * 24 * 30 * 1000,
+                        },
+                        {
+                          name: "every year",
+                          id: "every_year",
+                          range: 60 * 60 * 24 * 365 * 1000,
+                        },
+                      ],
+                      selected: (item) => {
+                        if (item.id === "no_repeat") {
+                          setLocalRepeatedTransactions({
+                            uid: userAccount.uid,
+                            repeat_id: null,
+                            repeat_type: item,
+                            transactions: [],
+                          });
+                          setTransaction({
+                            ...transaction,
+                            repeat_id: null,
+                          });
+                        } else {
+                          const repeat_id = uuid.v4();
+
+                          setLocalRepeatedTransactions({
+                            ...localRepeatedTransactions,
+                            uid: userAccount.uid,
+                            repeat_id: repeat_id,
+                            repeat_amount: transaction.details.amount,
+                            repeat_in_out: transaction.details.in_out,
+                            repeat_category_id: transaction.details.category_id,
+                            repeat_status: "active",
+                            repeat_logbook_id: transaction.logbook_id,
+                            repeat_notes: transaction.details.notes,
+                            repeat_start_date: transaction.details.date,
+                            repeat_finish_date: null,
+                            next_repeat_date:
+                              transaction.details.date + item.range,
+                            repeat_type: item,
+                            transactions: [transaction.transaction_id],
+                          });
+                          setTransaction({
+                            ...transaction,
+                            repeat_id: repeat_id,
+                          });
+                        }
+                      },
+                      default: localRepeatedTransactions.repeat_type,
+                    });
+                  } else {
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      "Upgrade your subscription to use repeating transactions"
+                    );
+                  }
+                }}
+              />
+              {localRepeatedTransactions.repeat_type.id !== "no_repeat" && (
+                <TextPrimary
+                  label={
+                    "Next repeat in " +
+                    new Date(
+                      localRepeatedTransactions.next_repeat_date
+                    ).toDateString()
+                  }
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 50,
+                  }}
+                />
+              )}
+            </ListSection>
+            {/* // TAG : Attachment Image */}
+            <ListSection>
+              <ListItem
+                pressable
+                disabled={
+                  !getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                  )
+                }
+                leftLabel="Attachment Images"
+                iconLeftName="image"
+                iconPack="IonIcons"
+                rightLabel={
+                  transaction?.details?.attachment_URL?.length
+                    ? transaction?.details?.attachment_URL?.length + " image(s)"
+                    : "Add attachment"
+                }
+                iconRightName="add"
+                onPress={async () => {
+                  // No permissions request is necessary for launching the image library
+                  let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    allowsMultipleSelection: true,
+                    quality: 1,
+                  });
+
+                  const { canceled, assets } = result;
+                  const uri = assets.map((asset) => asset.uri);
+                  if (!result.canceled) {
+                    setTransaction({
+                      ...transaction,
+                      details: {
+                        ...transaction.details,
+                        attachment_URL: [
+                          ...transaction.details.attachment_URL,
+                          ...uri,
+                        ],
+                      },
+                    });
+                  }
+                }}
+              />
+              <FlatList
+                horizontal
+                data={transaction?.details?.attachment_URL}
+                contentContainerStyle={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "100%",
+                }}
+                renderItem={({ item }) => (
+                  <>
+                    {item && (
+                      <>
+                        <TouchableOpacity
+                          style={{
+                            zIndex: 1,
+                            padding: 8,
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                          onPress={() =>
+                            setTransaction({
+                              ...transaction,
+                              details: {
+                                ...transaction?.details,
+                                attachment_URL: [
+                                  ...transaction.details.attachment_URL.filter(
+                                    (url) => url !== item
+                                  ),
+                                ],
+                              },
+                            })
+                          }
+                        >
+                          <IonIcons
+                            name="close-circle"
+                            size={20}
+                            style={{ padding: 16 }}
+                            color={appSettings.theme.style.colors.foreground}
+                          />
+                        </TouchableOpacity>
+
+                        <TouchableNativeFeedback
+                          onPress={() => {
+                            navigation.navigate(screenList.imageViewerScreen, {
+                              uri: item,
+                              uriList: transaction?.details?.attachment_URL,
+                            });
+                          }}
+                        >
+                          <Image
+                            source={{ uri: item }}
+                            style={{
+                              margin: 8,
+                              alignSelf: "center",
+                              borderRadius: 16,
+                              width: 200,
+                              height: 200,
+                            }}
+                          />
+                        </TouchableNativeFeedback>
+                      </>
+                    )}
+                  </>
+                )}
+              />
+              {transaction?.details?.attachment_URL.length !== 0 && (
+                <>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    onPress={() =>
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction?.details,
+                          attachment_URL: [],
+                        },
+                      })
+                    }
+                  >
+                    <IonIcons
+                      name="close-circle"
+                      size={20}
+                      style={{ padding: 16 }}
+                      color={appSettings.theme.style.colors.foreground}
+                    />
+                    <TextPrimary label="Clear all" />
+                  </TouchableOpacity>
+                </>
+              )}
+            </ListSection>
 
             {/* // TAG : Line Separator */}
             {/* <View
-            style={{
-              borderColor: "#bbb",
-              borderBottomWidth: 1,
-              height: 0,
-              width: "80%",
-              alignSelf: "center",
-              paddingTop: 16,
-            }}
-          ></View> */}
+              style={{
+                borderColor: "#bbb",
+                borderBottomWidth: 1,
+                height: 0,
+                width: "80%",
+                alignSelf: "center",
+                paddingTop: 16,
+              }}
+            ></View> */}
 
             {/* // TAG : Action Button */}
             <View
@@ -769,7 +1152,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   theme={appSettings.theme}
                   onPress={() => {
                     // setRawTransactionsLength(null)
-                    navigation.goBack();
+                    navigation.navigate(screenList.bottomTabNavigator);
                   }}
                 />
               </View>
@@ -793,4 +1176,4 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   );
 };
 
-export default EditTransactionDetailsScreen;
+export default NewTransactionDetailsScreen;

@@ -182,7 +182,6 @@ const DashboardScreen = ({ navigation }) => {
                 <Image
                   source={checkmark}
                   style={{
-                    tintColor: appSettings.theme.style.colors.textHeader,
                     width: 20,
                     height: 20,
                     marginLeft: 4,

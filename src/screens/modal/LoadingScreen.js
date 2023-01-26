@@ -9,14 +9,21 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import LOADING_TYPES from "./loading.type";
+import {
+  deleteAttachmentImage,
+  uploadAndGetAttachmentImageURL,
+} from "../../api/firebase/cloudStorage";
+import uuid from "react-native-uuid";
 
 const LoadingScreen = ({ route, navigation }) => {
+  const { userAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -81,33 +88,181 @@ const LoadingScreen = ({ route, navigation }) => {
 
         switch (true) {
           // TAG : Insert One Transaction Method
-          case transaction && loadingType === "insertTransaction":
-            console.log("start insert transaction");
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .INSERT_TRANSACTION,
-              payload: {
-                transaction,
-                logbookToOpen,
-                reducerUpdatedAt,
-              },
-            });
+          case transaction &&
+            loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
+            if (transaction.details.attachment_URL.length > 0) {
+              const newAttachmentURL = transaction.details.attachment_URL.map(
+                (uri) => {
+                  return { uri: uri, id: uuid.v4() };
+                }
+              );
+
+              const getNewURL = async () => {
+                const attachmentURL = [];
+                await newAttachmentURL.reduce(async (prev, curr) => {
+                  await prev;
+                  const newURL = await uploadAndGetAttachmentImageURL(
+                    curr.uri,
+                    curr.id
+                  );
+                  attachmentURL.push(newURL);
+                }, Promise.resolve());
+                return attachmentURL;
+              };
+
+              getNewURL().then((attachmentURL) => {
+                const finalTransaction = {
+                  ...transaction,
+                  details: {
+                    ...transaction.details,
+                    attachment_URL: attachmentURL,
+                  },
+                };
+                setTimeout(async () => {
+                  await firestore.setData(
+                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                    finalTransaction.transaction_id,
+                    finalTransaction
+                  );
+                }, 5000);
+                dispatchSortedTransactions({
+                  type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                    .INSERT_TRANSACTION,
+                  payload: {
+                    transaction: finalTransaction,
+                    logbookToOpen,
+                    reducerUpdatedAt,
+                  },
+                });
+              });
+            } else {
+              dispatchSortedTransactions({
+                type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                  .INSERT_TRANSACTION,
+                payload: {
+                  transaction,
+                  logbookToOpen,
+                  reducerUpdatedAt,
+                },
+              });
+            }
             break;
 
           // TAG : Patch One Transaction Method
           case patchTransaction &&
             prevTransaction &&
-            loadingType === "patchTransaction":
-            dispatchSortedTransactions({
-              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .PATCH_TRANSACTION,
-              payload: {
-                prevTransaction,
-                patchTransaction,
-                logbookToOpen,
-                reducerUpdatedAt,
-              },
+            loadingType === LOADING_TYPES.TRANSACTIONS.PATCH_ONE:
+            const newAttachmentURL =
+              patchTransaction.details.attachment_URL.filter((uri) => {
+                return uri.includes("file://");
+              });
+
+            const uriWithUUID = newAttachmentURL.map((uri) => {
+              return { uri: uri, id: uuid.v4() };
             });
+
+            const deleteWebAttachmentURL = [];
+
+            prevTransaction.details.attachment_URL.forEach((uri) => {
+              if (
+                !patchTransaction.details.attachment_URL.includes(uri) &&
+                !uri.includes("file://")
+              ) {
+                deleteWebAttachmentURL.push(uri);
+              }
+            });
+            const getNewURL = async () => {
+              const attachmentURL = [];
+              await uriWithUUID.reduce(async (prev, curr) => {
+                await prev;
+                const newURL = await uploadAndGetAttachmentImageURL(
+                  curr.uri,
+                  curr.id
+                );
+                attachmentURL.push(newURL);
+              }, Promise.resolve());
+              return attachmentURL;
+            };
+
+            if (newAttachmentURL.length > 0) {
+              getNewURL().then((attachmentURL) => {
+                const finalTransaction = {
+                  ...patchTransaction,
+                  details: {
+                    ...patchTransaction.details,
+                    attachment_URL: [
+                      ...patchTransaction.details.attachment_URL.filter(
+                        (uri) => {
+                          return !uri.includes("file://");
+                        }
+                      ),
+                      ...attachmentURL,
+                    ],
+                  },
+                  _timestamps: {
+                    ...patchTransaction._timestamps,
+                    updated_at: Date.now(),
+                    updated_by: userAccount.uid,
+                  },
+                };
+                setTimeout(async () => {
+                  await firestore.setData(
+                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                    finalTransaction.transaction_id,
+                    finalTransaction
+                  );
+                  if (deleteWebAttachmentURL.length > 0) {
+                    deleteWebAttachmentURL.forEach(async (url) => {
+                      await deleteAttachmentImage(url);
+                    });
+                  }
+                }, 5000);
+
+                dispatchSortedTransactions({
+                  type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                    .PATCH_TRANSACTION,
+                  payload: {
+                    prevTransaction,
+                    patchTransaction: finalTransaction,
+                    logbookToOpen,
+                    reducerUpdatedAt,
+                  },
+                });
+              });
+            } else {
+              const finalTransaction = {
+                ...patchTransaction,
+                _timestamps: {
+                  ...patchTransaction._timestamps,
+                  updated_at: Date.now(),
+                  updated_by: userAccount.uid,
+                },
+              };
+
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                  finalTransaction.transaction_id,
+                  finalTransaction
+                );
+                if (deleteWebAttachmentURL.length > 0) {
+                  deleteWebAttachmentURL.forEach(async (url) => {
+                    await deleteAttachmentImage(url);
+                  });
+                }
+              }, 5000);
+
+              dispatchSortedTransactions({
+                type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                  .PATCH_TRANSACTION,
+                payload: {
+                  prevTransaction,
+                  patchTransaction: finalTransaction,
+                  logbookToOpen,
+                  reducerUpdatedAt,
+                },
+              });
+            }
             break;
 
           // TAG : Delete One Transaction Method
@@ -313,10 +468,12 @@ const LoadingScreen = ({ route, navigation }) => {
       reducerUpdatedAt === sortedTransactions.reducerUpdatedAt;
 
     switch (true) {
-      case isReducerTimestampSame && loadingType === "insertTransaction":
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
         navigation.navigate(screenList.bottomTabNavigator);
         break;
-      case isReducerTimestampSame && loadingType === "patchTransaction":
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.TRANSACTIONS.PATCH_ONE:
         navigation.navigate(screenList.bottomTabNavigator);
         break;
       case isReducerTimestampSame && loadingType === "patchCategory":

@@ -21,6 +21,9 @@ const ImageViewerScreen = ({ route, navigation }) => {
         height={Dimensions.get("window").height}
         data={route?.params?.uriList}
         key={(index) => index}
+        style={{
+          backgroundColor: "black",
+        }}
         renderItem={({ index }) => (
           <>
             <ImageZoom uri={route?.params?.uriList[index]} />

@@ -9,6 +9,7 @@ import Loading from "./Loading";
 export const ListItem = ({
   leftLabel,
   rightLabel,
+  rightLabelColor = null,
   secondaryLabel,
   thirdLabel,
   iconPack,
@@ -34,150 +35,115 @@ export const ListItem = ({
 
   return (
     <>
-      {pressable && (
-        <TouchableNativeFeedback onPress={onPress}>
-          <View style={appSettings.theme.style.list.listContainer}>
-            {iconPack === "IonIcons" && (
-              <IonIcons
-                name={iconLeftName}
-                size={18}
-                color={
-                  iconLeftColor
-                    ? iconLeftColor
-                    : !disabled
-                    ? appSettings.theme.style.colors.foreground
-                    : appSettings.theme.style.text.textSecondary.color
-                }
-                style={{ paddingRight: 16 }}
-              />
-            )}
-            {iconPack === "FontAwesome5" && (
-              <FontAwesome5Icon
-                name={iconLeftName}
-                color={
-                  iconLeftColor || disabled
-                    ? appSettings.theme.style.text.textSecondary.color
-                    : appSettings.theme.style.colors.foreground
-                }
-                size={18}
-                style={{
-                  transform: [{ scaleX: -1 }],
-                  paddingLeft: 16,
-                }}
-              />
-            )}
-            <View
-              style={{
-                ...appSettings.theme.style.list.listItem,
-                flexDirection: "row",
-                // maxWidth: "100%",
-              }}
-            >
-              <View>
-                {leftLabel && !disabled && <TextPrimary label={leftLabel} />}
-                {secondaryLabel && !disabled && (
-                  <TextSecondary label={secondaryLabel} />
-                )}
-                {thirdLabel && !disabled && (
-                  <TextSecondary label={thirdLabel} />
-                )}
-                {leftLabel && disabled && <TextSecondary label={leftLabel} />}
-              </View>
-              {rightLabel && !useRightLabelContainer && (
-                <TextSecondary label={rightLabel} />
-              )}
-              {rightLabel && useRightLabelContainer && (
-                <>
-                  <View
-                    style={[
-                      { ...rightLabelContainerStyle },
-                      { maxWidth: "70%" },
-                    ]}
-                  >
-                    {iconInRightContainerName && (
-                      <IonIcons
-                        name={iconInRightContainerName}
-                        size={
-                          iconRightSize ||
-                          (iconRightName === "checkmark-circle" ? 22 : 18)
-                        }
-                        color={
-                          iconColorInContainer ||
-                          appSettings.theme.style.colors.foreground ||
-                          lightTheme.colors.foreground
-                        }
-                        style={{ paddingRight: 8 }}
-                      />
-                    )}
-
-                    <TextPrimary
-                      label={rightLabel}
-                      style={{ ...(rightLabelStyle || null) }}
-                    />
-                  </View>
-                </>
-              )}
-            </View>
-            {/* {iconPack === "IonIcons" && ( */}
-
-            {iconRightName && !isLoading && (
-              <IonIcons
-                name={iconRightName}
-                size={
-                  iconRightSize ||
-                  (iconRightName === "checkmark-circle" ? 22 : 18)
-                }
-                color={
-                  disabled
-                    ? appSettings.theme.style.colors.secondary
-                    : iconRightColor
-                    ? iconRightColor
-                    : appSettings.theme.style.colors.foreground ||
-                      lightTheme.colors.foreground
-                }
-                style={{ paddingLeft: 16 }}
-              />
-            )}
-            {isLoading && <Loading size={18} />}
-            {/* )} */}
-          </View>
-        </TouchableNativeFeedback>
-      )}
-
-      {!pressable && (
+      <TouchableNativeFeedback onPress={pressable ? onPress : null}>
         <View style={appSettings.theme.style.list.listContainer}>
-          {iconLeftName && (
+          {iconPack === "IonIcons" && (
             <IonIcons
               name={iconLeftName}
               size={18}
               color={
-                iconLeftColor ||
-                appSettings.theme.style.colors.foreground ||
-                lightTheme.colors.foreground
+                iconLeftColor
+                  ? iconLeftColor
+                  : !disabled
+                  ? appSettings.theme.style.colors.foreground
+                  : appSettings.theme.style.text.textSecondary.color
               }
               style={{ paddingRight: 16 }}
             />
           )}
-          <View style={appSettings.theme.style.list.listItem}>
-            {leftLabel && <TextPrimary label={leftLabel} />}
-            <View style={{ flexDirection: "row" }}>
-              {symbol && <TextSecondary label={symbol} />}
-              {rightLabel && <TextSecondary label={rightLabel} />}
+          {iconPack === "FontAwesome5" && (
+            <FontAwesome5Icon
+              name={iconLeftName}
+              color={
+                iconLeftColor || disabled
+                  ? appSettings.theme.style.text.textSecondary.color
+                  : appSettings.theme.style.colors.foreground
+              }
+              size={18}
+              style={{
+                transform: [{ scaleX: -1 }],
+                paddingLeft: 16,
+              }}
+            />
+          )}
+          <View
+            style={{
+              ...appSettings.theme.style.list.listItem,
+              flexDirection: "row",
+              // maxWidth: "100%",
+            }}
+          >
+            <View>
+              {leftLabel && !disabled && <TextPrimary label={leftLabel} />}
+              {secondaryLabel && !disabled && (
+                <TextSecondary label={secondaryLabel} />
+              )}
+              {thirdLabel && !disabled && <TextSecondary label={thirdLabel} />}
+              {leftLabel && disabled && <TextSecondary label={leftLabel} />}
             </View>
+            {rightLabel && !useRightLabelContainer && (
+              <TextSecondary
+                label={rightLabel}
+                style={{
+                  color:
+                    rightLabelColor ||
+                    appSettings.theme.style.text.textSecondary.color,
+                }}
+              />
+            )}
+            {rightLabel && useRightLabelContainer && (
+              <>
+                <View
+                  style={[{ ...rightLabelContainerStyle }, { maxWidth: "70%" }]}
+                >
+                  {iconInRightContainerName && (
+                    <IonIcons
+                      name={iconInRightContainerName}
+                      size={
+                        iconRightSize ||
+                        (iconRightName === "checkmark-circle" ? 22 : 18)
+                      }
+                      color={
+                        iconColorInContainer ||
+                        appSettings.theme.style.colors.foreground ||
+                        lightTheme.colors.foreground
+                      }
+                      style={{ paddingRight: 8 }}
+                    />
+                  )}
+
+                  <TextPrimary
+                    label={rightLabel}
+                    style={{ ...(rightLabelStyle || null) }}
+                  />
+                </View>
+              </>
+            )}
           </View>
-          {iconRightName && (
+          {/* {iconPack === "IonIcons" && ( */}
+
+          {iconRightName && !isLoading && (
             <IonIcons
               name={iconRightName}
-              size={iconRightName === "checkmark-circle" ? 22 : 18}
+              size={
+                iconRightSize ||
+                (iconRightName === "checkmark-circle" ? 22 : 18)
+              }
               color={
-                appSettings.theme.style.colors.foreground ||
-                lightTheme.colors.foreground
+                disabled
+                  ? appSettings.theme.style.colors.secondary
+                  : iconRightColor
+                  ? iconRightColor
+                  : appSettings.theme.style.colors.foreground ||
+                    lightTheme.colors.foreground
               }
               style={{ paddingLeft: 16 }}
             />
           )}
+          {isLoading && <Loading size={18} />}
+          {/* )} */}
         </View>
-      )}
+      </TouchableNativeFeedback>
     </>
   );
 };

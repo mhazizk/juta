@@ -15,7 +15,7 @@ import {
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
-import TransactionList from "../transactions/TransactionList";
+import TransactionList from "../../features/transactions/components/TransactionList";
 const { width, height } = Dimensions.get("screen");
 
 const LogbookScreen = ({ route, navigation }) => {
