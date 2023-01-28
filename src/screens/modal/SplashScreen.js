@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
-import { setSortedTransactions } from "../../utils/FetchData";
+// import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
@@ -12,8 +12,8 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import persistStorage from "../../reducers/persist/persistStorage";
-import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+// import persistStorage from "../../reducers/persist/persistStorage";
+// import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import auth from "../../api/firebase/auth";
@@ -101,18 +101,17 @@ const SplashScreen = ({ route, navigation }) => {
   };
 
   const goToLogInScreen = async () => {
-    const loadAppSettings = await persistStorage.asyncStorage({
-      action: PERSIST_ACTIONS.GET,
-      key: "appSettings",
-    });
-
-    Promise.all([loadAppSettings]).then((data) => {
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: data[0],
-      });
-      navigation.replace(screenList.loginScreen);
-    });
+    // const loadAppSettings = await persistStorage.asyncStorage({
+    //   action: PERSIST_ACTIONS.GET,
+    //   key: "appSettings",
+    // });
+    // Promise.all([loadAppSettings]).then((data) => {
+    //   dispatchAppSettings({
+    //     type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+    //     payload: data[0],
+    //   });
+    //   navigation.replace(screenList.loginScreen);
+    // });
   };
 
   const startAppWithNewUser = async (currUser) => {
@@ -472,16 +471,16 @@ const SplashScreen = ({ route, navigation }) => {
   };
 
   // const dispatchInitSortedTransactions = () => {
-  const getSortedTransactions = async () => {
-    try {
-      dispatchSortedTransactions({
-        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-        payload: await setSortedTransactions(),
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getSortedTransactions = async () => {
+  //   try {
+  //     dispatchSortedTransactions({
+  //       type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
+  //       payload: await setSortedTransactions(),
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   // }
 
   return (

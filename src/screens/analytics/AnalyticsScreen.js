@@ -70,13 +70,13 @@ const AnalyticsScreen = () => {
         expenseOnly: true,
         groupSorted: sortedTransactions.groupSorted,
         categories: categories.categories,
-        rangeDay: graph.rangeDay,
+        rangeDay: graph?.rangeDay,
         setSpentList: (item) => setSpentList(item),
       });
       setScreenLoading(false);
       setComponentLoading(false);
     };
-  }, [graph.rangeDay, graph.status]);
+  }, [graph?.rangeDay, graph?.status]);
 
   useEffect(() => {
     let isUnmounted = false;
@@ -121,13 +121,13 @@ const AnalyticsScreen = () => {
   useEffect(() => {
     // console.log(JSON.stringify(graph));
     setComponentLoading(true);
-    if (graph.status === "loading") {
+    if (graph?.status === "loading") {
       setTimeout(() => {
         findTransactions();
         categorizeSpentList();
       }, 1);
     }
-  }, [graph.rangeDay, graph.status]);
+  }, [graph?.rangeDay, graph?.status]);
 
   // useEffect(() => {
   //   setGraph({
@@ -170,9 +170,9 @@ const AnalyticsScreen = () => {
             </View>
           )}
 
-          {activeBudget.spent && (
+          {activeBudget?.spent && (
             <>
-              {!componentLoading && graph.status === "done" && (
+              {!componentLoading && graph?.status === "done" && (
                 <>
                   <View
                     style={{
@@ -196,34 +196,34 @@ const AnalyticsScreen = () => {
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
                         label={utils.GetFormattedNumber({
-                          value: activeBudget.spent,
+                          value: activeBudget?.spent,
                           currency: appSettings.logbookSettings.defaultCurrency.name,
                         })}
                       />
                     </View>
                     <TextSecondary
-                      label={`Total expense in the last ${graph.rangeDay} days`}
+                      label={`Total expense in the last ${graph?.rangeDay} days`}
                       style={{ paddingRight: 8 }}
                     />
                   </View>
                   <CustomBarChart
                     //   Graph Data
                     mainGraph={
-                      graph.status === "done" ? graph.graphData.mainGraph : null
+                      graph?.status === "done" ? graph?.graphData.mainGraph : null
                     }
                     shadowGraph={
-                      graph.status === "done"
-                        ? graph.graphData.shadowGraph
+                      graph?.status === "done"
+                        ? graph?.graphData.shadowGraph
                         : null
                     }
                     limitLine={
-                      graph.status === "done" &&
-                      graph.graphData.limitLine.length
-                        ? graph.graphData.limitLine
+                      graph?.status === "done" &&
+                      graph?.graphData.limitLine.length
+                        ? graph?.graphData.limitLine
                         : null
                     }
                     symbol={appSettings.logbookSettings.defaultCurrency.symbol}
-                    rangeDay={graph.rangeDay}
+                    rangeDay={graph?.rangeDay}
                     //  Graph Style
                     successColor={appSettings.theme.style.colors.success}
                     primaryColor={appSettings.theme.style.colors.foreground}
@@ -239,7 +239,7 @@ const AnalyticsScreen = () => {
                     textColor={appSettings.theme.style.text.textSecondary.color}
                     barRadius={8}
                     barWidth={
-                      graph.rangeDay === 7 ? 28 : graph.rangeDay === 30 ? 8 : 16
+                      graph?.rangeDay === 7 ? 28 : graph?.rangeDay === 30 ? 8 : 16
                     }
                   />
                 </>
@@ -258,21 +258,21 @@ const AnalyticsScreen = () => {
                   onPress={() => {
                     setGraph({ ...graph, rangeDay: 7, status: "loading" });
                   }}
-                  condition={graph.rangeDay === 7}
+                  condition={graph?.rangeDay === 7}
                   label="Last week"
                 />
                 <ButtonSwitch
                   onPress={() => {
                     setGraph({ ...graph, rangeDay: 30, status: "loading" });
                   }}
-                  condition={graph.rangeDay === 30}
+                  condition={graph?.rangeDay === 30}
                   label="Last month"
                 />
                 <ButtonSwitch
                   onPress={() => {
                     setGraph({ ...graph, rangeDay: 365, status: "loading" });
                   }}
-                  condition={graph.rangeDay === 365}
+                  condition={graph?.rangeDay === 365}
                   label="Last year"
                 />
               </View>
@@ -280,13 +280,13 @@ const AnalyticsScreen = () => {
           )}
 
           {/* // TODO add average spent amount  */}
-          {/* {graph.status === "loading" && (
+          {/* {graph?.status === "loading" && (
             <ActivityIndicator
               size={50}
               color={appSettings.theme.style.colors.primary}
             />
           )} */}
-          {graph.status === "done" && !componentLoading && (
+          {graph?.status === "done" && !componentLoading && (
             <TextPrimary
               label="Expense by category"
               style={{
@@ -340,7 +340,7 @@ const AnalyticsScreen = () => {
               </>
             )}
           />
-          {graph.status === "empty" && (
+          {graph?.status === "empty" && (
             <View
               style={{
                 height: "100%",

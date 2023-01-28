@@ -1,4 +1,3 @@
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 // Find Logbook By Id
 const findLogbookById = ({ id, logbooks }) => {

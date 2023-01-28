@@ -1,20 +1,13 @@
-import {
-  View, Dimensions,
-  TouchableOpacity,
-  ScrollView
-} from "react-native";
+import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import { TextPrimary } from "../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import {
-  ButtonDisabled,
-  ButtonPrimary
-} from "../../components/Button";
+import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserLogin from "../../utils/HandlUserLogin";
+import handleUserLogin from "../../utils/HandleUserLogin";
 import CheckList from "../../components/CheckList";
 import Loading from "../../components/Loading";
 import LottieView from "lottie-react-native";
@@ -23,12 +16,10 @@ import screenList from "../../navigations/ScreenList";
 import Footer from "../../components/Footer";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import useAuth from "../../hooks/useAuth";
-import {
-  useAuthState
-} from "react-firebase-hooks/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../api/firebase/auth";
-import persistStorage from "../../reducers/persist/persistStorage";
-import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+// import persistStorage from "../../reducers/persist/persistStorage";
+// import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../utils";
@@ -54,15 +45,15 @@ const LoginScreen = ({ route, navigation }) => {
       setEmail(account.email);
       setPassword(password);
     } else {
-      const loadUserAccount = persistStorage
-        .asyncSecureStorage({
-          action: PERSIST_ACTIONS.GET,
-          key: "authAccount",
-        })
-        .then((account) => {
-          setEmail(account?.email);
-          // setPassword(account.password);
-        });
+      // const loadUserAccount = persistStorage
+      //   .asyncSecureStorage({
+      //     action: PERSIST_ACTIONS.GET,
+      //     key: "authAccount",
+      //   })
+      //   .then((account) => {
+      //     setEmail(account?.email);
+      //     // setPassword(account.password);
+      //   });
     }
   }, []);
 
@@ -118,11 +109,11 @@ const LoginScreen = ({ route, navigation }) => {
 
     // Login check
     setTimeout(() => {
-      persistStorage.asyncSecureStorage({
-        action: PERSIST_ACTIONS.SET,
-        key: "authAccount",
-        rawValue: email,
-      });
+      // persistStorage.asyncSecureStorage({
+      //   action: PERSIST_ACTIONS.SET,
+      //   key: "authAccount",
+      //   rawValue: email,
+      // });
       switch (true) {
         case !!email &&
           !!password &&
@@ -174,11 +165,12 @@ const LoginScreen = ({ route, navigation }) => {
           handleUserLogin({ email, password })
             .then((authAccount) => {
               if (rememberLogin) {
-                persistStorage.asyncSecureStorage({
-                  action: PERSIST_ACTIONS.SET,
-                  key: "authAccount",
-                  rawValue: account,
-                });
+                // TODO : commented out for now
+                // persistStorage.asyncSecureStorage({
+                //   action: PERSIST_ACTIONS.SET,
+                //   key: "authAccount",
+                //   rawValue: account,
+                // });
               }
               navigation.replace(screenList.splashScreen);
             })
@@ -192,11 +184,12 @@ const LoginScreen = ({ route, navigation }) => {
           handleUserLogin({ email, password })
             .then((authAccount) => {
               if (rememberLogin) {
-                persistStorage.asyncSecureStorage({
-                  action: PERSIST_ACTIONS.SET,
-                  key: "authAccount",
-                  rawValue: account,
-                });
+                // TODO : commented out for now
+                // persistStorage.asyncSecureStorage({
+                //   action: PERSIST_ACTIONS.SET,
+                //   key: "authAccount",
+                //   rawValue: account,
+                // });
               }
               navigation.replace(screenList.splashScreen);
             })
