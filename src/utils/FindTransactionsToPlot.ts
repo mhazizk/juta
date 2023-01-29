@@ -1,5 +1,5 @@
 // import * as utils from "../utils";
-import FindById from "../utils/FindById";
+import FindById from "./FindById";
 
 const findTransactionsToPlot = ({
   groupSorted,

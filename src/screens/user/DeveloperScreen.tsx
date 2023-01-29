@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../../src/assets/themes/globalStyles";
+import { globalStyles } from "../../assets/themes/globalStyles";
 import LargeJSONTransactions from "../../database/largeTransactions.json";
 import userCategories from "../../database/userCategories";
 import userLogBooks from "../../database/userLogBooks";

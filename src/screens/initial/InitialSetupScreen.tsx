@@ -3,7 +3,7 @@ import { FlatList, Image, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../../src/assets/themes/globalStyles";
+import { globalStyles } from "../../assets/themes/globalStyles";
 import APP_SETTINGS from "../../config/appSettings";
 import {
   useGlobalAppSettings,
@@ -23,7 +23,7 @@ import large from "../../../src/assets/img/large.png";
 import light from "../../../src/assets/img/light.png";
 import medium from "../../../src/assets/img/medium.png";
 import small from "../../../src/assets/img/small.png";
-import { lightTheme } from "../../../src/assets/themes/lightTheme";
+import { lightTheme } from "../../assets/themes/lightTheme";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import uuid from "react-native-uuid";

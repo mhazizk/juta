@@ -34,11 +34,13 @@ import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectio
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import SUBSCRIPTION_LIMIT from "../../../features/subscription/model/subscriptionLimit";
-import getSubscriptionLimit from "../../../features/subscription/logic/getSubscriptionLimit";
+import SUBSCRIPTION_LIMIT from "../../subscription/model/subscriptionLimit";
+import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit";
 import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStorage";
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import { ITransaction } from "../../../@types/transactions";
+import newTransaction from "../../../model/transaction.model";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -110,27 +112,56 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     insertNameInUserLogBook();
 
-    setTransaction({
-      details: {
-        in_out: "expense",
-        amount: 0,
-        type: "cash",
-        date: Date.now(),
-        notes: null,
-        category_id: null,
-        attachment_URL: [],
-      },
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: userAccount.uid,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-      repeat_id: null,
-      logbook_id: logbooks.logbooks[0].logbook_id,
-      transaction_id: uuid.v4(),
-      uid: userAccount.uid,
-    });
+    // const transaction: ITransaction = {
+    //   uid: uuid.v4(),
+    //   transaction_id: uuid.v4(),
+    //   logbook_id: logbooks.logbooks[0].logbook_id,
+    //   repeat_id: null,
+    //   details: {
+    //     in_out: "expense",
+    //     amount: 0,
+    //     type: "cash",
+    //     date: Date.now(),
+    //     notes: null,
+    //     category_id: null,
+    //     attachment_URL: [],
+    //   },
+    //   _timestamps: {
+    //     created_at: Date.now(),
+    //     created_by: userAccount.uid,
+    //     updated_at: Date.now(),
+    //     updated_by: userAccount.uid,
+    //   },
+    // };
+
+    setTransaction(
+      newTransaction({
+        uid: userAccount.uid,
+        logbookId: logbooks.logbooks[0].logbook_id,
+      })
+
+      // {
+      // details: {
+      //   in_out: "expense",
+      //   amount: 0,
+      //   type: "cash",
+      //   date: Date.now(),
+      //   notes: null,
+      //   category_id: null,
+      //   attachment_URL: [],
+      // },
+      // _timestamps: {
+      //   created_at: Date.now(),
+      //   created_by: userAccount.uid,
+      //   updated_at: Date.now(),
+      //   updated_by: userAccount.uid,
+      // },
+      // repeat_id: null,
+      // logbook_id: logbooks.logbooks[0].logbook_id,
+      // transaction_id: uuid.v4(),
+      // uid: userAccount.uid,
+      // }
+    );
 
     setIsLoading(false);
 

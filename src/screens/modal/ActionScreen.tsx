@@ -18,6 +18,7 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import newLogbook from "../../model/logbook.model";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -151,35 +152,42 @@ const ActionScreen = ({ route, navigation }) => {
                     title: "Create New Log Book",
                     placeholder: "Enter new log book name ...",
                     selected: (item) => {
-                      const newLogbook = {
-                        _timestamps: {
-                          created_at: Date.now(),
-                          created_by: userAccount.uid,
-                          updated_at: Date.now(),
-                          updated_by: userAccount.uid,
-                        },
+                      const createNewLogbook = newLogbook({
                         uid: userAccount.uid,
-                        group_id: null,
+                        name: item,
                         logbook_currency:
                           appSettings.logbookSettings.defaultCurrency,
-                        logbook_type: "basic",
-                        logbook_id: uuid.v4(),
-                        logbook_name: item,
-                        logbook_records: [],
-                        logbook_categories: [],
-                      };
+                      });
+                      // const newLogbook = {
+                      //   _timestamps: {
+                      //     created_at: Date.now(),
+                      //     created_by: userAccount.uid,
+                      //     updated_at: Date.now(),
+                      //     updated_by: userAccount.uid,
+                      //   },
+                      //   uid: userAccount.uid,
+                      //   group_id: null,
+                      //   logbook_currency:
+                      //     appSettings.logbookSettings.defaultCurrency,
+                      //   logbook_type: "basic",
+                      //   logbook_id: uuid.v4(),
+                      //   logbook_name: item,
+                      // };
 
                       setTimeout(async () => {
                         await firestore.setData(
                           FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                          newLogbook.logbook_id,
-                          newLogbook
+                          createNewLogbook.logbook_id,
+                          createNewLogbook
                         );
                       }, 1);
 
                       dispatchLogbooks({
                         type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-                        payload: { newLogbook, reducerUpdatedAt: Date.now() },
+                        payload: {
+                          newLogbook: createNewLogbook,
+                          reducerUpdatedAt: Date.now(),
+                        },
                       });
 
                       dispatchSortedTransactions({
@@ -187,12 +195,12 @@ const ActionScreen = ({ route, navigation }) => {
                           .INSERT_LOGBOOK,
                         payload: {
                           newLogbook: {
-                            logbook_id: newLogbook.logbook_id,
+                            logbook_id: createNewLogbook.logbook_id,
                             transactions: [],
                           },
                           logbookToOpen: {
-                            name: newLogbook.logbook_name,
-                            logbook_id: newLogbook.logbook_id,
+                            name: createNewLogbook.logbook_name,
+                            logbook_id: createNewLogbook.logbook_id,
                             logbook_currency: {
                               name: "IDR",
                               symbol: "Rp",

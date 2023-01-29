@@ -1,17 +1,17 @@
 import { Text, View } from "react-native";
 import {
-    globalStyles,
-    globalTheme
-} from "../../../src/assets/themes/globalStyles";
+  globalStyles,
+  globalTheme,
+} from "../../assets/themes/globalStyles";
 import { TextPrimary } from "../../components/Text";
 import {
-    useGlobalAppSettings,
-    useGlobalCategories,
-    useGlobalLogbooks,
-    useGlobalSortedTransactions
+  useGlobalAppSettings,
+  useGlobalCategories,
+  useGlobalLogbooks,
+  useGlobalSortedTransactions,
 } from "../../reducers/GlobalContext";
 
-const LogBookSearchScreen = () => {
+const CategorySearchScreen = () => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { sortedTransactions, dispatchSortedTransctions } =
     useGlobalSortedTransactions();
@@ -26,10 +26,10 @@ const LogBookSearchScreen = () => {
           backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
-        <TextPrimary label="Logbook Search Screen" />
+        <TextPrimary label="Category Search Screen" />
       </View>
     </>
   );
 };
 
-export default LogBookSearchScreen;
+export default CategorySearchScreen;

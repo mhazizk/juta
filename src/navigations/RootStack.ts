@@ -79,6 +79,7 @@ import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureW
 import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
 import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfilePictureScreen";
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
+import newLogbook from "../model/logbook.model";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -526,38 +527,24 @@ const RootStack = () => {
                       title: "Create New Log Book",
                       placeholder: "Enter new log book name ...",
                       selected: (item) => {
-                        const newLogbook = {
-                          _timestamps: {
-                            created_at: Date.now(),
-                            created_by: userAccount.uid,
-                            updated_at: Date.now(),
-                            updated_by: userAccount.uid,
-                          },
+                        const createNewLogbook = newLogbook({
                           uid: userAccount.uid,
-                          logbook_currency: {
-                            name: "IDR",
-                            symbol: "Rp",
-                            isoCode: "id",
-                          },
-                          logbook_type: "basic",
-                          group_id: null,
-                          logbook_id: uuid.v4(),
-                          logbook_name: item,
-                          logbook_records: [],
-                          logbook_categories: [],
-                        };
+                          name: item,
+                          logbook_currency:
+                            appSettings.logbookSettings.defaultCurrency,
+                        });
 
                         setTimeout(async () => {
                           await firestore.setData(
                             FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                            newLogbook.logbook_id,
-                            newLogbook
+                            createNewLogbook.logbook_id,
+                            createNewLogbook
                           );
                         }, 5000);
 
                         dispatchLogbooks({
                           type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-                          payload: newLogbook,
+                          payload: createNewLogbook,
                         });
 
                         dispatchSortedTransactions({
@@ -565,12 +552,12 @@ const RootStack = () => {
                             .INSERT_LOGBOOK,
                           payload: {
                             newLogbook: {
-                              logbook_id: newLogbook.logbook_id,
+                              logbook_id: createNewLogbook.logbook_id,
                               transactions: [],
                             },
                             logbookToOpen: {
-                              name: newLogbook.logbook_name,
-                              logbook_id: newLogbook.logbook_id,
+                              name: createNewLogbook.logbook_name,
+                              logbook_id: createNewLogbook.logbook_id,
                               logbook_currency: {
                                 name: "IDR",
                                 symbol: "Rp",

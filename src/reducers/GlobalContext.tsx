@@ -1,4 +1,13 @@
-import { createContext, useContext, useReducer, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  ReactElement,
+  ReactNode,
+  useContext,
+  useReducer,
+  useState,
+} from "react";
+import { IGlobalSortedTransactions } from "../@types/sortedTransactions";
 import globalAppSettingsReducer from "./globalAppSettingsReducer";
 import globalBadgeCounterReducer from "./globalBadgeCounterReducer";
 import globalBudgetsReducer from "./globalBudgetsReducer";
@@ -21,7 +30,13 @@ import initialUserAccount from "./initial-state/initialUserAccount";
 // TAG : Create Context //
 const globalTransactionsContext = createContext();
 const globalBudgetsContext = createContext();
-const globalSortedTransactionsContext = createContext();
+const globalSortedTransactionsContext = createContext<{
+  sortedTransactions: IGlobalSortedTransactions;
+  dispatchSortedTransactions: Dispatch<any>;
+}>({
+  sortedTransactions: initialSortedTransactions,
+  dispatchSortedTransactions: () => null,
+});
 const globalSettingsContext = createContext();
 const globalUserAccountContext = createContext();
 const globalLoadingContext = createContext();
@@ -81,6 +96,10 @@ export const useGlobalFeatureWishlist = () => {
   return useContext(globalFeatureWishlistContext);
 };
 
+type GlobalStateProviderProps = {
+  children: ReactNode;
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -128,74 +147,72 @@ export const GlobalStateProvider = ({ children }) => {
   const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
 
   return (
-    <>
-      <globalSettingsContext.Provider
+    <globalSettingsContext.Provider
+      value={{
+        appSettings: appSettings,
+        dispatchAppSettings: dispatchAppSettings,
+      }}
+    >
+      <globalUserAccountContext.Provider
         value={{
-          appSettings: appSettings,
-          dispatchAppSettings: dispatchAppSettings,
+          userAccount: userAccount,
+          dispatchUserAccount: dispatchUserAccount,
         }}
       >
-        <globalUserAccountContext.Provider
+        <globalLogbooksContext.Provider
           value={{
-            userAccount: userAccount,
-            dispatchUserAccount: dispatchUserAccount,
+            logbooks: logbooks,
+            dispatchLogbooks: dispatchLogbooks,
           }}
         >
-          <globalLogbooksContext.Provider
+          <globalCategoriesContext.Provider
             value={{
-              logbooks: logbooks,
-              dispatchLogbooks: dispatchLogbooks,
+              categories: categories,
+              dispatchCategories: dispatchCategories,
             }}
           >
-            <globalCategoriesContext.Provider
+            <globalSortedTransactionsContext.Provider
               value={{
-                categories: categories,
-                dispatchCategories: dispatchCategories,
+                sortedTransactions,
+                dispatchSortedTransactions,
               }}
             >
-              <globalSortedTransactionsContext.Provider
+              <globalBudgetsContext.Provider
                 value={{
-                  sortedTransactions: sortedTransactions,
-                  dispatchSortedTransactions: dispatchSortedTransactions,
+                  budgets: budgets,
+                  dispatchBudgets: dispatchBudgets,
                 }}
               >
-                <globalBudgetsContext.Provider
+                <globalBadgeCounterContext.Provider
                   value={{
-                    budgets: budgets,
-                    dispatchBudgets: dispatchBudgets,
+                    badgeCounter: badgeCounter,
+                    dispatchBadgeCounter: dispatchBadgeCounter,
                   }}
                 >
-                  <globalBadgeCounterContext.Provider
+                  <globalRepeatedTransactionsContext.Provider
                     value={{
-                      badgeCounter: badgeCounter,
-                      dispatchBadgeCounter: dispatchBadgeCounter,
+                      repeatedTransactions: repeatedTransactions,
+                      dispatchRepeatedTransactions:
+                        dispatchRepeatedTransactions,
                     }}
                   >
-                    <globalRepeatedTransactionsContext.Provider
+                    <globalFeatureWishlistContext.Provider
                       value={{
-                        repeatedTransactions: repeatedTransactions,
-                        dispatchRepeatedTransactions:
-                          dispatchRepeatedTransactions,
+                        globalFeatureWishlist: globalFeatureWishlist,
+                        dispatchGlobalFeatureWishlist:
+                          dispatchGlobalFeatureWishlist,
                       }}
                     >
-                      <globalFeatureWishlistContext.Provider
-                        value={{
-                          globalFeatureWishlist: globalFeatureWishlist,
-                          dispatchGlobalFeatureWishlist:
-                            dispatchGlobalFeatureWishlist,
-                        }}
-                      >
-                        {children}
-                      </globalFeatureWishlistContext.Provider>
-                    </globalRepeatedTransactionsContext.Provider>
-                  </globalBadgeCounterContext.Provider>
-                </globalBudgetsContext.Provider>
-              </globalSortedTransactionsContext.Provider>
-            </globalCategoriesContext.Provider>
-          </globalLogbooksContext.Provider>
-        </globalUserAccountContext.Provider>
-      </globalSettingsContext.Provider>
-    </>
+                      {children}
+                    </globalFeatureWishlistContext.Provider>
+                  </globalRepeatedTransactionsContext.Provider>
+                </globalBadgeCounterContext.Provider>
+              </globalBudgetsContext.Provider>
+            </globalSortedTransactionsContext.Provider>
+          </globalCategoriesContext.Provider>
+        </globalLogbooksContext.Provider>
+      </globalUserAccountContext.Provider>
+    </globalSettingsContext.Provider>
   );
 };
 

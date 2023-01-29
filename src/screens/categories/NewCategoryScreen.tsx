@@ -3,7 +3,7 @@ import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import uuid from "react-native-uuid";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { ionIcons } from "../../../src/assets/iconPack/ionIcons";
+import { ionIcons } from "../../assets/iconPack/ionIcons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
