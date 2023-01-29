@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Dimensions, Image, TouchableOpacity, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import CoinsImg from "../../../src/assets/img/coins.png";
-import { ImgButton } from "../../components/Button";
+import { ButtonPrimary, ImgButton } from "../../components/Button";
 import { CustomBarChart } from "../../components/charts/CustomBarChart";
 import Loading from "../../components/Loading";
 import { MyBudgetsPreview } from "../../components/MyBudgetsPreview";
@@ -151,6 +151,13 @@ const DashboardScreen = ({ navigation }) => {
               padding: 16,
             }}
           >
+            <ButtonPrimary
+              label="test error"
+              onPress={() => {
+                throw new Error("My first Sentry error!");
+              }}
+            />
+            <TextPrimary label={__DEV__ ? "DEV MODE" : "PROD MODE"} />
             <TextPrimary
               label={
                 getHours <= 4
@@ -178,7 +185,7 @@ const DashboardScreen = ({ navigation }) => {
                   }}
                 />
               )}
-              {userAccount?.subscription?.plan === 'premium' && (
+              {userAccount?.subscription?.plan === "premium" && (
                 <Image
                   source={checkmark}
                   style={{

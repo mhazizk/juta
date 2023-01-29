@@ -2,7 +2,7 @@
   "expo": {
     "name": "Juta",
     "slug": "Juta",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "orientation": "portrait",
     "icon": "./src/assets/icons/juta-app-icon.png",
     "userInterfaceStyle": "automatic",
@@ -24,7 +24,7 @@
     },
     "android": {
       "package": "app.juta",
-      "versionCode": 2,
+      "versionCode": 3,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icons/juta-icon-foreground.png",
@@ -54,8 +54,21 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos."
         }
-      ]
+      ],
+      "sentry-expo"
     ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "mhazizk",
+            "project": "juta-app",
+            "authToken": "c699f2c2e84f4bee8606a9146aa0c45717a7664b477c4679a2004dc10a01d067"
+          }
+        }
+      ]
+    },
     "extra": {
       "eas": {
         "projectId": "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3"

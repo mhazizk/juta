@@ -1,13 +1,15 @@
 import { initializeApp } from "firebase/app";
 
+import env from "../../config/env";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBa2PQkoyKDmok1qEmGGTPdZPEhy16unPQ",
-  authDomain: "cashlog-app.firebaseapp.com",
-  projectId: "cashlog-app",
-  storageBucket: "cashlog-app.appspot.com",
-  messagingSenderId: "535532688013",
-  appId: "1:535532688013:web:b664a2a9c41447218608c4",
-  measurementId: "G-4F0HF1XHQ9",
+  apiKey: env.firebaseConfig.apiKey,
+  authDomain: env.firebaseConfig.authDomain,
+  projectId: env.firebaseConfig.projectId,
+  storageBucket: env.firebaseConfig.projectId,
+  messagingSenderId: env.firebaseConfig.messagingSenderId,
+  appId: env.firebaseConfig.appId,
+  measurementId: env.firebaseConfig.measurementId,
 };
 
 const app = initializeApp(firebaseConfig);

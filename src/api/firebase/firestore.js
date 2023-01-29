@@ -28,7 +28,7 @@ import {
 } from "firebase/firestore";
 // import { onSnapshot, collection } from "firebase/firestore";
 import { Alert, Settings } from "react-native";
-import { db } from "../firebaseConfig";
+import db from "./db";
 
 // Get data from firestore
 const getOneDoc = async (collectionName, documentId = null) => {
@@ -180,11 +180,7 @@ const queryData = async (collectionName, uid) => {
 
 const getMyFeatureWishlist = async (collectionName, uid) => {
   try {
-    const q = query(
-      collection(db, collectionName),
-      where("uid", "==", uid),
-      
-    );
+    const q = query(collection(db, collectionName), where("uid", "==", uid));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => doc.data());
   } catch (error) {
@@ -220,7 +216,7 @@ const firestore = {
   deleteData,
   queryData,
   paginationQuery,
-  getMyFeatureWishlist
+  getMyFeatureWishlist,
 };
 
 export default firestore;

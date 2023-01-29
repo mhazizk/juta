@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGSNAG_API_URL, LOGSNAG_API_KEY } from "react-native-dotenv";
+import env from "../../config/env";
 
 const postLogSnagEvent = async (displayName, eventTypes) => {
   const data = JSON.stringify({
@@ -13,11 +13,11 @@ const postLogSnagEvent = async (displayName, eventTypes) => {
 
   const options = {
     method: "POST",
-    url: LOGSNAG_API_URL,
+    url: env.logSnagConfig.apiUrl,
     data: data,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${LOGSNAG_API_KEY}`,
+      Authorization: `Bearer ${env.logSnagConfig.apiKey}`,
     },
   };
 

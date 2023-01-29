@@ -1,15 +1,11 @@
 import { Alert } from "react-native";
-import {
-  auth,
-  signInAndPersist,
-  signInWithEmailAndPassword,
-} from "../api/firebaseConfig";
+import loginAndPersist from "../api/firebase/login";
 
 const handleUserLogin = async ({ email, password }) => {
   try {
     // const userCredential = await auth.signInWithEmailAndPassword(
     // const userCredential = await signInWithEmailAndPassword(email, password);
-    const userCredential = await signInAndPersist(email, password);
+    const userCredential = await loginAndPersist(email, password);
     const user = userCredential.user;
     return user;
   } catch (error) {

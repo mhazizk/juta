@@ -14,35 +14,39 @@ import {
 } from "./src/reducers/GlobalContext";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useRef } from "react";
+import sentryInit from "./src/sentry/sentryInit";
+import * as Sentry from "@sentry/react-native";
 
-export default function App() {
+export default Sentry.wrap(App);
+
+function App() {
   // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const dark = "dark";
-  return (
-    <>
-      {
-        // appSettings?.theme?.id !== 'dark' &&
-        dark !== "dark" && (
-          <GlobalStateProvider>
-            <NavigationContainer>
-              <RootStack />
-            </NavigationContainer>
-          </GlobalStateProvider>
-        )
-      }
+  const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+  const navigationRef = useRef();
+  useEffect(() => {
+    sentryInit();
+  }, []);
 
-      {
-        // appSettings?.theme?.id === 'dark' &&
-        dark === "dark" && (
-          <GlobalStateProvider>
-            <NavigationContainer theme={DarkTheme}>
-              <RootStack />
-            </NavigationContainer>
-          </GlobalStateProvider>
-        )
-      }
-    </>
-  );
+  try {
+    return (
+      <>
+        <GlobalStateProvider>
+          <NavigationContainer
+            theme={DarkTheme}
+            onReady={() => {
+              routingInstrumentation.registerNavigationContainer(navigationRef);
+            }}
+          >
+            <RootStack />
+          </NavigationContainer>
+        </GlobalStateProvider>
+      </>
+    );
+  } catch (error) {
+    Sentry.nativeCrash();
+  }
 }
 
 // const styles = StyleSheet.create({

@@ -51,7 +51,9 @@ const SplashScreen = ({ route, navigation }) => {
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [user, loading, error] = useAuthState(auth);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log({ __DEV__ });
+  }, []);
 
   useEffect(() => {
     // goToLogInScreen();
