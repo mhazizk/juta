@@ -16,14 +16,15 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useRef } from "react";
 import sentryInit from "./src/sentry/sentryInit";
-import * as Sentry from "@sentry/react-native";
-
-export default Sentry.wrap(App);
+// import * as Sentry from "@sentry/react-native";
+import * as Sentry from "sentry-expo";
+export default Sentry.Native.wrap(App);
 
 function App() {
   // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const dark = "dark";
-  const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+  const routingInstrumentation =
+    new Sentry.Native.ReactNavigationInstrumentation();
   const navigationRef = useRef();
   useEffect(() => {
     sentryInit();
@@ -45,7 +46,7 @@ function App() {
       </>
     );
   } catch (error) {
-    Sentry.nativeCrash();
+    Sentry.Native.nativeCrash();
   }
 }
 
