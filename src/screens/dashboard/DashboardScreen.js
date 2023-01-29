@@ -198,14 +198,14 @@ const DashboardScreen = ({ navigation }) => {
             </View>
           </View>
 
-          {/* {appSettings.dashboardSettings.showTotalExpenseWidget && (
+          {appSettings.dashboardSettings.showTotalExpenseWidget && (
             <TotalExpenseWidget
               graph={graph}
               activeBudget={activeBudget}
               cardHeight={cardHeight}
               onPress={() => navigation.navigate(screenList.analyticsScreen)}
             />
-          )} */}
+          )}
 
           {/* <Chart /> */}
 
