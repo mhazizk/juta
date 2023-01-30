@@ -153,12 +153,6 @@ const DashboardScreen = ({ navigation }) => {
               padding: 16,
             }}
           >
-            <ButtonPrimary
-              label="test error"
-              onPress={() => {
-                throw new Error("My first Sentry error!");
-              }}
-            />
             <TextPrimary label={__DEV__ ? "DEV MODE" : "PROD MODE"} />
             <TextPrimary
               label={
@@ -199,6 +193,12 @@ const DashboardScreen = ({ navigation }) => {
               )}
             </View>
           </View>
+          <ButtonPrimary
+            label="test error"
+            onPress={() => {
+              throw new Error("Error from test button");
+            }}
+          />
 
           {/* {appSettings.dashboardSettings.showTotalExpenseWidget && (
             <TotalExpenseWidget
