@@ -7,7 +7,12 @@ import React, {
   useReducer,
   useState,
 } from "react";
-import { IGlobalSortedTransactions } from "../@types/sortedTransactions";
+import { GlobalAppSettingsType } from "../@types/appSettings";
+import { GlobalBudgetsType } from "../@types/budgets";
+import { GlobalCategoriesType } from "../@types/categories";
+import { GlobalLogbook } from "../@types/logbook";
+import { GlobalSortedTransactionsType } from "../@types/sortedTransactions";
+import { GlobalUserAccountType } from "../@types/userAccount";
 import globalAppSettingsReducer from "./globalAppSettingsReducer";
 import globalBadgeCounterReducer from "./globalBadgeCounterReducer";
 import globalBudgetsReducer from "./globalBudgetsReducer";
@@ -29,19 +34,49 @@ import initialUserAccount from "./initial-state/initialUserAccount";
 
 // TAG : Create Context //
 const globalTransactionsContext = createContext();
-const globalBudgetsContext = createContext();
+const globalBudgetsContext = createContext<{
+  budgets: GlobalBudgetsType;
+  dispatchBudgets: Dispatch<any>;
+}>({
+  budgets: initialBudgets,
+  dispatchBudgets: () => null,
+});
 const globalSortedTransactionsContext = createContext<{
-  sortedTransactions: IGlobalSortedTransactions;
+  sortedTransactions: GlobalSortedTransactionsType;
   dispatchSortedTransactions: Dispatch<any>;
 }>({
   sortedTransactions: initialSortedTransactions,
   dispatchSortedTransactions: () => null,
 });
-const globalSettingsContext = createContext();
-const globalUserAccountContext = createContext();
+const globalSettingsContext = createContext<{
+  appSettings: GlobalAppSettingsType;
+  dispatchAppSettings: Dispatch<any>;
+}>({
+  appSettings: initialAppSettings,
+  dispatchAppSettings: () => null,
+});
+const globalUserAccountContext = createContext<{
+  userAccount: GlobalUserAccountType;
+  dispatchUserAccount: Dispatch<any>;
+}>({
+  userAccount: initialUserAccount,
+  dispatchUserAccount: () => null,
+});
 const globalLoadingContext = createContext();
-const globalLogbooksContext = createContext();
-const globalCategoriesContext = createContext();
+const globalLogbooksContext = createContext<{
+  logbooks: GlobalLogbook;
+  dispatchLogbooks: Dispatch<any>;
+}>({
+  logbooks: initialLogbooks,
+  dispatchLogbooks: () => null,
+});
+const globalCategoriesContext = createContext<{
+  categories: GlobalCategoriesType;
+  dispatchCategories: Dispatch<any>;
+}>({
+  categories: initialCategories,
+  dispatchCategories: () => null,
+});
 const globalBadgeCounterContext = createContext();
 const globalGroupsContext = createContext();
 const globalRepeatedTransactionsContext = createContext();

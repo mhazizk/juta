@@ -1,11 +1,11 @@
-import { ILogbook, ILogbookCurrency } from "../@types/logbook";
+import { LogbookType, LogbookCurrencyType } from "../@types/logbook";
 import uuid from "react-native-uuid";
 
 interface newLogbookProps {
   uid: string | number[];
   name: string;
   group_id?: string | number[] | null;
-  logbook_currency: ILogbookCurrency;
+  logbook_currency: LogbookCurrencyType;
 }
 
 /**
@@ -32,7 +32,7 @@ const newLogbook = (props: newLogbookProps) => {
     logbook_type: "basic",
     logbook_id: uuid.v4(),
     logbook_name: props.name,
-  } satisfies ILogbook;
+  } satisfies LogbookType;
 };
 
 export default newLogbook;

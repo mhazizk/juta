@@ -1,3 +1,5 @@
+import { ThemeStyleType } from "../../@types/theme";
+
 const palette = {
   white: {
     600: "#F5F5F5",
@@ -21,33 +23,32 @@ const palette = {
   orange: "#F49D1A",
 };
 
-export const darkTheme = {
+export const lightTheme = {
   colors: {
-    background: palette.black[600],
-    foreground: palette.white[600],
-    primary: palette.white[600],
-    secondary: palette.black[400],
-    header: palette.black[600],
-    textHeader: palette.white[600],
-    incomeAmount: "#00B19B",
-    incomeSymbol: "#008888",
+    background: palette.white[600],
+    foreground: palette.black[600],
+    primary: palette.black[600],
+    secondary: palette.white[400],
+    header: palette.white[600],
+    textHeader: palette.black[600],
+    incomeAmount: "#008888",
+    incomeSymbol: "#00B19B",
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
-    failure: palette.red,
   },
   text: {
     textPrimary: {
       fontSize: 16,
-      color: palette.white[500],
+      color: palette.black[500],
     },
     textSecondary: {
       fontSize: 16,
-      color: palette.black[200],
+      color: palette.white[200],
     },
     textDisabled: {
       fontSize: 16,
-      color: palette.black[200],
+      color: palette.white[200],
     },
     textSuccess: {
       fontSize: 16,
@@ -61,15 +62,33 @@ export const darkTheme = {
       fontSize: 16,
       color: palette.red,
     },
-    textFailure: {
-      fontSize: 16,
-      color: palette.red,
-    },
   },
   button: {
     buttonPrimary: {
       buttonStyle: {
-        backgroundColor: palette.white[600],
+        backgroundColor: palette.black[600],
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
+    },
+    buttonSecondary: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.black[600],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.black[600],
+        fontSize: 16,
+      },
+    },
+    buttonDisabled: {
+      buttonStyle: {
+        backgroundColor: palette.white[200],
         borderRadius: 16,
       },
       textStyle: {
@@ -77,51 +96,37 @@ export const darkTheme = {
         fontSize: 16,
       },
     },
-    buttonSecondary: {
+    buttonSuccess: {
       buttonStyle: {
-        backgroundColor: "transparent",
-        borderColor: palette.white[600],
+        backgroundColor: palette.green,
         borderRadius: 16,
-        borderWidth: 1,
       },
       textStyle: {
-        color: palette.white[600],
+        color: palette.black[600],
         fontSize: 16,
       },
     },
-    buttonDisabled: {
-      backgroundColor: palette.white[200],
-      borderRadius: 8,
-    },
-    buttonSuccess: {
-      backgroundColor: palette.green,
-      borderRadius: 8,
-    },
     buttonWarn: {
-      backgroundColor: palette.orange,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.orange,
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.black[600],
+        fontSize: 16,
+      },
     },
     buttonDanger: {
       buttonStyle: {
+        borderRadius: 16,
         backgroundColor: "transparent",
         borderColor: palette.red,
-        borderRadius: 16,
         borderWidth: 1,
       },
       textStyle: {
-        color: palette.red,
+        color: palette.black[600],
         fontSize: 16,
       },
-    },
-    // buttonDanger: {
-    //   backgroundColor: "transparent",
-    //   borderColor: palette.red,
-    //   borderRadius: 8,
-    //   borderWidth: 1,
-    // },
-    buttonFailure: {
-      backgroundColor: palette.red,
-      borderRadius: 8,
     },
   },
   list: {
@@ -135,16 +140,16 @@ export const darkTheme = {
       minHeight: 48,
     },
     listItem: {
-      borderColor: palette.black[400],
+      borderColor: palette.white[400],
       display: "flex",
       flex: 1,
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "space-between",
-      paddingVertical: 4,
+      paddingVertical: 0,
       borderBottomWidth: 0.5,
       minHeight: 46,
       textAlignVertical: "center",
     },
   },
-};
+} satisfies ThemeStyleType;

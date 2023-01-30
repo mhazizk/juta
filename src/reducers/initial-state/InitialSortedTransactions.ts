@@ -1,9 +1,9 @@
-import { IGlobalSortedTransactions } from "../../@types/sortedTransactions";
+import { GlobalSortedTransactionsType } from "../../@types/sortedTransactions";
 
 const initialSortedTransactions = {
   reducerUpdatedAt: Date.now(),
   logbookToOpen: null,
   groupSorted: [],
-} satisfies IGlobalSortedTransactions;
+} satisfies GlobalSortedTransactionsType;
 
 export default initialSortedTransactions;

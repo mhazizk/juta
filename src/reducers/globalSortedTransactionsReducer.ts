@@ -1,14 +1,14 @@
 import React from "react";
-import { IGlobalSortedTransactions } from "../@types/sortedTransactions";
+import { GlobalSortedTransactionsType } from "../@types/sortedTransactions";
 import deletedManyTransactionsHandler from "./reducer-handler/deletedManyTransactionsHandler";
 import insertedManyTransactionsHandler from "./reducer-handler/insertedManyTransactionsHandler";
 import patchedManyTransactionsHandler from "./reducer-handler/patchedManyTransactionsHandler";
 import REDUCER_ACTIONS from "./reducer.action";
 
 export const globalSortedTransactionsReducer = (
-  state: IGlobalSortedTransactions,
+  state: GlobalSortedTransactionsType,
   action
-): IGlobalSortedTransactions => {
+): GlobalSortedTransactionsType => {
   let reducerUpdatedAt;
   switch (action.type) {
     // TAG : Multi Actions

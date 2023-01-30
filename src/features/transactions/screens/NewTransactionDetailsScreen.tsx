@@ -39,7 +39,7 @@ import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit"
 import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStorage";
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
-import { ITransaction } from "../../../@types/transactions";
+import { TransactionType } from "../../../@types/transactions";
 import newTransaction from "../../../model/transaction.model";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {

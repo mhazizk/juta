@@ -1,7 +1,6 @@
+import { GlobalCategoriesType } from "../../@types/categories";
+
 const initialCategories = {
-  // categoryPatchCounter: 0,
-  // categoryInsertCounter: 0,
-  // categoryDeleteCounter: 0,
   reducerUpdatedAt: Date.now(),
   categories: {
     uid: null,
@@ -186,6 +185,6 @@ const initialCategories = {
       },
     ],
   },
-};
+} satisfies GlobalCategoriesType;
 
 export default initialCategories;

@@ -1,6 +1,6 @@
-import { ILogbook, ILogbookCurrency } from "../@types/logbook";
+import { LogbookType, LogbookCurrencyType } from "../@types/logbook";
 import uuid from "react-native-uuid";
-import { ITransaction } from "../@types/transactions";
+import { TransactionType } from "../@types/transactions";
 
 interface newTransactionProps {
   uid: string | number[];
@@ -39,7 +39,7 @@ const newTransaction = (props: newTransactionProps) => {
       updated_at: Date.now(),
       updated_by: props.uid,
     },
-  } satisfies ITransaction;
+  } satisfies TransactionType;
 };
 
 export default newTransaction;

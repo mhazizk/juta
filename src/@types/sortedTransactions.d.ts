@@ -1,19 +1,21 @@
-import { ILogbookToOpen } from "./logbook";
-import { ITransaction } from "./transactions";
+import { LogbookToOpenType } from "./logbook";
+import { TransactionType } from "./transactions";
 
 /**
  *
- * interface for global sorted transactions state
- * @interface IGlobalSortedTransactions
- * @property {Object} sortedTransactions - sorted transactions
+ * Type for sorted transactions
+ *
+ * @type GlobalSortedTransactionsType
  * @property {number} reducerUpdatedAt - timestamp in milliseconds
+ * @property {Object} logbookToOpen - logbook to open when logbook screen is opened
+ * @property {Object} groupSorted - transactions sorted in group
  *
  */
-export interface IGlobalSortedTransactions {
-  reducerUpdatedAt: number; // timestamp in milliseconds
-  logbookToOpen: ILogbookToOpen | null;
-  groupSorted: ILogbookInSortedTransactions[];
-}
+export type GlobalSortedTransactionsType = {
+  reducerUpdatedAt: number;
+  logbookToOpen: LogbookToOpenType | null;
+  groupSorted: GroupSortedLogbook[];
+};
 
 /**
  *
@@ -23,47 +25,23 @@ export interface IGlobalSortedTransactions {
  * @property {Object} transactions - array of section date
  *
  * */
-interface ILogbookInSortedTransactions {
+type GroupSortedLogbook = {
   logbook_id: string | number[];
-  transactions: IDateSectionInSortedTransactions[];
-}
+  transactions: DateSectionType[];
+};
 
 /**
  *
- * interface for section date in sorted transactions
- * @interface IDateSectionInSortedTransactions
+ * Type for section date
+ *
+ * @type DateSectionType
  * @property {string} title - section title
  * @property {string} customDate - section custom date
  * @property {Object} data - array of transaction
  *
  * */
-interface IDateSectionInSortedTransactions {
+type DateSectionType = {
   title: string;
   customDate: string;
-  data: ITransaction[];
-}
-
-// type ActionMap<M extends { [index: string]: any }> = {
-//   [Key in keyof M]: M[Key] extends undefined
-//     ? {
-//         type: Key;
-//       }
-//     : {
-//         type: Key;
-//         payload: M[Key];
-//       };
-// };
-
-// type ProductPayload = {
-//   [Types.Create]: {
-//     id: number;
-//     name: string;
-//     price: number;
-//   };
-//   [Types.Delete]: {
-//     id: number;
-//   };
-// };
-
-// export type ProductActions =
-//   ActionMap<ProductPayload>[keyof ActionMap<ProductPayload>];
+  data: TransactionType[];
+};
