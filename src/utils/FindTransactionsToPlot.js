@@ -9,6 +9,7 @@ const findTransactionsToPlot = ({
   budgets,
   graph,
   setGraph,
+  setShowGraph,
   activeBudget,
   setActiveBudget,
   appSettings,
@@ -247,15 +248,16 @@ const findTransactionsToPlot = ({
       });
       setGraph({
         ...graph,
-        status:
-          mainGraph.length || shadowGraph.length || limitLine.length
-            ? "done"
-            : "empty",
+        // status:
+        //   mainGraph.length || shadowGraph.length || limitLine.length
+        //     ? "done"
+        //     : "empty",
         graphData: { mainGraph, shadowGraph, limitLine },
       });
+      setShowGraph(true);
     } else {
       setGraph({
-        status: "empty",
+        // status: "empty",
         rangeDay: 7,
         graphData: {
           mainGraph: [],
@@ -263,6 +265,7 @@ const findTransactionsToPlot = ({
           limitLine: [],
         },
       });
+      setShowGraph(true);
     }
     // }
   }

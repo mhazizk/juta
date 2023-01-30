@@ -37,8 +37,9 @@ const DashboardScreen = ({ navigation }) => {
     transactionList: [],
   });
   const [date, setDate] = useState();
+  const [showGraph, setShowGraph] = useState(false);
   const [graph, setGraph] = useState({
-    status: "empty",
+    // status: "empty",
     rangeDay: 7,
     graphData: {
       mainGraph: [],
@@ -66,6 +67,7 @@ const DashboardScreen = ({ navigation }) => {
         activeBudget: activeBudget,
         setGraph: (item) => setGraph(item),
         setActiveBudget: (item) => setActiveBudget(item),
+        setShowGraph: (item) => setShowGraph(item),
       });
     };
     // }, [sortedTransactions, budgets, graph, activeBudget]);
@@ -198,14 +200,15 @@ const DashboardScreen = ({ navigation }) => {
             </View>
           </View>
 
-          {appSettings.dashboardSettings.showTotalExpenseWidget && (
+          {/* {appSettings.dashboardSettings.showTotalExpenseWidget && (
             <TotalExpenseWidget
+              showGraph={showGraph}
               graph={graph}
               activeBudget={activeBudget}
               cardHeight={cardHeight}
               onPress={() => navigation.navigate(screenList.analyticsScreen)}
             />
-          )}
+          )} */}
 
           {/* <Chart /> */}
 

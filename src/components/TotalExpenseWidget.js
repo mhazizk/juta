@@ -6,7 +6,13 @@ import * as utils from "../utils";
 import CoinsImg from "../assets/img/coins.png";
 import { CustomBarChart } from "./charts/CustomBarChart";
 
-const TotalExpenseWidget = ({ graph, activeBudget, cardHeight, onPress }) => {
+const TotalExpenseWidget = ({
+  graph,
+  showGraph,
+  activeBudget,
+  cardHeight,
+  onPress,
+}) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
 
   useEffect(() => {
@@ -44,7 +50,7 @@ const TotalExpenseWidget = ({ graph, activeBudget, cardHeight, onPress }) => {
           }}
         >
           {/* // TAG : No Expense */}
-          {graph.status !== "done" && (
+          {!showGraph && (
             <>
               <View
                 style={{
@@ -84,7 +90,7 @@ const TotalExpenseWidget = ({ graph, activeBudget, cardHeight, onPress }) => {
           )}
 
           {/* // TAG : Expense */}
-          {graph.status === "done" && (
+          {showGraph && (
             <>
               <View
                 style={{
@@ -141,21 +147,17 @@ const TotalExpenseWidget = ({ graph, activeBudget, cardHeight, onPress }) => {
                   zIndex: 0,
                 }}
               >
-                <CustomBarChart
+                {/* <CustomBarChart
                   //   Graph Data
-                  mainGraph={
-                    graph.status === "done" ? graph.graphData.mainGraph : null
-                  }
-                  shadowGraph={
-                    graph.status === "done" ? graph.graphData.shadowGraph : null
-                  }
+                  mainGraph={graph?.graphData?.mainGraph}
+                  shadowGraph={graph?.graphData?.shadowGraph}
                   limitLine={
-                    graph.status === "done" && graph.graphData.limitLine.length
-                      ? graph.graphData.limitLine
+                    graph?.graphData?.limitLine.length > 0
+                      ? graph?.graphData?.limitLine
                       : null
                   }
                   symbol={appSettings.logbookSettings.defaultCurrency.symbol}
-                  rangeDay={graph.rangeDay}
+                  rangeDay={graph?.rangeDay}
                   //  Graph Style
                   successColor={appSettings.theme.style.colors.success}
                   primaryColor={utils.HexToRgb({
@@ -173,9 +175,9 @@ const TotalExpenseWidget = ({ graph, activeBudget, cardHeight, onPress }) => {
                   textColor={appSettings.theme.style.text.textSecondary.color}
                   barRadius={8}
                   barWidth={
-                    graph.rangeDay === 7 ? 28 : graph.rangeDay === 30 ? 8 : 16
+                    graph?.rangeDay === 7 ? 28 : graph?.rangeDay === 30 ? 8 : 16
                   }
-                />
+                /> */}
               </View>
             </>
           )}

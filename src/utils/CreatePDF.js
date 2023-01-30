@@ -1,7 +1,7 @@
 import * as Print from "expo-print";
 import * as FileSystem from "expo-file-system";
 import FindById from "./FindById";
-import { GetFormattedNumber } from ".";
+import getFormattedNumber from "./FormatNumber";
 
 const td = `
         <td
@@ -349,7 +349,7 @@ const mapData = ({
                 ${tdAlignRight}
                     ${
                       transaction.details.in_out === "income"
-                        ? GetFormattedNumber({
+                        ? getFormattedNumber({
                             value: transaction.details.amount,
                             currency: logbook.logbook_currency.name,
                           })

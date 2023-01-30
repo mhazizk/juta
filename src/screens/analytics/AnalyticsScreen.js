@@ -28,9 +28,10 @@ const AnalyticsScreen = () => {
     spent: null,
     transactionList: [],
   });
+  const [showGraph, setShowGraph] = useState(false);
 
   const [graph, setGraph] = useState({
-    status: "empty",
+    // status: "empty",
     rangeDay: 7,
     graphData: {
       mainGraph: [],
@@ -45,38 +46,52 @@ const AnalyticsScreen = () => {
 
   const isFocus = useIsFocused();
 
-  const findTransactions = useMemo(() => {
-    return () => {
-      utils.FindTransactionsToPlot({
-        expenseOnly: true,
-        appSettings: appSettings,
-        groupSorted: sortedTransactions.groupSorted,
-        logbooks: logbooks,
-        categories: categories,
-        budgets: budgets,
-        graph: graph,
-        activeBudget: activeBudget,
-        setGraph: (item) => setGraph(item),
-        setActiveBudget: (item) => setActiveBudget(item),
-      });
-      setScreenLoading(false);
-      // setComponentLoading(false);
-    };
-  }, [graph, budgets, activeBudget]);
-
-  const categorizeSpentList = useMemo(() => {
-    return () => {
-      utils.GetSpentList({
-        expenseOnly: true,
-        groupSorted: sortedTransactions.groupSorted,
-        categories: categories.categories,
-        rangeDay: graph?.rangeDay,
-        setSpentList: (item) => setSpentList(item),
-      });
-      setScreenLoading(false);
-      setComponentLoading(false);
-    };
-  }, [graph?.rangeDay, graph?.status]);
+  // const findTransactions = useMemo(() => {
+  //   return () => {
+  //     utils.FindTransactionsToPlot({
+  //       expenseOnly: true,
+  //       appSettings: appSettings,
+  //       groupSorted: sortedTransactions?.groupSorted,
+  //       logbooks: logbooks,
+  //       categories: categories,
+  //       budgets: budgets,
+  //       graph: graph,
+  //       activeBudget: activeBudget,
+  //       setGraph: (item) => setGraph(item),
+  //       setActiveBudget: (item) => setActiveBudget(item),
+  //     });
+  //     setScreenLoading(false);
+  //     // setComponentLoading(false);
+  //   };
+  // }, [graph, budgets, activeBudget]);
+  const findTransactions = () => {
+    utils.FindTransactionsToPlot({
+      expenseOnly: true,
+      appSettings: appSettings,
+      groupSorted: sortedTransactions?.groupSorted,
+      logbooks: logbooks,
+      categories: categories,
+      budgets: budgets,
+      graph: graph,
+      activeBudget: activeBudget,
+      setGraph: (item) => setGraph(item),
+      setActiveBudget: (item) => setActiveBudget(item),
+      setShowGraph: (item) => setShowGraph(item),
+    });
+    setScreenLoading(false);
+    // setComponentLoading(false);
+  };
+  const categorizeSpentList = () => {
+    utils.GetSpentList({
+      expenseOnly: true,
+      groupSorted: sortedTransactions.groupSorted,
+      categories: categories.categories,
+      rangeDay: graph?.rangeDay,
+      setSpentList: (item) => setSpentList(item),
+    });
+    setScreenLoading(false);
+    setComponentLoading(false);
+  };
 
   useEffect(() => {
     let isUnmounted = false;
@@ -87,11 +102,6 @@ const AnalyticsScreen = () => {
     //   }, 10);
     // }
     // console.log("Mounted");
-
-    return () => {
-      // isUnmounted = true;
-      console.log("Unmounted");
-    };
   }, []);
 
   useEffect(() => {
@@ -108,7 +118,14 @@ const AnalyticsScreen = () => {
         categorizeSpentList();
       }, 1);
     }
-  }, [screenLoading, componentLoading]);
+  }, [screenLoading]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      findTransactions();
+      categorizeSpentList();
+    }, 1);
+  }, [componentLoading]);
 
   // useEffect(() => {
   //   setGraph({
@@ -121,13 +138,18 @@ const AnalyticsScreen = () => {
   useEffect(() => {
     // console.log(JSON.stringify(graph));
     setComponentLoading(true);
-    if (graph?.status === "loading") {
+    setShowGraph(false);
+    if (!showGraph) {
       setTimeout(() => {
         findTransactions();
         categorizeSpentList();
       }, 1);
     }
-  }, [graph?.rangeDay, graph?.status]);
+  }, [graph?.rangeDay]);
+
+  useEffect(() => {
+    console.log({ graph });
+  }, [graph]);
 
   // useEffect(() => {
   //   setGraph({
@@ -172,7 +194,7 @@ const AnalyticsScreen = () => {
 
           {activeBudget?.spent && (
             <>
-              {!componentLoading && graph?.status === "done" && (
+              {!componentLoading && showGraph && (
                 <>
                   <View
                     style={{
@@ -190,14 +212,17 @@ const AnalyticsScreen = () => {
                       }}
                     >
                       <TextSecondary
-                        label={appSettings.logbookSettings.defaultCurrency.symbol}
+                        label={
+                          appSettings.logbookSettings.defaultCurrency.symbol
+                        }
                         style={{ paddingRight: 8 }}
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
                         label={utils.GetFormattedNumber({
                           value: activeBudget?.spent,
-                          currency: appSettings.logbookSettings.defaultCurrency.name,
+                          currency:
+                            appSettings.logbookSettings.defaultCurrency.name,
                         })}
                       />
                     </View>
@@ -208,17 +233,12 @@ const AnalyticsScreen = () => {
                   </View>
                   <CustomBarChart
                     //   Graph Data
-                    mainGraph={
-                      graph?.status === "done" ? graph?.graphData.mainGraph : null
-                    }
+                    mainGraph={showGraph ? graph?.graphData.mainGraph : null}
                     shadowGraph={
-                      graph?.status === "done"
-                        ? graph?.graphData.shadowGraph
-                        : null
+                      showGraph ? graph?.graphData.shadowGraph : null
                     }
                     limitLine={
-                      graph?.status === "done" &&
-                      graph?.graphData.limitLine.length
+                      showGraph && graph?.graphData.limitLine.length
                         ? graph?.graphData.limitLine
                         : null
                     }
@@ -239,7 +259,11 @@ const AnalyticsScreen = () => {
                     textColor={appSettings.theme.style.text.textSecondary.color}
                     barRadius={8}
                     barWidth={
-                      graph?.rangeDay === 7 ? 28 : graph?.rangeDay === 30 ? 8 : 16
+                      graph?.rangeDay === 7
+                        ? 28
+                        : graph?.rangeDay === 30
+                        ? 8
+                        : 16
                     }
                   />
                 </>
@@ -256,21 +280,24 @@ const AnalyticsScreen = () => {
               >
                 <ButtonSwitch
                   onPress={() => {
-                    setGraph({ ...graph, rangeDay: 7, status: "loading" });
+                    setShowGraph(false);
+                    setGraph({ ...graph, rangeDay: 7 });
                   }}
                   condition={graph?.rangeDay === 7}
                   label="Last week"
                 />
                 <ButtonSwitch
                   onPress={() => {
-                    setGraph({ ...graph, rangeDay: 30, status: "loading" });
+                    setShowGraph(false);
+                    setGraph({ ...graph, rangeDay: 30 });
                   }}
                   condition={graph?.rangeDay === 30}
                   label="Last month"
-                />
+                  />
                 <ButtonSwitch
                   onPress={() => {
-                    setGraph({ ...graph, rangeDay: 365, status: "loading" });
+                    setShowGraph(false);
+                    setGraph({ ...graph, rangeDay: 365});
                   }}
                   condition={graph?.rangeDay === 365}
                   label="Last year"
@@ -280,13 +307,7 @@ const AnalyticsScreen = () => {
           )}
 
           {/* // TODO add average spent amount  */}
-          {/* {graph?.status === "loading" && (
-            <ActivityIndicator
-              size={50}
-              color={appSettings.theme.style.colors.primary}
-            />
-          )} */}
-          {graph?.status === "done" && !componentLoading && (
+          {showGraph && !componentLoading && (
             <TextPrimary
               label="Expense by category"
               style={{
@@ -324,7 +345,8 @@ const AnalyticsScreen = () => {
                     }
                     rightLabel={utils.GetFormattedNumber({
                       value: item?.totalSpent,
-                      currency: appSettings.logbookSettings.defaultCurrency.name,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}
                     iconLeftColor={
                       item?.category.icon.color === "default"
@@ -333,14 +355,16 @@ const AnalyticsScreen = () => {
                     }
                     iconLeftName={item?.category.icon.name}
                     // iconLeftColor={item?.category.icon.color}
-                    logbookCurrency={appSettings.logbookSettings.defaultCurrency}
+                    logbookCurrency={
+                      appSettings.logbookSettings.defaultCurrency
+                    }
                     transactionAmount={item?.totalSpent}
                   />
                 )}
               </>
             )}
           />
-          {graph?.status === "empty" && (
+          {!showGraph && (
             <View
               style={{
                 height: "100%",
