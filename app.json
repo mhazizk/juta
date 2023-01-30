@@ -2,7 +2,7 @@
   "expo": {
     "name": "Juta",
     "slug": "Juta",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "orientation": "portrait",
     "icon": "./src/assets/icons/juta-app-icon.png",
     "userInterfaceStyle": "automatic",
@@ -27,7 +27,7 @@
     },
     "android": {
       "package": "app.juta",
-      "versionCode": 4,
+      "versionCode": 5,
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icons/juta-icon-foreground.png",
