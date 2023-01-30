@@ -1,19 +1,7 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  // StatusBar,
-} from "react-native";
 import "react-native-gesture-handler";
 import RootStack from "./src/navigations/RootStack";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
-import {
-  GlobalStateProvider,
-  useGlobalAppSettings,
-} from "./src/reducers/GlobalContext";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { GlobalStateProvider } from "./src/reducers/GlobalContext";
 import { useEffect, useRef } from "react";
 import sentryInit from "./src/sentry/sentryInit";
 // import * as Sentry from "@sentry/react-native";
