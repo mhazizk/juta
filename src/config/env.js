@@ -1,6 +1,15 @@
 import * as Constants from "expo-constants";
 import {
-  // DEV
+  PROD_FIREBASE_API_KEY,
+  PROD_FIREBASE_PROJECT_ID,
+  PROD_FIREBASE_AUTH_DOMAIN,
+  PROD_FIREBASE_STORAGE_BUCKET,
+  PROD_FIREBASE_MESSAGING_SENDER_ID,
+  PROD_FIREBASE_APP_ID,
+  PROD_FIREBASE_MEASUREMENT_ID,
+  PROD_LOGSNAG_API_KEY,
+  PROD_LOGSNAG_API_URL,
+  PROD_SENTRY_DSN,
   DEV_FIREBASE_API_KEY,
   DEV_FIREBASE_PROJECT_ID,
   DEV_FIREBASE_AUTH_DOMAIN,
@@ -12,22 +21,6 @@ import {
   DEV_LOGSNAG_API_URL,
   DEV_SENTRY_DSN,
 } from "@env";
-
-const {
-  PROD_FIREBASE_API_KEY,
-  PROD_FIREBASE_PROJECT_ID,
-  PROD_FIREBASE_AUTH_DOMAIN,
-  PROD_FIREBASE_STORAGE_BUCKET,
-  PROD_FIREBASE_MESSAGING_SENDER_ID,
-  PROD_FIREBASE_APP_ID,
-  PROD_FIREBASE_MEASUREMENT_ID,
-} = Constants.default.expoConfig.extra.secretKey.FIREBASE.PRODUCTION;
-
-const { PROD_LOGSNAG_API_KEY, PROD_LOGSNAG_API_URL } =
-  Constants.default.expoConfig.extra.secretKey.LOGSNAG.PRODUCTION;
-
-const { PROD_SENTRY_DSN } =
-  Constants.default.expoConfig.extra.secretKey.SENTRY.PRODUCTION;
 
 const devEnv = {
   firebaseConfig: {
@@ -67,4 +60,31 @@ const prodEnv = {
   },
 };
 
+// const tryEnv = {
+//   firebaseConfig: {
+//     apiKey: "AIzaSyBa2PQkoyKDmok1qEmGGTPdZPEhy16unPQ",
+//     authDomain: "cashlog-app.firebaseapp.com",
+//     projectId: "cashlog-app",
+//     storageBucket: "cashlog-app.appspot.com",
+//     messagingSenderId: "535532688013",
+//     appId: "1:535532688013:web:b664a2a9c41447218608c4",
+//     measurementId: "G-4F0HF1XHQ9",
+//   },
+//   sentryConfig: {
+//     dsn: "https://2041645fa3e1477a9b5fe533716eacd4@o4504586660478976.ingest.sentry.io/4504586695868416",
+//   },
+//   logSnagConfig: {
+//     apiKey: "b0df022a7c9740a3e0d8f5f908cb33a2",
+//     apiUrl: "https://api.logsnag.com/v1/log",
+//   },
+// };
+// alert(`Constants.expoConfig :
+//   ${Constants.default.expoConfig.extra.PROD_FIREBASE_API_KEY}\nConstants.manifest2 :
+//   ${Constants.default.manifest2.extra.PROD_FIREBASE_API_KEY}\nprocess.env : ${process.env.PROD_FIREBASE_API_KEY}
+// `);
+// alert(`devFirebaseAPI : ${DEV_FIREBASE_API_KEY}\n\nConstants.expoConfig :
+//   ${Constants.default.expoConfig.extra.PROD_FIREBASE_API_KEY}\nConstants.manifest2 :
+//   ${Constants.default.manifest2.extra.PROD_FIREBASE_API_KEY}\nprocess.env : ${process.env.PROD_FIREBASE_API_KEY}
+// `);
+// export default prodEnv;
 export default __DEV__ ? devEnv : prodEnv;

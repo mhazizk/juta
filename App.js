@@ -1,4 +1,7 @@
+import "expo-dev-client";
+
 import {
+  Button,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,7 +19,6 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useRef } from "react";
 import sentryInit from "./src/sentry/sentryInit";
-// import * as Sentry from "@sentry/react-native";
 import * as Sentry from "sentry-expo";
 export default Sentry.Native.wrap(App);
 
@@ -41,6 +43,22 @@ function App() {
             }}
           >
             <RootStack />
+            {/* <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                backgroundColor: "red",
+              }}
+            >
+              <Button
+                title="Send sentry error"
+                onPress={() => {
+                  throw new Error("Test error from production");
+                }}
+              />
+              {__DEV__ && <Text>Dev Mode</Text>}
+            </View> */}
           </NavigationContainer>
         </GlobalStateProvider>
       </>

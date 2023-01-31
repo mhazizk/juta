@@ -27,6 +27,7 @@
       "package": "app.juta",
       "versionCode": 6,
       "softwareKeyboardLayoutMode": "pan",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icons/juta-icon-foreground.png",
         "backgroundColor": "#000000"
@@ -39,9 +40,10 @@
       ]
     },
     "web": {
-      "favicon": "./assets/icons/favicon.png"
+      "favicon": "./src/assets/icons/favicon.png"
     },
     "plugins": [
+      "sentry-expo",
       [
         "expo-media-library",
         {
@@ -55,8 +57,7 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos."
         }
-      ],
-      "sentry-expo"
+      ]
     ],
     "hooks": {
       "postPublish": [

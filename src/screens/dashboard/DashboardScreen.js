@@ -20,6 +20,7 @@ import {
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
+import * as Constants from "expo-constants";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -74,7 +75,6 @@ const DashboardScreen = ({ navigation }) => {
   }, [sortedTransactions, budgets, graph, activeBudget]);
 
   useEffect(() => {
-    // in epoch time
     findTransactions();
     setDate(Date.now());
   }, []);
@@ -193,12 +193,6 @@ const DashboardScreen = ({ navigation }) => {
               )}
             </View>
           </View>
-          <ButtonPrimary
-            label="test error"
-            onPress={() => {
-              throw new Error("Error from test button");
-            }}
-          />
 
           {/* {appSettings.dashboardSettings.showTotalExpenseWidget && (
             <TotalExpenseWidget

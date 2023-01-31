@@ -228,57 +228,14 @@ const RootStack = () => {
   // Save Logbooks to storage
   useEffect(() => {
     if (logbooks.logbooks) {
-      // setTimeout(async () => {
-      //   await firestore.setData(
-      //     FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-      //     logbooks.logbooks.uid,
-      //     userAccount
-      //   );
-      // }, 1);
     }
   }, [logbooks]);
 
   // Save Categories to storage
   useEffect(() => {
     if (categories) {
-      // persistStorage.asyncStorage({
-      //   action: PERSIST_ACTIONS.SET,
-      //   key: "categories",
-      //   rawValue: categories,
-      // });
     }
   }, [categories]);
-
-  // const dispatchInitSortedTransactions = () => {
-  // const getSortedTransactions = useMemo(() => {
-  //   return async () => {
-  //     try {
-  //       dispatchSortedTransactions({
-  //         type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.SET,
-  //         payload: await setSortedTransactions(),
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  // }, [rawTransactions]);
-  // }
-
-  // Get Transaction File from storage
-  // const getFileFromStorage = async () => {
-  //   try {
-  //     const json = await AsyncStorage.getItem("trx");
-  //     if (json !== null) {
-  //       const parsed = JSON.parse(json);
-  //       dispatchRawTransactions({
-  //         type: REDUCER_ACTIONS.TRANSACTIONS.SET,
-  //         payload: parsed,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // };
 
   const noHeader = {
     headerShown: false,
@@ -301,29 +258,17 @@ const RootStack = () => {
   };
 
   return (
-    <Stack.Navigator
-      initialRouteName={screenList.splashScreen}
-      // screenOptions={{
-      //   headerShown: true,
-      // }}
-    >
+    <Stack.Navigator initialRouteName={screenList.splashScreen}>
       {/* // SECTION : INITIAL */}
       {/* // TAG : Splash Screen */}
-      {!appSettings?.hiddenScreens?.some(
-        (screen) => screen === screenList.splashScreen
-      ) && (
-        <Stack.Screen
-          options={{
-            gestureEnabled: false,
-            presentation: "transparentModal",
-            headerShown: false,
-            cardOverlayEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forBottomSheetAndroid,
-          }}
-          name={screenList.splashScreen}
-          component={SplashScreen}
-        />
-      )}
+      <Stack.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+        }}
+        name={screenList.splashScreen}
+        component={SplashScreen}
+      />
 
       {/* // TAG : Onboarding Screen */}
       {!appSettings?.hiddenScreens?.some(
