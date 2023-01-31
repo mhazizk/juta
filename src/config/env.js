@@ -1,3 +1,4 @@
+import * as Constants from "expo-constants";
 import {
   // DEV
   DEV_FIREBASE_API_KEY,
@@ -10,7 +11,9 @@ import {
   DEV_LOGSNAG_API_KEY,
   DEV_LOGSNAG_API_URL,
   DEV_SENTRY_DSN,
-  // PROD
+} from "@env";
+
+const {
   PROD_FIREBASE_API_KEY,
   PROD_FIREBASE_PROJECT_ID,
   PROD_FIREBASE_AUTH_DOMAIN,
@@ -18,10 +21,13 @@ import {
   PROD_FIREBASE_MESSAGING_SENDER_ID,
   PROD_FIREBASE_APP_ID,
   PROD_FIREBASE_MEASUREMENT_ID,
-  PROD_LOGSNAG_API_KEY,
-  PROD_LOGSNAG_API_URL,
-  PROD_SENTRY_DSN
-} from "@env";
+} = Constants.default.expoConfig.extra.secretKey.FIREBASE.PRODUCTION;
+
+const { PROD_LOGSNAG_API_KEY, PROD_LOGSNAG_API_URL } =
+  Constants.default.expoConfig.extra.secretKey.LOGSNAG.PRODUCTION;
+
+const { PROD_SENTRY_DSN } =
+  Constants.default.expoConfig.extra.secretKey.SENTRY.PRODUCTION;
 
 const devEnv = {
   firebaseConfig: {
