@@ -113,6 +113,7 @@ const LoadingScreen = ({ route, navigation }) => {
                   );
                   attachmentURL.push(newURL);
                 }, Promise.resolve());
+                alert("attachment Uploaded");
                 return attachmentURL;
               };
 
@@ -142,6 +143,13 @@ const LoadingScreen = ({ route, navigation }) => {
                 });
               });
             } else {
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                  transaction.transaction_id,
+                  transaction
+                );
+              }, 5000);
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                   .INSERT_TRANSACTION,

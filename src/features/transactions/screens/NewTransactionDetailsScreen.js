@@ -1004,7 +1004,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
                     allowsEditing: true,
                     allowsMultipleSelection: true,
-                    quality: 1,
+                    quality: 0.2,
+                    // TODO : try compressing image for firebase storage
                   });
 
                   const { canceled, assets } = result;

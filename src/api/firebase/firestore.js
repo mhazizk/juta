@@ -131,8 +131,12 @@ const getAndListenMultipleDocs = (
 // Add data to firestore
 const setData = async (collectionName, documentId = null, data) => {
   try {
-    const docRef = await setDoc(doc(db, collectionName, documentId), data);
-    // console.log("Document written w ith ID: ", docRef.id);
+    setDoc(doc(db, collectionName, documentId), data).then((docRef) => {
+      alert("Document has beeen written");
+    });
+    // const docRef = await setDoc(doc(db, collectionName, documentId), data);
+    // console.log("Document written with ID: ", docRef.id);
+    // return docRef;
   } catch (error) {
     Alert.alert("Error", error.message);
     return Promise.reject(error);
