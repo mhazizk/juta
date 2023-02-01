@@ -113,7 +113,7 @@ const LoadingScreen = ({ route, navigation }) => {
                   );
                   attachmentURL.push(newURL);
                 }, Promise.resolve());
-                alert("attachment Uploaded");
+                // alert("attachment Uploaded");
                 return attachmentURL;
               };
 
