@@ -16,8 +16,9 @@ import screenList from "../../navigations/ScreenList";
 import Footer from "../../components/Footer";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import useAuth from "../../hooks/useAuth";
-import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../api/firebase/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
+// import auth from "../../api/firebase/auth";
+import auth from "@react-native-firebase/auth";
 // import persistStorage from "../../reducers/persist/persistStorage";
 // import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import firestore from "../../api/firebase/firestore";
@@ -36,9 +37,11 @@ const LoginScreen = ({ route, navigation }) => {
   // const [authAccount, setAuthAccount] = useState(null);
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, setUser] = useState(null);
+  // const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(setUser(auth().currentUser));
     if (route?.params?.account && route?.params?.password) {
       const account = route?.params?.account;
       const password = route?.params?.password;
@@ -55,6 +58,7 @@ const LoginScreen = ({ route, navigation }) => {
       //     // setPassword(account.password);
       //   });
     }
+    return subscriber;
   }, []);
 
   useEffect(() => {
@@ -65,13 +69,13 @@ const LoginScreen = ({ route, navigation }) => {
     }
   }, [email, password]);
 
-  useEffect(() => {
-    if (user) {
-      // setEmail(auth.email);
-      console.log("hooks", user);
-      // navigation.replace(screenList.splashScreen);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     // setEmail(auth.email);
+  //     console.log("hooks", user);
+  //     // navigation.replace(screenList.splashScreen);
+  //   }
+  // }, [user]);
 
   const finalCheck = () => {
     setScreenLoading(true);
@@ -119,7 +123,7 @@ const LoginScreen = ({ route, navigation }) => {
           !!password &&
           route.params?.status === "NEW_USER" &&
           !!route.params?.account:
-          if (auth.currentUser) {
+          if (!user) {
             // Login from new user
             Promise.all([
               firestore.getOneDoc(
@@ -160,7 +164,7 @@ const LoginScreen = ({ route, navigation }) => {
           }
           break;
 
-        case !!email && !!password && !user:
+        case !!email && !!password && !!user:
           // New login
           handleUserLogin({ email, password })
             .then((authAccount) => {
@@ -179,7 +183,7 @@ const LoginScreen = ({ route, navigation }) => {
             });
           break;
 
-        case !!email && !!password && !!user && !route?.params?.status:
+        case !!email && !!password && !route?.params?.status:
           // Login existing account
           handleUserLogin({ email, password })
             .then((authAccount) => {

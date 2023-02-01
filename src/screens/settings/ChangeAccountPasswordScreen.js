@@ -1,8 +1,8 @@
 import { signOut } from "firebase/auth";
 import { useEffect, useRef, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import { Alert, Dimensions, ScrollView, View } from "react-native";
-import auth from "../../api/firebase/auth";
+// import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import password from "../../api/firebase/password";
@@ -34,7 +34,6 @@ const ChangeAccountPasswordScreen = ({ item, navigation }) => {
   const { dispatchCategories } = useGlobalCategories();
   const { dispatchLogbooks } = useGlobalLogbooks();
   const { dispatchBudgets } = useGlobalBudgets();
-  const [user, loading, error] = useAuthState(auth);
   const [isLoading, setIsLoading] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

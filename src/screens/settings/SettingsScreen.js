@@ -18,7 +18,7 @@ import ListSection from "../../components/List/ListSection";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import getCurrencyRate from "../../api/GetCurrencyRate";
 import auth from "../../api/firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth/react-native";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
@@ -40,7 +40,6 @@ const CurrencySettingsScreen = ({ navigation }) => {
     appSettings.logbookSettings
   );
   const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
-  const [user, loading, error] = useAuthState(auth);
 
   const [isLoading, setIsLoading] = useState(false);
 

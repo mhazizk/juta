@@ -1,28 +1,19 @@
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, ScrollView, View } from "react-native";
-import auth from "../../../api/firebase/auth";
+import { ScrollView, View } from "react-native";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../../assets/themes/colorOfTheYear2023";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
 import UserHeaderComponent from "../../../components/UserHeader";
-import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
+  useGlobalBudgets, useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalUserAccount,
+  useGlobalUserAccount
 } from "../../../reducers/GlobalContext";
-import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import { getDeviceId } from "../../../utils";
 import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 
@@ -33,7 +24,6 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   const { budgets } = useGlobalBudgets();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     if (userAccount) {

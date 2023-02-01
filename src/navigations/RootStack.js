@@ -52,8 +52,7 @@ import SignUpScreen from "../screens/auth/SignUpScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
-import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../api/firebase/auth";
+// import auth from "../api/firebase/auth";
 import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
 import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
 import NewGroupScreen from "../features/groups/screens/NewGroupScreen";
@@ -93,7 +92,7 @@ const RootStack = () => {
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
   const navigation = useNavigation();
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth());
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
 
   const userAccountRef = useRef(userAccount);
@@ -154,67 +153,66 @@ const RootStack = () => {
 
   // TAG : useEffect for state
   useEffect(() => {
-    if (userAccount && user && !loading) {
-      console.log("here");
-    }
-    return () => {
-      if (userAccount && user && !loading) {
-        console.log("here unsubscribe");
-      }
-    };
+    // if (userAccount && user && !loading) {
+    //   console.log("here");
+    // }
+    // return () => {
+    //   if (userAccount && user && !loading) {
+    //     console.log("here unsubscribe");
+    //   }
+    // };
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {
-    if (userAccount && user && !loading) {
-      // if (userAccount) {
-      setTimeout(async () => {
-        console.log("here2");
-        // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
-        // await firestore.setData(
-        //   FIRESTORE_COLLECTION_NAMES.USERS,
-        //   userAccount.uid,
-        //   userAccount
-        // );
-      }, 1);
-    }
+    // if (userAccount && user && !loading) {
+    //   // if (userAccount) {
+    //   setTimeout(async () => {
+    //     console.log("here2");
+    //     // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
+    //     // await firestore.setData(
+    //     //   FIRESTORE_COLLECTION_NAMES.USERS,
+    //     //   userAccount.uid,
+    //     //   userAccount
+    //     // );
+    //   }, 1);
+    // }
     // }, [userAccount]);
   }, [userAccount]);
 
   // Save Sorted Transactions to storage
   useEffect(() => {
-    if (sortedTransactions && user && !loading) {
-      console.log("here");
-      // useFirestoreSubscriptions({
-      //   uid: userAccount.uid,
-      //   subscribeAll: true,
-      //   appSettings: appSettings,
-      //   dispatchAppSettings: dispatchAppSettings,
-      //   userAccount: userAccount,
-      //   dispatchUserAccount: dispatchUserAccount,
-      //   logbooks: logbooks,
-      //   dispatchLogbooks: dispatchLogbooks,
-      //   sortedTransactions: sortedTransactions,
-      //   dispatchSortedTransactions: dispatchSortedTransactions,
-      //   categories: categories,
-      //   dispatchCategories: dispatchCategories,
-      //   budgets: budgets,
-      //   dispatchBudgets: dispatchBudgets,
-      //   badgeCounter: badgeCounter,
-      //   dispatchBadgeCounter: dispatchBadgeCounter,
-      // });
-    }
-
-    // persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "sortedTransactions",
-    //   rawValue: sortedTransactions,
-    // });
+    // if (sortedTransactions && user && !loading) {
+    //   console.log("here");
+    //   // useFirestoreSubscriptions({
+    //   //   uid: userAccount.uid,
+    //   //   subscribeAll: true,
+    //   //   appSettings: appSettings,
+    //   //   dispatchAppSettings: dispatchAppSettings,
+    //   //   userAccount: userAccount,
+    //   //   dispatchUserAccount: dispatchUserAccount,
+    //   //   logbooks: logbooks,
+    //   //   dispatchLogbooks: dispatchLogbooks,
+    //   //   sortedTransactions: sortedTransactions,
+    //   //   dispatchSortedTransactions: dispatchSortedTransactions,
+    //   //   categories: categories,
+    //   //   dispatchCategories: dispatchCategories,
+    //   //   budgets: budgets,
+    //   //   dispatchBudgets: dispatchBudgets,
+    //   //   badgeCounter: badgeCounter,
+    //   //   dispatchBadgeCounter: dispatchBadgeCounter,
+    //   // });
+    // }
+    // // persistStorage.asyncStorage({
+    // //   action: PERSIST_ACTIONS.SET,
+    // //   key: "sortedTransactions",
+    // //   rawValue: sortedTransactions,
+    // // });
   }, [sortedTransactions]);
 
   // Save App Settings to storage
   useEffect(() => {
     // if (appSettings && user && !isLoading) {
-    if (appSettings && userAccount && user && !loading) {
+    if (appSettings && userAccount) {
       setTimeout(async () => {
         await firestore.setData(
           FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,

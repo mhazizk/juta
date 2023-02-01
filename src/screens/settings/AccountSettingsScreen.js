@@ -1,8 +1,9 @@
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import { Alert, ScrollView, View } from "react-native";
-import auth from "../../api/firebase/auth";
+// import auth from "../../api/firebase/auth";
+import auth from "@react-native-firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
@@ -34,7 +35,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
   const { dispatchLogbooks } = useGlobalLogbooks();
   const { dispatchBudgets } = useGlobalBudgets();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     if (userAccount) {
@@ -189,7 +190,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                       text: "Yes",
                       onPress: async () => {
                         setIsLoading(true);
-                        if (user) {
+                        if (userAccount) {
                           // Get device id
                           const deviceId = await getDeviceId();
                           const removedDeviceIdFromDevicesLoggedIn =
@@ -215,26 +216,28 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                                 unsubscribeAll: true,
                               });
                               setTimeout(() => {
-                                signOut(auth).then(() => {
-                                  dispatchAppSettings({
-                                    type: REDUCER_ACTIONS.APP_SETTINGS.THEME
-                                      .SET,
-                                    payload: { style: colorOfTheYear2023 },
-                                  });
-                                  dispatchUserAccount({
-                                    type: REDUCER_ACTIONS.USER_ACCOUNT
-                                      .FORCE_SET,
-                                    payload: null,
-                                  });
-                                  setTimeout(() => {
-                                    navigation.reset({
-                                      index: 0,
-                                      routes: [
-                                        { name: screenList.loginScreen },
-                                      ],
+                                auth()
+                                  .signOut()
+                                  .then(() => {
+                                    dispatchAppSettings({
+                                      type: REDUCER_ACTIONS.APP_SETTINGS.THEME
+                                        .SET,
+                                      payload: { style: colorOfTheYear2023 },
                                     });
-                                  }, 500);
-                                });
+                                    dispatchUserAccount({
+                                      type: REDUCER_ACTIONS.USER_ACCOUNT
+                                        .FORCE_SET,
+                                      payload: null,
+                                    });
+                                    setTimeout(() => {
+                                      navigation.reset({
+                                        index: 0,
+                                        routes: [
+                                          { name: screenList.loginScreen },
+                                        ],
+                                      });
+                                    }, 500);
+                                  });
                               }, 1500);
                             });
 

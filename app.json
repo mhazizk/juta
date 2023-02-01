@@ -44,6 +44,8 @@
     },
     "plugins": [
       "sentry-expo",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
       [
         "expo-media-library",
         {

@@ -26,8 +26,9 @@ import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
 import devAppSettings from "../../dev/devAppSettings";
 import devUserAccount from "../../dev/devUserAccount";
-import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../api/firebase/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
+// import auth from "../../api/firebase/auth";
+import auth from "@react-native-firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
@@ -47,9 +48,16 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [loaded, setLoaded] = useState(null);
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
+  const [user, setUser] = useState(null);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (auth().currentUser.uid) {
+      setUser(auth().currentUser);
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   useEffect(() => {
     console.log(loaded);

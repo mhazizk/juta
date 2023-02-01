@@ -1,5 +1,5 @@
 module.exports = ({ config }) => {
-  const appVersion = "0.5.8-firebase@9.4.0";
+  const appVersion = "0.5.8-rnfb-16.7.0";
   const androidVersionCode = 8;
   const iosBuildNumber = 1;
 

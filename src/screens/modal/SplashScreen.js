@@ -16,8 +16,9 @@ import {
 // import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import screenList from "../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
-import auth from "../../api/firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import auth from "../../api/firebase/auth";
+import auth from "@react-native-firebase/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
@@ -49,37 +50,46 @@ const SplashScreen = ({ route, navigation }) => {
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     console.log({ __DEV__ });
+    const subscribe = auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    // subscribe();
   }, []);
 
   useEffect(() => {
     // goToLogInScreen();
     switch (true) {
-      case route.params?.status === "NEW_USER" && !!user && !loading:
+      case route.params?.status === "NEW_USER" && !!user:
         startAppWithNewUser(user);
         break;
-      case !route.params?.status && !!user && !loading:
+      case !route.params?.status && !!user:
         startAppWithExistingUser(user);
         break;
       case !route.params?.status === "RETRY_LOGIN":
-        // case !route.params?.status === "RETRY_LOGIN" && !user && !loading:
+        // case !route.params?.status === "RETRY_LOGIN" && !user:
         navigation.replace(screenList.loginScreen);
         break;
       case error:
         console.log(error);
         break;
 
-      case !user && !loading:
+      case !user:
         navigation.replace(screenList.onboardingScreen);
         break;
 
       default:
         break;
     }
-  }, [user, loading, error]);
+  }, [user]);
 
   useEffect(() => {
     // refresh state

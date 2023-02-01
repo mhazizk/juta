@@ -1,10 +1,5 @@
-import { signOut } from "firebase/auth";
 import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  Alert, View
-} from "react-native";
-import auth from "../../../api/firebase/auth";
+import { View } from "react-native";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import UserHeaderComponent from "../../../components/UserHeader";
@@ -26,7 +21,6 @@ const MyGroupsScreen = ({ item, navigation }) => {
   const { dispatchCategories } = useGlobalCategories();
   const { dispatchLogbooks } = useGlobalLogbooks();
   const { dispatchBudgets } = useGlobalBudgets();
-  const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     if (userAccount) {
@@ -110,53 +104,13 @@ const MyGroupsScreen = ({ item, navigation }) => {
                 pressable
                 leftLabel="Account Type"
                 rightLabel={
-                  userAccount?.subscription?.plan === 'premium' ? "Premium Account" : "Basic Account"
+                  userAccount?.subscription?.plan === "premium"
+                    ? "Premium Account"
+                    : "Basic Account"
                 }
                 iconLeftName="checkmark"
                 iconPack="IonIcons"
                 onPress={() => alert("Feature in progress ...")}
-              />
-            </ListSection>
-            <ListSection>
-              {/* // TAG : Log out */}
-              <ListItem
-                pressable
-                leftLabel="Log out account"
-                iconLeftName="log-out-outline"
-                iconPack="IonIcons"
-                onPress={() =>
-                  Alert.alert("Log out", "Are you sure you want to log out?", [
-                    {
-                      text: "No",
-                      onPress: () => console.log("Cancel Pressed"),
-                      style: "cancel",
-                    },
-                    {
-                      text: "Yes",
-                      onPress: () =>
-                        signOut(auth).then(() => {
-                          // dispatchSortedTransactions({
-                          //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS
-                          //     .GROUP_SORTED.FORCE_SET,
-                          //   payload: InitialSortedTransactions,
-                          // });
-                          // dispatchCategories({
-                          //   type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-                          //   payload: initialCategories,
-                          // });
-                          // dispatchLogbooks({
-                          //   type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
-                          //   payload: initialLogbooks,
-                          // });
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: screenList.loginScreen }],
-                          });
-                        }),
-                      // style: "default",
-                    },
-                  ])
-                }
               />
             </ListSection>
           </>
