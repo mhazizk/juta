@@ -359,7 +359,7 @@ const mapData = ({
                 ${tdAlignRight}
                     ${
                       transaction.details.in_out === "expense"
-                        ? GetFormattedNumber({
+                        ? getFormattedNumber({
                             value: transaction.details.amount,
                             currency: logbook.logbook_currency.name,
                           })
@@ -367,7 +367,7 @@ const mapData = ({
                     }
                 </td>
                 ${tdAlignRight}
-                ${GetFormattedNumber({
+                ${getFormattedNumber({
                   value: balance,
                   currency: logbook.logbook_currency.name,
                 })}
@@ -428,19 +428,19 @@ const tableSummary = ({ logbook, transactionData }) => {
         ${td}
         </td>
         ${tdAlignRight}
-        ${GetFormattedNumber({
+        ${getFormattedNumber({
           value: allIncome.reduce((a, b) => a + b, 0),
           currency: logbook.logbook_currency.name,
         })}
         </td>
         ${tdAlignRight}
-            ${GetFormattedNumber({
+            ${getFormattedNumber({
               value: allExpense.reduce((a, b) => a + b, 0),
               currency: logbook.logbook_currency.name,
             })}
         </td>
         ${tdAlignRight}
-            ${GetFormattedNumber({
+            ${getFormattedNumber({
               value:
                 allIncome.reduce((a, b) => a + b, 0) -
                 allExpense.reduce((a, b) => a + b, 0),
