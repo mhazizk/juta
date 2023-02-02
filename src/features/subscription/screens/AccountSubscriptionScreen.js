@@ -25,6 +25,8 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import { getDeviceId } from "../../../utils";
 import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
+import Purchases from "react-native-purchases";
+import configureRevenueCat from "../../../api/revenue-cat/configureRevenueCat";
 
 const AccountSubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -34,6 +36,13 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
+
+  useEffect(() => {
+    configureRevenueCat();
+    Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+      console.log(customerInfo.activeSubscriptions);
+    });
+  }, []);
 
   useEffect(() => {
     if (userAccount) {

@@ -28,7 +28,6 @@ import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 import SubscriptionTypeCard from "../components/SubscriptionTypeCard";
 import subscriptionTypes from "../model/subscriptionType";
-import Purchases, { PurchasesOffering } from "react-native-purchases";
 import RevenueCatMapOfferings from "../../../api/revenue-cat/revenueCat";
 
 const SubscriptionPlanScreen = ({ item, navigation }) => {

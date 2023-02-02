@@ -132,7 +132,7 @@ const getAndListenMultipleDocs = (
 const setData = async (collectionName, documentId = null, data) => {
   try {
     setDoc(doc(db, collectionName, documentId), data).then((docRef) => {
-      alert("Document has beeen written");
+      console.log("Document has beeen written");
     });
     // const docRef = await setDoc(doc(db, collectionName, documentId), data);
     // console.log("Document written with ID: ", docRef.id);
