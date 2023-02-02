@@ -1,3 +1,4 @@
+import * as Constants from "expo-constants";
 import { View } from "react-native";
 import { TextPrimary } from "./Text";
 
@@ -13,8 +14,8 @@ const Footer = () => {
           justifyContent: "center",
         }}
       >
-        <TextPrimary label="Juta" />
-        <TextPrimary label="v.0.5.0" />
+        <TextPrimary label={Constants.default.expoConfig.name} />
+        <TextPrimary label={Constants.default.expoConfig.version} />
       </View>
     </>
   );
