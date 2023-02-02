@@ -21,7 +21,7 @@ const TermsOfServiceScreen = ({ navigation }) => {
           }}
         >
           <TextPrimary
-            label="Terms & Conditions"
+            label="Terms of Service"
             style={{
               padding: 16,
               alignSelf: "center",
