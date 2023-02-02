@@ -79,6 +79,8 @@ import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureW
 import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
 import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfilePictureScreen";
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
+import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOfServiceScreen";
+import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -875,6 +877,20 @@ const RootStack = () => {
         component={NewFeatureWishlistScreen}
       />
 
+      {/* // SECTION : TERMS OF SERVICE */}
+      {/* // TAG : Terms of Service Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Terms of Service" }}
+        name={screenList.termsOfServiceScreen}
+        component={TermsOfServiceScreen}
+      />
+      {/* // SECTION : PRIVACY POLICY */}
+      {/* // TAG : Privacy Policy Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Privacy Policy" }}
+        name={screenList.privacyPolicyScreen}
+        component={PrivacyPolicyScreen}
+      />
       {/* // SECTION : EXPORT */}
       {/* // TAG : Subscription Plan Screen */}
       <Stack.Screen

@@ -23,7 +23,7 @@ const SignUpScreen = ({ route, navigation }) => {
   // const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
-  // const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [checkPassword, setCheckPassword] = useState("");
@@ -100,13 +100,14 @@ const SignUpScreen = ({ route, navigation }) => {
     if (
       buttonCondition.displayName === "ok" &&
       buttonCondition.email === "ok" &&
-      buttonCondition.password === "ok"
+      buttonCondition.password === "ok" &&
+      agreeTerms
     ) {
       setShowButton(true);
     } else {
       setShowButton(false);
     }
-  }, [buttonCondition]);
+  }, [buttonCondition, agreeTerms]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -449,57 +450,58 @@ const SignUpScreen = ({ route, navigation }) => {
                 <PasswordRules conditions={passwordConditions} />
               )}
             </View>
-            {/* //SECTION : Footer */}
-            {/* // TODO : Terms and condition hidden */}
-            {/* <View
+            {/* //SECTION : Terms of Service and Privacy Policy */}
+            <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-between",
+                justifyContent: "flex-start",
                 width: "100%",
               }}
             >
-              <View
-                style={{
-                  flex: 1,
+              <CheckList
+                pressable
+                checkboxPlacement="left"
+                singleChecklist
+                marginRight={0}
+                item={true}
+                // primaryLabel="I accept all Terms of Services and Privacy Policy"
+                selected={agreeTerms}
+                onPress={() => {
+                  setAgreeTerms(!agreeTerms);
+                }}
+              />
+              <TextPrimary label="I accept all" />
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate(screenList.termsOfServiceScreen);
                 }}
               >
-                <CheckList
-                  pressable
-                  checkboxPlacement="left"
-                  singleChecklist
-                  item={true}
-                  primaryLabel="I accept all Terms and Conditions"
-                  selected={agreeTerms}
-                  onPress={() => {
-                    setAgreeTerms(!agreeTerms);
+                <TextPrimary
+                  label="Terms of Service"
+                  style={{
+                    paddingVertical: 16,
+                    paddingHorizontal: 4,
+                    fontWeight: "bold",
                   }}
                 />
-              </View>
-              <TouchableOpacity
-                style={
-                  {
-                    // flex: 1,
-                  }
-                }
-              >
-                <View
-                  style={{
-                    alignItems: "flex-end",
-                    paddingRight: 16,
-                    //   flex: 1,
-                  }}
-                >
-                  <TextPrimary
-                    label="Terms and Conditions"
-                    style={{
-                      paddingVertical: 16,
-                      fontWeight: "bold",
-                    }}
-                  />
-                </View>
               </TouchableOpacity>
-            </View> */}
+              <TextPrimary label="and" />
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate(screenList.privacyPolicyScreen);
+                }}
+              >
+                <TextPrimary
+                  label="Privacy Policy"
+                  style={{
+                    paddingVertical: 16,
+                    paddingHorizontal: 4,
+                    fontWeight: "bold",
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
             {/* // TAG : Button Active */}
             {showButton && !showPasswordRules && (
               <ButtonPrimary

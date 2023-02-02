@@ -96,6 +96,12 @@ const screenList = {
   // Image viewer screen
   imageViewerScreen: "Image Viewer Screen",
 
+  // Terms of Service Screen
+  termsOfServiceScreen: "Terms Of Service Screen",
+
+  // Privacy Policy Screen
+  privacyPolicyScreen: "Privacy Policy Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",

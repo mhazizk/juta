@@ -6,6 +6,7 @@ const CheckList = ({
   checkboxPlacement = "right",
   singleChecklist = false,
   disabled = false,
+  marginRight = 16,
   viewOnly,
   primaryLabel,
   secondaryLabel,
@@ -239,7 +240,7 @@ const CheckList = ({
                   width: 20,
                   borderWidth: 1.3,
                   borderRadius: 8,
-                  marginRight: 16,
+                  marginRight: marginRight,
                   justifyContent: "center",
                   alignItems: "center",
                 }}
