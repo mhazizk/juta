@@ -1,6 +1,6 @@
 module.exports = ({ config }) => {
-  const name = "Juta-staging";
-  const appVersion = "0.5.9-dev-alpha";
+  const name = "Juta";
+  const appVersion = "0.5.9-stable";
   const androidVersionCode = 9;
   const iosBuildNumber = 1;
 
