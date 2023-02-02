@@ -20,6 +20,7 @@ import {
   DEV_LOGSNAG_API_KEY,
   DEV_LOGSNAG_API_URL,
   DEV_SENTRY_DSN,
+  REVENUE_CAT_GOOGLE_API_KEY,
 } from "@env";
 
 const devEnv = {
@@ -39,6 +40,9 @@ const devEnv = {
     apiKey: DEV_LOGSNAG_API_KEY,
     apiUrl: DEV_LOGSNAG_API_URL,
   },
+  revenueCat: {
+    googleApiKey: REVENUE_CAT_GOOGLE_API_KEY,
+  },
 };
 
 const prodEnv = {
@@ -57,6 +61,9 @@ const prodEnv = {
   logSnagConfig: {
     apiKey: PROD_LOGSNAG_API_KEY,
     apiUrl: PROD_LOGSNAG_API_URL,
+  },
+  revenueCat: {
+    googleApiKey: REVENUE_CAT_GOOGLE_API_KEY,
   },
 };
 
