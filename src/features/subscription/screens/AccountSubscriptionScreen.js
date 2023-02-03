@@ -27,6 +27,7 @@ import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 import Purchases from "react-native-purchases";
 import configureRevenueCat from "../../../api/revenue-cat/configureRevenueCat";
+import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 
 const AccountSubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -38,10 +39,7 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
-    configureRevenueCat();
-    Purchases.addCustomerInfoUpdateListener((customerInfo) => {
-      console.log(customerInfo.activeSubscriptions);
-    });
+    // updateSubscriptionStatus(userAccount);
   }, []);
 
   useEffect(() => {
@@ -67,7 +65,12 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
         {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
-            <SubscriptionStatus subscription={userAccount?.subscription} />
+            <SubscriptionStatus
+              subscription={userAccount?.subscription}
+              onPress={(screen) => {
+                navigation.navigate(screen);
+              }}
+            />
             <SubscriptionFeatures
               subscription={userAccount?.subscription}
               showCurrent={true}

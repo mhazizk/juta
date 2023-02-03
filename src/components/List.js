@@ -74,7 +74,12 @@ export const ListItem = ({
             }}
           >
             <View>
-              {leftLabel && !disabled && <TextPrimary label={leftLabel} />}
+              {leftLabel && !disabled && (
+                <TextPrimary
+                  label={leftLabel}
+                  // style={{ color: leftLabelColor || null }}
+                />
+              )}
               {secondaryLabel && !disabled && (
                 <TextSecondary label={secondaryLabel} />
               )}

@@ -88,10 +88,26 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                     maxLength: 14,
                     default: userAccount.displayName,
                     selected: (item) => {
+                      const modifiedUserAcount = {
+                        ...userAccount,
+                        displayName: item,
+                        _timestamps: {
+                          ...userAccount._timestamps,
+                          updated_at: Date.now(),
+                          updated_by: userAccount.uid,
+                        },
+                      };
                       dispatchUserAccount({
-                        type: REDUCER_ACTIONS.USER_ACCOUNT.DISPLAY_NAME.SET,
-                        payload: item,
+                        type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+                        payload: modifiedUserAcount,
                       });
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.USERS,
+                          userAccount.uid,
+                          modifiedUserAcount
+                        );
+                      }, 5000);
                     },
                   })
                 }

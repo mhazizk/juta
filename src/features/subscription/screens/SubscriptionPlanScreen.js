@@ -135,14 +135,14 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
             <SubscriptionFeatures subscription={userAccount?.subscription} />
 
             <TextPrimary
-              label="Subscription Plan"
+              label="Choose your subscription plan"
               style={{
                 paddingVertical: 16,
                 paddingHorizontal: 32,
               }}
             />
             <RevenueCatMapOfferings />
-            <ListSection>
+            {/* <ListSection>
               {subscriptionTypes.map((subscriptionType) => (
                 <>
                   <SubscriptionTypeCard
@@ -155,7 +155,7 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
                   />
                 </>
               ))}
-            </ListSection>
+            </ListSection> */}
           </>
         )}
         {isLoading && (

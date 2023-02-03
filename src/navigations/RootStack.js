@@ -81,6 +81,8 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
 import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOfServiceScreen";
 import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
+import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
+import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -156,6 +158,7 @@ const RootStack = () => {
 
   // TAG : useEffect for state
   useEffect(() => {
+    updateSubscriptionStatus(userAccount, dispatchUserAccount);
     if (userAccount && user && !loading) {
       console.log("here");
     }
@@ -810,6 +813,12 @@ const RootStack = () => {
       />
 
       {/* // SECTION : SUBSCRIPTION */}
+      {/* // TAG : Subscription History Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Subscription History" }}
+        name={screenList.subscriptionHistoryScreen}
+        component={SubscriptionHistoryScreen}
+      />
       {/* // TAG : Account Subscription Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "My Subscription" }}

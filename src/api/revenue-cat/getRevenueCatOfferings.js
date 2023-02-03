@@ -20,3 +20,7 @@ const getRevenueCatOfferings = async () => {
 };
 
 export default getRevenueCatOfferings;
+
+Purchases.getOfferings().then((offerings) =>
+  offerings.current.availablePackages.map((pkg) => pkg.product)
+);

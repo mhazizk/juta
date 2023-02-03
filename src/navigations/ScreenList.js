@@ -79,8 +79,10 @@ const screenList = {
   changeAccountEmailScreen: "Change Account Email Screen",
 
   // Subscription Screen
+  mySubscriptionScreen: "My Subscription Screen",
   subscriptionPlanScreen: "Subscription Plan Screen",
   accountSubscriptionScreen: "Account Subscription Screen",
+  subscriptionHistoryScreen: "Subscription History Screen",
 
   // Export Screen
   exportScreen: "Export Screen",
