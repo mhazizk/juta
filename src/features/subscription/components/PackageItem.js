@@ -13,6 +13,7 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
       title,
       description,
       priceString,
+      price,
       currencyCode,
       subscriptionPeriod,
     },
@@ -82,7 +83,7 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
             )}
           </View>
           {/* // TAG : Yearly Saving */}
-          {/* {yearlySaving && offering.id === "yearly" && (
+          {yearlySaving && subscriptionPeriod === "P1Y" && (
             <View
               style={{
                 padding: 8,
@@ -94,14 +95,14 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
             >
               <TextButtonPrimary
                 label={` ${
-                  Math.floor((yearlySaving * 100) / offering.price) || "0"
+                  Math.floor((yearlySaving * 100) / price) || "0"
                 }% off`}
                 style={{
                   fontWeight: "bold",
                 }}
               />
             </View>
-          )} */}
+          )}
         </View>
         {/* // TAG : Background Image */}
       </TouchableNativeFeedback>

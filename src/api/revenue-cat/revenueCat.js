@@ -1,38 +1,95 @@
 import { useEffect, useState } from "react";
-import { FlatList, Platform } from "react-native";
+import { FlatList } from "react-native";
 import Purchases from "react-native-purchases";
-import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
-import env from "../../config/env";
 import PackageItem from "../../features/subscription/components/PackageItem";
-import SubscriptionTypeCard from "../../features/subscription/components/SubscriptionTypeCard";
 import { useGlobalUserAccount } from "../../reducers/GlobalContext";
-import firestore from "../firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../firebase/firestoreCollectionNames";
 import getRevenueCatOfferings from "./getRevenueCatOfferings";
-import updateSubscriptionStatus from "./updateSubscriptionStatus";
 
 const RevenueCatMapOfferings = () => {
   const { userAccount } = useGlobalUserAccount();
   const [offerings, setOfferings] = useState(null);
+  const [yearlySaving, setYearlySaving] = useState(null);
+
   useEffect(() => {
-    getRevenueCatOfferings()
-      .then((offerings) => {
-        // console.log(offerings);
-        setOfferings(offerings.current.availablePackages);
-      })
-      .then(() => {})
-      .catch((err) => {
-        console.log(err);
-      });
-    // updateSubscriptionStatus(userAccount);
+    try {
+      getRevenueCatOfferings()
+        .then((offerings) => {
+          // console.log(offerings);
+          setOfferings(offerings.current.availablePackages);
+        })
+        .then(() => {})
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {}
   }, []);
+
+  useEffect(() => {
+    if (offerings) {
+      getYearlySaving();
+    }
+    console.log(offerings);
+  }, [offerings]);
+  const a = [
+    {
+      identifier: "$rc_monthly",
+      offeringIdentifier: "premium",
+      packageType: "MONTHLY",
+      product: {
+        currencyCode: "IDR",
+        description: "Monthly premium subscription",
+        discounts: null,
+        identifier: "juta_8.99_m",
+        introPrice: null,
+        price: 129000,
+        priceString: "IDR 129,000.00",
+        productCategory: "SUBSCRIPTION",
+        productType: "AUTO_RENEWABLE_SUBSCRIPTION",
+        subscriptionPeriod: "P1M",
+        title: "Juta premium monthly subscription (Juta)",
+      },
+    },
+    {
+      identifier: "$rc_annual",
+      offeringIdentifier: "premium",
+      packageType: "ANNUAL",
+      product: {
+        currencyCode: "IDR",
+        description: "Yearly premium subscription",
+        discounts: null,
+        identifier: "juta_89.99_y",
+        introPrice: null,
+        price: 1290000,
+        priceString: "IDR 1,290,000.00",
+        productCategory: "SUBSCRIPTION",
+        productType: "AUTO_RENEWABLE_SUBSCRIPTION",
+        subscriptionPeriod: "P1Y",
+        title: "Juta premium yearly subscription (Juta)",
+      },
+    },
+  ];
+  const getYearlySaving = () => {
+    // const yearlyPrice = subscriptionTypes.find((subscriptionType) => {
+    //   return subscriptionType.id === "yearly";
+    // }).price;
+    const yearlyPrice = offerings.find((pkg) => {
+      return pkg.product.identifier.includes("y");
+    }).product.price;
+
+    const monthlyPrice = offerings.find((pkg) => {
+      return pkg.product.identifier.includes("m");
+    }).product.price;
+
+    const yearlySaving = monthlyPrice * 12 - yearlyPrice;
+    setYearlySaving(yearlySaving);
+  };
 
   return (
     <>
-      {!offerings && <Loading />}
-      {offerings && (
+      {(!offerings || !yearlySaving) && <Loading />}
+      {offerings && yearlySaving && (
         <ListSection>
           <PackageItem
             onPress={() => {}}
@@ -54,7 +111,7 @@ const RevenueCatMapOfferings = () => {
                 {offerings && (
                   <PackageItem
                     purchasePackage={item}
-                    //   yearlySaving={yearlySaving}
+                    yearlySaving={yearlySaving}
                     onPress={async () => {
                       // Using Offerings/Packages
                       try {
@@ -66,22 +123,6 @@ const RevenueCatMapOfferings = () => {
                         ) {
                           // Unlock that great "pro" content
                           console.log("PURCHASED");
-                          await firestore.setData(
-                            FIRESTORE_COLLECTION_NAMES.USERS,
-                            userAccount.uid,
-                            {
-                              ...userAccount,
-                              subscription: {
-                                ...userAccount.subscription,
-                                active: true,
-                                date: Date.now(),
-                                expiry: item.identifier.includes("monthly")
-                                  ? Date.now() + 1000 * 60 * 60 * 24 * 30
-                                  : Date.now() + 1000 * 60 * 60 * 24 * 365,
-                                plan: `premium ${item.identifier}`,
-                              },
-                            }
-                          );
                         }
                       } catch (e) {
                         if (!e.userCancelled) {

@@ -159,29 +159,29 @@ const RootStack = () => {
   // TAG : useEffect for state
   useEffect(() => {
     updateSubscriptionStatus(userAccount, dispatchUserAccount);
-    if (userAccount && user && !loading) {
-      console.log("here");
-    }
-    return () => {
-      if (userAccount && user && !loading) {
-        console.log("here unsubscribe");
-      }
-    };
+    // if (userAccount && user && !loading) {
+    //   console.log("here");
+    // }
+    // return () => {
+    //   if (userAccount && user && !loading) {
+    //     console.log("here unsubscribe");
+    //   }
+    // };
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {
-    if (userAccount && user && !loading) {
-      // if (userAccount) {
-      setTimeout(async () => {
-        console.log("here2");
-        // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
-        // await firestore.setData(
-        //   FIRESTORE_COLLECTION_NAMES.USERS,
-        //   userAccount.uid,
-        //   userAccount
-        // );
-      }, 1);
-    }
+    // if (userAccount && user && !loading) {
+    //   // if (userAccount) {
+    //   setTimeout(async () => {
+    //     console.log("here2");
+    //     // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
+    //     // await firestore.setData(
+    //     //   FIRESTORE_COLLECTION_NAMES.USERS,
+    //     //   userAccount.uid,
+    //     //   userAccount
+    //     // );
+    //   }, 1);
+    // }
     // }, [userAccount]);
   }, [userAccount]);
 
