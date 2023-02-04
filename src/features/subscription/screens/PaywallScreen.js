@@ -1,19 +1,10 @@
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, Dimensions, Image, ScrollView, View } from "react-native";
+import { Dimensions, Image, ScrollView, View } from "react-native";
 import { Path, Svg } from "react-native-svg";
 import auth from "../../../api/firebase/auth";
-import firestore from "../../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../../assets/themes/colorOfTheYear2023";
-import { ListItem } from "../../../components/List";
-import ListSection from "../../../components/List/ListSection";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
-import UserHeaderComponent from "../../../components/UserHeader";
-import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
-import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -22,14 +13,10 @@ import {
   useGlobalSortedTransactions,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
-import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import { getDeviceId } from "../../../utils";
 import SubscriptionFeatures from "../components/SubscriptionFeatures";
-import SubscriptionStatus from "../components/SubscriptionStatus";
-import SubscriptionTypeCard from "../components/SubscriptionTypeCard";
-import subscriptionTypes from "../model/subscriptionType";
+import RevenueCatPaywallOfferings from "../../../api/revenue-cat/RevenueCatPaywallOfferings";
 
-const SubscriptionPlanScreen = ({ item, navigation }) => {
+const PaywallScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -37,37 +24,12 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
   const { dispatchLogbooks } = useGlobalLogbooks();
   const { dispatchBudgets } = useGlobalBudgets();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, loading, error] = useAuthState(auth);
-  const [yearlySaving, setYearlySaving] = useState(null);
 
   useEffect(() => {
-    getYearlySaving();
+    // getYearlySaving();
   }, []);
 
-  useEffect(() => {
-    if (userAccount) {
-      setTimeout(async () => {
-        firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.USERS,
-          userAccount.uid,
-          userAccount
-        );
-      }, 1);
-    }
-  }, [userAccount]);
-
-  const getYearlySaving = () => {
-    const yearlyPrice = subscriptionTypes.find((subscriptionType) => {
-      return subscriptionType.id === "yearly";
-    }).price;
-
-    const monthlyToYear = subscriptionTypes.find((subscriptionType) => {
-      return subscriptionType.id === "monthly";
-    }).price;
-
-    const yearlySaving = monthlyToYear * 12 - yearlyPrice;
-    setYearlySaving(yearlySaving);
-  };
+  useEffect(() => {}, [userAccount]);
 
   return (
     <>
@@ -122,7 +84,7 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
             />
 
             <TextPrimary
-              label={`Choose your subscription plan\nand enjoy the benefits`}
+              label={`Become a premium user\nand enjoy all the features`}
               style={{
                 fontSize: 24,
                 textAlign: "center",
@@ -134,26 +96,13 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
             <SubscriptionFeatures subscription={userAccount?.subscription} />
 
             <TextPrimary
-              label="Subscription Plan"
+              label="Choose your subscription plan"
               style={{
                 paddingVertical: 16,
                 paddingHorizontal: 32,
               }}
             />
-            <ListSection>
-              {subscriptionTypes.map((subscriptionType) => (
-                <>
-                  <SubscriptionTypeCard
-                    yearlySaving={yearlySaving}
-                    key={subscriptionType.id}
-                    currentSubscriptionType={userAccount?.subscription?.type}
-                    subscriptionType={subscriptionType}
-                    index={subscriptionType.id}
-                    onPress={()=>{}}
-                  />
-                </>
-              ))}
-            </ListSection>
+            <RevenueCatPaywallOfferings />
           </>
         )}
         {isLoading && (
@@ -176,4 +125,4 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
   );
 };
 
-export default SubscriptionPlanScreen;
+export default PaywallScreen;

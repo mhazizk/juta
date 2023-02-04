@@ -119,7 +119,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
                   {
                     text: "Upgrade",
                     onPress: () =>
-                      navigation.navigate(screenList.accountSubscriptionScreen),
+                      navigation.navigate(screenList.mySubscriptionScreen),
                   },
                 ],
                 { cancelable: false }

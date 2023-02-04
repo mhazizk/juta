@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Alert } from "react-native";
 import CheckList from "../../components/CheckList";
 import { ListItem } from "../../components/List";
 import RadioButtonList from "../../components/List/RadioButtonList";
-import { TextPrimary, TextSecondary } from "../../components/Text";
+import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
@@ -12,20 +12,14 @@ import {
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import * as utils from "../../utils";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import SettingsHeaderList from "../../components/List/SettingsHeaderList";
 import ListSection from "../../components/List/ListSection";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import getCurrencyRate from "../../api/GetCurrencyRate";
-import auth from "../../api/firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { signOut } from "firebase/auth/react-native";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { StatusBar } from "expo-status-bar";
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
-import createPDF from "../../utils/CreatePDF";
+import firestore from "../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 
 const CurrencySettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -40,66 +34,116 @@ const CurrencySettingsScreen = ({ navigation }) => {
     appSettings.logbookSettings
   );
   const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
-  const [user, loading, error] = useAuthState(auth);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
+      const payload = {
+        currencyRate: currencyRate,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: {
-          currencyRate: currencyRate,
-        },
+        payload: payload,
       });
     }, 1);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        { ...appSettings, ...payload }
+      );
+    }, 1000);
   }, [currencyRate]);
 
   useEffect(() => {
+    const payload = {
+      logbookSettings: logbookSettings,
+      _timestamps: {
+        ...appSettings._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
     setTimeout(() => {
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: {
-          logbookSettings: logbookSettings,
-        },
+        payload: payload,
       });
     }, 1);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        { ...appSettings, ...payload }
+      );
+    }, 1000);
   }, [logbookSettings]);
 
   useEffect(() => {
+    const payload = {
+      dashboardSettings: dashboardSettings,
+      _timestamps: {
+        ...appSettings._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
     setTimeout(() => {
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: {
-          dashboardSettings: dashboardSettings,
-        },
+        payload: payload,
       });
     }, 1);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        { ...appSettings, ...payload }
+      );
+    }, 1000);
   }, [dashboardSettings]);
 
   useEffect(() => {
+    const payload = {
+      searchSettings: searchSettings,
+      _timestamps: {
+        ...appSettings._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
     setTimeout(() => {
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: {
-          searchSettings: searchSettings,
-        },
+        payload: payload,
       });
     }, 1);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        { ...appSettings, ...payload }
+      );
+    }, 1000);
   }, [searchSettings]);
 
   useEffect(() => {
     // console.log(JSON.stringify(appSettings));
-    if (appSettings) {
-      setTimeout(async () => {
-        console.log("appSettings");
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-          appSettings.uid,
-          appSettings
-        );
-      }, 1);
-    }
+    // if (appSettings) {
+    //   setTimeout(async () => {
+    //     await firestore.setData(
+    //       FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+    //       appSettings.uid,
+    //       appSettings
+    //     );
+    //   }, 1);
+    // }
   }, [appSettings]);
 
   useEffect(() => {
@@ -424,7 +468,16 @@ const CurrencySettingsScreen = ({ navigation }) => {
                   } else {
                     Alert.alert(
                       "Upgrade your subscription",
-                      "This feature is only available for premium users. Please upgrade your subscription to unlock this feature."
+                      "This feature is only available for premium users. Please upgrade your subscription to unlock this feature.",
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   }
                 }}

@@ -9,10 +9,8 @@ const userAccountModel = ({
   const userAccountObject = {
     displayName: displayName,
     subscription: {
-      active: false,
+      joinDate: Date.now(),
       plan: "free",
-      date: Date.now(),
-      expiry: null,
     },
     uid: uid,
     email: email,

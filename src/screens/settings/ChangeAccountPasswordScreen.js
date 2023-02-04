@@ -62,13 +62,13 @@ const ChangeAccountPasswordScreen = ({ item, navigation }) => {
 
   useEffect(() => {
     if (userAccount) {
-      setTimeout(async () => {
-        firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.USERS,
-          userAccount.uid,
-          userAccount
-        );
-      }, 1);
+      // setTimeout(async () => {
+      //   firestore.setData(
+      //     FIRESTORE_COLLECTION_NAMES.USERS,
+      //     userAccount.uid,
+      //     userAccount
+      //   );
+      // }, 1);
     }
   }, [userAccount]);
 

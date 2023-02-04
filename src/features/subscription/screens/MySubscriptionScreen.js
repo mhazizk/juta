@@ -1,32 +1,22 @@
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import auth from "../../../api/firebase/auth";
-import firestore from "../../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../../assets/themes/colorOfTheYear2023";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
 import UserHeaderComponent from "../../../components/UserHeader";
-import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
+  useGlobalBudgets, useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalUserAccount,
+  useGlobalUserAccount
 } from "../../../reducers/GlobalContext";
-import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import { getDeviceId } from "../../../utils";
-import SubscriptionFeatures from "../components/SubscriptionFeatures";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 
-const AccountSubscriptionScreen = ({ item, navigation }) => {
+const MySubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks } = useGlobalLogbooks();
@@ -36,16 +26,9 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
-    if (userAccount) {
-      setTimeout(async () => {
-        firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.USERS,
-          userAccount.uid,
-          userAccount
-        );
-      }, 1);
-    }
-  }, [userAccount]);
+  }, []);
+
+  useEffect(() => {}, [userAccount]);
 
   return (
     <>
@@ -58,11 +41,16 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
         {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
-            <SubscriptionStatus subscription={userAccount?.subscription} />
-            <SubscriptionFeatures
+            <SubscriptionStatus
+              subscription={userAccount?.subscription}
+              onPress={(screen) => {
+                navigation.navigate(screen);
+              }}
+            />
+            {/* <SubscriptionFeatures
               subscription={userAccount?.subscription}
               showCurrent={true}
-            />
+            /> */}
             {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
@@ -75,7 +63,7 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
                 iconRightName="chevron-forward"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.subscriptionPlanScreen)
+                  navigation.navigate(screenList.paywallScreen)
                 }
               />
             </ListSection>
@@ -101,4 +89,4 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   );
 };
 
-export default AccountSubscriptionScreen;
+export default MySubscriptionScreen;

@@ -7,6 +7,7 @@ import OnboardingImg4 from "../../assets/img/onboarding4.png";
 import OnboardingImg5 from "../../assets/img/onboarding5.png";
 import { lightTheme } from "../../assets/themes/lightTheme";
 import screenList from "../../navigations/ScreenList";
+import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
@@ -20,23 +21,8 @@ const OnboardingScreen = ({ navigation }) => {
         showSkip={false}
         onDone={() => {
           dispatchAppSettings({
-            type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-            payload: {
-              theme: { name: "Light Theme", id: "light", style: lightTheme },
-              // hiddenScreens: [screenList.onboardingScreen],
-              hiddenScreens: [],
-              fontSize: "medium",
-              language: "english",
-              logbookSettings: {
-                defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-                showSecondaryCurrency: false,
-                dailySummary: "expense-only",
-                showTransactionTime: true,
-                showTransactionNotes: true,
-              },
-              locale: "en-US",
-              // currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-            },
+            type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+            payload: appSettingsFallback,
           });
 
           navigation.replace(screenList.loginScreen);

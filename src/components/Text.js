@@ -12,10 +12,7 @@ export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
     <>
       <Text
         numberOfLines={numberOfLines}
-        style={[
-          { ...appSettings.theme.style.text.textPrimary },
-          { ...(style || null) },
-        ]}
+        style={[{ ...appSettings.theme.style.text.textPrimary }, { ...style }]}
       >
         {label || "Primary Text"}
       </Text>

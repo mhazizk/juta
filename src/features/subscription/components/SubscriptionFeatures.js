@@ -1,14 +1,10 @@
-import { StatusBar } from "expo-status-bar";
-import { Image, SafeAreaView, StyleSheet, View } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import { ListItem, ListTable } from "../../../components/List";
+import { View } from "react-native";
+import { ListTable } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
-import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
-  useGlobalLogbooks,
-  useGlobalUserAccount,
+  useGlobalLogbooks
 } from "../../../reducers/GlobalContext";
 import subscriptionFeaturesModel from "../model/subscriptionFeaturesModel";
 
@@ -21,14 +17,6 @@ const SubscriptionFeatures = ({ subscription, showCurrent = false }) => {
     </>
   );
 };
-
-/* {subscription.plan === "free" &&
-  showCurrent &&
-  mapSubscription({ subscription, showCurrent })} */
-
-// {subscription.plan === "free" &&
-//   !showCurrent &&
-//   freeSubscription({ subscription, showCurrent })}
 
 export default SubscriptionFeatures;
 

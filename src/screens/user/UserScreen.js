@@ -67,7 +67,7 @@ const UserScreen = ({ navigation }) => {
                 iconLeftName="person"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.accountSettingsScreen)
+                  navigation.navigate(screenList.myAccountScreen)
                 }
               />
               {/* // TAG : My Groups */}
@@ -169,7 +169,7 @@ const UserScreen = ({ navigation }) => {
                           text: "Upgrade",
                           onPress: () =>
                             navigation.navigate(
-                              screenList.accountSubscriptionScreen
+                              screenList.mySubscriptionScreen
                             ),
                         },
                       ]

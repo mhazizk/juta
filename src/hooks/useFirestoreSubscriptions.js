@@ -68,7 +68,7 @@ const useFirestoreSubscriptions = ({
         payload: 1,
       });
       dispatchUserAccount({
-        type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+        type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
         payload: data,
       });
     },

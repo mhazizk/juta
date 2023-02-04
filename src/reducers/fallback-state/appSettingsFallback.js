@@ -1,5 +1,11 @@
 const appSettingsFallback = {
   uid: null,
+  _timestamps: {
+    created_at: Date.now(),
+    created_by: null,
+    updated_at: Date.now(),
+    updated_by: null,
+  },
   fontSize: "medium",
   language: "english",
   locale: "en-US",

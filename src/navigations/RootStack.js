@@ -2,7 +2,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
@@ -38,7 +38,7 @@ import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import CurrencySettingsScreen from "../screens/settings/CurrencySettingsScreen";
 import PersonalizationSettingsScreen from "../screens/settings/PersonalizationSettingsScreen";
 import UserScreen from "../screens/user/UserScreen";
-import AccountSettingsScreen from "../screens/settings/AccountSettingsScreen";
+import MyAccountScreen from "../screens/settings/MyAccountScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
 import DashboardScreen from "../screens/dashboard/DashboardScreen";
 import SearchScreen from "../screens/search/SearchScreen";
@@ -46,7 +46,7 @@ import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogbookScreen from "../screens/logbook/LogbookScreen";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
@@ -66,8 +66,8 @@ import { useNavigation } from "@react-navigation/native";
 import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
 import uuid from "react-native-uuid";
 import useFirestoreSubscriptions from "../hooks/useFirestoreSubscriptions";
-import SubscriptionPlanScreen from "../features/subscription/screens/SubscriptionPlanScreen";
-import AccountSubscriptionScreen from "../features/subscription/screens/AccountSubscriptionScreen";
+import PaywallScreen from "../features/subscription/screens/PaywallScreen";
+import MySubscriptionScreen from "../features/subscription/screens/MySubscriptionScreen";
 import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
 import ExportScreen from "../features/export/screens/ExportScreen";
@@ -81,6 +81,8 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
 import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOfServiceScreen";
 import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
+import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
+import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -97,6 +99,9 @@ const RootStack = () => {
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
+  const [lastSettingsUpdate, setLastSettingsUpdate] = useState(
+    appSettings?._timestamps?.updated_at
+  );
 
   const userAccountRef = useRef(userAccount);
   const appSettingsRef = useRef(appSettings);
@@ -144,88 +149,19 @@ const RootStack = () => {
     categoriesRef,
     budgetsRef,
     badgeCounterRef,
-
-    // userAccount,
-    // appSettings,
-    // logbooks,
-    // sortedTransactions,
-    // categories,
-    // budgets,
-    // badgeCounter,
   ]);
 
   // TAG : useEffect for state
   useEffect(() => {
-    if (userAccount && user && !loading) {
-      console.log("here");
-    }
-    return () => {
-      if (userAccount && user && !loading) {
-        console.log("here unsubscribe");
-      }
-    };
+    updateSubscriptionStatus({
+      appSettings,
+      dispatchAppSettings,
+      userAccount,
+      dispatchUserAccount,
+    });
   }, []);
   // Save Sorted Transactions to storage
-  useEffect(() => {
-    if (userAccount && user && !loading) {
-      // if (userAccount) {
-      setTimeout(async () => {
-        console.log("here2");
-        // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
-        // await firestore.setData(
-        //   FIRESTORE_COLLECTION_NAMES.USERS,
-        //   userAccount.uid,
-        //   userAccount
-        // );
-      }, 1);
-    }
-    // }, [userAccount]);
-  }, [userAccount]);
-
-  // Save Sorted Transactions to storage
-  useEffect(() => {
-    if (sortedTransactions && user && !loading) {
-      console.log("here");
-      // useFirestoreSubscriptions({
-      //   uid: userAccount.uid,
-      //   subscribeAll: true,
-      //   appSettings: appSettings,
-      //   dispatchAppSettings: dispatchAppSettings,
-      //   userAccount: userAccount,
-      //   dispatchUserAccount: dispatchUserAccount,
-      //   logbooks: logbooks,
-      //   dispatchLogbooks: dispatchLogbooks,
-      //   sortedTransactions: sortedTransactions,
-      //   dispatchSortedTransactions: dispatchSortedTransactions,
-      //   categories: categories,
-      //   dispatchCategories: dispatchCategories,
-      //   budgets: budgets,
-      //   dispatchBudgets: dispatchBudgets,
-      //   badgeCounter: badgeCounter,
-      //   dispatchBadgeCounter: dispatchBadgeCounter,
-      // });
-    }
-
-    // persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "sortedTransactions",
-    //   rawValue: sortedTransactions,
-    // });
-  }, [sortedTransactions]);
-
-  // Save App Settings to storage
-  useEffect(() => {
-    // if (appSettings && user && !isLoading) {
-    if (appSettings && userAccount && user && !loading) {
-      setTimeout(async () => {
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-          appSettings.uid,
-          appSettings
-        );
-      }, 1);
-    }
-  }, [appSettings]);
+  useEffect(() => {}, [userAccount]);
 
   // Save Logbooks to storage
   useEffect(() => {
@@ -235,9 +171,10 @@ const RootStack = () => {
 
   // Save Categories to storage
   useEffect(() => {
-    if (categories) {
+    if (appSettings) {
+      // setLastSettingsUpdate(appSettings._timestamps.updated_at);
     }
-  }, [categories]);
+  }, [appSettings]);
 
   const noHeader = {
     headerShown: false,
@@ -754,7 +691,16 @@ const RootStack = () => {
                     // show alert
                     Alert.alert(
                       "Upgrade Subscription",
-                      `Upgrade your subscription to add repeated transactions.`
+                      `Upgrade your subscription to add new repeated transactions.`,
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   }
 
@@ -810,17 +756,23 @@ const RootStack = () => {
       />
 
       {/* // SECTION : SUBSCRIPTION */}
-      {/* // TAG : Account Subscription Screen */}
+      {/* // TAG : Subscription History Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Subscription History" }}
+        name={screenList.subscriptionHistoryScreen}
+        component={SubscriptionHistoryScreen}
+      />
+      {/* // TAG : My Subscription Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "My Subscription" }}
-        name={screenList.accountSubscriptionScreen}
-        component={AccountSubscriptionScreen}
+        name={screenList.mySubscriptionScreen}
+        component={MySubscriptionScreen}
       />
-      {/* // TAG : Subscription Plan Screen */}
+      {/* // TAG : Paywall Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Subscription Plan" }}
-        name={screenList.subscriptionPlanScreen}
-        component={SubscriptionPlanScreen}
+        name={screenList.paywallScreen}
+        component={PaywallScreen}
       />
 
       {/* // SECTION : FEATURE WISHLIST */}
@@ -847,7 +799,16 @@ const RootStack = () => {
                     // show alert
                     Alert.alert(
                       "Upgrade to Premium",
-                      `Upgrade your subscription to add new feature wishlist.`
+                      `Upgrade your subscription to add new feature wishlist.`,
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   } else {
                     navigation.navigate(screenList.newFeatureWishlistScreen);
@@ -917,7 +878,10 @@ const RootStack = () => {
       {/* // SECTION : SETTINGS */}
       {/* // TAG : Settings Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Settings" }}
+        options={{
+          ...showHeader,
+          title: "Settings",
+        }}
         name={screenList.settingsScreen}
         component={SettingsScreen}
       />
@@ -938,8 +902,8 @@ const RootStack = () => {
       {/* // TAG : Account Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Account Settings" }}
-        name={screenList.accountSettingsScreen}
-        component={AccountSettingsScreen}
+        name={screenList.myAccountScreen}
+        component={MyAccountScreen}
       />
 
       {/* // TAG : Developer Settings Screen */}

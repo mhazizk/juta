@@ -1,9 +1,11 @@
-import { View } from "react-native";
+import { TouchableNativeFeedback, View } from "react-native";
+import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
+import screenList from "../../../navigations/ScreenList";
 import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
 
-const SubscriptionStatus = ({ subscription }) => {
+const SubscriptionStatus = ({ subscription, onPress }) => {
   const { appSettings } = useGlobalAppSettings();
 
   return (
@@ -30,10 +32,53 @@ const SubscriptionStatus = ({ subscription }) => {
             style={{ fontWeight: "bold" }}
           />
           <TextButtonPrimary
-            label={"Since: " + new Date(subscription.date).toDateString()}
+            label={
+              "Joined since : " + new Date(subscription.joinDate).toDateString()
+            }
           />
         </View>
       </ListSection>
+      {subscription.plan !== "premium" && (
+        <ListSection backgroundColor={appSettings.theme.style.colors.success}>
+          <TouchableNativeFeedback
+            onPress={() => {
+              onPress(screenList.paywallScreen);
+            }}
+          >
+            <View
+              style={{
+                padding: 16,
+                alignItems: "center",
+              }}
+            >
+              <TextButtonPrimary
+                label="Upgrade to Premium"
+                style={{ fontWeight: "bold" }}
+              />
+            </View>
+          </TouchableNativeFeedback>
+        </ListSection>
+      )}
+      {subscription.plan !== "premium" && (
+        <>
+          <ListSection>
+            <ListItem
+              pressable
+              leftLabel="Manage subscription"
+              iconRightName={"chevron-forward-outline"}
+              onPress={() => {}}
+            />
+            <ListItem
+              pressable
+              leftLabel="Subscription history"
+              iconRightName={"chevron-forward-outline"}
+              onPress={() => {
+                onPress(screenList.subscriptionHistoryScreen);
+              }}
+            />
+          </ListSection>
+        </>
+      )}
     </>
   );
 };

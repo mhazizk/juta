@@ -79,8 +79,10 @@ const screenList = {
   changeAccountEmailScreen: "Change Account Email Screen",
 
   // Subscription Screen
-  subscriptionPlanScreen: "Subscription Plan Screen",
-  accountSubscriptionScreen: "Account Subscription Screen",
+  // mySubscriptionScreen: "My Subscription Screen",
+  paywallScreen: "Paywall Screen",
+  mySubscriptionScreen: "My Subscription Screen",
+  subscriptionHistoryScreen: "Subscription History Screen",
 
   // Export Screen
   exportScreen: "Export Screen",
@@ -88,7 +90,6 @@ const screenList = {
   // Feature wishlist
   featureWishlistScreen: "Feature Wishlist Screen",
   newFeatureWishlistScreen: "New Feature Wishlist Screen",
-
 
   // Profile picture screen
   myProfilePictureScreen: "My Profile Picture Screen",
@@ -102,11 +103,13 @@ const screenList = {
   // Privacy Policy Screen
   privacyPolicyScreen: "Privacy Policy Screen",
 
+  // My Account Screen
+  myAccountScreen: "My Account Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",
   personalizationSettingsScreen: "Personalization Settings Screen",
-  accountSettingsScreen: "Account Settings Screen",
   dataSettingsScreen: "Data Settings Screen",
   developerSettingsScreen: "Developer Settings Screen",
   aboutScreen: "About Screen",

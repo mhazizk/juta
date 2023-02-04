@@ -148,6 +148,11 @@ const MyProfilePictureScreen = ({ navigation }) => {
                         const patchUserAccount = {
                           ...userAccount,
                           photoURL: await getProfilePictureURL(userAccount.uid),
+                          _timestamps: {
+                            ...userAccount._timestamps,
+                            updated_at: Date.now(),
+                            updated_by: userAccount.uid,
+                          },
                         };
                         await firestore.setData(
                           FIRESTORE_COLLECTION_NAMES.USERS,
