@@ -38,7 +38,13 @@ const globalAppSettingsReducer = (state, action) => {
 
     // TAG : Multiple Actions
     case REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS:
-      return { ...state, ...action.payload };
+      // check timestamp for duplicate
+      if (
+        action.payload._timestamps.updated_at > state._timestamps.updated_at
+      ) {
+        return { ...state, ...action.payload };
+      }
+      return state;
 
     case REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET:
       return action.payload;

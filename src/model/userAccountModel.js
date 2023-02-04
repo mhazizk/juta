@@ -10,7 +10,7 @@ const userAccountModel = ({
     displayName: displayName,
     subscription: {
       joinDate: Date.now(),
-      activeSubscription: [],
+      activeSubscriptions: [],
       // active: false,
       // plan: "free",
       // expirationDate: null,

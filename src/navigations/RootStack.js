@@ -2,7 +2,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
@@ -46,7 +46,7 @@ import SettingsScreen from "../screens/settings/SettingsScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogbookScreen from "../screens/logbook/LogbookScreen";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
@@ -99,6 +99,9 @@ const RootStack = () => {
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
+  const [lastSettingsUpdate, setLastSettingsUpdate] = useState(
+    appSettings?._timestamps?.updated_at
+  );
 
   const userAccountRef = useRef(userAccount);
   const appSettingsRef = useRef(appSettings);
@@ -146,89 +149,19 @@ const RootStack = () => {
     categoriesRef,
     budgetsRef,
     badgeCounterRef,
-
-    // userAccount,
-    // appSettings,
-    // logbooks,
-    // sortedTransactions,
-    // categories,
-    // budgets,
-    // badgeCounter,
   ]);
 
   // TAG : useEffect for state
   useEffect(() => {
-    updateSubscriptionStatus(userAccount, dispatchUserAccount);
-    // if (userAccount && user && !loading) {
-    //   console.log("here");
-    // }
-    // return () => {
-    //   if (userAccount && user && !loading) {
-    //     console.log("here unsubscribe");
-    //   }
-    // };
+    updateSubscriptionStatus({
+      appSettings,
+      dispatchAppSettings,
+      userAccount,
+      dispatchUserAccount,
+    });
   }, []);
   // Save Sorted Transactions to storage
-  useEffect(() => {
-    // if (userAccount && user && !loading) {
-    //   // if (userAccount) {
-    //   setTimeout(async () => {
-    //     console.log("here2");
-    //     // useFirestoreSubscriptions({ uid: userAccount.uid, subscribeAll: true });
-    //     // await firestore.setData(
-    //     //   FIRESTORE_COLLECTION_NAMES.USERS,
-    //     //   userAccount.uid,
-    //     //   userAccount
-    //     // );
-    //   }, 1);
-    // }
-    // }, [userAccount]);
-  }, [userAccount]);
-
-  // Save Sorted Transactions to storage
-  useEffect(() => {
-    if (sortedTransactions && user && !loading) {
-      console.log("here");
-      // useFirestoreSubscriptions({
-      //   uid: userAccount.uid,
-      //   subscribeAll: true,
-      //   appSettings: appSettings,
-      //   dispatchAppSettings: dispatchAppSettings,
-      //   userAccount: userAccount,
-      //   dispatchUserAccount: dispatchUserAccount,
-      //   logbooks: logbooks,
-      //   dispatchLogbooks: dispatchLogbooks,
-      //   sortedTransactions: sortedTransactions,
-      //   dispatchSortedTransactions: dispatchSortedTransactions,
-      //   categories: categories,
-      //   dispatchCategories: dispatchCategories,
-      //   budgets: budgets,
-      //   dispatchBudgets: dispatchBudgets,
-      //   badgeCounter: badgeCounter,
-      //   dispatchBadgeCounter: dispatchBadgeCounter,
-      // });
-    }
-
-    // persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.SET,
-    //   key: "sortedTransactions",
-    //   rawValue: sortedTransactions,
-    // });
-  }, [sortedTransactions]);
-
-  // Save App Settings to storage
-  useEffect(() => {
-    // if (appSettings && user && !isLoading) {
-    if (appSettings && userAccount && user && !loading) {
-      setTimeout(async () => {
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-          appSettings.uid,
-          appSettings
-        );
-      }, 1);
-    }
-  }, [appSettings]);
+  useEffect(() => {}, [userAccount]);
 
   // Save Logbooks to storage
   useEffect(() => {
@@ -238,9 +171,10 @@ const RootStack = () => {
 
   // Save Categories to storage
   useEffect(() => {
-    if (categories) {
+    if (appSettings) {
+      // setLastSettingsUpdate(appSettings._timestamps.updated_at);
     }
-  }, [categories]);
+  }, [appSettings]);
 
   const noHeader = {
     headerShown: false,
@@ -757,7 +691,16 @@ const RootStack = () => {
                     // show alert
                     Alert.alert(
                       "Upgrade Subscription",
-                      `Upgrade your subscription to add repeated transactions.`
+                      `Upgrade your subscription to add new repeated transactions.`,
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   }
 
@@ -856,7 +799,16 @@ const RootStack = () => {
                     // show alert
                     Alert.alert(
                       "Upgrade to Premium",
-                      `Upgrade your subscription to add new feature wishlist.`
+                      `Upgrade your subscription to add new feature wishlist.`,
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   } else {
                     navigation.navigate(screenList.newFeatureWishlistScreen);
@@ -926,7 +878,10 @@ const RootStack = () => {
       {/* // SECTION : SETTINGS */}
       {/* // TAG : Settings Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Settings" }}
+        options={{
+          ...showHeader,
+          title: "Settings",
+        }}
         name={screenList.settingsScreen}
         component={SettingsScreen}
       />

@@ -32,12 +32,8 @@ const SubscriptionStatus = ({ subscription, onPress }) => {
             style={{ fontWeight: "bold" }}
           />
           <TextButtonPrimary
-            label={"Since : " + new Date(subscription.joinDate).toDateString()}
-          />
-          <TextButtonPrimary
             label={
-              "Expires in : " +
-              new Date(subscription.expirationDate).toDateString()
+              "Joined since : " + new Date(subscription.joinDate).toDateString()
             }
           />
         </View>
@@ -70,7 +66,7 @@ const SubscriptionStatus = ({ subscription, onPress }) => {
               pressable
               leftLabel="Manage subscription"
               iconRightName={"chevron-forward-outline"}
-              onPress={()=>{}}
+              onPress={() => {}}
             />
             <ListItem
               pressable

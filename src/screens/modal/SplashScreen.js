@@ -298,12 +298,6 @@ const SplashScreen = ({ route, navigation }) => {
         );
         const loggedInUserAccount = {
           ...userAccountData,
-          // subscription: {
-          //   active: false,
-          //   plan: "free",
-          //   date: Date.now(),
-          //   expiry: null,
-          // },
           devicesLoggedIn: [
             ...otherDevicesLoggedIn,
             {
