@@ -7,7 +7,7 @@ import PackageItem from "../../features/subscription/components/PackageItem";
 import { useGlobalUserAccount } from "../../reducers/GlobalContext";
 import getRevenueCatOfferings from "./getRevenueCatOfferings";
 
-const RevenueCatMapOfferings = () => {
+const RevenueCatPaywallOfferings = () => {
   const { userAccount } = useGlobalUserAccount();
   const [offerings, setOfferings] = useState(null);
   const [yearlySaving, setYearlySaving] = useState(null);
@@ -32,44 +32,6 @@ const RevenueCatMapOfferings = () => {
     }
     console.log(offerings);
   }, [offerings]);
-  const a = [
-    {
-      identifier: "$rc_monthly",
-      offeringIdentifier: "premium",
-      packageType: "MONTHLY",
-      product: {
-        currencyCode: "IDR",
-        description: "Monthly premium subscription",
-        discounts: null,
-        identifier: "juta_8.99_m",
-        introPrice: null,
-        price: 129000,
-        priceString: "IDR 129,000.00",
-        productCategory: "SUBSCRIPTION",
-        productType: "AUTO_RENEWABLE_SUBSCRIPTION",
-        subscriptionPeriod: "P1M",
-        title: "Juta premium monthly subscription (Juta)",
-      },
-    },
-    {
-      identifier: "$rc_annual",
-      offeringIdentifier: "premium",
-      packageType: "ANNUAL",
-      product: {
-        currencyCode: "IDR",
-        description: "Yearly premium subscription",
-        discounts: null,
-        identifier: "juta_89.99_y",
-        introPrice: null,
-        price: 1290000,
-        priceString: "IDR 1,290,000.00",
-        productCategory: "SUBSCRIPTION",
-        productType: "AUTO_RENEWABLE_SUBSCRIPTION",
-        subscriptionPeriod: "P1Y",
-        title: "Juta premium yearly subscription (Juta)",
-      },
-    },
-  ];
   const getYearlySaving = () => {
     // const yearlyPrice = subscriptionTypes.find((subscriptionType) => {
     //   return subscriptionType.id === "yearly";
@@ -141,7 +103,7 @@ const RevenueCatMapOfferings = () => {
   );
 };
 
-export default RevenueCatMapOfferings;
+export default RevenueCatPaywallOfferings;
 
 // regex to find string between two underscore
 // _.*?_

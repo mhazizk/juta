@@ -84,24 +84,42 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
           </View>
           {/* // TAG : Yearly Saving */}
           {yearlySaving && subscriptionPeriod === "P1Y" && (
-            <View
-              style={{
-                padding: 8,
-                borderRadius: 8,
-                width: 86,
-                alignItems: "center",
-                backgroundColor: appSettings.theme.style.colors.success,
-              }}
-            >
-              <TextButtonPrimary
-                label={` ${
-                  Math.floor((yearlySaving * 100) / price) || "0"
-                }% off`}
+            <>
+              <View
                 style={{
-                  fontWeight: "bold",
+                  padding: 8,
+                  borderRadius: 8,
+                  width: 86,
+                  alignItems: "center",
+                  backgroundColor: appSettings.theme.style.colors.success,
                 }}
-              />
-            </View>
+              >
+                <TextButtonPrimary
+                  label={` ${
+                    Math.floor((yearlySaving * 100) / price) || "0"
+                  }% off`}
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  padding: 8,
+                  borderRadius: 8,
+                  width: 86,
+                  alignItems: "center",
+                  backgroundColor: appSettings.theme.style.colors.success,
+                }}
+              >
+                <TextButtonPrimary
+                  label="✨ Best Value ✨"
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                />
+              </View>
+            </>
           )}
         </View>
         {/* // TAG : Background Image */}

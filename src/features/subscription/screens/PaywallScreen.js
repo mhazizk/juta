@@ -14,9 +14,9 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import SubscriptionFeatures from "../components/SubscriptionFeatures";
-import RevenueCatMapOfferings from "../../../api/revenue-cat/revenueCat";
+import RevenueCatPaywallOfferings from "../../../api/revenue-cat/RevenueCatPaywallOfferings";
 
-const SubscriptionPlanScreen = ({ item, navigation }) => {
+const PaywallScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -102,7 +102,7 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
                 paddingHorizontal: 32,
               }}
             />
-            <RevenueCatMapOfferings />
+            <RevenueCatPaywallOfferings />
           </>
         )}
         {isLoading && (
@@ -125,4 +125,4 @@ const SubscriptionPlanScreen = ({ item, navigation }) => {
   );
 };
 
-export default SubscriptionPlanScreen;
+export default PaywallScreen;

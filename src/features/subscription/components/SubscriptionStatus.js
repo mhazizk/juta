@@ -46,7 +46,7 @@ const SubscriptionStatus = ({ subscription, onPress }) => {
         <ListSection backgroundColor={appSettings.theme.style.colors.success}>
           <TouchableNativeFeedback
             onPress={() => {
-              onPress(screenList.subscriptionPlanScreen);
+              onPress(screenList.paywallScreen);
             }}
           >
             <View

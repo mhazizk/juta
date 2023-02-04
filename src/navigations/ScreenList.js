@@ -79,9 +79,9 @@ const screenList = {
   changeAccountEmailScreen: "Change Account Email Screen",
 
   // Subscription Screen
+  // mySubscriptionScreen: "My Subscription Screen",
+  paywallScreen: "Paywall Screen",
   mySubscriptionScreen: "My Subscription Screen",
-  subscriptionPlanScreen: "Subscription Plan Screen",
-  accountSubscriptionScreen: "Account Subscription Screen",
   subscriptionHistoryScreen: "Subscription History Screen",
 
   // Export Screen
@@ -90,7 +90,6 @@ const screenList = {
   // Feature wishlist
   featureWishlistScreen: "Feature Wishlist Screen",
   newFeatureWishlistScreen: "New Feature Wishlist Screen",
-
 
   // Profile picture screen
   myProfilePictureScreen: "My Profile Picture Screen",

@@ -146,7 +146,7 @@ const AccountSettingsScreen = ({ item, navigation }) => {
                 iconLeftName="ribbon"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.accountSubscriptionScreen)
+                  navigation.navigate(screenList.mySubscriptionScreen)
                 }
               />
               {/* // TAG : Export Data */}

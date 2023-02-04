@@ -16,7 +16,7 @@ import {
 } from "../../../reducers/GlobalContext";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 
-const AccountSubscriptionScreen = ({ item, navigation }) => {
+const MySubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { logbooks } = useGlobalLogbooks();
@@ -63,7 +63,7 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
                 iconRightName="chevron-forward"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.subscriptionPlanScreen)
+                  navigation.navigate(screenList.paywallScreen)
                 }
               />
             </ListSection>
@@ -89,4 +89,4 @@ const AccountSubscriptionScreen = ({ item, navigation }) => {
   );
 };
 
-export default AccountSubscriptionScreen;
+export default MySubscriptionScreen;

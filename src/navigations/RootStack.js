@@ -66,8 +66,8 @@ import { useNavigation } from "@react-navigation/native";
 import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
 import uuid from "react-native-uuid";
 import useFirestoreSubscriptions from "../hooks/useFirestoreSubscriptions";
-import SubscriptionPlanScreen from "../features/subscription/screens/SubscriptionPlanScreen";
-import AccountSubscriptionScreen from "../features/subscription/screens/AccountSubscriptionScreen";
+import PaywallScreen from "../features/subscription/screens/PaywallScreen";
+import MySubscriptionScreen from "../features/subscription/screens/MySubscriptionScreen";
 import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
 import ExportScreen from "../features/export/screens/ExportScreen";
@@ -819,17 +819,17 @@ const RootStack = () => {
         name={screenList.subscriptionHistoryScreen}
         component={SubscriptionHistoryScreen}
       />
-      {/* // TAG : Account Subscription Screen */}
+      {/* // TAG : My Subscription Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "My Subscription" }}
-        name={screenList.accountSubscriptionScreen}
-        component={AccountSubscriptionScreen}
+        name={screenList.mySubscriptionScreen}
+        component={MySubscriptionScreen}
       />
-      {/* // TAG : Subscription Plan Screen */}
+      {/* // TAG : Paywall Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Subscription Plan" }}
-        name={screenList.subscriptionPlanScreen}
-        component={SubscriptionPlanScreen}
+        name={screenList.paywallScreen}
+        component={PaywallScreen}
       />
 
       {/* // SECTION : FEATURE WISHLIST */}

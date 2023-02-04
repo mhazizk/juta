@@ -169,7 +169,7 @@ const UserScreen = ({ navigation }) => {
                           text: "Upgrade",
                           onPress: () =>
                             navigation.navigate(
-                              screenList.accountSubscriptionScreen
+                              screenList.mySubscriptionScreen
                             ),
                         },
                       ]
