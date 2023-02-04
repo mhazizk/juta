@@ -1,11 +1,11 @@
-import { Image, TouchableNativeFeedback, View } from "react-native";
+import { Image, Text, TouchableNativeFeedback, View } from "react-native";
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
 import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
 import subscriptionTypes from "../model/subscriptionType";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Path, Svg } from "react-native-svg";
 
-const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
+const PackageItem = ({ purchasePackage, monthToYearPrice, onPress }) => {
   const { appSettings } = useGlobalAppSettings();
   const {
     identifier,
@@ -48,22 +48,45 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
             label={description}
             style={{
               fontWeight: "bold",
+              paddingBottom: 4,
             }}
           />
           {/* // TAG : Price */}
+          {/* // TAG : Discount Price */}
+          {title.toLowerCase().includes("yearly") && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingBottom: 4,
+              }}
+            >
+              <TextPrimary
+                label={currencyCode + " " + monthToYearPrice}
+                style={{
+                  fontSize: 18,
+                  textDecorationLine: "line-through",
+                  textDecorationStyle: "solid",
+                }}
+              />
+              <TextPrimary
+                label="/yr"
+                style={{
+                  paddingRight: 8,
+                  fontSize: 16,
+                  textDecorationLine: "line-through",
+                }}
+              />
+            </View>
+          )}
+          {/* // TAG : Offered price */}
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
+              paddingBottom: 4,
             }}
           >
-            {/* <TextPrimary
-              label={offering.currency}
-              style={{
-                paddingRight: 8,
-                fontSize: 18,
-              }}
-            /> */}
             {priceString !== "0" && (
               <TextPrimary
                 label={priceString}
@@ -83,41 +106,49 @@ const PackageItem = ({ purchasePackage, yearlySaving, onPress }) => {
             )}
           </View>
           {/* // TAG : Yearly Saving */}
-          {yearlySaving && subscriptionPeriod === "P1Y" && (
+          {monthToYearPrice && subscriptionPeriod === "P1Y" && (
             <>
               <View
                 style={{
-                  padding: 8,
-                  borderRadius: 8,
-                  width: 86,
-                  alignItems: "center",
-                  backgroundColor: appSettings.theme.style.colors.success,
+                  flexDirection: "row",
                 }}
               >
-                <TextButtonPrimary
-                  label={` ${
-                    Math.floor((yearlySaving * 100) / price) || "0"
-                  }% off`}
+                <View
                   style={{
-                    fontWeight: "bold",
+                    padding: 8,
+                    borderRadius: 8,
+                    width: 86,
+                    alignItems: "center",
+                    marginRight: 8,
+                    backgroundColor: appSettings.theme.style.colors.success,
                   }}
-                />
-              </View>
-              <View
-                style={{
-                  padding: 8,
-                  borderRadius: 8,
-                  width: 86,
-                  alignItems: "center",
-                  backgroundColor: appSettings.theme.style.colors.success,
-                }}
-              >
-                <TextButtonPrimary
-                  label="✨ Best Value ✨"
+                >
+                  <TextButtonPrimary
+                    label={` ${
+                      Math.floor(((monthToYearPrice - price) * 100) / price) ||
+                      "0"
+                    }% off`}
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  />
+                </View>
+                <View
                   style={{
-                    fontWeight: "bold",
+                    padding: 8,
+                    borderRadius: 8,
+                    // width: 86,
+                    alignItems: "center",
+                    backgroundColor: appSettings.theme.style.colors.success,
                   }}
-                />
+                >
+                  <TextButtonPrimary
+                    label="✨ Best Value ✨"
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  />
+                </View>
               </View>
             </>
           )}

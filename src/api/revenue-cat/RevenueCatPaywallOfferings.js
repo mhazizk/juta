@@ -10,7 +10,7 @@ import getRevenueCatOfferings from "./getRevenueCatOfferings";
 const RevenueCatPaywallOfferings = () => {
   const { userAccount } = useGlobalUserAccount();
   const [offerings, setOfferings] = useState(null);
-  const [yearlySaving, setYearlySaving] = useState(null);
+  const [monthToYearPrice, setMonthToYearPrice] = useState(null);
 
   useEffect(() => {
     try {
@@ -44,14 +44,14 @@ const RevenueCatPaywallOfferings = () => {
       return pkg.product.identifier.includes("m");
     }).product.price;
 
-    const yearlySaving = monthlyPrice * 12 - yearlyPrice;
-    setYearlySaving(yearlySaving);
+    const monthToYearPrice = monthlyPrice * 12;
+    setMonthToYearPrice(monthToYearPrice);
   };
 
   return (
     <>
-      {(!offerings || !yearlySaving) && <Loading />}
-      {offerings && yearlySaving && (
+      {(!offerings || !monthToYearPrice) && <Loading />}
+      {offerings && monthToYearPrice && (
         <ListSection>
           <PackageItem
             onPress={() => {}}
@@ -73,7 +73,7 @@ const RevenueCatPaywallOfferings = () => {
                 {offerings && (
                   <PackageItem
                     purchasePackage={item}
-                    yearlySaving={yearlySaving}
+                    monthToYearPrice={monthToYearPrice}
                     onPress={async () => {
                       // Using Offerings/Packages
                       try {

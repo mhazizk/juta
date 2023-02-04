@@ -12,7 +12,7 @@ const REDUCER_ACTIONS = {
       FORCE_SET_BADGE_TAB: "FORCE_SET_BADGE_TAB",
     },
     SCREEN: {
-      SET_BADGE_IN_ACCOUNT_SCREEN: screenList.accountSettingsScreen
+      SET_BADGE_IN_ACCOUNT_SCREEN: screenList.myAccountScreen
         .replace(/ /g, "_")
         .toUpperCase(),
       SET_BADGE_IN_ACCOUNT_SCREEN: screenList.logbookScreen

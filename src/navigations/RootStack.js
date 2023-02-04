@@ -38,7 +38,7 @@ import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import CurrencySettingsScreen from "../screens/settings/CurrencySettingsScreen";
 import PersonalizationSettingsScreen from "../screens/settings/PersonalizationSettingsScreen";
 import UserScreen from "../screens/user/UserScreen";
-import AccountSettingsScreen from "../screens/settings/AccountSettingsScreen";
+import MyAccountScreen from "../screens/settings/MyAccountScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
 import DashboardScreen from "../screens/dashboard/DashboardScreen";
 import SearchScreen from "../screens/search/SearchScreen";
@@ -947,8 +947,8 @@ const RootStack = () => {
       {/* // TAG : Account Settings Screen */}
       <Stack.Screen
         options={{ ...showHeader, title: "Account Settings" }}
-        name={screenList.accountSettingsScreen}
-        component={AccountSettingsScreen}
+        name={screenList.myAccountScreen}
+        component={MyAccountScreen}
       />
 
       {/* // TAG : Developer Settings Screen */}

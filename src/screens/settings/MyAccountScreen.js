@@ -26,7 +26,7 @@ import {
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import { getDeviceId } from "../../utils";
 
-const AccountSettingsScreen = ({ item, navigation }) => {
+const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -292,4 +292,4 @@ const AccountSettingsScreen = ({ item, navigation }) => {
   );
 };
 
-export default AccountSettingsScreen;
+export default MyAccountScreen;

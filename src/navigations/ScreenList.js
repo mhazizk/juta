@@ -103,11 +103,13 @@ const screenList = {
   // Privacy Policy Screen
   privacyPolicyScreen: "Privacy Policy Screen",
 
+  // My Account Screen
+  myAccountScreen: "My Account Screen",
+
   // Setttings Screen
   settingsScreen: "Settings Screen",
   currencySettingsScreen: "Currency Settings Screen",
   personalizationSettingsScreen: "Personalization Settings Screen",
-  accountSettingsScreen: "Account Settings Screen",
   dataSettingsScreen: "Data Settings Screen",
   developerSettingsScreen: "Developer Settings Screen",
   aboutScreen: "About Screen",
