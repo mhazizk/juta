@@ -104,6 +104,3 @@ const RevenueCatPaywallOfferings = () => {
 };
 
 export default RevenueCatPaywallOfferings;
-
-// regex to find string between two underscore
-// _.*?_
