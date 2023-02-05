@@ -1,5 +1,6 @@
 import {
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
@@ -12,6 +13,8 @@ import ListSection from "../../components/List/ListSection";
 import UserHeaderComponent from "../../components/UserHeader";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
 import JutaLogo from "../../assets/icons/juta-app-icon.png";
+import Constants from "expo-constants";
+import { TextPrimary } from "../../components/Text";
 
 const AboutScreen = ({ item, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -37,42 +40,31 @@ const AboutScreen = ({ item, navigation }) => {
             style={{
               height: 128,
               width: 128,
+              marginBottom: 16,
             }}
           />
-        </View>
-        {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
-                    <Text style={{ fontSize: 32, color: '#bbb' }}>About Cash Log</Text>
-                </View> */}
-        <ListSection>
-          {/* // TAG : Made by */}
-          <ListItem
-            pressable
-            leftLabel="Made by"
-            rightLabel="mhazizk"
-            iconLeftName="information-circle"
-            iconPack="IonIcons"
-            onPress={() =>
-              alert(
-                "Thank you for using Cash Log App.\nI hope this app helps you alot.\nHappy logging !"
-              )
+          <TextPrimary
+            label={Constants.expoConfig.name}
+            style={{
+              fontSize: 24,
+            }}
+          />
+          <TextPrimary label={Constants.expoConfig.version} />
+          <TextPrimary label={Platform.constants.Manufacturer} />
+          <TextPrimary label={Platform.constants.Model} />
+          <TextPrimary
+            label={
+              Platform.OS[0].toUpperCase() +
+              Platform.OS.substring(1).toLowerCase()
             }
           />
-
-          {/* // TAG : Contact */}
+        </View>
+        <ListSection>
+          {/* // TAG : Open Source */}
           <ListItem
             pressable
-            leftLabel="Contact Me"
-            iconLeftName="mail"
-            iconPack="IonIcons"
-            onPress={() => alert("OTW")}
-          />
-
-          {/* // TAG : App Version */}
-          <ListItem
-            pressable
-            leftLabel="App Version"
-            rightLabel="v.0.5.0"
-            iconLeftName="phone-portrait"
+            leftLabel="Open source libraries"
+            iconLeftName="code"
             iconPack="IonIcons"
             onPress={() => alert("OTW")}
           />
@@ -81,45 +73,5 @@ const AboutScreen = ({ item, navigation }) => {
     </>
   );
 };
-
-const styles = new StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  flatListView: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    height: 48,
-  },
-  flatListViewUnderscore: {
-    display: "flex",
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    // backgroundColor: 'green',
-    paddingVertical: 0,
-    paddingLeft: 16,
-    borderColor: "#d9d9d9",
-    borderBottomWidth: 0.5,
-    minHeight: 46,
-    textAlignVertical: "center",
-  },
-  flatListViewText: {
-    display: "flex",
-    color: "#000",
-    textAlignVertical: "center",
-    fontSize: 18,
-    textAlignVertical: "center",
-  },
-});
 
 export default AboutScreen;

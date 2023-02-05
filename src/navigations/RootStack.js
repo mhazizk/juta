@@ -83,6 +83,8 @@ import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOf
 import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
 import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
 import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
+import EmailVerificationScreen from "../screens/auth/EmailVerificationScreen";
+import LogoutScreen from "../features/logout/screens/LogoutScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -285,6 +287,14 @@ const RootStack = () => {
         name={screenList.loginScreen}
         component={LoginScreen}
       />
+      {/* // TAG : Logout Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.logoutScreen}
+        component={LogoutScreen}
+      />
       {/* // TAG : Sign Up Screen */}
       <Stack.Screen
         options={{
@@ -292,6 +302,15 @@ const RootStack = () => {
         }}
         name={screenList.signUpScreen}
         component={SignUpScreen}
+      />
+
+      {/* // TAG : Email Verification Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.emailVerificationScreen}
+        component={EmailVerificationScreen}
       />
 
       {/* // TAG : Forgot Password Screen */}

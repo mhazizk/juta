@@ -268,15 +268,6 @@ const SignUpScreen = ({ route, navigation }) => {
     if (email?.includes("@") && showButton) {
       setScreenLoading(true);
       setTimeout(() => {
-        // Network timeout 10s
-        // setTimeout(() => {
-        //   Alert.alert(
-        //     "Network timeout",
-        //     "Please check your internet connection and try again"
-        //   );
-        //   setScreenLoading(false);
-        // }, 10000);
-
         handleUserSignUp({ email, password, displayName })
           .then((user) => {
             const account = userAccountModel({
@@ -287,26 +278,16 @@ const SignUpScreen = ({ route, navigation }) => {
               photoURL: user.photoURL,
             });
 
-            // const account = {
-            //   displayName: displayName,
-            //   premium: false,
-            //   uid: user.uid,
-            //   email: user.email,
-            //   emailVerified: user.emailVerified,
-            //   photoURL: user.photoURL,
-            //   devicesLoggedIn: [],
-            //   groups: [],
-            // };
             setTimeout(async () => {
               await firestore.setData(
                 FIRESTORE_COLLECTION_NAMES.USERS,
                 account.uid,
                 account
               );
-              await postLogSnagEvent(
-                account.displayName,
-                LOGSNAG_EVENT_TYPES.USER_SIGNUP
-              );
+              // await postLogSnagEvent(
+              //   account.displayName,
+              //   LOGSNAG_EVENT_TYPES.USER_SIGNUP
+              // );
               await handleUserUpdateProfile({
                 displayName,
                 photoURL: null,
@@ -316,11 +297,12 @@ const SignUpScreen = ({ route, navigation }) => {
               });
             }, 1);
             setTimeout(() => {
-              navigation.replace(screenList.loginScreen, {
-                account: account,
-                password: password,
-                status: "NEW_USER",
-              });
+              navigation.replace(screenList.emailVerificationScreen);
+              // navigation.replace(screenList.loginScreen, {
+              //   account: account,
+              //   password: password,
+              //   status: "NEW_USER",
+              // });
             }, 1000);
           })
           .catch((error) => {

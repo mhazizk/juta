@@ -179,7 +179,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // };
 
     dispatchAppSettings({
-      type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
       payload: selectedAppSettings,
     });
 
@@ -236,7 +236,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     Promise.all([saveCategories, saveLogbook, saveAppSettings])
       .then(() => {
         return navigation.replace(screenList.splashScreen, {
-          status: "NEW_USER",
+          redirect: screenList.bottomTabNavigator,
         });
       })
       .catch((err) => {

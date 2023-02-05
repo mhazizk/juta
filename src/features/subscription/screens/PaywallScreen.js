@@ -102,7 +102,7 @@ const PaywallScreen = ({ item, navigation }) => {
                 paddingHorizontal: 32,
               }}
             />
-            <RevenueCatPaywallOfferings />
+            <RevenueCatPaywallOfferings onSuccess={() => navigation.goBack()} />
           </>
         )}
         {isLoading && (
