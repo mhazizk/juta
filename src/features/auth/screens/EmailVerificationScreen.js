@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  View, ScrollView,
-  TouchableOpacity,
-  AppState
-} from "react-native";
+import { View, ScrollView, TouchableOpacity, AppState } from "react-native";
 import auth from "../../../api/firebase/auth";
 import sendEmailToVerify from "../../../api/firebase/sendEmailToVerify";
 import { TextPrimary } from "../../../components/Text";
@@ -17,7 +13,9 @@ import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 
-const EmailVerificationScreen = ({ navigation }) => {
+const EmailVerificationScreen = ({ route, navigation }) => {
+  const fromScreen = route.params?.fromScreen || null;
+  const userAccountWithNewEmail = route.params?.userAccountWithNewEmail || null;
   const { appSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -28,6 +26,7 @@ const EmailVerificationScreen = ({ navigation }) => {
   const appState = useRef(AppState.currentState);
   useEffect(() => {
     sendEmailToVerify();
+    // fromScreen === screenList.splashScreen && sendEmailToVerify();
     setResendLinkTimerInSeconds(15);
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
@@ -85,9 +84,49 @@ const EmailVerificationScreen = ({ navigation }) => {
       loginTimerInSeconds > 0 &&
       setInterval(() => setLoginTimerInSeconds(loginTimerInSeconds - 1), 1000);
     if (loginTimerInSeconds === 0) {
-      navigation.navigate(screenList.splashScreen, {
-        redirect: screenList.initialSetupScreen,
-      });
+      switch (fromScreen) {
+        case screenList.splashScreen:
+          navigation.replace(screenList.splashScreen, {
+            fromScreen: screenList.emailVerificationScreen,
+            targetScreen: screenList.initialSetupScreen,
+          });
+          break;
+        case screenList.signUpScreen:
+          navigation.replace(screenList.splashScreen, {
+            fromScreen: screenList.emailVerificationScreen,
+            targetScreen: screenList.initialSetupScreen,
+          });
+          break;
+
+        case screenList.updateEmailScreen:
+          const updatedUserAccountWithNewEmail = {
+            ...userAccountWithNewEmail,
+            emailVerified: true,
+          };
+          setTimeout(async () => {
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+              payload: updatedUserAccountWithNewEmail,
+            });
+          }, 1);
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.USERS,
+              auth.currentUser.uid,
+              updatedUserAccountWithNewEmail
+            );
+            navigation.reset({
+              index: 1,
+              routes: [
+                { name: screenList.bottomTabNavigator },
+                {
+                  name: screenList.myAccountScreen,
+                },
+              ],
+            });
+          }, 500);
+          break;
+      }
     }
     return () => clearInterval(timer);
   }, [loginTimerInSeconds]);
@@ -182,7 +221,7 @@ const EmailVerificationScreen = ({ navigation }) => {
             {showResendEmailLink && (
               <TouchableOpacity
                 onPress={() => {
-                  // sendEmailToVerify();
+                  sendEmailToVerify();
                   setShowResendEmailLink(false);
                   setResendLinkTimerInSeconds(15);
                 }}

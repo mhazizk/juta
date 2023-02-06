@@ -120,7 +120,9 @@ const MyAccountScreen = ({ item, navigation }) => {
                 rightLabel={userAccount.email}
                 iconLeftName="mail"
                 iconPack="IonIcons"
-                onPress={() => {}}
+                onPress={() => {
+                  navigation.navigate(screenList.updateEmailScreen);
+                }}
               />
 
               {/* // TAG : Change Password */}

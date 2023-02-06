@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
-import resetPassword from "../../../api/firebase/updatePassword";
+import updateAccountPassword from "../../../api/firebase/updatePassword";
 import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
 import CustomTextInput from "../../../components/CustomTextInput";
 import Loading from "../../../components/Loading";
@@ -107,6 +107,7 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
             inputRef={inputOldPasswordRef}
             inputType="password"
             inputQuery={oldPassword}
+            title={!!oldPassword ? "Current password" : null}
             onChange={(text) => {
               setOldPassword(text);
             }}
@@ -117,6 +118,7 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
             inputRef={inputNewPasswordRef}
             inputType="password"
             inputQuery={newPassword}
+            title={!!newPassword ? "New password" : null}
             onChange={(text) => {
               setNewPassword(text);
             }}
@@ -126,6 +128,7 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
             editable={!isloading}
             inputRef={inputConfirmNewPasswordRef}
             inputType="password"
+            title={!!confirmNewPassword ? "Confirm password" : null}
             inputQuery={confirmNewPassword}
             onChange={(text) => {
               setConfirmNewPassword(text);
@@ -147,7 +150,11 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
                 onPress={() => {
                   setIsLoading(true);
                   setTimeout(() => {
-                    resetPassword(userAccount.email, oldPassword, newPassword)
+                    updateAccountPassword(
+                      userAccount.email,
+                      oldPassword,
+                      newPassword
+                    )
                       .then(() => {
                         navigation.goBack();
                         setIsLoading(false);
@@ -167,7 +174,11 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
                 label="Update password"
               />
             )}
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate(screenList.forgotPasswordScreen);
+              }}
+            >
               <TextPrimary label="Forgot password?" />
             </TouchableOpacity>
           </>

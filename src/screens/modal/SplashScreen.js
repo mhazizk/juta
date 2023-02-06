@@ -40,7 +40,8 @@ import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const fromScreen = route.params?.fromScreen || null;
+  const targetScreen = route.params?.targetScreen || null;
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -68,43 +69,43 @@ const SplashScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // goToLogInScreen();
     switch (true) {
       case !isFirstRun &&
-        route.params?.redirect === screenList.initialSetupScreen:
-        navigation.replace(screenList.initialSetupScreen);
+        !!user &&
+        user?.emailVerified &&
+        fromScreen === screenList.emailVerificationScreen:
+        navigation.replace(targetScreen);
         break;
-
       case !isFirstRun &&
         user?.emailVerified &&
-        !loading &&
-        route.params?.redirect === screenList.bottomTabNavigator:
+        fromScreen === screenList.initialSetupScreen:
         startAppWithNewUser(user);
         break;
-
       case !isFirstRun &&
-        !route.params?.status &&
+        !!user &&
         user?.emailVerified &&
-        !loading:
+        fromScreen === screenList.loginScreen:
         startAppWithExistingUser(user);
         break;
-      case !isFirstRun && !route.params?.status === "RETRY_LOGIN":
-        // case !route.params?.status === "RETRY_LOGIN" && !user && !loading:
-        navigation.replace(screenList.loginScreen);
+      case !isFirstRun && !!user && user?.emailVerified:
+        startAppWithExistingUser(user);
         break;
       case !isFirstRun && !!user && !user?.emailVerified:
+        console.log("user not verified");
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
           payload: appSettingsFallback,
         });
-        navigation.replace(screenList.emailVerificationScreen);
+        navigation.replace(screenList.emailVerificationScreen, {
+          fromScreen: screenList.splashScreen,
+        });
         break;
 
-      case !user && !loading && isFirstRun:
+      case isFirstRun && !user && !loading:
         navigation.replace(screenList.onboardingScreen);
         break;
 
-      case !user && !loading && !isFirstRun:
+      case !isFirstRun && !user && !loading:
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
           payload: appSettingsFallback,
@@ -119,7 +120,7 @@ const SplashScreen = ({ route, navigation }) => {
       default:
         break;
     }
-  }, [user, loading, error, isFirstRun]);
+  }, [user, loading, error, isFirstRun, fromScreen, targetScreen]);
 
   useEffect(() => {
     // refresh state
@@ -224,12 +225,12 @@ const SplashScreen = ({ route, navigation }) => {
             dispatchBadgeCounter: dispatchBadgeCounter,
           });
 
-          navigation.navigate(screenList.bottomTabNavigator);
+          navigation.replace(targetScreen || screenList.bottomTabNavigator);
         }, 1000);
       })
       .catch((error) => {
         alert(error);
-        navigation.navigate(screenList.loginScreen);
+        navigation.replace(screenList.loginScreen);
       });
   };
 
@@ -515,7 +516,7 @@ const SplashScreen = ({ route, navigation }) => {
           });
         }, 1000);
 
-        navigation.replace(screenList.bottomTabNavigator);
+        navigation.replace(targetScreen || screenList.bottomTabNavigator);
       })
       .catch((err) => {
         console.log(err);

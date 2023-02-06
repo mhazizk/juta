@@ -170,7 +170,10 @@ const LoginScreen = ({ route, navigation }) => {
                 //   rawValue: account,
                 // });
               }
-              navigation.replace(screenList.splashScreen);
+              navigation.replace(screenList.splashScreen, {
+                fromScreen: screenList.loginScreen,
+                targetScreen: screenList.bottomTabNavigator,
+              });
             })
             .catch((error) => {
               setScreenLoading(false);
@@ -247,6 +250,7 @@ const LoginScreen = ({ route, navigation }) => {
                 inputRef={inputEmailRef}
                 inputType="email"
                 inputQuery={email}
+                title={!!email ? "Email" : null}
                 onChange={(text) => {
                   setEmail(text);
                 }}
@@ -256,6 +260,7 @@ const LoginScreen = ({ route, navigation }) => {
                 inputRef={inputPasswordRef}
                 inputType="password"
                 inputQuery={password}
+                title={!!password ? "Password" : null}
                 onChange={(text) => {
                   setPassword(text);
                 }}

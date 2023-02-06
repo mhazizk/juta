@@ -86,6 +86,7 @@ import EmailVerificationScreen from "../features/auth/screens/EmailVerificationS
 import LogoutScreen from "../features/auth/screens/LogoutScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import SignUpScreen from "../features/auth/screens/SignUpScreen";
+import UpdateEmailScreen from "../features/auth/screens/UpdateEmailScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -322,6 +323,16 @@ const RootStack = () => {
         }}
         name={screenList.updatePasswordScreen}
         component={UpdatePasswordScreen}
+      />
+
+      {/* // TAG : Update Password Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Update Email",
+        }}
+        name={screenList.updateEmailScreen}
+        component={UpdateEmailScreen}
       />
 
       {/* // TAG : Forgot Password Screen */}

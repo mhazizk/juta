@@ -19,6 +19,7 @@ const screenList = {
   signUpScreen: "Sign Up Screen",
   emailVerificationScreen: "Email Verification Screen",
   updatePasswordScreen: "Update Password Screen",
+  updateEmailScreen: "Update Email Screen",
   forgotPasswordScreen: "Forgot Password Screen",
 
   // Tour Screen

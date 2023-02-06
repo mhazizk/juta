@@ -44,6 +44,12 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
   const [selectedAppSettings, setSelectedAppSettings] = useState({
+    _timestamps: {
+      created_at: Date.now(),
+      created_by: userAccount.uid,
+      updated_by: userAccount.uid,
+      updated_at: Date.now(),
+    },
     uid: userAccount.uid,
     theme: { name: "Light Theme", id: "light", style: lightTheme },
     fontSize: "medium",
@@ -236,7 +242,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     Promise.all([saveCategories, saveLogbook, saveAppSettings])
       .then(() => {
         return navigation.replace(screenList.splashScreen, {
-          redirect: screenList.bottomTabNavigator,
+          fromScreen: screenList.initialSetupScreen,
+          targetScreen: screenList.bottomTabNavigator,
         });
       })
       .catch((err) => {

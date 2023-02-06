@@ -33,7 +33,10 @@ const LogoutScreen = ({ navigation }) => {
           payload: null,
         });
         setTimeout(() => {
-          navigation.replace(screenList.loginScreen);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: screenList.splashScreen }],
+          });
         }, 500);
       });
     }, 3000);

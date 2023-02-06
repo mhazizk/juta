@@ -1,15 +1,12 @@
 import auth from "./auth";
 import {
-  confirmPasswordReset,
-  sendPasswordResetEmail,
   updatePassword,
-  verifyPasswordResetCode,
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth/react-native";
 import { Alert } from "react-native";
 
-const resetPassword = async (email, oldPassword, newPassword) => {
+const updateAccountPassword = async (email, oldPassword, newPassword) => {
   const credential = EmailAuthProvider.credential(email, oldPassword);
   return reauthenticateWithCredential(auth.currentUser, credential)
     .then((user) => {
@@ -37,4 +34,4 @@ const resetPassword = async (email, oldPassword, newPassword) => {
     });
 };
 
-export default resetPassword;
+export default updateAccountPassword;

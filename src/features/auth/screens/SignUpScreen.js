@@ -28,7 +28,7 @@ const SignUpScreen = ({ route, navigation }) => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [checkPassword, setCheckPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswordConditionsChecklist, setShowPasswordConditionsChecklist] =
     useState(false);
   const [buttonCondition, setButtonCondition] = useState({
@@ -97,6 +97,7 @@ const SignUpScreen = ({ route, navigation }) => {
   const inputDisplayNameRef = useRef(null);
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
+  const inputConfirmPasswordRef = useRef(null);
 
   const passwordRulesCheck = (conditions) => {
     if (!password) {
@@ -276,12 +277,9 @@ const SignUpScreen = ({ route, navigation }) => {
               });
             }, 1);
             setTimeout(() => {
-              navigation.replace(screenList.emailVerificationScreen);
-              // navigation.replace(screenList.loginScreen, {
-              //   account: account,
-              //   password: password,
-              //   status: "NEW_USER",
-              // });
+              navigation.replace(screenList.emailVerificationScreen, {
+                fromScreen: screenList.signUpScreen,
+              });
             }, 1000);
           })
           .catch((error) => {
@@ -348,17 +346,19 @@ const SignUpScreen = ({ route, navigation }) => {
                 <CustomTextInput
                   inputRef={inputDisplayNameRef}
                   inputType="displayName"
+                  title={!!displayName ? "Display name" : null}
                   inputQuery={displayName}
                   onChange={(text) => {
                     setDisplayName(text);
                   }}
-                  placeholder="Display Name"
+                  placeholder="Display name"
                 />
                 {/* // TAG : Email */}
                 <CustomTextInput
                   inputRef={inputEmailRef}
                   inputType="email"
                   inputQuery={email}
+                  title={!!email ? "Email" : null}
                   onChange={(text) => {
                     setEmail(text);
                   }}
@@ -369,31 +369,33 @@ const SignUpScreen = ({ route, navigation }) => {
                   inputRef={inputPasswordRef}
                   inputType="password"
                   inputQuery={password}
+                  title={!!password ? "Password" : null}
                   onChange={(text) => {
                     setPassword(text);
                   }}
                   placeholder="Password"
                 />
-                {/* // TAG : Check Password */}
+                {/* // TAG : Confirm Password */}
                 <CustomTextInput
-                  inputRef={inputPasswordRef}
+                  inputRef={inputConfirmPasswordRef}
                   inputType="password"
-                  inputQuery={checkPassword}
+                  inputQuery={confirmPassword}
+                  title={!!confirmPassword ? "Confirm password" : null}
                   onChange={(text) => {
-                    setCheckPassword(text);
+                    setConfirmPassword(text);
                   }}
                   onEndEditing={() => {
                     switch (true) {
                       case password &&
-                        checkPassword &&
-                        checkPassword === password:
+                        confirmPassword &&
+                        confirmPassword === password:
                         return setButtonCondition({
                           ...buttonCondition,
                           password: "ok",
                         });
                       case password &&
-                        checkPassword &&
-                        checkPassword !== password:
+                        confirmPassword &&
+                        confirmPassword !== password:
                         setButtonCondition({
                           ...buttonCondition,
                           password: "no",
