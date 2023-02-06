@@ -3,16 +3,20 @@ import { View, Text, ScrollView, FlatList } from "react-native";
 import configureRevenueCat from "../../../api/revenue-cat/configureRevenueCat";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
-import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalUserAccount,
+} from "../../../reducers/GlobalContext";
 import Purchases from "react-native-purchases";
 import { TextPrimary } from "../../../components/Text";
 import Loading from "../../../components/Loading";
 
-const SubscriptionHistoryScreen = () => {
+const SubscriptionHistoryScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { userAccount } = useGlobalUserAccount();
   const [subscriptionHistory, setSubscriptionHistory] = useState(null);
   useEffect(() => {
-    configureRevenueCat();
+    configureRevenueCat(userAccount.uid);
     Promise.all([Purchases.getCustomerInfo(), Purchases.getOfferings()]).then(
       (data) => {
         const info = data[0];
@@ -69,7 +73,9 @@ const SubscriptionHistoryScreen = () => {
                       <TextPrimary
                         label={"Purchase date : " + item.purchaseDate}
                       />
-                      <TextPrimary label={"Expiration date : " + item.expirationDate} />
+                      <TextPrimary
+                        label={"Expiration date : " + item.expirationDate}
+                      />
                     </View>
                   </>
                 )}
