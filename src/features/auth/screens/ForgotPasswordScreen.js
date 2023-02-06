@@ -86,6 +86,7 @@ const ForgotPasswordScreen = () => {
       >
         <CustomTextInput
           editable={!isLoading}
+          title={!!email ? "Email" : null}
           inputRef={emailInputRef}
           inputType="email"
           inputQuery={email}
