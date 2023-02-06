@@ -64,7 +64,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
-              {/* // TAG : Profile */}
+              {/* // TAG : Change Profile */}
               <ListItem
                 pressable
                 leftLabel="Change Profile Picture"
@@ -130,7 +130,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 iconLeftName="key"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.changeAccountPasswordScreen)
+                  navigation.navigate(screenList.updatePasswordScreen)
                 }
               />
             </ListSection>

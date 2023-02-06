@@ -5,8 +5,8 @@ import { Alert, Dimensions, ScrollView, View } from "react-native";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import password from "../../api/firebase/password";
-import newPassword from "../../api/firebase/password";
+import resetPassword from "../../api/firebase/updatePassword";
+import newPassword from "../../api/firebase/updatePassword";
 import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
 import CheckList from "../../components/CheckList";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -163,10 +163,10 @@ const ChangeAccountPasswordScreen = ({ item, navigation }) => {
                 label="Update Password"
                 onPress={() => {
                   setIsLoading(true);
-                  password
+                  resetPassword
                     .reauthenticate(oldPassword)
                     .then(() => {
-                      password
+                      resetPassword
                         .changePassword(newPassword)
                         .then(() => {
                           alert("Password reset email sent, check your inbox.");

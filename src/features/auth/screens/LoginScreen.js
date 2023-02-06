@@ -1,28 +1,26 @@
 import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
-import { TextPrimary } from "../../components/Text";
+import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
-import CustomTextInput from "../../components/CustomTextInput";
+} from "../../../reducers/GlobalContext";
+import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserLogin from "../../utils/HandleUserLogin";
-import CheckList from "../../components/CheckList";
-import Loading from "../../components/Loading";
+import handleUserLogin from "../../../utils/HandleUserLogin";
+import CheckList from "../../../components/CheckList";
+import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
-import AnimatedLoginText from "../../components/AnimatedLoginText";
-import screenList from "../../navigations/ScreenList";
-import Footer from "../../components/Footer";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import AnimatedLoginText from "../../../components/AnimatedLoginText";
+import screenList from "../../../navigations/ScreenList";
+import Footer from "../../../components/Footer";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 // import useAuth from "../../hooks/useAuth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../api/firebase/auth";
-// import persistStorage from "../../reducers/persist/persistStorage";
-// import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { getDeviceId, getDeviceName, getDeviceOSName } from "../../utils";
+import auth from "../../../api/firebase/auth";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -386,7 +384,7 @@ const LottieBackground = () => {
         autoPlay
         resizeMode="cover"
         //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
+        source={require("../../../assets/animation/wave.json")}
         style={{
           transform: [{ rotateZ: "90deg" }],
           overflow: "visible",
@@ -397,21 +395,6 @@ const LottieBackground = () => {
           height: 650,
         }}
       />
-      {/* // TAG : ANIMATED BACKGROUND */}
-      {/* <LottieView
-        autoPlay
-        resizeMode="cover"
-        //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
-        style={{
-          overflow: "visible",
-          bottom: -100,
-          left: -100,
-          position: "absolute",
-          width: 350,
-          height: 350,
-        }}
-      /> */}
     </>
   );
 };

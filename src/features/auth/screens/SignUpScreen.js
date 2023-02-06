@@ -1,22 +1,24 @@
 // TODO : Create a login screen
 
 import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
-import { TextPrimary } from "../../components/Text";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
-import CustomTextInput from "../../components/CustomTextInput";
+import { TextPrimary } from "../../../components/Text";
+import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserSignUp from "../../utils/HandleUserSignUp";
-import CheckList from "../../components/CheckList";
-import Loading from "../../components/Loading";
+import handleUserSignUp from "../../../utils/HandleUserSignUp";
+import CheckList from "../../../components/CheckList";
+import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
-import AnimatedLoginText from "../../components/AnimatedLoginText";
-import screenList from "../../navigations/ScreenList";
-import handleUserUpdateProfile from "../../utils/HandleUserUpdateProfile";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import userAccountModel from "../../model/userAccountModel";
-import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
+import AnimatedLoginText from "../../../components/AnimatedLoginText";
+import screenList from "../../../navigations/ScreenList";
+import handleUserUpdateProfile from "../../../utils/HandleUserUpdateProfile";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import userAccountModel from "../../../model/userAccountModel";
+import LOGSNAG_EVENT_TYPES from "../../../api/logsnag/logSnagEventTypes";
+import passwordConditionsList from "../model/passwordConditionsList";
+import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -27,40 +29,17 @@ const SignUpScreen = ({ route, navigation }) => {
   const [screenLoading, setScreenLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [checkPassword, setCheckPassword] = useState("");
-  const [showPasswordRules, setShowPasswordRules] = useState(false);
+  const [showPasswordConditionsChecklist, setShowPasswordConditionsChecklist] =
+    useState(false);
   const [buttonCondition, setButtonCondition] = useState({
     displayName: "no",
     password: "no",
     email: "no",
   });
   const [showButton, setShowButton] = useState(false);
-  const [passwordConditions, setPasswordConditions] = useState([
-    {
-      id: 1,
-      label: "At least 6 characters",
-      checked: false,
-    },
-    {
-      id: 2,
-      label: "At least 1 number",
-      checked: false,
-    },
-    {
-      id: 3,
-      label: "At least 1 special character",
-      checked: false,
-    },
-    {
-      id: 4,
-      label: "Does not contain your email address or display name",
-      checked: false,
-    },
-    {
-      id: 5,
-      label: "Does not contain generic password",
-      checked: false,
-    },
-  ]);
+  const [passwordConditions, setPasswordConditions] = useState(
+    passwordConditionsList
+  );
 
   useEffect(() => {}, []);
 
@@ -112,7 +91,7 @@ const SignUpScreen = ({ route, navigation }) => {
   useEffect(() => {
     setTimeout(() => {
       passwordRulesCheck(passwordConditions);
-    }, 1000);
+    }, 1);
   }, [password]);
 
   const inputDisplayNameRef = useRef(null);
@@ -251,9 +230,9 @@ const SignUpScreen = ({ route, navigation }) => {
           ...buttonCondition,
           password: "no",
         });
-        setShowPasswordRules(true);
+        setShowPasswordConditionsChecklist(true);
       } else {
-        setShowPasswordRules(false);
+        setShowPasswordConditionsChecklist(false);
       }
     }
   };
@@ -332,7 +311,7 @@ const SignUpScreen = ({ route, navigation }) => {
             <View
               style={{
                 width: "100%",
-                paddingTop: showPasswordRules ? "10%" : 0,
+                paddingTop: showPasswordConditionsChecklist ? "10%" : 0,
                 paddingHorizontal: 16,
                 alignItems: "flex-start",
                 justifyContent: "center",
@@ -352,7 +331,7 @@ const SignUpScreen = ({ route, navigation }) => {
             <View
               style={{
                 paddingHorizontal: 16,
-                flex: showPasswordRules ? 1 : 0,
+                flex: showPasswordConditionsChecklist ? 1 : 0,
                 justifyContent: "center",
               }}
             >
@@ -428,8 +407,8 @@ const SignUpScreen = ({ route, navigation }) => {
                   placeholder="Check Password"
                 />
               </View>
-              {showPasswordRules && (
-                <PasswordRules conditions={passwordConditions} />
+              {showPasswordConditionsChecklist && (
+                <PasswordConditionsChecklist conditions={passwordConditions} />
               )}
             </View>
             {/* //SECTION : Terms of Service and Privacy Policy */}
@@ -485,7 +464,7 @@ const SignUpScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
             {/* // TAG : Button Active */}
-            {showButton && !showPasswordRules && (
+            {showButton && !showPasswordConditionsChecklist && (
               <ButtonPrimary
                 style={{ marginVertical: 16 }}
                 width={Dimensions.get("window").width - 32}
@@ -496,16 +475,13 @@ const SignUpScreen = ({ route, navigation }) => {
               />
             )}
             {/* // TAG : Button Disabled */}
-            {(!showButton || showPasswordRules) && (
+            {(!showButton || showPasswordConditionsChecklist) && (
               <ButtonDisabled
                 style={{ marginVertical: 16 }}
                 width={Dimensions.get("window").width - 32}
                 label="Sign up"
               />
             )}
-            {/* 
-          // TODO : Create a signup screen 
-           */}
             {/* // TAG : Log In Route */}
             <TouchableOpacity
               onPress={() => {
@@ -546,7 +522,6 @@ const SignUpScreen = ({ route, navigation }) => {
           </>
         )}
       </ScrollView>
-      {/* {!isKeyboardVisible && <Footer />} */}
     </>
   );
 };
@@ -559,7 +534,7 @@ const LottieBackground = () => {
         autoPlay
         resizeMode="cover"
         //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
+        source={require("../../../assets/animation/wave.json")}
         style={{
           transform: [{ rotateZ: "90deg" }],
           overflow: "visible",
@@ -570,104 +545,8 @@ const LottieBackground = () => {
           height: 650,
         }}
       />
-      {/* // TAG : ANIMATED BACKGROUND */}
-      {/* <LottieView
-        autoPlay
-        resizeMode="cover"
-        //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
-        style={{
-          overflow: "visible",
-          bottom: -100,
-          left: -100,
-          position: "absolute",
-          width: 350,
-          height: 350,
-        }}
-      /> */}
     </>
   );
-};
-
-const PasswordRules = ({ conditions }) => {
-  return (
-    <>
-      {conditions && (
-        <View
-          style={{
-            alignItems: "flex-start",
-            width: "100%",
-            paddingHorizontal: 10,
-            // flex: 1,
-            // maxHeight: 140,
-          }}
-        >
-          <TextPrimary label="Password Rules" />
-          <CheckList
-            viewOnly
-            primaryLabel={conditions[0].label}
-            item={true}
-            singleChecklist
-            selected={conditions[0].checked}
-          />
-          <CheckList
-            viewOnly
-            primaryLabel={conditions[1].label}
-            item={true}
-            singleChecklist
-            selected={conditions[1].checked}
-          />
-          <CheckList
-            viewOnly
-            primaryLabel={conditions[2].label}
-            item={true}
-            singleChecklist
-            selected={conditions[2].checked}
-          />
-          <CheckList
-            viewOnly
-            primaryLabel={conditions[3].label}
-            item={true}
-            singleChecklist
-            selected={conditions[3].checked}
-          />
-          <CheckList
-            viewOnly
-            primaryLabel={conditions[4].label}
-            item={true}
-            singleChecklist
-            selected={conditions[4].checked}
-          />
-        </View>
-      )}
-    </>
-  );
-  // return (
-  //   <>
-  //     <View
-  //       style={{
-  //         alignItems: "flex-start",
-  //         maxHeight: 140,
-  //       }}
-  //     >
-  //       <TextPrimary label="Password Rules" />
-  //       <FlatList
-  //         nestedScrollEnabled
-  //         data={conditions}
-  //         keyExtractor={(item) => item.id}
-  //         renderItem={({ item }) => (
-  //           <CheckList
-  //             viewOnly
-  //             primaryLabel={item.label}
-  //             item={true}
-  //             singleChecklist
-  //             selected={item.checked}
-  //           />
-  //         )}
-  //       />
-  //     </View>
-  //   </>
-  // );
 };
 
 export default SignUpScreen;

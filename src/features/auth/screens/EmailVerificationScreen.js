@@ -1,29 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableNativeFeedback,
-  ScrollView,
+  View, ScrollView,
   TouchableOpacity,
-  AppState,
+  AppState
 } from "react-native";
-import auth from "../../api/firebase/auth";
-import authStateDidChange from "../../api/firebase/getAuthState";
-import sendEmailToVerify from "../../api/firebase/sendEmailToVerify";
-import { ButtonPrimary } from "../../components/Button";
-import CustomTextInput from "../../components/CustomTextInput";
-import { TextPrimary, TextSecondary } from "../../components/Text";
-import screenList from "../../navigations/ScreenList";
+import auth from "../../../api/firebase/auth";
+import sendEmailToVerify from "../../../api/firebase/sendEmailToVerify";
+import { TextPrimary } from "../../../components/Text";
+import screenList from "../../../navigations/ScreenList";
 import LottieView from "lottie-react-native";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import { useIsFocused } from "@react-navigation/native";
-import { onAuthStateChanged } from "firebase/auth/react-native";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+} from "../../../reducers/GlobalContext";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 
 const EmailVerificationScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -145,7 +137,7 @@ const EmailVerificationScreen = ({ navigation }) => {
               autoPlay
               resizeMode="contain"
               //   ref={animation}
-              source={require("../../assets/animation/checkmark-confetti.json")}
+              source={require("../../../assets/animation/checkmark-confetti.json")}
               style={{
                 overflow: "visible",
                 width: 150,

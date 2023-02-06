@@ -47,9 +47,8 @@ import AboutScreen from "../screens/settings/AboutScreen";
 import screenList from "./ScreenList";
 import LogbookScreen from "../screens/logbook/LogbookScreen";
 import { Alert, TouchableOpacity, View } from "react-native";
-import LoginScreen from "../screens/auth/LoginScreen";
-import SignUpScreen from "../screens/auth/SignUpScreen";
-import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
+import LoginScreen from "../features/auth/screens/LoginScreen";
+import UpdatePasswordScreen from "../features/auth/screens/UpdatePasswordScreen";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -83,8 +82,10 @@ import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOf
 import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
 import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
 import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
-import EmailVerificationScreen from "../screens/auth/EmailVerificationScreen";
-import LogoutScreen from "../features/logout/screens/LogoutScreen";
+import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
+import LogoutScreen from "../features/auth/screens/LogoutScreen";
+import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
+import SignUpScreen from "../features/auth/screens/SignUpScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -311,6 +312,16 @@ const RootStack = () => {
         }}
         name={screenList.emailVerificationScreen}
         component={EmailVerificationScreen}
+      />
+
+      {/* // TAG : Update Password Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Update Password",
+        }}
+        name={screenList.updatePasswordScreen}
+        component={UpdatePasswordScreen}
       />
 
       {/* // TAG : Forgot Password Screen */}

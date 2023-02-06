@@ -4,6 +4,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 const CustomTextInput = ({
+  editable = true,
   inputType,
   inputQuery,
   inputRef,
@@ -109,6 +110,7 @@ const CustomTextInput = ({
     >
       {leftIcon(inputType)}
       <TextInput
+        editable={editable}
         ref={inputRef}
         keyboardType={inputType === "password" ? "default" : "default"}
         returnKeyType={returnKeyType || "default"}
