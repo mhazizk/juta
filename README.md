@@ -1,6 +1,8 @@
+<div
+style='display:flex;flex-direction:column;align-items:center; justify-content:center;text-align:center'
+>
 <img 
-    style="display: block; 
-           margin-left: auto;
+    style="margin-left: auto;
            margin-right: auto;
            width: 30%;"
     src="src/assets/icons/juta-app-icon.png" 
@@ -12,13 +14,15 @@ Juta
 <div style='text-align:center; font-size:24px'>
 Mobile Expense Tracker
 </div>
+<a href="https://play.google.com/store/apps/details?id=app.juta">
 <img 
-    style="display: block; 
-           margin-left: auto;
+    style="margin-left: auto;
            margin-right: auto;
            width: 30%;"
     src="src/assets/badges/google-play-badge.png" 
     alt="Download **Juta**"/>
+</a>
+</div>
 
 ---
 
@@ -77,5 +81,5 @@ Coming soon at juta official web
 
 ## Download
 
-- Android - Coming soon
+- Android - [https://play.google.com/store/apps/details?id=app.juta](https://play.google.com/store/apps/details?id=app.juta)
 - iOS - Coming soon
