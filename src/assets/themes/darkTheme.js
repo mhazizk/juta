@@ -34,7 +34,6 @@ export const darkTheme = {
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
-    failure: palette.red,
   },
   text: {
     textPrimary: {
@@ -58,10 +57,6 @@ export const darkTheme = {
       color: palette.orange,
     },
     textDanger: {
-      fontSize: 16,
-      color: palette.red,
-    },
-    textFailure: {
       fontSize: 16,
       color: palette.red,
     },
@@ -90,16 +85,38 @@ export const darkTheme = {
       },
     },
     buttonDisabled: {
-      backgroundColor: palette.white[200],
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.white[200],
+        borderColor: palette.white[600],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
     buttonSuccess: {
-      backgroundColor: palette.green,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.green,
+        borderColor: palette.white[600],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
     buttonWarn: {
-      backgroundColor: palette.orange,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.orange,
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
     buttonDanger: {
       buttonStyle: {
@@ -112,16 +129,6 @@ export const darkTheme = {
         color: palette.red,
         fontSize: 16,
       },
-    },
-    // buttonDanger: {
-    //   backgroundColor: "transparent",
-    //   borderColor: palette.red,
-    //   borderRadius: 8,
-    //   borderWidth: 1,
-    // },
-    buttonFailure: {
-      backgroundColor: palette.red,
-      borderRadius: 8,
     },
   },
   list: {
