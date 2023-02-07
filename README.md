@@ -1,18 +1,15 @@
-<p align='center'>
+<h1 align='center'>
 <img 
     style="margin-left: auto;
            margin-right: auto;
            width: 30%;"
     src="src/assets/icons/juta-app-icon.png" 
     alt="Juta logo"/>
-
-<p align='center' style='font-size:36px;margin:0;padding:0'>
+</p>
 Juta
-</p>
-<p align='center' style='font-size:24px;margin:0;padding:0'>
+
 Mobile Expense Tracker
-</p>
-<p align='center' style='margin:0;padding:0'>
+
 <a href="https://play.google.com/store/apps/details?id=app.juta">
 <img 
     style="margin-left: auto;
@@ -21,9 +18,7 @@ Mobile Expense Tracker
     src="src/assets/badges/google-play-badge.png" 
     alt="Download Juta App"/>
 </a>
-</p>
-
----
+</h1>
 
 ## About Juta
 
@@ -34,7 +29,9 @@ Juta is a mobile app expense tracker to help you track your daily spendings
 Juta has many features to help you manage your daily spendings:
 
 - Dashboard
+
   Never miss your daily spendings with Juta dashboard
+
 - Income and Expense category
 
   Categorize your spendings to help you understand your income and expense
