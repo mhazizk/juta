@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { TextPrimary } from "./Text";
+import { TextPrimary } from "../../../components/Text";
 
 const AnimatedLoginText = () => {
     const textData = [
