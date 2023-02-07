@@ -340,7 +340,7 @@ const SignUpScreen = ({ route, navigation }) => {
                 }}
               >
                 <TextPrimary
-                  label="Already have an account ?"
+                  label="Already have an account?"
                   style={{
                     paddingVertical: 16,
                   }}
