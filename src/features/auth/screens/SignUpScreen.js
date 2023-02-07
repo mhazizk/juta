@@ -19,6 +19,7 @@ import userAccountModel from "../../../model/userAccountModel";
 import LOGSNAG_EVENT_TYPES from "../../../api/logsnag/logSnagEventTypes";
 import passwordConditionsList from "../model/passwordConditionsList";
 import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
+import passwordCheck from "../model/passwordCheck";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -31,11 +32,6 @@ const SignUpScreen = ({ route, navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswordConditionsChecklist, setShowPasswordConditionsChecklist] =
     useState(false);
-  const [buttonCondition, setButtonCondition] = useState({
-    displayName: "no",
-    password: "no",
-    email: "no",
-  });
   const [showButton, setShowButton] = useState(false);
   const [passwordConditions, setPasswordConditions] = useState(
     passwordConditionsList
@@ -44,199 +40,54 @@ const SignUpScreen = ({ route, navigation }) => {
   useEffect(() => {}, []);
 
   useEffect(() => {
-    if (displayName) {
-      setButtonCondition({
-        ...buttonCondition,
-        displayName: "ok",
-      });
-    } else {
-      setButtonCondition({
-        ...buttonCondition,
-        displayName: "no",
-      });
+    const isDisplayNameValid = displayName.length > 0;
+    const isEmailValid = email.includes("@") && email.includes(".");
+    const isPasswordValid = passwordConditions.every((item) => {
+      return item.checked === true;
+    });
+    const isConfirmedPasswordValid = password === confirmPassword;
+    const isAllowedToSignup =
+      isDisplayNameValid &&
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmedPasswordValid &&
+      agreeTerms;
+    switch (true) {
+      case isAllowedToSignup:
+        setShowButton(true);
+        break;
+
+      default:
+        setShowButton(false);
+        break;
     }
-  }, [displayName]);
+  }, [displayName, email, confirmPassword, passwordConditions, agreeTerms]);
 
   useEffect(() => {
-    if (email) {
-      setButtonCondition({
-        ...buttonCondition,
-        email: "ok",
-      });
-    } else {
-      setButtonCondition({
-        ...buttonCondition,
-        email: "no",
-      });
+    if (password.length > 0) {
+      setTimeout(() => {
+        // passwordRulesCheck(passwordConditions);
+        passwordCheck({
+          email,
+          password,
+          conditionsList: passwordConditions,
+          onAnyUnfulfilledCallback: (newConditions) => {
+            setPasswordConditions(newConditions);
+            setShowPasswordConditionsChecklist(true);
+          },
+          onAllFulfilledCallback: (newConditions) => {
+            setShowPasswordConditionsChecklist(false);
+            setPasswordConditions(newConditions);
+          },
+        });
+      }, 1);
     }
-  }, [email]);
-
-  useEffect(() => {
-    // console.log(passwordRules);
-  }, [passwordConditions]);
-
-  useEffect(() => {
-    if (
-      buttonCondition.displayName === "ok" &&
-      buttonCondition.email === "ok" &&
-      buttonCondition.password === "ok" &&
-      agreeTerms
-    ) {
-      setShowButton(true);
-    } else {
-      setShowButton(false);
-    }
-  }, [buttonCondition, agreeTerms]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      passwordRulesCheck(passwordConditions);
-    }, 1);
   }, [password]);
 
   const inputDisplayNameRef = useRef(null);
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
   const inputConfirmPasswordRef = useRef(null);
-
-  const passwordRulesCheck = (conditions) => {
-    if (!password) {
-      setPasswordConditions([
-        {
-          id: 1,
-          label: "At least 6 characters",
-          checked: false,
-        },
-        {
-          id: 2,
-          label: "At least 1 number",
-          checked: false,
-        },
-        {
-          id: 3,
-          label: "At least 1 special character",
-          checked: false,
-        },
-        {
-          id: 4,
-          label: "Does not contain your email address or display name",
-          checked: false,
-        },
-        {
-          id: 5,
-          label: "Does not contain generic password",
-          checked: false,
-        },
-      ]);
-    }
-    if (displayName && email && password) {
-      let id1Checked = conditions.find((item) => item.id === 1).checked;
-      let id2Checked = conditions.find((item) => item.id === 2).checked;
-      let id3Checked = conditions.find((item) => item.id === 3).checked;
-      let id4Checked = conditions.find((item) => item.id === 4).checked;
-      let id5Checked = conditions.find((item) => item.id === 5).checked;
-      const checkList = [];
-      for (const condition of conditions) {
-        switch (true) {
-          case !checkList.length:
-            if (password.length >= 6) {
-              id1Checked = true;
-            } else {
-              id1Checked = false;
-            }
-            checkList.push(1);
-            break;
-          case checkList.length === 1:
-            if (/\d/.test(password)) {
-              id2Checked = true;
-            } else {
-              id2Checked = false;
-            }
-            checkList.push(2);
-            break;
-          case checkList.length === 2:
-            if (/[-!$%^&*()_+|~=`{}[:;<>?,.@#\]]/g.test(password)) {
-              id3Checked = true;
-            } else {
-              id3Checked = false;
-            }
-            checkList.push(3);
-            break;
-          case checkList.length === 3:
-            if (
-              password.includes(displayName.toLowerCase()) ||
-              password.includes(email.toLowerCase())
-            ) {
-              id4Checked = false;
-            } else {
-              id4Checked = true;
-            }
-            checkList.push(4);
-            break;
-
-          case checkList.length === 4:
-            if (
-              // password.includes(displayName.toLowerCase()) ||
-              // password.includes(email.toLowerCase()) ||
-              password.includes(123456) ||
-              password.includes("qwerty")
-            ) {
-              id5Checked = false;
-            } else {
-              id5Checked = true;
-            }
-            checkList.push(5);
-            break;
-
-          default:
-            break;
-        }
-      }
-      setPasswordConditions([
-        {
-          id: 1,
-          label: "At least 6 characters",
-          checked: id1Checked,
-        },
-        {
-          id: 2,
-          label: "At least 1 number",
-          checked: id2Checked,
-        },
-        {
-          id: 3,
-          label: "At least 1 special character",
-          checked: id3Checked,
-        },
-        {
-          id: 4,
-          label: "Does not contain your email address or display name",
-          checked: id4Checked,
-        },
-        {
-          id: 5,
-          label: "Does not contain generic password",
-          checked: id5Checked,
-        },
-      ]);
-      const allValue = [
-        id1Checked,
-        id2Checked,
-        id3Checked,
-        id4Checked,
-        id5Checked,
-      ];
-      if (allValue.some((val) => val === false)) {
-        setButtonCondition({
-          ...buttonCondition,
-          password: "no",
-        });
-        setShowPasswordConditionsChecklist(true);
-      } else {
-        setShowPasswordConditionsChecklist(false);
-      }
-    }
-  };
 
   const finalCheck = (action) => {
     if (!email?.includes("@")) {
@@ -389,19 +240,11 @@ const SignUpScreen = ({ route, navigation }) => {
                       case password &&
                         confirmPassword &&
                         confirmPassword === password:
-                        return setButtonCondition({
-                          ...buttonCondition,
-                          password: "ok",
-                        });
+                        break;
                       case password &&
                         confirmPassword &&
                         confirmPassword !== password:
-                        setButtonCondition({
-                          ...buttonCondition,
-                          password: "no",
-                        });
-                        // alert("Password don't match. Please try again");
-                        return;
+                        break;
                       default:
                         return;
                     }
@@ -466,7 +309,7 @@ const SignUpScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
             {/* // TAG : Button Active */}
-            {showButton && !showPasswordConditionsChecklist && (
+            {showButton && (
               <ButtonPrimary
                 style={{ marginVertical: 16 }}
                 width={Dimensions.get("window").width - 32}
@@ -477,7 +320,7 @@ const SignUpScreen = ({ route, navigation }) => {
               />
             )}
             {/* // TAG : Button Disabled */}
-            {(!showButton || showPasswordConditionsChecklist) && (
+            {!showButton && (
               <ButtonDisabled
                 style={{ marginVertical: 16 }}
                 width={Dimensions.get("window").width - 32}
