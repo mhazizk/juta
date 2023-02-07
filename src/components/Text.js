@@ -1,18 +1,28 @@
 import { Text } from "react-native";
 import { lightTheme } from "../assets/themes/lightTheme";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 
 // TAG : TEXT COMPONENT //
 
 // TAG : Text Primary //
 export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text
+      {/* <Text
         numberOfLines={numberOfLines}
         style={[{ ...appSettings.theme.style.text.textPrimary }, { ...style }]}
+      >
+        {label || "Primary Text"}
+      </Text> */}
+      <Text
+        numberOfLines={numberOfLines}
+        style={[{ ...globalTheme.text.textPrimary }, { ...style }]}
       >
         {label || "Primary Text"}
       </Text>
@@ -23,13 +33,23 @@ export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
 // TAG : Text Button Primary //
 export const TextButtonPrimary = ({ label, props, numberOfLines, style }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text
+      {/* <Text
         numberOfLines={numberOfLines || null}
         style={[
           { ...appSettings.theme.style.button.buttonPrimary.textStyle },
+          { ...(style || null) },
+        ]}
+      >
+        {label || "Primary Text"}
+      </Text> */}
+      <Text
+        numberOfLines={numberOfLines || null}
+        style={[
+          { ...globalTheme.button.buttonPrimary.textStyle },
           { ...(style || null) },
         ]}
       >
@@ -42,10 +62,14 @@ export const TextButtonPrimary = ({ label, props, numberOfLines, style }) => {
 // TAG : Text Button Secondary //
 export const TextButtonSecondary = ({ label, props, theme, style }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text style={appSettings.theme.style.button.buttonSecondary.textStyle}>
+      {/* <Text style={appSettings.theme.style.button.buttonSecondary.textStyle}>
+        {label || "Secondary Text"}
+      </Text> */}
+      <Text style={{ ...globalTheme.button.buttonSecondary.textStyle }}>
         {label || "Secondary Text"}
       </Text>
     </>
@@ -55,14 +79,20 @@ export const TextButtonSecondary = ({ label, props, theme, style }) => {
 // TAG : Text Secondary //
 export const TextSecondary = ({ label, props, theme, style }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text
+      {/* <Text
         style={[
           { ...appSettings.theme.style.text.textSecondary },
           { ...(style || null) },
         ]}
+      >
+        {label || "Secondary Text"}
+      </Text> */}
+      <Text
+        style={[{ ...globalTheme.text.textSecondary }, { ...(style || null) }]}
       >
         {label || "Secondary Text"}
       </Text>
@@ -72,11 +102,14 @@ export const TextSecondary = ({ label, props, theme, style }) => {
 
 // TAG : Text Disabled //
 export const TextDisabled = ({ label, props, theme, style }) => {
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       <Text
         style={[
-          { ...(theme.text.textDisabled || lightTheme.text.textDisabled) },
+          {
+            ...globalTheme.text.textDisabled,
+          },
           { ...(style || null) },
         ]}
       >
@@ -88,13 +121,12 @@ export const TextDisabled = ({ label, props, theme, style }) => {
 
 // TAG : Text Success //
 export const TextSuccess = ({ label, props, theme, style }) => {
+  const { globalTheme } = useGlobalTheme();
+
   return (
     <>
       <Text
-        style={[
-          { ...(theme.text.textSuccess || lightTheme.text.textSuccess) },
-          { ...(style || null) },
-        ]}
+        style={[{ ...globalTheme.text.textSuccess }, { ...(style || null) }]}
       >
         {label || "Success Text"}
       </Text>
@@ -105,14 +137,25 @@ export const TextSuccess = ({ label, props, theme, style }) => {
 // TAG : Text Warn //
 export const TextWarn = ({ label, props, theme, style }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text
+      {/* <Text
         style={[
           {
             ...(appSettings.theme.style.text.textWarn ||
               lightTheme.text.textWarn),
+          },
+          { ...(style || null) },
+        ]}
+      >
+        {label || "Warn Text"}
+      </Text> */}
+      <Text
+        style={[
+          {
+            ...globalTheme.text.textWarn,
           },
           { ...(style || null) },
         ]}
@@ -126,14 +169,25 @@ export const TextWarn = ({ label, props, theme, style }) => {
 // TAG : Text Danger //
 export const TextDanger = ({ label, props, theme, style }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <Text
+      {/* <Text
         style={[
           {
             ...(appSettings.theme.style.text.textDanger ||
               lightTheme.text.textDanger),
+          },
+          { ...(style || null) },
+        ]}
+      >
+        {label || "Danger Text"}
+      </Text> */}
+      <Text
+        style={[
+          {
+            ...globalTheme.text.textDanger,
           },
           { ...(style || null) },
         ]}

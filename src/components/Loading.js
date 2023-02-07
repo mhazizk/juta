@@ -1,10 +1,14 @@
 import { ActivityIndicator, View } from "react-native";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { TextPrimary } from "./Text";
 import LottieView from "lottie-react-native";
 
-const Loading = ({ size, lottie }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+const Loading = ({ size, lottie, loadingText = null }) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
@@ -18,7 +22,7 @@ const Loading = ({ size, lottie }) => {
         {!lottie && (
           <ActivityIndicator
             size={size || 48}
-            color={appSettings.theme.style.colors.primary}
+            color={globalTheme.colors.primary}
           />
         )}
         {lottie && (
@@ -34,7 +38,7 @@ const Loading = ({ size, lottie }) => {
             }}
           />
         )}
-        {/* <TextPrimary label="Loading..." /> */}
+        {loadingText && <TextPrimary label={loadingText} />}
       </View>
     </>
   );

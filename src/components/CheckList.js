@@ -1,6 +1,9 @@
 import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
 const CheckList = ({
   checkboxPlacement = "right",
@@ -16,6 +19,7 @@ const CheckList = ({
   selected,
 }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       {!singleChecklist && pressable && (
@@ -27,7 +31,7 @@ const CheckList = ({
           {/* // TAG : Container */}
           <View
             style={{
-              ...appSettings.theme.style.list.listContainer,
+              ...globalTheme.list.listContainer,
               width: "100%",
               flexDirection: "row",
               paddingHorizontal: 16,
@@ -43,10 +47,10 @@ const CheckList = ({
                   borderColor:
                     selected === item
                       ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                   backgroundColor:
                     selected === item
-                      ? appSettings.theme.style.colors.primary
+                      ? globalTheme.colors.primary
                       : "transparent",
                   height: 20,
                   width: 20,
@@ -61,7 +65,7 @@ const CheckList = ({
                   <IonIcons
                     name="checkmark-sharp"
                     size={16}
-                    color={appSettings.theme.style.colors.background}
+                    color={globalTheme.colors.background}
                   />
                 )}
               </View>
@@ -69,7 +73,7 @@ const CheckList = ({
 
             <View
               style={{
-                ...appSettings.theme.style.list.listItem,
+                ...globalTheme.list.listItem,
                 flex: 1,
                 maxWidth: "80%",
                 paddingVertical: 8,
@@ -93,10 +97,10 @@ const CheckList = ({
                   borderColor:
                     selected === item
                       ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                   backgroundColor:
                     selected === item
-                      ? appSettings.theme.style.colors.primary
+                      ? globalTheme.colors.primary
                       : "transparent",
                   height: 20,
                   width: 20,
@@ -111,7 +115,7 @@ const CheckList = ({
                   <IonIcons
                     name="checkmark-sharp"
                     size={16}
-                    color={appSettings.theme.style.colors.background}
+                    color={globalTheme.colors.background}
                   />
                 )}
               </View>
@@ -128,7 +132,7 @@ const CheckList = ({
           {/* // TAG : Container */}
           <View
             style={{
-              ...appSettings.theme.style.list.listContainer,
+              ...globalTheme.list.listContainer,
               width: "100%",
               flexDirection: "row",
               paddingHorizontal: 16,
@@ -144,10 +148,10 @@ const CheckList = ({
                   borderColor:
                     selected === item
                       ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                   backgroundColor:
                     selected === item
-                      ? appSettings.theme.style.colors.secondary
+                      ? globalTheme.colors.secondary
                       : "transparent",
                   height: 20,
                   width: 20,
@@ -162,7 +166,7 @@ const CheckList = ({
 
             <View
               style={{
-                ...appSettings.theme.style.list.listItem,
+                ...globalTheme.list.listItem,
                 flex: 1,
                 maxWidth: "80%",
                 paddingVertical: 8,
@@ -190,7 +194,7 @@ const CheckList = ({
             {checkboxPlacement === "right" && (
               <View
                 style={{
-                  borderColor: appSettings.theme.style.colors.secondary,
+                  borderColor: globalTheme.colors.secondary,
                   backgroundColor: "transparent",
                   height: 20,
                   width: 20,
@@ -215,7 +219,7 @@ const CheckList = ({
           {/* // TAG : Container */}
           <View
             style={{
-              ...appSettings.theme.style.list.listContainer,
+              ...globalTheme.list.listContainer,
               width: "100%",
               flexDirection: "row",
               paddingHorizontal: 16,
@@ -231,10 +235,10 @@ const CheckList = ({
                   borderColor:
                     selected === item
                       ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                   backgroundColor:
                     selected === item
-                      ? appSettings.theme.style.colors.primary
+                      ? globalTheme.colors.primary
                       : "transparent",
                   height: 20,
                   width: 20,
@@ -249,7 +253,7 @@ const CheckList = ({
                   <IonIcons
                     name="checkmark-sharp"
                     size={16}
-                    color={appSettings.theme.style.colors.background}
+                    color={globalTheme.colors.background}
                   />
                 )}
               </View>
@@ -257,7 +261,7 @@ const CheckList = ({
 
             <View
               style={{
-                // ...appSettings.theme.style.list.listItem,
+                // ...globalTheme.list.listItem,
                 flex: 1,
                 maxWidth: "80%",
                 paddingVertical: 8,
@@ -281,10 +285,10 @@ const CheckList = ({
                   borderColor:
                     selected === item
                       ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                   backgroundColor:
                     selected === item
-                      ? appSettings.theme.style.colors.primary
+                      ? globalTheme.colors.primary
                       : "transparent",
                   height: 20,
                   width: 20,
@@ -299,7 +303,7 @@ const CheckList = ({
                   <IonIcons
                     name="checkmark-sharp"
                     size={16}
-                    color={appSettings.theme.style.colors.background}
+                    color={globalTheme.colors.background}
                   />
                 )}
               </View>
@@ -335,8 +339,8 @@ const CheckList = ({
                 size={16}
                 color={
                   selected === item
-                    ? appSettings.theme.style.colors.success
-                    : appSettings.theme.style.colors.danger
+                    ? globalTheme.colors.success
+                    : globalTheme.colors.danger
                 }
               />
             </View>
@@ -357,8 +361,8 @@ const CheckList = ({
                   style={{
                     color:
                       selected === item
-                        ? appSettings.theme.style.colors.success
-                        : appSettings.theme.style.colors.danger,
+                        ? globalTheme.colors.success
+                        : globalTheme.colors.danger,
                   }}
                 />
               )}
