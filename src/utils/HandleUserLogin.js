@@ -1,11 +1,15 @@
 import { Alert } from "react-native";
-import loginAndPersist from "../api/firebase/login";
+import loginWithPersistOption from "../api/firebase/login";
 
-const handleUserLogin = async ({ email, password }) => {
+const handleUserLogin = async ({ email, password, isPersist }) => {
   try {
     // const userCredential = await auth.signInWithEmailAndPassword(
     // const userCredential = await signInWithEmailAndPassword(email, password);
-    const userCredential = await loginAndPersist(email, password);
+    const userCredential = await loginWithPersistOption({
+      email,
+      password,
+      isPersist,
+    });
     const user = userCredential.user;
     return user;
   } catch (error) {
