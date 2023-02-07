@@ -7,10 +7,12 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 import Entypo from "react-native-vector-icons/Entypo";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const TransactionsSearchResults = ({
   route,
@@ -18,7 +20,8 @@ const TransactionsSearchResults = ({
   searchQuery,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransctions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -89,7 +92,7 @@ const TransactionsSearchResults = ({
               const iconColor = utils.FindById.findCategoryColorById({
                 id: transaction?.details.category_id,
                 categories: categories.categories,
-                defaultColor: appSettings.theme.style.colors.foreground,
+                defaultColor: globalTheme.colors.foreground,
               });
               const iconName = utils.FindById.findCategoryIconNameById({
                 id: transaction?.details.category_id,
@@ -138,7 +141,7 @@ const TransactionsSearchResults = ({
       <View
         style={{
           height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
         }}
       >
         {/* // TAG : Loading */}
@@ -147,13 +150,13 @@ const TransactionsSearchResults = ({
             <View
               style={{
                 height: "100%",
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
                 justifyContent: "center",
               }}
             >
               <ActivityIndicator
                 size={48}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
                 style={{ paddingBottom: 16 }}
               />
               <TextPrimary
@@ -167,21 +170,15 @@ const TransactionsSearchResults = ({
         {/* // TAG : No result */}
         {searchResult.status === "done" && !searchResult.result.length && (
           <>
-            <ScrollView
-              contentContainerStyle={{
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <CustomScrollView>
               <Entypo
                 name="emoji-sad"
                 size={48}
-                color={appSettings.theme.style.colors.secondary}
+                color={globalTheme.colors.secondary}
                 style={{ padding: 16 }}
               />
               <TextSecondary label="Nothing Found" />
-            </ScrollView>
+            </CustomScrollView>
           </>
         )}
 

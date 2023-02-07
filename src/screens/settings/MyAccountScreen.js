@@ -5,7 +5,7 @@ import { Alert, ScrollView, View } from "react-native";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
+import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
@@ -22,14 +22,17 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 import { getDeviceId } from "../../utils";
 
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const { dispatchCategories } = useGlobalCategories();
   const { dispatchLogbooks } = useGlobalLogbooks();
@@ -51,12 +54,7 @@ const MyAccountScreen = ({ item, navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
@@ -87,7 +85,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                     title: "Change Display Name",
                     modalType: "textInput",
                     maxLength: 14,
-                    default: userAccount.displayName,
+                    defaultOption: userAccount.displayName,
                     selected: (item) => {
                       const modifiedUserAcount = {
                         ...userAccount,
@@ -249,7 +247,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
               }}
             >
               <Loading />
@@ -257,7 +255,7 @@ const MyAccountScreen = ({ item, navigation }) => {
             </View>
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

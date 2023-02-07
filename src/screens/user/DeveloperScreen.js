@@ -1,9 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../../src/assets/themes/globalStyles";
 import LargeJSONTransactions from "../../database/largeTransactions.json";
 import userCategories from "../../database/userCategories";
 import userLogBooks from "../../database/userLogBooks";
@@ -17,6 +15,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import persistStorage from "../../reducers/persist/persistStorage";
@@ -32,10 +31,12 @@ import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
 import testing from "../../dev/testing";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const DeveloperScreen = ({ item, navigation }) => {
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -170,12 +171,7 @@ const DeveloperScreen = ({ item, navigation }) => {
   return (
     <>
       {appSettings && (
-        <ScrollView
-          style={{
-            height: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
-          }}
-        >
+        <CustomScrollView>
           {/* <UserHeaderComponent /> */}
 
           {/* // TAG : Save Large Transactions to Storage */}
@@ -186,8 +182,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Save 1000 Transactions JSON to AsyncStorage
                 </Text>
               </View>
@@ -202,8 +198,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Save Transactions to Device
                 </Text>
               </View>
@@ -218,8 +214,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Save Logbooks to Device
                 </Text>
               </View>
@@ -234,8 +230,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Save Categories to Device
                 </Text>
               </View>
@@ -299,8 +295,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Load Transactions from Device
                 </Text>
               </View>
@@ -315,8 +311,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Load Logbooks from Device
                 </Text>
               </View>
@@ -331,8 +327,8 @@ const DeveloperScreen = ({ item, navigation }) => {
                 size={18}
                 style={{ paddingRight: 16 }}
               />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Load Categories from Device
                 </Text>
               </View>
@@ -717,32 +713,20 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback onPress={() => {}}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log Global Raw Transactions
                 </Text>
               </View>
             </View>
           </TouchableNativeFeedback>
 
-          {/* // TAG : Log global raw transactions length */}
-          {/* <TouchableNativeFeedback
-                        onPress={() => console.log(rawTransactions.transactions.length)}>
-                        <View style={styles.flatListView}>
-                            <IonIcons name='code' size={18} style={{ paddingRight: 16 }} />
-                            <View style={globalStyles.lightTheme.listItem}>
-                                <Text style={globalStyles.lightTheme.textPrimary}>Log Global Raw Transactions Length</Text>
-                                <Text style={globalStyles.lightTheme.textSecondary}>{rawTransactions.transactions.length}</Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback> */}
-
           {/* // TAG : Log app settings */}
           <TouchableNativeFeedback onPress={() => console.log(appSettings)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log App Settings
                 </Text>
               </View>
@@ -762,10 +746,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           >
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
-                  Load TOken
-                </Text>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>Load TOken</Text>
               </View>
             </View>
           </TouchableNativeFeedback>
@@ -774,8 +756,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback onPress={() => console.log(userAccount)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log User Account
                 </Text>
               </View>
@@ -788,11 +770,11 @@ const DeveloperScreen = ({ item, navigation }) => {
           >
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log Global Sorted Transactions
                 </Text>
-                <Text style={globalStyles.lightTheme.textSecondary}>
+                <Text style={globalTheme.text.textSecondary}>
                   {countGlobalSortedTransactions()} Transactions
                 </Text>
               </View>
@@ -803,8 +785,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback onPress={() => console.log(appSettings)}>
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log Global App Settings
                 </Text>
               </View>
@@ -817,8 +799,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           >
             <View style={styles.flatListView}>
               <IonIcons name="code" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Log Sorted Transactions Promises
                 </Text>
               </View>
@@ -829,8 +811,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback onPress={() => deleteAll()}>
             <View style={styles.flatListView}>
               <IonIcons name="trash" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Delete All from Device
                 </Text>
               </View>
@@ -848,8 +830,8 @@ const DeveloperScreen = ({ item, navigation }) => {
           >
             <View style={styles.flatListView}>
               <IonIcons name="trash" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Delete Token from Secure Storage
                 </Text>
               </View>
@@ -860,14 +842,14 @@ const DeveloperScreen = ({ item, navigation }) => {
           <TouchableNativeFeedback onPress={() => setLoaded(null)}>
             <View style={styles.flatListView}>
               <IonIcons name="trash" size={18} style={{ paddingRight: 16 }} />
-              <View style={globalStyles.lightTheme.listItem}>
-                <Text style={globalStyles.lightTheme.textPrimary}>
+              <View style={globalTheme.list.listItem}>
+                <Text style={globalTheme.text.textPrimary}>
                   Clear Loaded State
                 </Text>
               </View>
             </View>
           </TouchableNativeFeedback>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );

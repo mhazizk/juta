@@ -26,6 +26,7 @@ import {
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const UserScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -50,12 +51,7 @@ const UserScreen = ({ navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {userAccount && (
           <>
             <UserHeaderComponent />
@@ -66,9 +62,7 @@ const UserScreen = ({ navigation }) => {
                 leftLabel="My Account"
                 iconLeftName="person"
                 iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.myAccountScreen)
-                }
+                onPress={() => navigation.navigate(screenList.myAccountScreen)}
               />
               {/* // TAG : My Groups */}
               {/* <ListItem
@@ -200,7 +194,7 @@ const UserScreen = ({ navigation }) => {
             </ListSection>
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

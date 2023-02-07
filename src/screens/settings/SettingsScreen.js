@@ -8,6 +8,7 @@ import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
@@ -20,9 +21,12 @@ import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLi
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
+import THEME_CONSTANTS from "../../constants/themeConstants";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
-const CurrencySettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [dashboardSettings, setDashboardSettings] = useState(
     appSettings.dashboardSettings
@@ -134,29 +138,35 @@ const CurrencySettingsScreen = ({ navigation }) => {
   }, [searchSettings]);
 
   useEffect(() => {
-    // console.log(JSON.stringify(appSettings));
-    // if (appSettings) {
-    //   setTimeout(async () => {
-    //     await firestore.setData(
-    //       FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-    //       appSettings.uid,
-    //       appSettings
-    //     );
-    //   }, 1);
-    // }
-  }, [appSettings]);
+    const payload = {
+      theme_id: appSettings.theme_id,
+      _timestamps: {
+        ...appSettings._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
+    setTimeout(() => {
+      dispatchGlobalTheme({
+        type: REDUCER_ACTIONS.THEME.SET,
+        payload: appSettings.theme_id,
+      });
+    }, 1);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        appSettings.uid,
+        { ...appSettings, ...payload }
+      );
+    }, 1000);
+  }, [appSettings?.theme_id]);
 
   useEffect(() => {
     console.log(currencyRate);
   }, [currencyRate]);
   return (
     <>
-      <Animated.ScrollView
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {/* // SECTION : Personalization Section */}
         {appSettings && (
           <>
@@ -170,19 +180,23 @@ const CurrencySettingsScreen = ({ navigation }) => {
               <ListItem
                 pressable
                 leftLabel="Theme"
-                rightLabel={appSettings.theme.name}
+                rightLabel={globalTheme.identifier.name}
                 iconLeftName="contrast"
                 iconPack="IonIcons"
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
-                    title: "Theme",
+                    title: "Select Theme",
                     modalType: "list",
-                    props: APP_SETTINGS.THEME.OPTIONS.map((theme) => theme),
-                    default: appSettings.theme,
+                    iconProps: {
+                      name: "contrast",
+                      pack: "IonIcons",
+                    },
+                    props: THEME_CONSTANTS.OPTIONS.map((theme) => theme),
+                    defaultOption: appSettings.theme_id,
                     selected: (item) =>
                       dispatchAppSettings({
                         type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
-                        payload: item,
+                        payload: item.id,
                       }),
                   })
                 }
@@ -210,7 +224,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                         type: REDUCER_ACTIONS.APP_SETTINGS.FONT_SIZE.SET,
                         payload: item.name,
                       }),
-                    default: { name: appSettings.fontSize },
+                    defaultOption: { name: appSettings.fontSize },
                   })
                 }
               /> */}
@@ -240,7 +254,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                           locale: item.locale,
                         },
                       }),
-                    default: { name: appSettings.language },
+                    defaultOption: { name: appSettings.language },
                   })
                 }
               />
@@ -381,9 +395,10 @@ const CurrencySettingsScreen = ({ navigation }) => {
             <TextPrimary
               label="Currency"
               style={{
-                paddingHorizontal: 32,
+                alignSelf: "flex-start",
+                paddingHorizontal: 16,
                 paddingBottom: 16,
-                color: appSettings.theme.style.colors.primary,
+                color: globalTheme.colors.primary,
               }}
             />
             <ListSection>
@@ -399,7 +414,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                         defaultCurrency: item,
                       });
                     },
-                    default: logbookSettings.defaultCurrency,
+                    defaultOption: logbookSettings.defaultCurrency,
                   });
                 }}
                 pressable
@@ -425,7 +440,7 @@ const CurrencySettingsScreen = ({ navigation }) => {
                         secondaryCurrency: item,
                       });
                     },
-                    default: logbookSettings.secondaryCurrency,
+                    defaultOption: logbookSettings.secondaryCurrency,
                   });
                 }}
                 pressable
@@ -524,9 +539,10 @@ const CurrencySettingsScreen = ({ navigation }) => {
             <TextPrimary
               label="Daily Summary"
               style={{
-                paddingHorizontal: 32,
+                alignSelf: "flex-start",
+                paddingHorizontal: 16,
                 paddingBottom: 16,
-                color: appSettings.theme.style.colors.primary,
+                color: globalTheme.colors.primary,
               }}
             />
             <ListSection>
@@ -579,9 +595,9 @@ const CurrencySettingsScreen = ({ navigation }) => {
             </ListSection>
           </>
         )}
-      </Animated.ScrollView>
+      </CustomScrollView>
     </>
   );
 };
 
-export default CurrencySettingsScreen;
+export default SettingsScreen;

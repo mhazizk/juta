@@ -1,33 +1,25 @@
 import {
   Image,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableNativeFeedback,
-  View,
+  Platform, View
 } from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
-import UserHeaderComponent from "../../components/UserHeader";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 import JutaLogo from "../../assets/icons/juta-app-icon.png";
 import Constants from "expo-constants";
 import { TextPrimary } from "../../components/Text";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const AboutScreen = ({ item, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
-      <View
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
-        {/* <UserHeaderComponent /> */}
+      <CustomScrollView>
         <View
           style={{
             alignItems: "center",
@@ -69,7 +61,7 @@ const AboutScreen = ({ item, navigation }) => {
             onPress={() => alert("OTW")}
           />
         </ListSection>
-      </View>
+      </CustomScrollView>
     </>
   );
 };

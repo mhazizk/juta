@@ -1,7 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import { useGlobalTheme } from "../reducers/GlobalContext";
 
-nestedScrollEnabled;
 const CustomScrollView = ({
   children,
   nestedScrollEnabled = false,
@@ -14,7 +13,7 @@ const CustomScrollView = ({
       contentContainerStyle={[
         {
           minHeight: "100%",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "center",
           paddingHorizontal: 16,
           backgroundColor: globalTheme.colors.background,
