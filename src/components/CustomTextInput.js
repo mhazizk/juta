@@ -2,8 +2,11 @@ import { useState } from "react";
 import { TextInput, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import { TextPrimary } from "./Text";
 
 const CustomTextInput = ({
+  title,
+  editable = true,
   inputType,
   inputQuery,
   inputRef,
@@ -92,43 +95,63 @@ const CustomTextInput = ({
   };
 
   return (
-    <View
-      style={{
-        // flex: 1,
-        alignItems: "center",
-        width: "100%",
-        overflow: "hidden",
-        flexDirection: "row",
-        borderColor: appSettings.theme.style.colors.primary,
-        justifyContent: "space-between",
-        borderRadius: 16,
-        borderWidth: 1,
-        backgroundColor: appSettings.theme.style.colors.background,
-        margin: 8,
-      }}
-    >
-      {leftIcon(inputType)}
-      <TextInput
-        ref={inputRef}
-        keyboardType={inputType === "password" ? "default" : "default"}
-        returnKeyType={returnKeyType || "default"}
-        placeholder={placeholder || "Type something here ..."}
-        placeholderTextColor={appSettings.theme.style.text.textSecondary.color}
-        style={{
-          ...appSettings.theme.style.text.textPrimary,
-          flex: 1,
-          paddingLeft: 0,
-          height: 48,
-        }}
-        maxLength={maxLength}
-        secureTextEntry={inputType === "password" && secureTextEntry}
-        onChangeText={(searchText) => onChange(searchText)}
-        onEndEditing={onEndEditing}
-        clearButtonMode="while-editing"
-        value={inputQuery}
-      />
-      {rightButton()}
-    </View>
+    <>
+      <View>
+        <View
+          style={{
+            // flex: 1,
+            alignItems: "center",
+            width: "100%",
+            overflow: "hidden",
+            flexDirection: "row",
+            borderColor: appSettings.theme.style.colors.primary,
+            justifyContent: "space-between",
+            borderRadius: 16,
+            borderWidth: 1,
+            backgroundColor: appSettings.theme.style.colors.background,
+            margin: 8,
+          }}
+        >
+          {leftIcon(inputType)}
+          <TextInput
+            editable={editable}
+            ref={inputRef}
+            keyboardType={inputType === "password" ? "default" : "default"}
+            returnKeyType={returnKeyType || "default"}
+            placeholder={placeholder || "Type something here ..."}
+            placeholderTextColor={
+              appSettings.theme.style.text.textSecondary.color
+            }
+            style={{
+              ...appSettings.theme.style.text.textPrimary,
+              flex: 1,
+              paddingLeft: 0,
+              height: 48,
+            }}
+            maxLength={maxLength}
+            secureTextEntry={inputType === "password" && secureTextEntry}
+            onChangeText={(searchText) => onChange(searchText)}
+            onEndEditing={onEndEditing}
+            clearButtonMode="while-editing"
+            value={inputQuery}
+          />
+          {rightButton()}
+        </View>
+        {title && (
+          <TextPrimary
+            label={title}
+            style={{
+              backgroundColor: appSettings.theme.style.colors.background,
+              paddingHorizontal: 8,
+              position: "absolute",
+              top: 0,
+              left: 54,
+              fontSize: 14,
+            }}
+          />
+        )}
+      </View>
+    </>
   );
 };
 

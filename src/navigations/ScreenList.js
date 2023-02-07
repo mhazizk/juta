@@ -15,7 +15,11 @@ const screenList = {
 
   // Auth Screen
   loginScreen: "Login Screen",
+  logoutScreen: "Logout Screen",
   signUpScreen: "Sign Up Screen",
+  emailVerificationScreen: "Email Verification Screen",
+  updatePasswordScreen: "Update Password Screen",
+  updateEmailScreen: "Update Email Screen",
   forgotPasswordScreen: "Forgot Password Screen",
 
   // Tour Screen

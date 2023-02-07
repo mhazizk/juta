@@ -9,6 +9,8 @@ import { lightTheme } from "../../assets/themes/lightTheme";
 import screenList from "../../navigations/ScreenList";
 import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
 import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+import persistStorage from "../../reducers/persist/persistStorage";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const OnboardingScreen = ({ navigation }) => {
@@ -20,12 +22,20 @@ const OnboardingScreen = ({ navigation }) => {
         transitionAnimationDuration={250}
         showSkip={false}
         onDone={() => {
-          dispatchAppSettings({
-            type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-            payload: appSettingsFallback,
-          });
-
-          navigation.replace(screenList.loginScreen);
+          persistStorage
+            .asyncStorage({
+              action: PERSIST_ACTIONS.SET,
+              key: "isFirstRun",
+              rawValue: false,
+            })
+            .then(() => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+                payload: appSettingsFallback,
+              });
+              navigation.replace(screenList.loginScreen);
+            })
+            .catch((error) => {});
         }}
         pages={[
           {

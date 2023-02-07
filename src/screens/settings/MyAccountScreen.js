@@ -15,6 +15,7 @@ import getSubscriptionLimit from "../../features/subscription/logic/getSubscript
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import screenList from "../../navigations/ScreenList";
+import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
@@ -63,7 +64,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
-              {/* // TAG : Profile */}
+              {/* // TAG : Change Profile */}
               <ListItem
                 pressable
                 leftLabel="Change Profile Picture"
@@ -119,7 +120,9 @@ const MyAccountScreen = ({ item, navigation }) => {
                 rightLabel={userAccount.email}
                 iconLeftName="mail"
                 iconPack="IonIcons"
-                onPress={() => {}}
+                onPress={() => {
+                  navigation.navigate(screenList.updateEmailScreen);
+                }}
               />
 
               {/* // TAG : Change Password */}
@@ -129,7 +132,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 iconLeftName="key"
                 iconPack="IonIcons"
                 onPress={() =>
-                  navigation.navigate(screenList.changeAccountPasswordScreen)
+                  navigation.navigate(screenList.updatePasswordScreen)
                 }
               />
             </ListSection>
@@ -225,45 +228,12 @@ const MyAccountScreen = ({ item, navigation }) => {
                               }
                             )
                             .then(() => {
-                              // Unsubscribe firestore subscriptions
-                              useFirestoreSubscriptions({
-                                uid: userAccount.uid,
-                                unsubscribeAll: true,
+                              navigation.reset({
+                                index: 0,
+                                routes: [{ name: screenList.logoutScreen }],
                               });
-                              setTimeout(() => {
-                                signOut(auth).then(() => {
-                                  dispatchAppSettings({
-                                    type: REDUCER_ACTIONS.APP_SETTINGS.THEME
-                                      .SET,
-                                    payload: { style: colorOfTheYear2023 },
-                                  });
-                                  dispatchUserAccount({
-                                    type: REDUCER_ACTIONS.USER_ACCOUNT
-                                      .FORCE_SET,
-                                    payload: null,
-                                  });
-                                  setTimeout(() => {
-                                    navigation.reset({
-                                      index: 0,
-                                      routes: [
-                                        { name: screenList.loginScreen },
-                                      ],
-                                    });
-                                  }, 500);
-                                });
-                              }, 1500);
                             });
-
-                          // setTimeout(() => {
-                          //   console.log("Unsubscribing firestore from account");
-                          // }, 1500);
-                          // setTimeout(() => {}, 3000);
                         }
-
-                        // } catch (error) {
-                        //   alert(error);
-                        //   setIsLoading(false);
-                        // }
                       },
                     },
                   ])

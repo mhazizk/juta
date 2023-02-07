@@ -1,28 +1,26 @@
 import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
-import { TextPrimary } from "../../components/Text";
+import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import { ButtonDisabled, ButtonPrimary } from "../../components/Button";
-import CustomTextInput from "../../components/CustomTextInput";
+} from "../../../reducers/GlobalContext";
+import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserLogin from "../../utils/HandleUserLogin";
-import CheckList from "../../components/CheckList";
-import Loading from "../../components/Loading";
+import handleUserLogin from "../../../utils/HandleUserLogin";
+import CheckList from "../../../components/CheckList";
+import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
-import AnimatedLoginText from "../../components/AnimatedLoginText";
-import screenList from "../../navigations/ScreenList";
-import Footer from "../../components/Footer";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import AnimatedLoginText from "../../../components/AnimatedLoginText";
+import screenList from "../../../navigations/ScreenList";
+import Footer from "../../../components/Footer";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 // import useAuth from "../../hooks/useAuth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../api/firebase/auth";
-// import persistStorage from "../../reducers/persist/persistStorage";
-// import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { getDeviceId, getDeviceName, getDeviceOSName } from "../../utils";
+import auth from "../../../api/firebase/auth";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -45,15 +43,6 @@ const LoginScreen = ({ route, navigation }) => {
       setEmail(account.email);
       setPassword(password);
     } else {
-      // const loadUserAccount = persistStorage
-      //   .asyncSecureStorage({
-      //     action: PERSIST_ACTIONS.GET,
-      //     key: "authAccount",
-      //   })
-      //   .then((account) => {
-      //     setEmail(account?.email);
-      //     // setPassword(account.password);
-      //   });
     }
   }, []);
 
@@ -91,107 +80,30 @@ const LoginScreen = ({ route, navigation }) => {
         break;
     }
 
-    // if (rememberLogin) {
-    //   persistStorage.asyncSecureStorage({
-    //     action: PERSIST_ACTIONS.SET,
-    //     key: "authAccount",
-    //     rawValue: {
-    //       displayName:
-    //         auth.currentUser.displayName || route?.params?.account?.name,
-    //       premium: false,
-    //       uid: auth.currentUser.uid || route?.params?.account?.uid,
-    //       email: auth.currentUser.email || route?.params?.account?.email,
-    //       emailVerified: auth.currentUser.emailVerified,
-    //       photoURL: auth.currentUser.photoURL,
-    //     },
-    //   });
-    // }
-
     // Login check
     setTimeout(() => {
-      // persistStorage.asyncSecureStorage({
-      //   action: PERSIST_ACTIONS.SET,
-      //   key: "authAccount",
-      //   rawValue: email,
-      // });
       switch (true) {
-        case !!email &&
-          !!password &&
-          route.params?.status === "NEW_USER" &&
-          !!route.params?.account:
-          if (auth.currentUser) {
-            // Login from new user
-            Promise.all([
-              firestore.getOneDoc(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                auth.currentUser.uid
-              ),
-              getDeviceId(),
-              getDeviceName(),
-              getDeviceOSName(),
-            ])
-              .then((data) => {
-                const userAccount = data[0];
-                const deviceId = data[1];
-                const deviceName = data[2];
-                const deviceOSName = data[3];
-                const loggedInUserAccount = {
-                  ...userAccount,
-                  devicesLoggedIn: [
-                    ...userAccount.devicesLoggedIn,
-                    {
-                      device_id: deviceId,
-                      device_name: deviceName,
-                      device_os_name: deviceOSName,
-                      last_login: Date.now(),
-                    },
-                  ],
-                };
-                dispatchUserAccount({
-                  type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-                  payload: loggedInUserAccount,
-                });
-
-                return navigation.replace(screenList.initialSetupScreen);
-              })
-              .catch((error) => {
-                setScreenLoading(false);
-              });
-          }
-          break;
-
         case !!email && !!password && !user:
           // New login
-          handleUserLogin({ email, password })
+          handleUserLogin({ email, password, isPersist: rememberLogin })
             .then((authAccount) => {
-              if (rememberLogin) {
-                // TODO : commented out for now
-                // persistStorage.asyncSecureStorage({
-                //   action: PERSIST_ACTIONS.SET,
-                //   key: "authAccount",
-                //   rawValue: account,
-                // });
-              }
-              navigation.replace(screenList.splashScreen);
+              navigation.replace(screenList.splashScreen, {
+                fromScreen: screenList.loginScreen,
+                targetScreen: screenList.bottomTabNavigator,
+              });
             })
             .catch((error) => {
               setScreenLoading(false);
             });
           break;
-
-        case !!email && !!password && !!user && !route?.params?.status:
-          // Login existing account
-          handleUserLogin({ email, password })
+        case !!email && !!password && !!user:
+          // New login
+          handleUserLogin({ email, password, isPersist: rememberLogin })
             .then((authAccount) => {
-              if (rememberLogin) {
-                // TODO : commented out for now
-                // persistStorage.asyncSecureStorage({
-                //   action: PERSIST_ACTIONS.SET,
-                //   key: "authAccount",
-                //   rawValue: account,
-                // });
-              }
-              navigation.replace(screenList.splashScreen);
+              navigation.replace(screenList.splashScreen, {
+                fromScreen: screenList.loginScreen,
+                targetScreen: screenList.bottomTabNavigator,
+              });
             })
             .catch((error) => {
               setScreenLoading(false);
@@ -249,6 +161,7 @@ const LoginScreen = ({ route, navigation }) => {
                 inputRef={inputEmailRef}
                 inputType="email"
                 inputQuery={email}
+                title={!!email ? "Email" : null}
                 onChange={(text) => {
                   setEmail(text);
                 }}
@@ -258,6 +171,7 @@ const LoginScreen = ({ route, navigation }) => {
                 inputRef={inputPasswordRef}
                 inputType="password"
                 inputQuery={password}
+                title={!!password ? "Password" : null}
                 onChange={(text) => {
                   setPassword(text);
                 }}
@@ -331,9 +245,8 @@ const LoginScreen = ({ route, navigation }) => {
                 label="Login"
               />
             )}
-            {/* 
-          // TODO : Create a signup screen 
-           */}
+            {/*
+             */}
             <TouchableOpacity
               onPress={() => {
                 navigation.replace(screenList.signUpScreen);
@@ -346,7 +259,7 @@ const LoginScreen = ({ route, navigation }) => {
                 }}
               >
                 <TextPrimary
-                  label="Don't have an account ?"
+                  label="Don't have an account?"
                   style={{
                     paddingVertical: 16,
                   }}
@@ -386,7 +299,7 @@ const LottieBackground = () => {
         autoPlay
         resizeMode="cover"
         //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
+        source={require("../../../assets/animation/wave.json")}
         style={{
           transform: [{ rotateZ: "90deg" }],
           overflow: "visible",
@@ -397,21 +310,6 @@ const LottieBackground = () => {
           height: 650,
         }}
       />
-      {/* // TAG : ANIMATED BACKGROUND */}
-      {/* <LottieView
-        autoPlay
-        resizeMode="cover"
-        //   ref={animation}
-        source={require("../../assets/animation/wave.json")}
-        style={{
-          overflow: "visible",
-          bottom: -100,
-          left: -100,
-          position: "absolute",
-          width: 350,
-          height: 350,
-        }}
-      /> */}
     </>
   );
 };

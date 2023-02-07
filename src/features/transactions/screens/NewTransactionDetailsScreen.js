@@ -958,8 +958,16 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     });
                   } else {
                     Alert.alert(
-                      "Upgrade Subscription",
-                      "Upgrade your subscription to use repeating transactions"
+                      "Upgrade to Premium",
+                      "Upgrade to premium to create repeating transactions",
+                      [
+                        { text: "Cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () =>
+                            navigation.navigate(screenList.mySubscriptionScreen),
+                        },
+                      ]
                     );
                   }
                 }}
@@ -999,28 +1007,55 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }
                 iconRightName="add"
                 onPress={async () => {
-                  // No permissions request is necessary for launching the image library
-                  let result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                    allowsEditing: true,
-                    allowsMultipleSelection: true,
-                    quality: 0.2,
-                    // TODO : try compressing image for firebase storage
-                  });
-
-                  const { canceled, assets } = result;
-                  const uri = assets.map((asset) => asset.uri);
-                  if (!result.canceled) {
-                    setTransaction({
-                      ...transaction,
-                      details: {
-                        ...transaction.details,
-                        attachment_URL: [
-                          ...transaction.details.attachment_URL,
-                          ...uri,
-                        ],
-                      },
+                  if (
+                    getSubscriptionLimit(
+                      userAccount.subscription.plan,
+                      SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                    )
+                  ) {
+                    // No permissions request is necessary for launching the image library
+                    let result = await ImagePicker.launchImageLibraryAsync({
+                      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                      allowsEditing: true,
+                      allowsMultipleSelection: true,
+                      quality: 0.2,
+                      // TODO : try compressing image for firebase storage
                     });
+
+                    const { canceled, assets } = result;
+                    const uri = assets.map((asset) => asset.uri);
+                    if (!result.canceled) {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          attachment_URL: [
+                            ...transaction.details.attachment_URL,
+                            ...uri,
+                          ],
+                        },
+                      });
+                    }
+                  } else {
+                    Alert.alert(
+                      "Upgrade to Premium",
+                      "Upgrade to premium to use attachment images",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(
+                              screenList.mySubscriptionScreen
+                            );
+                          },
+                        },
+                      ]
+                    );
+                    return;
                   }
                 }}
               />

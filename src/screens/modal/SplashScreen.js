@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { globalStyles } from "../../assets/themes/globalStyles";
 // import { setSortedTransactions } from "../../utils/FetchData";
@@ -35,10 +35,13 @@ import getDeviceName from "../../utils/GetDeviceName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import initialRepeatedTransactions from "../../reducers/initial-state/initialRepeatedTransactions";
 import JutaLogo from "../../assets/icons/juta-app-icon.png";
+import persistStorage from "../../reducers/persist/persistStorage";
+import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const fromScreen = route.params?.fromScreen || null;
+  const targetScreen = route.params?.targetScreen || null;
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -49,37 +52,75 @@ const SplashScreen = ({ route, navigation }) => {
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
+  const [isFirstRun, setIsFirstRun] = useState(true);
   const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     console.log({ __DEV__ });
+    persistStorage
+      .asyncStorage({
+        action: PERSIST_ACTIONS.GET,
+        key: "isFirstRun",
+      })
+      .then((isFirstRun) => {
+        setIsFirstRun(isFirstRun);
+      })
+      .catch((error) => {});
   }, []);
 
   useEffect(() => {
-    // goToLogInScreen();
     switch (true) {
-      case route.params?.status === "NEW_USER" && !!user && !loading:
+      case !isFirstRun &&
+        !!user &&
+        user?.emailVerified &&
+        fromScreen === screenList.emailVerificationScreen:
+        navigation.replace(targetScreen);
+        break;
+      case !isFirstRun &&
+        user?.emailVerified &&
+        fromScreen === screenList.initialSetupScreen:
         startAppWithNewUser(user);
         break;
-      case !route.params?.status && !!user && !loading:
+      case !isFirstRun &&
+        !!user &&
+        user?.emailVerified &&
+        fromScreen === screenList.loginScreen:
         startAppWithExistingUser(user);
         break;
-      case !route.params?.status === "RETRY_LOGIN":
-        // case !route.params?.status === "RETRY_LOGIN" && !user && !loading:
-        navigation.replace(screenList.loginScreen);
+      case !isFirstRun && !!user && user?.emailVerified:
+        startAppWithExistingUser(user);
         break;
-      case error:
-        console.log(error);
+      case !isFirstRun && !!user && !user?.emailVerified:
+        console.log("user not verified");
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: appSettingsFallback,
+        });
+        navigation.replace(screenList.emailVerificationScreen, {
+          fromScreen: screenList.splashScreen,
+        });
         break;
 
-      case !user && !loading:
+      case isFirstRun && !user && !loading:
         navigation.replace(screenList.onboardingScreen);
+        break;
+
+      case !isFirstRun && !user && !loading:
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: appSettingsFallback,
+        });
+        navigation.replace(screenList.loginScreen);
+        break;
+
+      case error:
+        console.log(error);
         break;
 
       default:
         break;
     }
-  }, [user, loading, error]);
+  }, [user, loading, error, isFirstRun, fromScreen, targetScreen]);
 
   useEffect(() => {
     // refresh state
@@ -102,23 +143,9 @@ const SplashScreen = ({ route, navigation }) => {
     return true;
   };
 
-  const goToLogInScreen = async () => {
-    // const loadAppSettings = await persistStorage.asyncStorage({
-    //   action: PERSIST_ACTIONS.GET,
-    //   key: "appSettings",
-    // });
-    // Promise.all([loadAppSettings]).then((data) => {
-    //   dispatchAppSettings({
-    //     type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-    //     payload: data[0],
-    //   });
-    //   navigation.replace(screenList.loginScreen);
-    // });
-  };
-
   const startAppWithNewUser = async (currUser) => {
     Promise.all([
-      firestore.get(FIRESTORE_COLLECTION_NAMES.USERS, currUser.uid),
+      firestore.getOneDoc(FIRESTORE_COLLECTION_NAMES.USERS, currUser.uid),
       getDeviceId(),
       getDeviceName(),
       getDeviceOSName(),
@@ -160,19 +187,50 @@ const SplashScreen = ({ route, navigation }) => {
         //     categories: { ...categoriesFallback, uid: currUser.uid },
         //   },
         // });
-
         setTimeout(async () => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.USERS,
             currUser.uid,
             loggedInUserAccount
           );
+        }, 1);
 
-          navigation.navigate(screenList.bottomTabNavigator);
+        setTimeout(async () => {
+          useFirestoreSubscriptions({
+            uid: userAccount.uid,
+            subscribeAll: true,
+
+            appSettings: appSettings,
+            dispatchAppSettings: dispatchAppSettings,
+
+            userAccount: userAccount,
+            dispatchUserAccount: dispatchUserAccount,
+
+            logbooks: logbooks,
+            dispatchLogbooks: dispatchLogbooks,
+
+            sortedTransactions: sortedTransactions,
+            dispatchSortedTransactions: dispatchSortedTransactions,
+
+            categories: categories,
+            dispatchCategories: dispatchCategories,
+
+            budgets: budgets,
+            dispatchBudgets: dispatchBudgets,
+
+            repeatedTransactions: repeatedTransactions,
+            dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+
+            badgeCounter: badgeCounter,
+            dispatchBadgeCounter: dispatchBadgeCounter,
+          });
+
+          navigation.replace(targetScreen || screenList.bottomTabNavigator);
         }, 1000);
       })
       .catch((error) => {
-        navigation.navigate(screenList.loginScreen);
+        alert(error);
+        navigation.replace(screenList.loginScreen);
       });
   };
 
@@ -458,7 +516,7 @@ const SplashScreen = ({ route, navigation }) => {
           });
         }, 1000);
 
-        navigation.replace(screenList.bottomTabNavigator);
+        navigation.replace(targetScreen || screenList.bottomTabNavigator);
       })
       .catch((err) => {
         console.log(err);

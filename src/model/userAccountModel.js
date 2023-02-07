@@ -7,6 +7,12 @@ const userAccountModel = ({
   premium,
 }) => {
   const userAccountObject = {
+    _timestamps: {
+      created_at: Date.now(),
+      updated_at: Date.now(),
+      created_by: uid,
+      updated_by: uid,
+    },
     displayName: displayName,
     subscription: {
       joinDate: Date.now(),

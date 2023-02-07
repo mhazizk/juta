@@ -7,7 +7,7 @@ import PackageItem from "../../features/subscription/components/PackageItem";
 import { useGlobalUserAccount } from "../../reducers/GlobalContext";
 import getRevenueCatOfferings from "./getRevenueCatOfferings";
 
-const RevenueCatPaywallOfferings = () => {
+const RevenueCatPaywallOfferings = ({ onSuccess }) => {
   const { userAccount } = useGlobalUserAccount();
   const [offerings, setOfferings] = useState(null);
   const [monthToYearPrice, setMonthToYearPrice] = useState(null);
@@ -85,6 +85,7 @@ const RevenueCatPaywallOfferings = () => {
                         ) {
                           // Unlock that great "pro" content
                           console.log("PURCHASED");
+                          onSuccess();
                         }
                       } catch (e) {
                         if (!e.userCancelled) {

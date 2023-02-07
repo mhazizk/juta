@@ -10,7 +10,7 @@ const updateSubscriptionStatus = ({
   userAccount,
   dispatchUserAccount,
 }) => {
-  configureRevenueCat();
+  configureRevenueCat(userAccount?.uid);
   return Purchases.addCustomerInfoUpdateListener(async (customerInfo) => {
     const existingActiveSubscriptionPlan = userAccount?.subscription.plan;
     const newActiveSubscriptionPlan =
