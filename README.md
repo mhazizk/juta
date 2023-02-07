@@ -1,6 +1,4 @@
-<div
-style='display:flex;flex-direction:column;align-items:center; justify-content:center;text-align:center'
->
+<p align='center'>
 <img 
     style="margin-left: auto;
            margin-right: auto;
@@ -8,21 +6,22 @@ style='display:flex;flex-direction:column;align-items:center; justify-content:ce
     src="src/assets/icons/juta-app-icon.png" 
     alt="Juta logo"/>
 
-<div style='text-align:center; font-size:36px'>
+<p align='center' style='font-size:36px;margin:0;padding:0'>
 Juta
-</div>
-<div style='text-align:center; font-size:24px'>
+</p>
+<p align='center' style='font-size:24px;margin:0;padding:0'>
 Mobile Expense Tracker
-</div>
+</p>
+<p align='center' style='margin:0;padding:0'>
 <a href="https://play.google.com/store/apps/details?id=app.juta">
 <img 
     style="margin-left: auto;
            margin-right: auto;
            width: 30%;"
     src="src/assets/badges/google-play-badge.png" 
-    alt="Download **Juta**"/>
+    alt="Download Juta App"/>
 </a>
-</div>
+</p>
 
 ---
 
