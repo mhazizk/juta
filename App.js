@@ -10,10 +10,15 @@ import {
 } from "react-native";
 import "react-native-gesture-handler";
 import RootStack from "./src/navigations/RootStack";
-import { NavigationContainer, DarkTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
 import {
   GlobalStateProvider,
   useGlobalAppSettings,
+  useGlobalTheme,
 } from "./src/reducers/GlobalContext";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,43 +28,14 @@ import * as Sentry from "sentry-expo";
 export default Sentry.Native.wrap(App);
 
 function App() {
-  // const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const dark = "dark";
-  const routingInstrumentation =
-    new Sentry.Native.ReactNavigationInstrumentation();
-  const navigationRef = useRef();
   useEffect(() => {
     sentryInit();
   }, []);
-
   try {
     return (
       <>
         <GlobalStateProvider>
-          <NavigationContainer
-            theme={DarkTheme}
-            onReady={() => {
-              routingInstrumentation.registerNavigationContainer(navigationRef);
-            }}
-          >
-            <RootStack />
-            {/* <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-                backgroundColor: "red",
-              }}
-            >
-              <Button
-                title="Send sentry error"
-                onPress={() => {
-                  throw new Error("Test error from production");
-                }}
-              />
-              {__DEV__ && <Text>Dev Mode</Text>}
-            </View> */}
-          </NavigationContainer>
+          <ThemeWrapper />
         </GlobalStateProvider>
       </>
     );
@@ -68,12 +44,25 @@ function App() {
   }
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     paddingTop: StatusBar.currentHeight,
-//   },
-// });
+const ThemeWrapper = () => {
+  const { globalTheme } = useGlobalTheme();
+  const routingInstrumentation =
+    new Sentry.Native.ReactNavigationInstrumentation();
+  const navigationRef = useRef();
+  useEffect(() => {
+    console.log({ globalTheme });
+  }, [globalTheme]);
+
+  return (
+    <NavigationContainer
+      theme={
+        globalTheme?.identifier?.id?.includes("dark") ? DarkTheme : DefaultTheme
+      }
+      onReady={() => {
+        routingInstrumentation.registerNavigationContainer(navigationRef);
+      }}
+    >
+      <RootStack />
+    </NavigationContainer>
+  );
+};
