@@ -11,13 +11,21 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
+  useGlobalTheme,
+  useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 import uuid from "react-native-uuid";
+import CustomScrollView from "../../shared-components/CustomScrollView";
+import ListSection from "../../components/List/ListSection";
+import CheckList from "../../components/CheckList";
+import { ListItem } from "../../components/List";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { userAccount } = useGlobalUserAccount();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   // const [date, setDate] = useState(new Date());
 
   const [newBudget, setNewBudget] = useState({
@@ -28,6 +36,12 @@ const NewBudgetScreen = ({ navigation }) => {
     limit: 0,
     start_date: +new Date().setHours(0, 0, 0, 0),
     finish_date: new Date(Date.now() + 2629746000).setHours(0, 0, 0, 0),
+    _timestamps: {
+      created_at: Date.now(),
+      updated_at: Date.now(),
+      created_by: userAccount.uid,
+      updated_by: userAccount.uid,
+    },
   });
 
   useEffect(() => {
@@ -107,12 +121,7 @@ const NewBudgetScreen = ({ navigation }) => {
 
   return (
     <>
-      <View
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         <View
           style={{
             flex: 1,
@@ -124,7 +133,7 @@ const NewBudgetScreen = ({ navigation }) => {
         >
           <FontAwesome5Icon
             name="piggy-bank"
-            color={appSettings.theme.style.colors.foreground}
+            color={globalTheme.colors.foreground}
             size={48}
             style={{
               transform: [{ scaleX: -1 }],
@@ -136,12 +145,10 @@ const NewBudgetScreen = ({ navigation }) => {
             textAlign="center"
             returnKeyType="done"
             placeholder="Type budget name ..."
-            placeholderTextColor={
-              appSettings.theme.style.text.textSecondary.color
-            }
+            placeholderTextColor={globalTheme.text.textSecondary.color}
             style={[
               {
-                ...appSettings.theme.style.text.textPrimary,
+                ...globalTheme.text.textPrimary,
                 paddingLeft: 0,
                 paddingVertical: 16,
                 minHeight: 24,
@@ -165,345 +172,173 @@ const NewBudgetScreen = ({ navigation }) => {
               name="close-circle"
               size={20}
               style={{ padding: 16 }}
-              color={appSettings.theme.style.colors.foreground}
+              color={globalTheme.colors.foreground}
             />
           )}
         </View>
         {/* // TAG : Budget Details */}
-        <View style={{ paddingHorizontal: 16 }}>
+        <View
+          style={{
+            width: "100%",
+            alignItems: "flex-start",
+            justifyContent: "center",
+            padding: 16,
+          }}
+        >
           <TextPrimary label="Budget Details" style={{ fontSize: 24 }} />
         </View>
 
-        {/* // TAG : Limit Section */}
-        <TouchableNativeFeedback
-          onPress={() =>
-            navigation.navigate(screenList.modalScreen, {
-              modalType: "textInput",
-              title: "Budget Limit",
-              placeholder: "Enter budget limit ...",
-              keyboardType: "numeric",
-              inputType: "number",
-              default: !newBudget.limit
-                ? null
+        <ListSection>
+          {/* // TAG : Budget limit */}
+          <ListItem
+            pressable
+            iconLeftName="cash"
+            iconPack="IonIcons"
+            iconRightName="chevron-forward"
+            leftLabel="Budget limit"
+            useRightLabelContainer
+            rightLabel={`${
+              appSettings.logbookSettings.defaultCurrency.symbol
+            } ${
+              newBudget.limit.toString().length > 15
+                ? utils
+                    .GetFormattedNumber({
+                      value: newBudget.limit,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                    })
+                    .slice(0, 15) + "..."
                 : utils.GetFormattedNumber({
                     value: newBudget.limit,
                     currency: appSettings.logbookSettings.defaultCurrency.name,
-                  }),
-              selected: (string) => {
-                const removedThousands = string
-                  ? parseFloat(
-                      parseFloat(string.replace(/[, ]/g, "")).toFixed(2)
-                    )
-                  : 0;
-                console.log({ removedThousands });
-                setNewBudget({
-                  ...newBudget,
-                  limit: removedThousands,
-                });
-              },
-            })
-          }
-        >
-          <View style={appSettings.theme.style.list.listContainer}>
-            <View
-              style={{
-                ...appSettings.theme.style.list.listItem,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <IonIcons
-                name="cash"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-              <TextPrimary label="Budget Limit" style={{ flex: 1 }} />
-
-              {/* // TAG : Container */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              ></View>
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    maxWidth: "50%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 8,
-                    borderRadius: 8,
-                  },
-                  { backgroundColor: appSettings.theme.style.colors.secondary },
-                ]}
-              >
-                <TextSecondary
-                  label={appSettings.logbookSettings.defaultCurrency.symbol}
-                  style={{ paddingRight: 8 }}
-                />
-                <TextPrimary
-                  label={
-                    newBudget.limit > 15
-                      ? utils
-                          .GetFormattedNumber({
-                            value: newBudget.limit,
-                            currency:
-                              appSettings.logbookSettings.defaultCurrency.name,
-                          })
-                          .slice(0, 15) + "..."
-                      : utils.GetFormattedNumber({
-                          value: newBudget.limit,
-                          currency:
-                            appSettings.logbookSettings.defaultCurrency.name,
-                        })
-                  }
-                  numberOfLines={1}
-                />
-              </View>
-              <IonIcons
-                name="chevron-forward"
-                size={18}
-                style={{ paddingLeft: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-
-        {/* // TAG : Start Date Section */}
-        <TouchableNativeFeedback
-          onPress={() => showDatePicker({ mode: "start" })}
-        >
-          <View style={appSettings.theme.style.list.listContainer}>
-            <View
-              style={{
-                ...appSettings.theme.style.list.listItem,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <IonIcons
-                name="calendar"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-              <TextPrimary label="Start Date" style={{ flex: 1 }} />
-
-              {/* // TAG : Container */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              ></View>
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    maxWidth: "50%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 8,
-                    borderRadius: 8,
-                  },
-                  { backgroundColor: appSettings.theme.style.colors.secondary },
-                ]}
-              >
-                <TextPrimary
-                  label={new Date(newBudget.start_date).toDateString()}
-                  numberOfLines={1}
-                />
-              </View>
-              <IonIcons
-                name="chevron-forward"
-                size={18}
-                style={{ paddingLeft: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        {/* // TAG : Finish Date Section */}
-        <TouchableNativeFeedback
-          onPress={() => showDatePicker({ mode: "finish" })}
-        >
-          <View style={appSettings.theme.style.list.listContainer}>
-            <View
-              style={{
-                ...appSettings.theme.style.list.listItem,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <IonIcons
-                name="calendar"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-              <TextPrimary label="Finish Date" style={{ flex: 1 }} />
-
-              {/* // TAG : Container */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              ></View>
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    maxWidth: "50%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 8,
-                    borderRadius: 8,
-                  },
-                  { backgroundColor: appSettings.theme.style.colors.secondary },
-                ]}
-              >
-                <TextPrimary
-                  label={new Date(newBudget.finish_date).toDateString()}
-                  numberOfLines={1}
-                />
-              </View>
-              <IonIcons
-                name="chevron-forward"
-                size={18}
-                style={{ paddingLeft: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-        {/* // TAG : Repeat Section */}
-        <TouchableNativeFeedback
-          onPress={() =>
-            setNewBudget({ ...newBudget, repeat: !newBudget.repeat })
-          }
-        >
-          <View style={appSettings.theme.style.list.listContainer}>
-            <View
-              style={{
-                ...appSettings.theme.style.list.listItem,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <IonIcons
-                name="repeat"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-              <TextPrimary label="Repeat after finish" style={{ flex: 1 }} />
-
-              {/* // TAG : Container */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                {/* // TAG : Right Side */}
-                <View
-                  style={{
-                    backgroundColor: newBudget.repeat
-                      ? appSettings.theme.style.colors.primary
-                      : "transparent",
-                    height: 20,
-                    width: 20,
-                    borderColor: newBudget.repeat
-                      ? "transparent"
-                      : appSettings.theme.style.colors.secondary,
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    marginRight: 0,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <IonIcons
-                    name={newBudget.repeat ? "checkmark-sharp" : undefined}
-                    size={16}
-                    color={appSettings.theme.style.colors.background}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-
-        {/* // TAG : Line Separator */}
-        <View
-          style={{
-            borderColor: appSettings.theme.style.colors.secondary,
-            borderBottomWidth: 1,
-            height: 0,
-            width: "80%",
-            alignSelf: "center",
-            paddingTop: 16,
-          }}
-        ></View>
+                  })
+            }`}
+            rightLabelContainerStyle={{
+              flexDirection: "row",
+              maxWidth: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 8,
+              borderRadius: 8,
+              backgroundColor: globalTheme.colors.secondary,
+            }}
+            onPress={() => {
+              navigation.navigate(screenList.modalScreen, {
+                modalType: "textInput",
+                title: "Set budget limit",
+                placeholder: "Enter budget limit ...",
+                keyboardType: "numeric",
+                inputType: "number",
+                defaultOption: !newBudget.limit
+                  ? null
+                  : utils.GetFormattedNumber({
+                      value: newBudget.limit,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                    }),
+                selected: (string) => {
+                  const removedThousands = string
+                    ? parseFloat(
+                        parseFloat(string.replace(/[, ]/g, "")).toFixed(2)
+                      )
+                    : 0;
+                  setNewBudget({
+                    ...newBudget,
+                    limit: removedThousands,
+                  });
+                },
+              });
+            }}
+          />
+          {/* // TAG : Start date */}
+          <ListItem
+            pressable
+            iconLeftName="calendar"
+            iconPack="IonIcons"
+            iconRightName="chevron-forward"
+            leftLabel="Start date"
+            useRightLabelContainer
+            rightLabel={new Date(newBudget.start_date).toDateString()}
+            rightLabelContainerStyle={{
+              flexDirection: "row",
+              maxWidth: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 8,
+              borderRadius: 8,
+              backgroundColor: globalTheme.colors.secondary,
+            }}
+            onPress={() => {
+              showDatePicker({ mode: "start" });
+            }}
+          />
+          {/* // TAG : Finish date */}
+          <ListItem
+            pressable
+            iconLeftName="calendar"
+            iconPack="IonIcons"
+            iconRightName="chevron-forward"
+            leftLabel="Finish date"
+            useRightLabelContainer
+            rightLabel={new Date(newBudget.finish_date).toDateString()}
+            rightLabelContainerStyle={{
+              flexDirection: "row",
+              maxWidth: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 8,
+              borderRadius: 8,
+              backgroundColor: globalTheme.colors.secondary,
+            }}
+            onPress={() => {
+              showDatePicker({ mode: "finish" });
+            }}
+          />
+          {/* // TAG : Repeat */}
+          <CheckList
+            singleChecklist
+            pressable
+            item={true}
+            selected={newBudget.repeat}
+            primaryLabel="Repeat after finish"
+            secondaryLabel="Automatically create new budget after finish date"
+            checkboxPlacement="left"
+            onPress={() => {
+              setNewBudget({ ...newBudget, repeat: !newBudget.repeat });
+            }}
+          />
+        </ListSection>
 
         {/* // TAG : Action Button */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
+            justifyContent: "space-between",
+            paddingTop: 8,
+            paddingBottom: 24,
+            paddingHorizontal: 48,
           }}
         >
-          {/* // TAG : cancel Button */}
-          <View style={{ paddingRight: 8 }}>
+          {/* // TAG : Cancel Button */}
+          <View style={{ flex: 1, paddingRight: 8 }}>
             <ButtonSecondary
               label="Cancel"
-              width={150}
               onPress={() => navigation.goBack()}
             />
           </View>
 
           {/* // TAG : Save Button */}
-          <View style={{ paddingLeft: 8 }}>
+          <View style={{ flex: 2, paddingLeft: 8 }}>
             <ButtonPrimary
               label="Save"
-              width={150}
               onPress={() => {
                 checkFinalBudget();
               }}
             />
           </View>
         </View>
-      </View>
+      </CustomScrollView>
     </>
   );
 };

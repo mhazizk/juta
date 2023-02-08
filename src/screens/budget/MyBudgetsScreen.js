@@ -12,10 +12,12 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 
 const MyBudgetsScreen = ({ route, navigation }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -101,7 +103,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
       <View
         style={{
           height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
         }}
       >
         {/* Active Budget */}
@@ -189,7 +191,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
             >
               <FontAwesome5Icon
                 name="piggy-bank"
-                color={appSettings.theme.style.colors.secondary}
+                color={globalTheme.colors.secondary}
                 size={48}
                 style={{
                   transform: [{ scaleX: -1 }],
@@ -211,7 +213,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
                 <IonIcons
                   name="add"
                   size={18}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                 />
                 <TextPrimary label="Create New Budget" />
               </View>
