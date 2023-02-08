@@ -11,7 +11,7 @@ import handleUserLogin from "../../../utils/HandleUserLogin";
 import CheckList from "../../../components/CheckList";
 import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
-import AnimatedLoginText from "../../../components/AnimatedLoginText";
+import AnimatedLoginText from "../components/AnimatedLoginText";
 import screenList from "../../../navigations/ScreenList";
 import Footer from "../../../components/Footer";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
@@ -21,6 +21,7 @@ import auth from "../../../api/firebase/auth";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -119,13 +120,10 @@ const LoginScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <ScrollView
+      <CustomScrollView
         contentContainerStyle={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
+        justifyContent: "center",
+      }}
       >
         {!screenLoading && (
           <>
@@ -133,7 +131,6 @@ const LoginScreen = ({ route, navigation }) => {
             <View
               style={{
                 width: "100%",
-                paddingHorizontal: 16,
                 alignItems: "flex-start",
                 justifyContent: "center",
               }}
@@ -150,7 +147,6 @@ const LoginScreen = ({ route, navigation }) => {
             </View>
             <View
               style={{
-                paddingHorizontal: 16,
                 paddingVertical: 0,
                 width: "100%",
                 alignItems: "center",
@@ -221,7 +217,7 @@ const LoginScreen = ({ route, navigation }) => {
                   <TextPrimary
                     label="Forgot password ?"
                     style={{
-                      paddingVertical: 16,
+                      // paddingVertical: 16,
                       fontWeight: "bold",
                     }}
                   />
@@ -231,7 +227,7 @@ const LoginScreen = ({ route, navigation }) => {
             {/* // TAG : Button */}
             {showButton && (
               <ButtonPrimary
-                style={{ marginVertical: 16 }}
+                style={{ marginVertical: 8 }}
                 width={Dimensions.get("window").width - 32}
                 label="Login"
                 onPress={() => finalCheck()}
@@ -240,7 +236,7 @@ const LoginScreen = ({ route, navigation }) => {
             {/* // TAG : Button */}
             {!showButton && (
               <ButtonDisabled
-                style={{ marginVertical: 16 }}
+                style={{ marginVertical: 8 }}
                 width={Dimensions.get("window").width - 32}
                 label="Login"
               />
@@ -285,7 +281,7 @@ const LoginScreen = ({ route, navigation }) => {
             /> */}
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
       <Footer />
     </>
   );

@@ -10,7 +10,7 @@ import handleUserSignUp from "../../../utils/HandleUserSignUp";
 import CheckList from "../../../components/CheckList";
 import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
-import AnimatedLoginText from "../../../components/AnimatedLoginText";
+import AnimatedLoginText from "../components/AnimatedLoginText";
 import screenList from "../../../navigations/ScreenList";
 import handleUserUpdateProfile from "../../../utils/HandleUserUpdateProfile";
 import firestore from "../../../api/firebase/firestore";
@@ -20,6 +20,7 @@ import LOGSNAG_EVENT_TYPES from "../../../api/logsnag/logSnagEventTypes";
 import passwordConditionsList from "../model/passwordConditionsList";
 import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
 import passwordCheck from "../model/passwordCheck";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -145,13 +146,9 @@ const SignUpScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <ScrollView
-        nestedScrollEnabled
+      <CustomScrollView
         contentContainerStyle={{
-          flex: 1,
           justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         {!screenLoading && (
@@ -161,7 +158,7 @@ const SignUpScreen = ({ route, navigation }) => {
               style={{
                 width: "100%",
                 paddingTop: showPasswordConditionsChecklist ? "10%" : 0,
-                paddingHorizontal: 16,
+                // paddingHorizontal: 16,
                 alignItems: "flex-start",
                 justifyContent: "center",
               }}
@@ -179,7 +176,7 @@ const SignUpScreen = ({ route, navigation }) => {
             {/* // SECTION : Input Section */}
             <View
               style={{
-                paddingHorizontal: 16,
+                // paddingHorizontal: 16,
                 flex: showPasswordConditionsChecklist ? 1 : 0,
                 justifyContent: "center",
               }}
@@ -311,7 +308,7 @@ const SignUpScreen = ({ route, navigation }) => {
             {/* // TAG : Button Active */}
             {showButton && (
               <ButtonPrimary
-                style={{ marginVertical: 16 }}
+                style={{ marginVertical: 8 }}
                 width={Dimensions.get("window").width - 32}
                 label="Sign up"
                 onPress={() => {
@@ -322,7 +319,7 @@ const SignUpScreen = ({ route, navigation }) => {
             {/* // TAG : Button Disabled */}
             {!showButton && (
               <ButtonDisabled
-                style={{ marginVertical: 16 }}
+                style={{ marginVertical: 8 }}
                 width={Dimensions.get("window").width - 32}
                 label="Sign up"
               />
@@ -366,7 +363,7 @@ const SignUpScreen = ({ route, navigation }) => {
             />
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

@@ -12,10 +12,15 @@ import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
 import CustomTextInput from "../../../components/CustomTextInput";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
-import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const ForgotPasswordScreen = () => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showButton, setShowButton] = useState(false);
@@ -50,18 +55,17 @@ const ForgotPasswordScreen = () => {
   }, [resendLinkTimerInSeconds]);
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        minHeight: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: appSettings.theme.style.colors.background,
-      }}
+    <CustomScrollView
+      contentContainerStyle={
+        {
+          // justifyContent: "center",
+        }
+      }
     >
       <View
         style={{
           width: "100%",
-          paddingHorizontal: 16,
+          paddingTop: 48,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -77,7 +81,7 @@ const ForgotPasswordScreen = () => {
       </View>
       <View
         style={{
-          paddingHorizontal: 16,
+          // paddingHorizontal: 16,
           paddingVertical: 0,
           width: "100%",
           alignItems: "center",
@@ -141,7 +145,7 @@ const ForgotPasswordScreen = () => {
           <Loading />
         </View>
       )}
-    </ScrollView>
+    </CustomScrollView>
   );
 };
 
