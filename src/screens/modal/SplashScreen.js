@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
-import { globalStyles } from "../../assets/themes/globalStyles";
 // import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
@@ -10,6 +9,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 // import persistStorage from "../../reducers/persist/persistStorage";
@@ -37,12 +37,15 @@ import initialRepeatedTransactions from "../../reducers/initial-state/initialRep
 import JutaLogo from "../../assets/icons/juta-app-icon.png";
 import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
+import CustomScrollView from "../../shared-components/CustomScrollView";
+import Loading from "../../components/Loading";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
   const fromScreen = route.params?.fromScreen || null;
   const targetScreen = route.params?.targetScreen || null;
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -387,6 +390,11 @@ const SplashScreen = ({ route, navigation }) => {
           },
         });
 
+        dispatchGlobalTheme({
+          type: REDUCER_ACTIONS.THEME.SET,
+          payload: appSettingsData.theme_id || appSettingsFallback.theme_id,
+        });
+
         const fallbackCategories = categoriesFallback({
           uid: currUser.uid,
           created_by: currUser.uid,
@@ -539,13 +547,9 @@ const SplashScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <View
-        style={{
-          ...globalStyles.lightTheme.view,
-          backgroundColor: "#000000",
-          flex: 1,
+      <CustomScrollView
+        contentContainerStyle={{
           justifyContent: "center",
-          alignItems: "center",
         }}
       >
         <Image
@@ -555,7 +559,7 @@ const SplashScreen = ({ route, navigation }) => {
             height: 200,
           }}
         />
-        <ActivityIndicator size={48} color="#000" />
+        <Loading />
 
         {/* App Version */}
         <View
@@ -570,7 +574,7 @@ const SplashScreen = ({ route, navigation }) => {
           <Text>Cash Log</Text>
           <Text>v.1.0.0</Text>
         </View>
-      </View>
+      </CustomScrollView>
     </>
   );
 };

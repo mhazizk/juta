@@ -38,7 +38,6 @@ const SettingsScreen = ({ navigation }) => {
     appSettings.logbookSettings
   );
   const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -137,29 +136,8 @@ const SettingsScreen = ({ navigation }) => {
     }, 1000);
   }, [searchSettings]);
 
-  useEffect(() => {
-    const payload = {
-      theme_id: appSettings.theme_id,
-      _timestamps: {
-        ...appSettings._timestamps,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-    };
-    setTimeout(() => {
-      dispatchGlobalTheme({
-        type: REDUCER_ACTIONS.THEME.SET,
-        payload: appSettings.theme_id,
-      });
-    }, 1);
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        { ...appSettings, ...payload }
-      );
-    }, 1000);
-  }, [appSettings?.theme_id]);
+  // useEffect(() => {
+  // }, [appSettings?.theme_id]);
 
   useEffect(() => {
     console.log(currencyRate);
@@ -192,12 +170,36 @@ const SettingsScreen = ({ navigation }) => {
                       pack: "IonIcons",
                     },
                     props: THEME_CONSTANTS.OPTIONS.map((theme) => theme),
-                    defaultOption: appSettings.theme_id,
-                    selected: (item) =>
-                      dispatchAppSettings({
-                        type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
+                    defaultOption: THEME_CONSTANTS.OPTIONS.find((theme) => {
+                      return theme.id === appSettings.theme_id;
+                    }),
+                    selected: (item) => {
+                      const payload = {
+                        theme_id: item.id,
+                        _timestamps: {
+                          ...appSettings._timestamps,
+                          updated_at: Date.now(),
+                          updated_by: userAccount.uid,
+                        },
+                      };
+                      dispatchGlobalTheme({
+                        type: REDUCER_ACTIONS.THEME.SET,
                         payload: item.id,
-                      }),
+                      });
+                      setTimeout(() => {
+                        dispatchAppSettings({
+                          type: REDUCER_ACTIONS.APP_SETTINGS.THEME.SET,
+                          payload: item.id,
+                        });
+                      }, 1);
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
                   })
                 }
               />
@@ -246,14 +248,16 @@ const SettingsScreen = ({ navigation }) => {
                     props: APP_SETTINGS.LANGUAGE.OPTIONS.map((option) => {
                       return { name: option.name, locale: option.locale };
                     }),
-                    selected: (item) =>
-                      dispatchAppSettings({
-                        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                        payload: {
-                          language: item.name,
-                          locale: item.locale,
-                        },
-                      }),
+                    selected: (item) => {
+                      // TODO : Add Language Support
+                      // dispatchAppSettings({
+                      //   type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+                      //   payload: {
+                      //     language: item.name,
+                      //     locale: item.locale,
+                      //   },
+                      // });
+                    },
                     defaultOption: { name: appSettings.language },
                   })
                 }
@@ -398,7 +402,6 @@ const SettingsScreen = ({ navigation }) => {
                 alignSelf: "flex-start",
                 paddingHorizontal: 16,
                 paddingBottom: 16,
-                color: globalTheme.colors.primary,
               }}
             />
             <ListSection>
@@ -542,7 +545,6 @@ const SettingsScreen = ({ navigation }) => {
                 alignSelf: "flex-start",
                 paddingHorizontal: 16,
                 paddingBottom: 16,
-                color: globalTheme.colors.primary,
               }}
             />
             <ListSection>

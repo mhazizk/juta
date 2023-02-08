@@ -65,7 +65,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Profile */}
               <ListItem
                 pressable
-                leftLabel="Change Profile Picture"
+                leftLabel="Change profile picture"
                 iconLeftName="person"
                 iconPack="IonIcons"
                 onPress={() =>
@@ -76,13 +76,13 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Display Name */}
               <ListItem
                 pressable
-                leftLabel="Change Display Name"
+                leftLabel="Change display name"
                 rightLabel={userAccount.displayName}
                 iconLeftName="create"
                 iconPack="IonIcons"
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
-                    title: "Change Display Name",
+                    title: "Change display name",
                     modalType: "textInput",
                     maxLength: 14,
                     defaultOption: userAccount.displayName,
@@ -114,7 +114,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Email */}
               <ListItem
                 pressable
-                leftLabel="Change Email"
+                leftLabel="Change email"
                 rightLabel={userAccount.email}
                 iconLeftName="mail"
                 iconPack="IonIcons"
@@ -126,7 +126,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Password */}
               <ListItem
                 pressable
-                leftLabel="Change Password"
+                leftLabel="Change password"
                 iconLeftName="key"
                 iconPack="IonIcons"
                 onPress={() =>
@@ -181,7 +181,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Active Devices */}
               <ListItem
                 pressable
-                leftLabel="Active Devices"
+                leftLabel="Active devices"
                 rightLabel={userAccount.devicesLoggedIn?.length + " device(s)"}
                 iconLeftName="laptop-outline"
                 iconPack="IonIcons"
@@ -192,8 +192,10 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Log out */}
               <ListItem
                 pressable
+                isDanger
                 leftLabel="Log out account"
                 iconLeftName="log-out-outline"
+                iconLeftColor={globalTheme.colors.danger}
                 iconPack="IonIcons"
                 onPress={() =>
                   Alert.alert("Log out", "Are you sure you want to log out?", [

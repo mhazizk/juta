@@ -9,6 +9,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
@@ -26,7 +27,8 @@ import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
 
 const LoadingScreen = ({ route, navigation }) => {
   const { userAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -834,7 +836,7 @@ const LoadingScreen = ({ route, navigation }) => {
       {/* {isLoading && */}
       <View
         style={{
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -847,7 +849,7 @@ const LoadingScreen = ({ route, navigation }) => {
       >
         <ActivityIndicator
           size={48}
-          color={appSettings.theme.style.colors.primary}
+          color={globalTheme.colors.primary}
           style={{ paddingBottom: 16 }}
         />
         <View>
