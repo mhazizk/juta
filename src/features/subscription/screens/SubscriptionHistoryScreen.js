@@ -10,12 +10,15 @@ import {
 import Purchases from "react-native-purchases";
 import { TextPrimary } from "../../../components/Text";
 import Loading from "../../../components/Loading";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const SubscriptionHistoryScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { userAccount } = useGlobalUserAccount();
+  const [isLoading, setIsLoading] = useState(false);
   const [subscriptionHistory, setSubscriptionHistory] = useState(null);
   useEffect(() => {
+    setIsLoading(true);
     configureRevenueCat(userAccount.uid);
     Promise.all([Purchases.getCustomerInfo(), Purchases.getOfferings()]).then(
       (data) => {
@@ -38,23 +41,33 @@ const SubscriptionHistoryScreen = ({ navigation }) => {
         });
         console.log(merge);
         setSubscriptionHistory(merge);
+        setIsLoading(false);
       }
     );
   }, []);
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        backgroundColor: appSettings.theme.style.colors.background,
-        minHeight: "100%",
-      }}
-    >
-      {!subscriptionHistory && <Loading />}
-      {subscriptionHistory && (
-        <ListSection>
+    <CustomScrollView>
+      {isLoading && <Loading />}
+      {!isLoading && (
+        <ListSection marginTop={16}>
           <FlatList
             data={subscriptionHistory}
             keyExtractor={(item) => item.productId}
+            ListEmptyComponent={() => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 16,
+                  }}
+                >
+                  <TextPrimary label={"No subscription history found"} />
+                </View>
+              );
+            }}
             renderItem={({ item }) => (
               <>
                 {subscriptionHistory && (
@@ -84,7 +97,7 @@ const SubscriptionHistoryScreen = ({ navigation }) => {
           />
         </ListSection>
       )}
-    </ScrollView>
+    </CustomScrollView>
   );
 };
 
