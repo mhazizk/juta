@@ -113,7 +113,7 @@ const CustomTextInput = ({
             borderRadius: 16,
             borderWidth: 1,
             backgroundColor: globalTheme.colors.background,
-            margin: 8,
+            marginVertical: 8,
           }}
         >
           {leftIcon(inputType)}

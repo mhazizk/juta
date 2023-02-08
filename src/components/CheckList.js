@@ -226,6 +226,7 @@ const CheckList = ({
               minHeight: 48,
               alignItems: "center",
               justifyContent: "flex-start",
+              // backgroundColor:'red'
             }}
           >
             {/* // TAG : Checkbox */}

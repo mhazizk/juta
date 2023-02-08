@@ -8,6 +8,8 @@ import {
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
 import Loading from "./Loading";
+import ListSection from "./List/ListSection";
+import CountryFlag from "react-native-country-flag";
 
 export const ListItem = ({
   leftLabel,
@@ -16,8 +18,12 @@ export const ListItem = ({
   secondaryLabel,
   thirdLabel,
   iconPack,
+  isDanger,
   useRightLabelContainer = false,
   rightLabelContainerStyle,
+  useFlagIcon,
+  flagIsoCode,
+  flagIconSize = 18,
   iconColorInContainer,
   iconInRightContainerName,
   rightLabelStyle,
@@ -39,7 +45,12 @@ export const ListItem = ({
   return (
     <>
       <TouchableNativeFeedback onPress={pressable ? onPress : null}>
-        <View style={globalTheme.list.listContainer}>
+        <View
+          style={{
+            ...globalTheme.list.listContainer,
+            // backgroundColor: isDanger ? globalTheme.colors.danger : null,
+          }}
+        >
           {iconPack === "IonIcons" && (
             <IonIcons
               name={iconLeftName}
@@ -80,7 +91,11 @@ export const ListItem = ({
               {leftLabel && !disabled && (
                 <TextPrimary
                   label={leftLabel}
-                  // style={{ color: leftLabelColor || null }}
+                  style={{
+                    color: isDanger
+                      ? globalTheme.colors.danger
+                      : globalTheme.text.textPrimary.color,
+                  }}
                 />
               )}
               {secondaryLabel && !disabled && (
@@ -103,6 +118,16 @@ export const ListItem = ({
                 <View
                   style={[{ ...rightLabelContainerStyle }, { maxWidth: "70%" }]}
                 >
+                  {useFlagIcon && (
+                    <CountryFlag
+                      isoCode={flagIsoCode}
+                      size={flagIconSize}
+                      style={{
+                        marginRight: 8,
+                      }}
+                    />
+                  )}
+
                   {iconInRightContainerName && (
                     <IonIcons
                       name={iconInRightContainerName}
@@ -111,9 +136,7 @@ export const ListItem = ({
                         (iconRightName === "checkmark-circle" ? 22 : 18)
                       }
                       color={
-                        iconColorInContainer ||
-                        globalTheme.colors.foreground ||
-                        lightTheme.colors.foreground
+                        iconColorInContainer || globalTheme.colors.foreground
                       }
                       style={{ paddingRight: 8 }}
                     />
@@ -141,8 +164,7 @@ export const ListItem = ({
                   ? globalTheme.colors.secondary
                   : iconRightColor
                   ? iconRightColor
-                  : globalTheme.colors.foreground ||
-                    lightTheme.colors.foreground
+                  : globalTheme.colors.foreground
               }
               style={{ paddingLeft: 16 }}
             />
@@ -184,7 +206,12 @@ export const ListTable = ({
     <>
       {pressable && (
         <TouchableNativeFeedback onPress={onPress}>
-          <View style={globalTheme.list.listContainer}>
+          {/* <View style={globalTheme.list.listContainer}> */}
+          <View
+            style={{
+              width: "100%",
+            }}
+          >
             {iconPack === "IonIcons" && (
               <IonIcons
                 name={iconLeftName}
@@ -216,41 +243,46 @@ export const ListTable = ({
                   iconRightSize ||
                   (iconRightName === "checkmark-circle" ? 22 : 18)
                 }
-                color={
-                  iconRightColor ||
-                  globalTheme.colors.foreground ||
-                  lightTheme.colors.foreground
-                }
+                color={iconRightColor || globalTheme.colors.foreground}
                 style={{ paddingLeft: 16 }}
               />
             )}
             {isLoading && <Loading size={18} />}
             {/* )} */}
+            {/* </View> */}
           </View>
         </TouchableNativeFeedback>
       )}
 
       {!pressable && (
-        <View style={globalTheme.list.listContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+          }}
+        >
           {iconLeftName && (
             <IonIcons
               name={iconLeftName}
               size={18}
-              color={
-                iconLeftColor ||
-                globalTheme.colors.foreground ||
-                lightTheme.colors.foreground
-              }
+              color={iconLeftColor || globalTheme.colors.foreground}
               style={{
                 paddingRight: 16,
                 // flex: titleMode ? 1 : 0,
               }}
             />
           )}
-          <View style={globalTheme.list.listItem}>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+            }}
+          >
             <View
               style={{
-                paddingRight: titleMode ? 34 : 0,
+                paddingRight: titleMode ? 32 : 0,
                 flex: 3,
                 alignItems: titleMode ? "center" : "flex-start",
               }}
@@ -261,9 +293,12 @@ export const ListTable = ({
               style={{
                 flex: 1,
                 alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {middleLabel && (
+              {(typeof middleLabel === "string" ||
+                typeof rightLabel === "number" ||
+                titleMode) && (
                 <TextPrimary
                   label={middleLabel}
                   style={{
@@ -271,19 +306,45 @@ export const ListTable = ({
                   }}
                 />
               )}
+              {typeof middleLabel === "boolean" && !titleMode && (
+                <IonIcons
+                  name={middleLabel ? "checkmark-sharp" : "close"}
+                  size={18}
+                  color={
+                    middleLabel
+                      ? globalTheme.colors.success
+                      : globalTheme.colors.danger
+                  }
+                />
+              )}
             </View>
             <View
               style={{
                 flex: 1,
                 alignItems: "center",
+                justifyContent: "center",
+                paddingRight: titleMode ? 0 : 32,
               }}
             >
-              {rightLabel && (
+              {(typeof rightLabel === "string" ||
+                typeof rightLabel === "number" ||
+                titleMode) && (
                 <TextPrimary
                   label={rightLabel}
                   style={{
                     color: rightLabelColor || globalTheme.colors.foreground,
                   }}
+                />
+              )}
+              {typeof rightLabel === "boolean" && !titleMode && (
+                <IonIcons
+                  name={rightLabel ? "checkmark-sharp" : "close"}
+                  size={18}
+                  color={
+                    rightLabel
+                      ? globalTheme.colors.success
+                      : globalTheme.colors.danger
+                  }
                 />
               )}
             </View>
@@ -292,9 +353,7 @@ export const ListTable = ({
             <IonIcons
               name={iconRightName}
               size={iconRightName === "checkmark-circle" ? 22 : 18}
-              color={
-                globalTheme.colors.foreground || lightTheme.colors.foreground
-              }
+              color={globalTheme.colors.foreground}
               style={{ paddingLeft: 16 }}
             />
           )}
@@ -519,9 +578,7 @@ export const TransactionListItem = ({
               <IonIcons
                 name={iconRightName}
                 size={iconRightName === "checkmark-circle" ? 22 : 18}
-                color={
-                  globalTheme.colors.foreground || lightTheme.colors.foreground
-                }
+                color={globalTheme.colors.foreground}
                 style={{ paddingLeft: 16 }}
               />
             )}
@@ -769,10 +826,7 @@ export const SearchResultListItem = ({
                 <IonIcons
                   name={iconRightName}
                   size={iconRightName === "checkmark-circle" ? 22 : 18}
-                  color={
-                    globalTheme.colors.foreground ||
-                    lightTheme.colors.foreground
-                  }
+                  color={globalTheme.colors.foreground}
                   style={{ paddingLeft: 16 }}
                 />
               )}
