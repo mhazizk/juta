@@ -1,26 +1,23 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
 } from "../reducers/GlobalContext";
-import { globalStyles, globalTheme } from "../assets/themes/globalStyles";
-import { lightTheme } from "../assets/themes/lightTheme";
 import {
+  TextButtonDisabled,
   TextButtonPrimary,
   TextButtonSecondary,
   TextDanger,
   TextPrimary,
-  TextSecondary,
-  TextWarn,
 } from "./Text";
 
 // TAG : BUTTON COMPONENT //
 
 /**
  * Button Primary
- * 
+ *
  * @param {*} label, props, onPress, condition, theme, width, style
  * @returns
  */
@@ -31,7 +28,7 @@ export const ButtonPrimary = ({
   condition,
   theme,
   width,
-  style,
+  style = null,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
@@ -70,7 +67,7 @@ export const ButtonPrimary = ({
               alignItems: "center",
               // margin: 4
             },
-            { ...(style || null) },
+            { ...style },
           ]}
         >
           <TextButtonPrimary label={label} />
@@ -147,7 +144,7 @@ export const ButtonDisabled = ({
   condition,
   theme,
   width,
-  style,
+  style = null,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
@@ -184,10 +181,10 @@ export const ButtonDisabled = ({
             alignItems: "center",
             // margin: 4
           },
-          { ...(style || null) },
+          { ...style },
         ]}
       >
-        <TextButtonPrimary label={label} />
+        <TextButtonDisabled label={label} />
       </View>
     </>
   );
@@ -199,7 +196,6 @@ export const ButtonSecondary = ({
   props,
   onPress,
   condition,
-  theme,
   width,
   style,
 }) => {

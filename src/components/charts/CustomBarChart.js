@@ -8,7 +8,10 @@ import {
   VictoryLine,
   VictoryScatter,
 } from "victory-native";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 // import {get} from 'date-fns'
 
@@ -35,8 +38,8 @@ export const CustomBarChart = ({
   symbol,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const maxAmount = () => {
     const max = (shadowGraph[0].y / 1000).toFixed(0);
     switch (true) {
@@ -291,7 +294,7 @@ export const CustomBarChart = ({
                     strokeWidth: 3,
                     // stroke: utils.HexToRgb({ hex: textColor, opacity: 0.5 }),
                     stroke: utils.HexToRgb({
-                      hex: appSettings.theme.style.colors.foreground,
+                      hex: globalTheme.colors.foreground,
                       opacity: 1,
                     }),
                     strokeDasharray: "1, 8",
