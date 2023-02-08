@@ -17,6 +17,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
@@ -25,7 +26,8 @@ import * as Constants from "expo-constants";
 const screenWidth = Dimensions.get("window").width;
 
 const DashboardScreen = ({ navigation }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -114,7 +116,7 @@ const DashboardScreen = ({ navigation }) => {
         <View
           style={{
             height: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -127,7 +129,7 @@ const DashboardScreen = ({ navigation }) => {
         <View
           style={{
             height: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
           }}
         >
           {/* Bleeding Header Color */}
@@ -139,7 +141,7 @@ const DashboardScreen = ({ navigation }) => {
               right: 0,
               width: "100%",
               height: "25%",
-              backgroundColor: appSettings.theme.style.colors.header,
+              backgroundColor: globalTheme.colors.header,
               // borderBottomRightRadius: 16,
               // borderBottomLeftRadius: 16,
             }}
@@ -148,7 +150,7 @@ const DashboardScreen = ({ navigation }) => {
           {/* // SECTION : Header Section */}
           <View
             style={{
-              // backgroundColor: appSettings.theme.style.colors.header,
+              // backgroundColor: globalTheme.colors.header,
               flexDirection: "column",
               padding: 16,
             }}
@@ -168,7 +170,7 @@ const DashboardScreen = ({ navigation }) => {
                   ? "Good Night"
                   : "Good Day"
               }
-              style={{ color: appSettings.theme.style.colors.textHeader }}
+              style={{ color: globalTheme.colors.textHeader }}
             />
             <View style={{ flexDirection: "row", alignItems: "baseline" }}>
               {userAccount?.displayName && (
@@ -177,7 +179,7 @@ const DashboardScreen = ({ navigation }) => {
                   style={{
                     fontWeight: "bold",
                     fontSize: 36,
-                    color: appSettings.theme.style.colors.textHeader,
+                    color: globalTheme.colors.textHeader,
                   }}
                 />
               )}
@@ -225,7 +227,7 @@ const DashboardScreen = ({ navigation }) => {
             {appSettings.dashboardSettings.showMyLogbooksWidget && (
               <ImgButton
                 label="My Logbooks"
-                textColor={appSettings.theme.style.colors.black}
+                textColor={globalTheme.colors.black}
                 iconName="book"
                 iconColor="#48ADFF"
                 iconPack="IonIcons"

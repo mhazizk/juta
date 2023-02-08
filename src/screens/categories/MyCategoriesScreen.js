@@ -11,8 +11,10 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const MyCategoriesScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -20,6 +22,7 @@ const MyCategoriesScreen = ({ navigation }) => {
     useGlobalSortedTransactions();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { categories, dispatchCategories } = useGlobalCategories();
 
   useEffect(() => {
@@ -46,17 +49,15 @@ const MyCategoriesScreen = ({ navigation }) => {
 
   return (
     <>
-      {/* <View style={{ backgroundColor: '#fff', height: '100%' }}> */}
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {/* // TAG : Expense */}
         <TextPrimary
           label="Expense"
-          style={{ paddingHorizontal: 32, paddingVertical: 16 }}
+          style={{
+            alignSelf: "flex-start",
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+          }}
         />
         <ListSection>
           {categories.categories?.expense?.map((item) => {
@@ -70,7 +71,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                 iconLeftName={item.icon.name}
                 iconLeftColor={
                   item.icon.color === "default"
-                    ? appSettings.theme.style.colors.foreground
+                    ? globalTheme.colors.foreground
                     : item.icon.color
                 }
                 iconPack={item.icon.pack}
@@ -88,7 +89,11 @@ const MyCategoriesScreen = ({ navigation }) => {
         {/* // TAG : Income */}
         <TextPrimary
           label="Income"
-          style={{ paddingHorizontal: 32, paddingVertical: 16 }}
+          style={{
+            alignSelf: "flex-start",
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+          }}
         />
         <ListSection>
           {categories.categories?.income?.map((item) => {
@@ -102,7 +107,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                 iconLeftName={item.icon.name}
                 iconLeftColor={
                   item.icon.color === "default"
-                    ? appSettings.theme.style.colors.foreground
+                    ? globalTheme.colors.foreground
                     : item.icon.color
                 }
                 iconPack={item.icon.pack}
@@ -116,7 +121,7 @@ const MyCategoriesScreen = ({ navigation }) => {
             );
           })}
         </ListSection>
-      </ScrollView>
+      </CustomScrollView>
       {/* <FlatList
         data={["expense", "income"]}
         keyExtractor={(item) => item}
@@ -125,7 +130,7 @@ const MyCategoriesScreen = ({ navigation }) => {
             <FlatList
               data={data(item)}
               contentContainerStyle={{
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
               }}
               keyExtractor={(item) => item.id}
               ListHeaderComponent={() => {
@@ -146,7 +151,7 @@ const MyCategoriesScreen = ({ navigation }) => {
                       iconLeftName={item.icon.name}
                       iconLeftColor={
                         item.icon.color === "default"
-                          ? appSettings.theme.style.colors.foreground
+                          ? globalTheme.colors.foreground
                           : item.icon.color
                       }
                       iconPack={item.icon.pack}
