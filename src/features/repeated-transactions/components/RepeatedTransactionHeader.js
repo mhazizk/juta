@@ -9,6 +9,7 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
+  useGlobalTheme,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -16,6 +17,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
 const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
   return (
@@ -46,7 +48,7 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                 color={utils.FindById.findCategoryColorById({
                   id: repeatSection.repeat_category_id,
                   categories: categories.categories,
-                  defaultColor: appSettings.theme.style.colors.foreground,
+                  defaultColor: globalTheme.colors.foreground,
                 })}
                 style={{
                   paddingBottom: 8,
@@ -132,7 +134,7 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                 <IonIcons
                   name="book"
                   size={20}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                   style={{
                     marginRight: 8,
                   }}
@@ -172,7 +174,7 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                 <IonIcons
                   name="repeat"
                   size={20}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                   style={{
                     marginRight: 8,
                   }}
@@ -208,8 +210,8 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                   // borderRadius: 16,
                   // backgroundColor:
                   //   repeatSection.repeat_status === "active"
-                  //     ? appSettings.theme.style.colors.success
-                  //     : appSettings.theme.style.colors.danger,
+                  //     ? globalTheme.colors.success
+                  //     : globalTheme.colors.danger,
                 }}
               >
                 <IonIcons
@@ -217,8 +219,8 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                   size={16}
                   color={
                     repeatSection.repeat_status === "active"
-                      ? appSettings.theme.style.colors.success
-                      : appSettings.theme.style.colors.danger
+                      ? globalTheme.colors.success
+                      : globalTheme.colors.danger
                   }
                   style={{
                     marginRight: 4,
@@ -233,8 +235,8 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                   style={{
                     color:
                       repeatSection.repeat_status === "active"
-                        ? appSettings.theme.style.colors.success
-                        : appSettings.theme.style.colors.danger,
+                        ? globalTheme.colors.success
+                        : globalTheme.colors.danger,
                   }}
                 />
               </View>

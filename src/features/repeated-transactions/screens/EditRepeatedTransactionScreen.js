@@ -19,6 +19,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
@@ -28,12 +29,13 @@ import RadioButtonList from "../../../components/List/RadioButtonList";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import uuid from "react-native-uuid";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   // TAG : useRef State //
   const inputNotes = useRef(null);
   const inputAmount = useRef(null);
-
+  const { globalTheme } = useGlobalTheme();
   const { appSettings } = useGlobalAppSettings();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { userAccount } = useGlobalUserAccount();
@@ -99,7 +101,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-      default:
+      defaultOption:
         break;
     }
   };
@@ -125,7 +127,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-      default:
+      defaultOption:
         break;
     }
   };
@@ -160,12 +162,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   return (
     <>
       {localRepeatedTransaction && selectedCategory && selectedLogbook && (
-        <ScrollView
-          contentContainerStyle={{
-            minHeight: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
-          }}
-        >
+        <CustomScrollView>
           {/* // TAG : Amount Section */}
           <TouchableOpacity
             onPress={() => inputAmount.current.focus()}
@@ -190,8 +187,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   paddingRight: 8,
                   color:
                     localRepeatedTransaction.repeat_in_out === "income"
-                      ? appSettings.theme.style.colors.incomeSymbol
-                      : appSettings.theme.style.text.textSecondary.color,
+                      ? globalTheme.colors.incomeSymbol
+                      : globalTheme.text.textSecondary.color,
                 }}
               />
               <TextInput
@@ -206,18 +203,18 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 //   maximumFractionDigits: 2,
                 // }).format(transaction.details.amount)}
                 // placeholderTextColor={
-                //   appSettings.theme.style.text.textSecondary.color
+                //   globalTheme.text.textSecondary.color
                 // }
                 placeholder={utils.GetFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
                   currency: appSettings.logbookSettings.defaultCurrency.name,
                 })}
                 placeholderTextColor={
-                  appSettings.theme.style.text.textSecondary.color
+                  globalTheme.text.textSecondary.color
                 }
                 style={[
                   {
-                    ...appSettings.theme.style.text.textPrimary,
+                    ...globalTheme.text.textPrimary,
                     paddingLeft: 0,
                     paddingVertical: 16,
                     paddingRight: 16,
@@ -227,8 +224,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   {
                     color:
                       localRepeatedTransaction.repeat_in_out === "income"
-                        ? appSettings.theme.style.colors.incomeAmount
-                        : appSettings.theme.style.text.textPrimary.color,
+                        ? globalTheme.colors.incomeAmount
+                        : globalTheme.text.textPrimary.color,
                   },
                 ]}
                 onChangeText={(string) => {
@@ -267,7 +264,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 name="close-circle"
                 size={20}
                 style={{ padding: 16 }}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
             )}
           </TouchableOpacity>
@@ -287,8 +284,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               iconLeftName="ellipse"
               iconLeftColor={
                 localRepeatedTransaction.repeat_status === "active"
-                  ? appSettings.theme.style.colors.success
-                  : appSettings.theme.style.colors.danger
+                  ? globalTheme.colors.success
+                  : globalTheme.colors.danger
               }
               iconPack="IonIcons"
               rightLabel={
@@ -298,8 +295,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               iconRightName="chevron-forward"
               iconColorInContainer={
                 localRepeatedTransaction.repeat_status === "active"
-                  ? appSettings.theme.style.colors.success
-                  : appSettings.theme.style.colors.danger
+                  ? globalTheme.colors.success
+                  : globalTheme.colors.danger
               }
               useRightLabelContainer
               iconInRightContainerName="ellipse"
@@ -313,13 +310,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 backgroundColor:
                   localRepeatedTransaction.repeat_in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction.repeat_in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -332,7 +329,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_status: "active",
                       icon: {
                         name: "ellipse",
-                        color: appSettings.theme.style.colors.success,
+                        color: globalTheme.colors.success,
                         pack: "IonIcons",
                       },
                     },
@@ -341,7 +338,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_status: "inactive",
                       icon: {
                         name: "ellipse",
-                        color: appSettings.theme.style.colors.danger,
+                        color: globalTheme.colors.danger,
                         pack: "IonIcons",
                       },
                     },
@@ -357,7 +354,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_status: item.repeat_status,
                     });
                   },
-                  default: { name: localRepeatedTransaction.repeat_status },
+                  defaultOption: { name: localRepeatedTransaction.repeat_status },
                 })
               }
             />
@@ -388,13 +385,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 backgroundColor:
                   localRepeatedTransaction.repeat_in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction.repeat_in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -424,7 +421,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_logbook_id: item.logbook_id,
                     });
                   },
-                  default: { name: selectedLogbook?.name },
+                  defaultOption: { name: selectedLogbook?.name },
                 })
               }
             />
@@ -454,21 +451,21 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 backgroundColor:
                   localRepeatedTransaction?.repeat_in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               iconColorInContainer={
                 selectedCategory?.icon?.color === "default"
-                  ? appSettings.theme.style.colors.foreground
+                  ? globalTheme.colors.foreground
                   : selectedCategory?.icon?.color
                 // transaction.details.in_out === "income"
                 //   ? "#00695c"
-                //   : appSettings.theme.style.text.textPrimary.color
+                //   : globalTheme.text.textPrimary.color
               }
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction?.repeat_in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -486,7 +483,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_category_id: item.id,
                     });
                   },
-                  default: selectedCategory,
+                  defaultOption: selectedCategory,
                 })
               }
             />
@@ -494,16 +491,16 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
           <ListSection>
             {/* // TAG : Notes Section */}
             <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
-              <View style={appSettings.theme.style.list.listContainer}>
+              <View style={globalTheme.list.listContainer}>
                 <IonIcons
                   name="document-text"
                   size={18}
                   style={{ paddingRight: 16 }}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                 />
                 <View
                   style={{
-                    ...appSettings.theme.style.list.listItem,
+                    ...globalTheme.list.listItem,
                     flexDirection: "row",
                     alignItems: "center",
                   }}
@@ -518,10 +515,10 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     keyboardType="default"
                     placeholder="Add additional notes ..."
                     placeholderTextColor={
-                      appSettings.theme.style.text.textSecondary.color
+                      globalTheme.text.textSecondary.color
                     }
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       flex: 5,
                       height: 48,
                       borderRadius: 8,
@@ -549,7 +546,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     name="close-circle"
                     size={18}
                     style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
+                    color={globalTheme.colors.foreground}
                   />
                 )}
 
@@ -686,7 +683,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       ),
                     });
                   },
-                  default: localRepeatedTransaction.repeat_type,
+                  defaultOption: localRepeatedTransaction.repeat_type,
                 });
               }}
             />
@@ -718,12 +715,12 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   }
                 >
                   <ListItem
-                    iconLeftColor={appSettings.theme.style.colors.warn}
+                    iconLeftColor={globalTheme.colors.warn}
                     iconLeftName="warning"
                     leftLabel="Earlier logged transactions date will be adjusted to the new changes"
                   />
                   <ListItem
-                    iconLeftColor={appSettings.theme.style.colors.warn}
+                    iconLeftColor={globalTheme.colors.warn}
                     iconLeftName="warning"
                     leftLabel={
                       route.params.repeatSection.transactions.length +
@@ -756,7 +753,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     mainButtonLabel: "Delete",
                     iconProps: {
                       name: "trash",
-                      //   color: appSettings.theme.style.colors.danger,
+                      //   color: globalTheme.colors.danger,
                       pack: "IonIcons",
                     },
                     props: [
@@ -780,7 +777,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                         });
                       }, 1);
                     },
-                    default: null,
+                    defaultOption: null,
                   });
                 }}
               />
@@ -800,7 +797,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );
@@ -862,7 +859,7 @@ const handleDelete = ({
         reducerUpdatedAt: Date.now(),
       };
       break;
-    default:
+    defaultOption:
       break;
   }
   navigation.navigate(screenList.loadingScreen, opt);
@@ -1022,7 +1019,7 @@ const handleSave = ({
 
           break;
 
-        default:
+        defaultOption:
           break;
       }
 
@@ -1071,7 +1068,7 @@ const handleSave = ({
 
     // TODO : continue 'next' case
 
-    default:
+    defaultOption:
       console.log("masuk default");
       break;
   }
@@ -1117,7 +1114,7 @@ const getNextRepeatDate = (
         (numberOfTransactionsToBeLogged + 1) * newRepeatRange
       );
 
-    default:
+    defaultOption:
       return 1674405411283;
   }
 };

@@ -8,6 +8,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
@@ -16,32 +17,33 @@ import screenList from "../../../navigations/ScreenList";
 import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit";
 import SUBSCRIPTION_LIMIT from "../../subscription/model/subscriptionLimit";
 import { useEffect } from "react";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const MyRepeatedTransactionsScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
-  const { repeatedTransactions } =
-    useGlobalRepeatedTransactions();
+  const { repeatedTransactions } = useGlobalRepeatedTransactions();
 
   useEffect(() => {}, []);
 
   return (
     <>
       {repeatedTransactions.repeatedTransactions.length > 0 && (
-        <ScrollView
-          style={{
-            minHeight: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
+        <CustomScrollView
+          contentContainerStyle={{
+            justifyContent: "flex-start",
           }}
         >
           <>
             <TextPrimary
               label="Repeated Transactions"
               style={{
+                alignSelf: "flex-start",
                 paddingVertical: 16,
-                paddingHorizontal: 32,
+                paddingHorizontal: 16,
               }}
             />
             <ListSection>
@@ -67,13 +69,13 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
                       iconLeftColor={utils.FindById.findCategoryColorById({
                         id: repeatSection.repeat_category_id,
                         categories: categories.categories,
-                        defaultColor: appSettings.theme.style.colors.foreground,
+                        defaultColor: globalTheme.colors.foreground,
                       })}
                       iconRightName="ellipse"
                       iconRightColor={
                         repeatSection.repeat_status === "active"
-                          ? appSettings.theme.style.colors.success
-                          : appSettings.theme.style.colors.danger
+                          ? globalTheme.colors.success
+                          : globalTheme.colors.danger
                       }
                       iconRightSize={12}
                       rightLabel={utils.GetFormattedNumber({
@@ -96,7 +98,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
               )}
             </ListSection>
           </>
-        </ScrollView>
+        </CustomScrollView>
       )}
       {!repeatedTransactions.repeatedTransactions.length && (
         <TouchableOpacity
@@ -134,12 +136,12 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
               height: "100%",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
             }}
           >
             <IonIcons
               name="repeat"
-              color={appSettings.theme.style.colors.secondary}
+              color={globalTheme.colors.secondary}
               size={48}
               style={{
                 // transform: [{ scaleX: -1 }],
@@ -161,7 +163,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
               <IonIcons
                 name="add"
                 size={18}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
               <TextPrimary label="Create New Repeated Transaction" />
             </View>
