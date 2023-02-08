@@ -25,6 +25,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
@@ -39,12 +40,13 @@ import getSubscriptionLimit from "../../../features/subscription/logic/getSubscr
 import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStorage";
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
   // TAG : useContext Section //
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
@@ -138,13 +140,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // refresh
-    // console.log(transaction);
-    // if (localRepeatedTransactions.repeat_id && transaction.repeat_id) {
-    //   console.log(localRepeatedTransactions.repeat_id);
-    //   console.log(transaction.repeat_id);
-    // }
-    // console.log(localRepeatedTransactions);
     if (transaction) {
       setLocalRepeatedTransactions({
         ...localRepeatedTransactions,
@@ -227,8 +222,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         });
         break;
 
-      default:
-        break;
+        defaultOption: break;
     }
   };
 
@@ -285,9 +279,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         // case transaction.details.attachment_URL.length > 0:
         console.log("287");
 
-      // break;
-      default:
-        break;
+        // break;
+        defaultOption: break;
     }
 
     setTimeout(() => {
@@ -338,27 +331,22 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         <View
           style={[
             {
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
               height: "100%",
             },
           ]}
         >
-          <ScrollView
-            contentContainerStyle={{
-              minHeight: "100%",
-              justifyContent: "center",
-            }}
-          >
+          <CustomScrollView>
             {/* // TAG : Amount Section */}
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
               style={{
                 minHeight: Dimensions.get("window").height / 3,
+                minWidth: "100%",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 flex: 1,
-                // minHeight: Dimensions.get("window").height / 3,
               }}
             >
               <View
@@ -366,6 +354,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "row",
+                  flex: 1,
                 }}
               >
                 <TextPrimary
@@ -377,37 +366,31 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeSymbol
-                        : appSettings.theme.style.text.textSecondary.color,
+                        ? globalTheme.colors.incomeSymbol
+                        : globalTheme.text.textSecondary.color,
                   }}
                 />
                 <TextInput
                   ref={inputAmount}
                   keyboardAppearance={
-                    appSettings.theme.id === "dark" ? "dark" : "default"
+                    appSettings.theme_id.includes("dark") ? "dark" : "default"
                   }
                   maxLength={20}
                   textAlign="center"
                   returnKeyType="done"
                   keyboardType="number-pad"
-                  // placeholder={utils.GetFormattedNumber({
-                  //   value: transaction.details.amount,
-                  //   currency: appSettings.logbookSettings.defaultCurrency.name,
-                  // })}
-                  placeholderTextColor={
-                    appSettings.theme.style.text.textSecondary.color
-                  }
+                  placeholderTextColor={globalTheme.text.textSecondary.color}
                   style={[
                     {
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       height: 36,
                       fontSize: 36,
                     },
                     {
                       color:
                         transaction.details.in_out === "income"
-                          ? appSettings.theme.style.colors.incomeSymbol
-                          : appSettings.theme.style.text.textPrimary.color,
+                          ? globalTheme.colors.incomeSymbol
+                          : globalTheme.text.textPrimary.color,
                     },
                   ]}
                   onChangeText={(string) => {
@@ -449,7 +432,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   name="close-circle"
                   size={20}
                   style={{ padding: 16 }}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                 />
               )}
             </TouchableOpacity>
@@ -459,8 +442,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             <View
               style={[
                 {
-                  ...appSettings.theme.style.list.listContainer,
-                  justifyContent: "space-between",
+                  justifyContent: "flex-start",
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  width: "100%",
                 },
               ]}
             >
@@ -471,7 +456,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 } Details`}
                 style={{
                   fontSize: 24,
-                  paddingHorizontal: 16,
                 }}
               />
             </View>
@@ -500,13 +484,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
@@ -524,7 +508,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       });
                       setSelectedCategory({});
                     },
-                    default: { name: transaction.details.in_out },
+                    defaultOption: { name: transaction.details.in_out },
                   })
                 }
               />
@@ -553,13 +537,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
@@ -575,7 +559,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         details: { ...transaction.details, type: item.name },
                       });
                     },
-                    default: { name: transaction.details.type },
+                    defaultOption: { name: transaction.details.type },
                   })
                 }
               />
@@ -615,13 +599,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={showDatePicker}
               />
@@ -650,13 +634,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
@@ -678,7 +662,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         logbook_id: item.logbook_id,
                       });
                     },
-                    default: { name: selectedLogbook?.name },
+                    defaultOption: { name: selectedLogbook?.name },
                   })
                 }
               />
@@ -707,21 +691,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
                   selectedCategory?.icon?.color === "default"
-                    ? appSettings.theme.style.colors.foreground
+                    ? globalTheme.colors.foreground
                     : selectedCategory?.icon?.color
                   // transaction.details.in_out === "income"
                   //   ? "#00695c"
-                  //   : appSettings.theme.style.text.textPrimary.color
+                  //   : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
@@ -741,7 +725,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         },
                       });
                     },
-                    default: selectedCategory,
+                    defaultOption: selectedCategory,
                   })
                 }
               />
@@ -751,26 +735,22 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <TouchableNativeFeedback
                 onPress={() => inputNotes.current.focus()}
               >
-                <View style={appSettings.theme.style.list.listContainer}>
+                <View style={globalTheme.list.listContainer}>
                   <IonIcons
                     name="document-text"
                     size={18}
                     style={{ paddingRight: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
+                    color={globalTheme.colors.foreground}
                   />
                   <View
                     style={{
-                      ...appSettings.theme.style.list.listItem,
+                      ...globalTheme.list.listItem,
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <TextPrimary label="Notes" style={{ flex: 1 }} />
 
-                    {/* // TAG : Container */}
-                    {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
-
-                    {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
                     {/* // TAG : Notes Input */}
                     <TextInput
                       ref={inputNotes}
@@ -779,10 +759,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       keyboardType="default"
                       placeholder="Add additional notes ..."
                       placeholderTextColor={
-                        appSettings.theme.style.text.textSecondary.color
+                        globalTheme.text.textSecondary.color
                       }
                       style={{
-                        ...appSettings.theme.style.text.textPrimary,
+                        ...globalTheme.text.textPrimary,
                         flex: 5,
                         height: 48,
                         borderRadius: 8,
@@ -816,7 +796,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       name="close-circle"
                       size={18}
                       style={{ paddingLeft: 16 }}
-                      color={appSettings.theme.style.colors.foreground}
+                      color={globalTheme.colors.foreground}
                     />
                   )}
 
@@ -857,18 +837,18 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   backgroundColor:
                     transaction.details.in_out === "income"
                       ? "#c3f4f4"
-                      : appSettings.theme.style.colors.secondary,
+                      : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color
+                    : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
                       ? "#00695c"
-                      : appSettings.theme.style.text.textPrimary.color,
+                      : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() => {
                   if (
@@ -954,7 +934,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                           });
                         }
                       },
-                      default: localRepeatedTransactions.repeat_type,
+                      defaultOption: localRepeatedTransactions.repeat_type,
                     });
                   } else {
                     Alert.alert(
@@ -965,7 +945,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         {
                           text: "Upgrade",
                           onPress: () =>
-                            navigation.navigate(screenList.mySubscriptionScreen),
+                            navigation.navigate(
+                              screenList.mySubscriptionScreen
+                            ),
                         },
                       ]
                     );
@@ -1016,9 +998,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     // No permissions request is necessary for launching the image library
                     let result = await ImagePicker.launchImageLibraryAsync({
                       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                      allowsEditing: true,
+                      // allowsEditing: true,
                       allowsMultipleSelection: true,
-                      quality: 0.2,
+                      quality: 1,
                       // TODO : try compressing image for firebase storage
                     });
 
@@ -1099,7 +1081,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                             name="close-circle"
                             size={20}
                             style={{ padding: 16 }}
-                            color={appSettings.theme.style.colors.foreground}
+                            color={globalTheme.colors.foreground}
                           />
                         </TouchableOpacity>
 
@@ -1149,25 +1131,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       name="close-circle"
                       size={20}
                       style={{ padding: 16 }}
-                      color={appSettings.theme.style.colors.foreground}
+                      color={globalTheme.colors.foreground}
                     />
                     <TextPrimary label="Clear all" />
                   </TouchableOpacity>
                 </>
               )}
             </ListSection>
-
-            {/* // TAG : Line Separator */}
-            {/* <View
-              style={{
-                borderColor: "#bbb",
-                borderBottomWidth: 1,
-                height: 0,
-                width: "80%",
-                alignSelf: "center",
-                paddingTop: 16,
-              }}
-            ></View> */}
 
             {/* // TAG : Action Button */}
             <View
@@ -1184,10 +1154,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <View style={{ flex: 1, paddingRight: 8 }}>
                 <ButtonSecondary
                   label="Cancel"
-                  // width={150}
                   theme={appSettings.theme}
                   onPress={() => {
-                    // setRawTransactionsLength(null)
                     navigation.navigate(screenList.bottomTabNavigator);
                   }}
                 />
@@ -1198,14 +1166,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 <ButtonPrimary
                   label="Save"
                   theme={appSettings.theme}
-                  // width={150}
                   onPress={() => {
                     checkFinalTransaction();
                   }}
                 />
               </View>
             </View>
-          </ScrollView>
+          </CustomScrollView>
         </View>
       )}
     </>

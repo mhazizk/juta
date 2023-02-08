@@ -27,6 +27,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
@@ -39,10 +40,12 @@ import {
   uploadAndGetAttachmentImageURL,
 } from "../../../api/firebase/cloudStorage";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -209,8 +212,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
-      default:
-        break;
+        defaultOption: break;
     }
 
     return navigation.navigate(screenList.loadingScreen, {
@@ -226,22 +228,17 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   return (
     <>
       {transaction && selectedCategory && selectedLogbook && (
-        <ScrollView
-          contentContainerStyle={{
-            minHeight: "100%",
-            justifyContent: "center",
-            backgroundColor: appSettings.theme.style.colors.background,
-          }}
-        >
+        <CustomScrollView>
           {/* // TAG : Amount Section */}
           <TouchableOpacity
             onPress={() => inputAmount.current.focus()}
             style={{
+              minHeight: Dimensions.get("window").height / 3,
+              minWidth: "100%",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
               flex: 1,
-              minHeight: Dimensions.get("window").height * 0.3,
             }}
           >
             <View
@@ -249,6 +246,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "row",
+                flex: 1,
               }}
             >
               <TextSecondary
@@ -257,8 +255,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   paddingRight: 8,
                   color:
                     transaction.details.in_out === "income"
-                      ? appSettings.theme.style.colors.incomeSymbol
-                      : appSettings.theme.style.text.textSecondary.color,
+                      ? globalTheme.colors.incomeSymbol
+                      : globalTheme.text.textSecondary.color,
                 }}
               />
               <TextInput
@@ -267,24 +265,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 textAlign="center"
                 returnKeyType="done"
                 keyboardType="number-pad"
-                // placeholder={Intl.NumberFormat("en-US", {
-                //   style: "decimal",
-                //   minimumFractionDigits: 2,
-                //   maximumFractionDigits: 2,
-                // }).format(transaction.details.amount)}
-                // placeholderTextColor={
-                //   appSettings.theme.style.text.textSecondary.color
-                // }
                 placeholder={utils.GetFormattedNumber({
                   value: transaction.details.amount,
                   currency: appSettings.logbookSettings.defaultCurrency.name,
                 })}
-                placeholderTextColor={
-                  appSettings.theme.style.text.textSecondary.color
-                }
+                placeholderTextColor={globalTheme.text.textSecondary.color}
                 style={[
                   {
-                    ...appSettings.theme.style.text.textPrimary,
+                    ...globalTheme.text.textPrimary,
                     paddingLeft: 0,
                     paddingVertical: 16,
                     paddingRight: 16,
@@ -294,8 +282,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   {
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeAmount
-                        : appSettings.theme.style.text.textPrimary.color,
+                        ? globalTheme.colors.incomeAmount
+                        : globalTheme.text.textPrimary.color,
                   },
                 ]}
                 onChangeText={(string) => {
@@ -337,7 +325,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 name="close-circle"
                 size={20}
                 style={{ padding: 16 }}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
             )}
           </TouchableOpacity>
@@ -347,8 +335,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           <View
             style={[
               {
-                ...appSettings.theme.style.list.listContainer,
-                justifyContent: "space-between",
+                justifyContent: "flex-start",
+                paddingBottom: 16,
+                paddingLeft: 16,
+                width: "100%",
               },
             ]}
           >
@@ -359,7 +349,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               } Details`}
               style={{
                 fontSize: 24,
-                paddingHorizontal: 16,
               }}
             />
           </View>
@@ -388,13 +377,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 backgroundColor:
                   transaction.details.in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -412,7 +401,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     });
                     setSelectedCategory({});
                   },
-                  default: { name: transaction.details.in_out },
+                  defaultOption: { name: transaction.details.in_out },
                 })
               }
             />
@@ -442,13 +431,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 backgroundColor:
                   transaction.details.in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -464,7 +453,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       details: { ...transaction.details, type: item.name },
                     });
                   },
-                  default: { name: transaction.details.type },
+                  defaultOption: { name: transaction.details.type },
                 })
               }
             />
@@ -504,13 +493,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 backgroundColor:
                   transaction.details.in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={showDatePicker}
             />
@@ -539,13 +528,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 backgroundColor:
                   transaction.details.in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -567,7 +556,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       logbook_id: item.logbook_id,
                     });
                   },
-                  default: { name: selectedLogbook?.name },
+                  defaultOption: { name: selectedLogbook?.name },
                 })
               }
             />
@@ -596,21 +585,21 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 backgroundColor:
                   transaction.details.in_out === "income"
                     ? "#c3f4f4"
-                    : appSettings.theme.style.colors.secondary,
+                    : globalTheme.colors.secondary,
               }}
               iconColorInContainer={
                 selectedCategory?.icon?.color === "default"
-                  ? appSettings.theme.style.colors.foreground
+                  ? globalTheme.colors.foreground
                   : selectedCategory?.icon?.color
                 // transaction.details.in_out === "income"
                 //   ? "#00695c"
-                //   : appSettings.theme.style.text.textPrimary.color
+                //   : globalTheme.text.textPrimary.color
               }
               rightLabelStyle={{
                 color:
                   transaction.details.in_out === "income"
                     ? "#00695c"
-                    : appSettings.theme.style.text.textPrimary.color,
+                    : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
@@ -630,7 +619,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     });
                   },
-                  default: selectedCategory,
+                  defaultOption: selectedCategory,
                 })
               }
             />
@@ -639,26 +628,22 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           <ListSection>
             {/* // TAG : Notes Section */}
             <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
-              <View style={appSettings.theme.style.list.listContainer}>
+              <View style={globalTheme.list.listContainer}>
                 <IonIcons
                   name="document-text"
                   size={18}
                   style={{ paddingRight: 16 }}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                 />
                 <View
                   style={{
-                    ...appSettings.theme.style.list.listItem,
+                    ...globalTheme.list.listItem,
                     flexDirection: "row",
                     alignItems: "center",
                   }}
                 >
                   <TextPrimary label="Notes" style={{ flex: 1 }} />
 
-                  {/* // TAG : Container */}
-                  {/* <View style={[globalStyles.lightTheme.view, { flexDirection: 'row', flex: 3, alignItems: 'center', justifyContent: 'center' }]}> */}
-
-                  {/* <View style={{ backgroundColor: '#eee', borderRadius: 8, height: 48, justifyContent: 'center', paddingHorizontal: 16 }}> */}
                   {/* // TAG : Notes Input */}
                   <TextInput
                     ref={inputNotes}
@@ -666,11 +651,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     returnKeyType="done"
                     keyboardType="default"
                     placeholder="Add additional notes ..."
-                    placeholderTextColor={
-                      appSettings.theme.style.text.textSecondary.color
-                    }
+                    placeholderTextColor={globalTheme.text.textSecondary.color}
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       flex: 5,
                       height: 48,
                       borderRadius: 8,
@@ -704,7 +687,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     name="close-circle"
                     size={18}
                     style={{ paddingLeft: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
+                    color={globalTheme.colors.foreground}
                   />
                 )}
 
@@ -786,7 +769,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                             details: {
                               ...transaction?.details,
                               attachment_URL: [
-                                ...transaction.details.attachment_URL.filter(
+                                ...transaction.details.attachment_URL?.filter(
                                   (url) => url !== item
                                 ),
                               ],
@@ -798,7 +781,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                           name="close-circle"
                           size={20}
                           style={{ padding: 16 }}
-                          color={appSettings.theme.style.colors.foreground}
+                          color={globalTheme.colors.foreground}
                         />
                       </TouchableOpacity>
 
@@ -826,7 +809,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 </>
               )}
             />
-            {transaction?.details?.attachment_URL.length !== 0 && (
+            {transaction?.details?.attachment_URL?.length !== 0 && (
               <>
                 <TouchableOpacity
                   style={{
@@ -848,7 +831,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     name="close-circle"
                     size={20}
                     style={{ padding: 16 }}
-                    color={appSettings.theme.style.colors.foreground}
+                    color={globalTheme.colors.foreground}
                   />
                   <TextPrimary label="Clear all" />
                 </TouchableOpacity>
@@ -892,7 +875,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );
