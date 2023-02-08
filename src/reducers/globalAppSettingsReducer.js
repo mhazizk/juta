@@ -6,7 +6,7 @@ const globalAppSettingsReducer = (state, action) => {
     case REDUCER_ACTIONS.APP_SETTINGS.THEME.SET:
       return {
         ...state,
-        theme: action.payload,
+        theme_id: action.payload,
       };
     // Set App Font Size
     case REDUCER_ACTIONS.APP_SETTINGS.FONT_SIZE.SET:

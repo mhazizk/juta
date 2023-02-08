@@ -1,5 +1,6 @@
-import { darkTheme } from "../../assets/themes/darkTheme";
+import { darkMonoTheme } from "../../assets/themes/darkMonoTheme/darkMonoTheme";
+import { lightMonoTheme } from "../../assets/themes/lightMonoTheme/lightMonoTheme";
 
-const initialGlobalTheme = darkTheme;
+const initialGlobalTheme = lightMonoTheme;
 
 export default initialGlobalTheme;
