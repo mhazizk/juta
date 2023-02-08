@@ -14,26 +14,24 @@ import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import screenList from "../../navigations/ScreenList";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import firestore from "../../api/firebase/firestore";
+import CustomScrollView from "../../shared-components/CustomScrollView";
+import ListSection from "../../components/List/ListSection";
+import { ListItem } from "../../components/List";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
   // TAG : useState Section //
-
-  // Theme State
-  const [theme, setTheme] = useState({
-    theme: "lightTheme",
-    fontSize: "medium",
-  });
 
   // Transaction State
   const [logbook, setLogbook] = useState(null);
@@ -193,217 +191,128 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   return (
     <>
       {logbook && (
-        <View
-          style={{
-            backgroundColor: appSettings.theme.style.colors.background,
-            height: "100%",
-          }}
-        >
-          <ScrollView
-            contentContainerStyle={{ flex: 1, justifyContent: "center" }}
+        <CustomScrollView>
+          {/* // TAG : Logbook Name Section */}
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              paddingHorizontal: 16,
+            }}
           >
-            {/* // TAG : Logbook Name Section */}
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
+            <IonIcons
+              name="book"
+              size={48}
+              style={{ padding: 16 }}
+              color={globalTheme.colors.foreground}
+            />
+            <TextPrimary
+              label={
+                route?.params?.logbook.logbook_name[0].toUpperCase() +
+                route?.params?.logbook.logbook_name.substring(1)
+              }
+              style={{ fontSize: 24 }}
+            />
+            {/* </View> */}
+          </View>
+          {/* </ScrollView> */}
+
+          {/* // TAG : Logbook Details */}
+          <View
+            style={{
+              width: "100%",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              padding: 16,
+            }}
+          >
+            <TextPrimary label="Logbook Details" style={{ fontSize: 24 }} />
+          </View>
+
+          <ListSection>
+            {/* // TAG : Main currency */}
+            <ListItem
+              iconLeftName="coins"
+              iconPack="FontAwesome5"
+              leftLabel="Main currency"
+              useRightLabelContainer
+              useFlagIcon
+              flagIsoCode={logbook.logbook_currency.isoCode}
+              flagIconSize={18}
+              rightLabel={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
+              rightLabelContainerStyle={{
+                flexDirection: "row",
+                maxWidth: "50%",
                 alignItems: "center",
-                flexDirection: "column",
-                paddingHorizontal: 16,
+                justifyContent: "center",
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: globalTheme.colors.secondary,
               }}
-            >
-              <IonIcons
-                name="book"
-                size={48}
-                style={{ padding: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <View style={{ ...globalStyles.lightTheme.view, flex: 0, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}> */}
-              <TextPrimary
-                label={
-                  route?.params?.logbook.logbook_name[0].toUpperCase() +
-                  route?.params?.logbook.logbook_name.substring(1)
+            />
+
+            {/* // TAG : Total balace */}
+            <ListItem
+              iconLeftName="cash"
+              iconPack="IonIcons"
+              leftLabel="Total balance"
+              rightLabelColor={globalTheme.colors.foreground}
+              rightLabel={`${
+                appSettings.logbookSettings.defaultCurrency.symbol
+              } ${utils.GetFormattedNumber({
+                value: sumBalance(),
+                currency: appSettings.logbookSettings.defaultCurrency.name,
+              })}`}
+            />
+            {/* // TAG : Total transactions */}
+            <ListItem
+              iconLeftName="book"
+              iconPack="IonIcons"
+              rightLabelColor={globalTheme.colors.foreground}
+              leftLabel="Total transactions"
+              rightLabel={(countTransactions() || "No") + " Transactions"}
+            />
+          </ListSection>
+
+          {/* // TAG : Action Button */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingTop: 8,
+              paddingBottom: 24,
+              paddingHorizontal: 48,
+            }}
+          >
+            {/* // TAG : Edit Button */}
+            <View style={{ flex: 1, paddingRight: 8 }}>
+              <ButtonSecondary
+                label="Edit"
+                onPress={() =>
+                  navigation.navigate(screenList.editLogbookScreen, {
+                    logbook: logbook,
+                    selectedLogbook: selectedLogbook,
+                    selectedCategory: selectedCategory,
+                  })
                 }
-                style={{ fontSize: 24 }}
               />
-              {/* </View> */}
-            </View>
-            {/* </ScrollView> */}
-
-            {/* // TAG : Logbook Details */}
-            <View style={{ paddingHorizontal: 16 }}>
-              <TextPrimary label="Logbook Details" style={{ fontSize: 24 }} />
             </View>
 
-            {/* // TAG : Currency Section */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                height: 36,
-                paddingTop: 8,
-                paddingHorizontal: 16,
-              }}
-            >
-              <FontAwesome5
-                name="coins"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
+            {/* // TAG : Delete Button */}
+            <View style={{ flex: 1, paddingLeft: 8 }}>
+              <ButtonSecondaryDanger
+                label="Delete"
+                type="danger"
+                onPress={() => {
+                  deleteLogbook();
+                }}
               />
-              <TextPrimary label="Main Currency" style={{ flex: 1 }} />
-
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                <CountryFlag
-                  isoCode={logbook.logbook_currency.isoCode}
-                  size={18}
-                />
-                <TextPrimary
-                  label={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
-                  style={{ paddingLeft: 8 }}
-                />
-              </View>
             </View>
-
-            {/* // TAG : Balance Section */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                height: 36,
-                paddingTop: 8,
-                paddingHorizontal: 16,
-              }}
-            >
-              <IonIcons
-                name="cash"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              {/* <FontAwesome5 name='calendar-alt' size={18} style={{ paddingRight: 16 }} /> */}
-              <TextPrimary label="Total Balance" style={{ flex: 1 }} />
-
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                <TextPrimary
-                  label={`${utils.GetFormattedNumber({
-                    value: sumBalance(),
-                    currency: appSettings.logbookSettings.defaultCurrency.name,
-                  })}`}
-                  style={{ paddingLeft: 8 }}
-                />
-              </View>
-            </View>
-
-            {/* // TAG : Total Transactions Section */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                height: 36,
-                paddingTop: 8,
-                paddingHorizontal: 16,
-              }}
-            >
-              <IonIcons
-                name="book"
-                size={18}
-                style={{ paddingRight: 16 }}
-                color={appSettings.theme.style.colors.foreground}
-              />
-              <TextPrimary label="Total Transactions" style={{ flex: 1 }} />
-
-              {/* // TAG : Right Side */}
-              <View
-                style={[
-                  {
-                    flexDirection: "row",
-                    flex: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                <TextPrimary
-                  label={(countTransactions() || "No") + " Transactions"}
-                  style={{ flex: 0 }}
-                  numberOfLines={1}
-                />
-              </View>
-            </View>
-
-            {/* // TAG : Line Separator */}
-            <View
-              style={{
-                borderColor: appSettings.theme.style.colors.secondary,
-                borderBottomWidth: 1,
-                height: 0,
-                width: "80%",
-                alignSelf: "center",
-                paddingTop: 16,
-              }}
-            ></View>
-
-            {/* // TAG : Action Button */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 16,
-              }}
-            >
-              {/* // TAG : Edit Button */}
-              <View style={{ paddingRight: 8 }}>
-                <ButtonSecondary
-                  label="Edit"
-                  width={150}
-                  onPress={() =>
-                    navigation.navigate(screenList.editLogbookScreen, {
-                      logbook: logbook,
-                      selectedLogbook: selectedLogbook,
-                      selectedCategory: selectedCategory,
-                    })
-                  }
-                  theme={theme.theme}
-                />
-              </View>
-
-              {/* // TAG : Delete Button */}
-              <View style={{ paddingLeft: 8 }}>
-                <ButtonSecondaryDanger
-                  label="Delete"
-                  type="danger"
-                  width={150}
-                  theme={theme.theme}
-                  onPress={() => {
-                    deleteLogbook();
-                  }}
-                />
-              </View>
-            </View>
-          </ScrollView>
-        </View>
+          </View>
+        </CustomScrollView>
       )}
     </>
   );
