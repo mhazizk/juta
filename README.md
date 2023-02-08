@@ -63,7 +63,14 @@ Coming soon at juta official web
 
 ## Release Notes
 
-### 0.5.12-stable
+### 0.6.0-alpha
+
+- New features:
+  - New themes
+- Bugfixes:
+  - Theme sync
+
+### 0.5.12-alpha
 
 - New features:
   - Account
