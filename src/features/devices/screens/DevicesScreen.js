@@ -8,6 +8,7 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ListSection from "../../../components/List/ListSection";
 import { getDeviceId } from "../../../utils";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const DevicesScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -41,10 +42,9 @@ const DevicesScreen = ({ navigation }) => {
   };
   return (
     <>
-      <ScrollView
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
+      <CustomScrollView
+        contentContainerStyle={{
+          justifyContent: "flex-start",
         }}
       >
         <ListSection marginTop={16}>
@@ -86,7 +86,7 @@ const DevicesScreen = ({ navigation }) => {
             </>
           )}
         /> */}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

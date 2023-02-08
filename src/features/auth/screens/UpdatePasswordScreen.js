@@ -10,6 +10,7 @@ import {
   useGlobalAppSettings,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
 import passwordCheck from "../model/passwordCheck";
 import passwordConditionsList from "../model/passwordConditionsList";
@@ -68,34 +69,10 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         <View
           style={{
-            width: "100%",
-            paddingHorizontal: 16,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <TextPrimary
-            label="Update Password"
-            style={{
-              paddingVertical: 16,
-              fontSize: 48,
-              fontWeight: "bold",
-            }}
-          />
-        </View>
-        <View
-          style={{
-            paddingHorizontal: 16,
+            // paddingHorizontal: 16,
             paddingVertical: 0,
             width: "100%",
             alignItems: "center",
@@ -192,7 +169,7 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
             <Loading />
           </View>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

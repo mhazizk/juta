@@ -15,6 +15,7 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const UpdateEmailScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -42,18 +43,11 @@ const UpdateEmailScreen = ({ navigation }) => {
   }, [email, password]);
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        minHeight: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: appSettings.theme.style.colors.background,
-      }}
-    >
-      <View
+    <CustomScrollView>
+      {/* <View
         style={{
           width: "100%",
-          paddingHorizontal: 16,
+          // paddingHorizontal: 16,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -66,10 +60,10 @@ const UpdateEmailScreen = ({ navigation }) => {
             fontWeight: "bold",
           }}
         />
-      </View>
+      </View> */}
       <View
         style={{
-          paddingHorizontal: 16,
+          // paddingHorizontal: 16,
           paddingVertical: 0,
           width: "100%",
           alignItems: "center",
@@ -175,7 +169,7 @@ const UpdateEmailScreen = ({ navigation }) => {
           <Loading />
         </View>
       )}
-    </ScrollView>
+    </CustomScrollView>
   );
 };
 
