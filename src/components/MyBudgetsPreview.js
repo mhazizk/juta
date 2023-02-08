@@ -7,6 +7,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../reducers/GlobalContext";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
 import { TextButtonPrimary, TextPrimary } from "./Text";
@@ -29,7 +30,8 @@ export const MyBudgetsPreview = ({
 }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const [activeBudget, setActiveBudget] = useState({
     budget: null,
@@ -100,10 +102,10 @@ export const MyBudgetsPreview = ({
             width: boxWidth || 150,
             backgroundColor: activeBudget.budget
               ? activeBudget.spent / activeBudget.budget.limit >= 1
-                ? appSettings.theme.style.colors.danger
+                ? globalTheme.colors.danger
                 : activeBudget.spent / activeBudget.budget.limit >= 0.8
-                ? appSettings.theme.style.colors.warn
-                : appSettings.theme.style.colors.success
+                ? globalTheme.colors.warn
+                : globalTheme.colors.success
               : "#FFE088",
             marginTop: boxMarginTop || 0,
             marginBottom: boxMarginBottom || 0,
@@ -126,7 +128,7 @@ export const MyBudgetsPreview = ({
                 name="warning"
                 size={18}
                 color={
-                  appSettings.theme.style.button.buttonPrimary.textStyle.color
+                  globalTheme.button.buttonPrimary.textStyle.color
                 }
                 style={{ paddingRight: 8 }}
               />
@@ -137,7 +139,7 @@ export const MyBudgetsPreview = ({
               style={{
                 fontSize: 18,
                 fontWeight: "bold",
-                color: appSettings.theme.style.colors.black,
+                color: globalTheme.colors.black,
               }}
             />
           </View>
@@ -154,12 +156,12 @@ export const MyBudgetsPreview = ({
                 <RoundProgressBar
                   // Styling
                   fontSize={24}
-                  fontColor={appSettings.theme.style.colors.background}
+                  fontColor={globalTheme.colors.background}
                   radius={32}
                   strokeWidth={10}
                   width={74}
                   height={74}
-                  color={appSettings.theme.style.colors.background}
+                  color={globalTheme.colors.background}
                   // Data
                   spent={activeBudget.spent}
                   limit={activeBudget.budget.limit}
@@ -199,7 +201,7 @@ export const MyBudgetsPreview = ({
                       height: 1,
                       width: "100%",
                       backgroundColor:
-                        appSettings.theme.style.button.buttonPrimary.textStyle
+                        globalTheme.button.buttonPrimary.textStyle
                           .color,
                     }}
                   />

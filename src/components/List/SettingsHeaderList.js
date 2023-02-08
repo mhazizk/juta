@@ -1,13 +1,18 @@
 import { View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 import { TextPrimary } from "../Text";
 
 const SettingsHeaderList = ({ label, iconName }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <View
       style={{
+        width: "100%",
         padding: 16,
         flexDirection: "row",
         alignItems: "center",
@@ -16,7 +21,7 @@ const SettingsHeaderList = ({ label, iconName }) => {
       {iconName && (
         <IonIcons
           name={iconName}
-          color={appSettings.theme.style.colors.primary}
+          color={globalTheme.text.textPrimary.color}
           size={18}
           style={{
             marginRight: 16,
@@ -26,7 +31,6 @@ const SettingsHeaderList = ({ label, iconName }) => {
       <TextPrimary
         label={label}
         style={{
-          color: appSettings.theme.style.colors.primary,
           marginRight: 16,
         }}
       />
@@ -34,7 +38,7 @@ const SettingsHeaderList = ({ label, iconName }) => {
         style={{
           height: 1,
           width: "100%",
-          backgroundColor: appSettings.theme.style.colors.secondary,
+          backgroundColor: globalTheme.colors.secondary,
         }}
       />
     </View>

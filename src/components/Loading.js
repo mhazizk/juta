@@ -17,6 +17,7 @@ const Loading = ({ size, lottie, loadingText = null }) => {
           alignItems: "center",
           justifyContent: "center",
           position: lottie ? "absolute" : "relative",
+          padding: 16,
         }}
       >
         {!lottie && (
