@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
@@ -24,7 +25,8 @@ const Tab = createBottomTabNavigator();
 
 const BottomTab = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const { userAccount } = useGlobalUserAccount();
   const { badgeCounter } = useGlobalBadgeCounter();
 
@@ -38,7 +40,7 @@ const BottomTab = ({ route, navigation }) => {
         <StatusBar
           animated={true}
           style="auto"
-          backgroundColor={appSettings.theme.style.colors.header}
+          backgroundColor={globalTheme.colors.header}
         />
         <Tab.Navigator
           initialRouteName={screenList.dashboardScreen}
@@ -58,7 +60,7 @@ const BottomTab = ({ route, navigation }) => {
                 return (
                   <View
                     style={{
-                      backgroundColor: appSettings.theme.style.colors.primary,
+                      backgroundColor: globalTheme.colors.primary,
                       alignItems: "center",
                       justifyContent: "center",
                       width: 54,
@@ -68,7 +70,7 @@ const BottomTab = ({ route, navigation }) => {
                   >
                     <FontAwesome5
                       name={iconName}
-                      color={appSettings.theme.style.colors.background}
+                      color={globalTheme.colors.background}
                       size={18}
                     />
                   </View>
@@ -83,7 +85,7 @@ const BottomTab = ({ route, navigation }) => {
               // return <IonIcons name={iconName} color={color} size={size} />
             },
             tabBarIconStyle: {},
-            tabBarActiveTintColor: appSettings.theme.style.colors.primary,
+            tabBarActiveTintColor: globalTheme.colors.primary,
             // tabBarActiveBackgroundColor: 'black',
             tabBarLabelStyle: { fontSize: 12, paddingBottom: 0 },
             tabBarShowLabel: false,
@@ -91,14 +93,14 @@ const BottomTab = ({ route, navigation }) => {
             tabBarStyle: {
               height: 48,
               paddingHorizontal: 0,
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
             },
             headerShown: true,
             headerBackground: () => (
               <View
                 style={{
                   flex: 1,
-                  backgroundColor: appSettings.theme.style.colors.header,
+                  backgroundColor: globalTheme.colors.header,
                 }}
               />
             ),
@@ -146,7 +148,7 @@ const BottomTab = ({ route, navigation }) => {
               //       <TextPrimary
               //         label={userAccount?.displayName}
               //         style={{
-              //           color: appSettings.theme.style.colors.textHeader,
+              //           color: globalTheme.colors.textHeader,
               //           fontSize: 18,
               //         }}
               //       />
@@ -194,7 +196,7 @@ const BottomTab = ({ route, navigation }) => {
                 marginBottom: 28,
                 height: 64,
               },
-              tabBarActiveTintColor: appSettings.theme.style.colors.background,
+              tabBarActiveTintColor: globalTheme.colors.background,
             }}
             name={screenList.actionScreen}
             component={ActionScreen}

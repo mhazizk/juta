@@ -11,6 +11,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import MyCategoriesScreen from "../screens/categories/MyCategoriesScreen";
@@ -29,14 +30,12 @@ import EditBudgetScreen from "../screens/budget/EditBudgetScreen";
 import MyBudgetsScreen from "../screens/budget/MyBudgetsScreen";
 import NewBudgetScreen from "../screens/budget/NewBudgetScreen";
 import AnalyticsScreen from "../screens/analytics/AnalyticsScreen";
-import InitialSetupScreen from "../screens/initial/InitialSetupScreen";
-import OnboardingScreen from "../screens/initial/OnboardingScreen";
+import InitialSetupScreen from "../features/onboarding/screens/InitialSetupScreen";
+import OnboardingScreen from "../features/onboarding/screens/OnboardingScreen";
 import CategoryPreviewScreen from "../screens/categories/CategoryPreviewScreen";
 import EditCategoryScreen from "../screens/categories/EditCategoryScreen";
 import LogbookPreviewScren from "../screens/logbook/LogbookPreviewScreen";
 import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
-import CurrencySettingsScreen from "../screens/settings/CurrencySettingsScreen";
-import PersonalizationSettingsScreen from "../screens/settings/PersonalizationSettingsScreen";
 import UserScreen from "../screens/user/UserScreen";
 import MyAccountScreen from "../screens/settings/MyAccountScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
@@ -90,7 +89,7 @@ import UpdateEmailScreen from "../features/auth/screens/UpdateEmailScreen";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
@@ -115,6 +114,7 @@ const RootStack = () => {
   const budgetsRef = useRef(budgets);
   const repeatedTransactionsRef = useRef(repeatedTransactions);
   const badgeCounterRef = useRef(badgeCounter);
+  const globalThemeRef = useRef(globalTheme);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -153,6 +153,7 @@ const RootStack = () => {
     categoriesRef,
     budgetsRef,
     badgeCounterRef,
+    globalThemeRef,
   ]);
 
   // TAG : useEffect for state
@@ -167,18 +168,24 @@ const RootStack = () => {
   // Save Sorted Transactions to storage
   useEffect(() => {}, [userAccount]);
 
-  // Save Logbooks to storage
   useEffect(() => {
     if (logbooks.logbooks) {
     }
   }, [logbooks]);
 
-  // Save Categories to storage
   useEffect(() => {
-    if (appSettings) {
-      // setLastSettingsUpdate(appSettings._timestamps.updated_at);
+    if (
+      !!appSettings?.theme_id &&
+      appSettings?.theme_id !== globalTheme.identifier.id
+    ) {
+      setTimeout(() => {
+        dispatchGlobalTheme({
+          type: REDUCER_ACTIONS.THEME.SET,
+          payload: appSettings?.theme_id,
+        });
+      }, 1);
     }
-  }, [appSettings]);
+  }, [appSettings?.theme_id]);
 
   const noHeader = {
     headerShown: false,
@@ -201,7 +208,23 @@ const RootStack = () => {
   };
 
   return (
-    <Stack.Navigator initialRouteName={screenList.splashScreen}>
+    <Stack.Navigator
+      initialRouteName={screenList.splashScreen}
+      screenOptions={{
+        headerShadowVisible: false,
+        headerTintColor: globalTheme.colors.textHeader,
+        headerBackground: () => (
+          <>
+            <View
+              style={{
+                backgroundColor: globalTheme.colors.header,
+                flex: 1,
+              }}
+            />
+          </>
+        ),
+      }}
+    >
       {/* // SECTION : INITIAL */}
       {/* // TAG : Splash Screen */}
       <Stack.Screen
@@ -430,7 +453,7 @@ const RootStack = () => {
                 onPress={() => {
                   // get logbook limit from subscription plan
                   const logbookLimit = getSubscriptionLimit(
-                    userAccount.subscription.plan,
+                    userAccount.subscription?.plan,
                     SUBSCRIPTION_LIMIT.LOGBOOKS
                   );
 
@@ -512,11 +535,11 @@ const RootStack = () => {
                 <IonIcons
                   name="add"
                   size={20}
-                  color={appSettings.theme.style.colors.textHeader}
+                  color={globalTheme.colors.textHeader}
                 />
                 <TextPrimary
                   label="Add"
-                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                  style={{ color: globalTheme.colors.textHeader }}
                 />
               </TouchableOpacity>
             );
@@ -568,11 +591,11 @@ const RootStack = () => {
                 <IonIcons
                   name="add"
                   size={20}
-                  color={appSettings.theme.style.colors.textHeader}
+                  color={globalTheme.colors.textHeader}
                 />
                 <TextPrimary
                   label="Add"
-                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                  style={{ color: globalTheme.colors.textHeader }}
                 />
               </TouchableOpacity>
             );
@@ -723,7 +746,7 @@ const RootStack = () => {
                 onPress={() => {
                   // get repeat limit from subscription plan
                   const repeatLimit = getSubscriptionLimit(
-                    userAccount.subscription.plan,
+                    userAccount.subscription?.plan,
                     SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
                   );
 
@@ -754,11 +777,11 @@ const RootStack = () => {
                 <IonIcons
                   name="add"
                   size={20}
-                  color={appSettings.theme.style.colors.textHeader}
+                  color={globalTheme.colors.textHeader}
                 />
                 <TextPrimary
                   label="Add"
-                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                  style={{ color: globalTheme.colors.textHeader }}
                 />
               </TouchableOpacity>
             );
@@ -833,7 +856,7 @@ const RootStack = () => {
                 onPress={() => {
                   if (
                     !getSubscriptionLimit(
-                      userAccount.subscription.plan,
+                      userAccount.subscription?.plan,
                       SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
                     )
                   ) {
@@ -859,11 +882,11 @@ const RootStack = () => {
                 <IonIcons
                   name="add"
                   size={20}
-                  color={appSettings.theme.style.colors.textHeader}
+                  color={globalTheme.colors.textHeader}
                 />
                 <TextPrimary
                   label="Add"
-                  style={{ color: appSettings.theme.style.colors.textHeader }}
+                  style={{ color: globalTheme.colors.textHeader }}
                 />
               </TouchableOpacity>
             );
@@ -926,23 +949,10 @@ const RootStack = () => {
         name={screenList.settingsScreen}
         component={SettingsScreen}
       />
-      {/* // TAG : Currency Settings Screen */}
-      <Stack.Screen
-        options={{ ...showHeader, title: "Currency Settings" }}
-        name={screenList.currencySettingsScreen}
-        component={CurrencySettingsScreen}
-      />
-
-      {/* // TAG : Personalization Settings Screen */}
-      <Stack.Screen
-        options={{ ...showHeader, title: "Personalization Settings" }}
-        name={screenList.personalizationSettingsScreen}
-        component={PersonalizationSettingsScreen}
-      />
 
       {/* // TAG : Account Settings Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Account Settings" }}
+        options={{ ...showHeader, title: "My Account" }}
         name={screenList.myAccountScreen}
         component={MyAccountScreen}
       />
