@@ -9,6 +9,7 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
@@ -16,6 +17,7 @@ import { TextPrimary, TextSecondary } from "./Text";
 const UserHeaderComponent = ({ navigation }) => {
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const checkmark = require("../assets/img/checkmark.png");
   // const statHeight = StatusBar.currentHeight;
   return (
@@ -24,7 +26,7 @@ const UserHeaderComponent = ({ navigation }) => {
         <View
           style={{
             flexDirection: "column",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             // height: "40%",
             height: Dimensions.get("window").height * 0.4,
             // flex:1,
@@ -36,7 +38,7 @@ const UserHeaderComponent = ({ navigation }) => {
             style={{
               alignItems: "center",
               justifyContent: "center",
-              borderColor: appSettings.theme.style.colors.primary,
+              borderColor: globalTheme.colors.primary,
               height: 128,
               width: 128,
               borderRadius: 128 / 2,
@@ -56,7 +58,7 @@ const UserHeaderComponent = ({ navigation }) => {
             <IonIcons
               name="person"
               size={64}
-              color={appSettings.theme.style.colors.primary}
+              color={globalTheme.colors.primary}
               style={{
                 display: !userAccount.photoURL ? "flex" : "none",
               }}

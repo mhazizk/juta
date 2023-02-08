@@ -1,25 +1,35 @@
-import { colorOfTheYear2022 } from "../assets/themes/colorOfTheYear2022";
-import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023";
-import { darkTheme } from "../assets/themes/darkTheme";
-import { lightTheme } from "../assets/themes/lightTheme";
+import { darkFallTheme } from "../assets/themes/darkFallTheme/darkFallTheme";
+import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
+import { darkMonoTheme } from "../assets/themes/darkMonoTheme/darkMonoTheme";
+import { lightMonoTheme } from "../assets/themes/lightMonoTheme/lightMonoTheme";
 
-const themeConstants = {
-  DEFAULT: { name: "Light Theme", id: "light", style: lightTheme },
-  USER: { name: "Light Theme", id: "light", style: lightTheme },
+const THEME_CONSTANTS = {
+  DEFAULT: {
+    ...lightMonoTheme.identifier,
+    style: lightMonoTheme,
+  },
+  USER: {
+    ...lightMonoTheme.identifier,
+    style: lightMonoTheme,
+  },
   OPTIONS: [
-    { name: "Light Theme", id: "light", style: lightTheme },
-    { name: "Dark Theme", id: "dark", style: darkTheme },
     {
-      name: "Color of The Year 2023",
-      id: "colorOfTheYear2023",
-      style: colorOfTheYear2023,
+      ...lightMonoTheme.identifier,
+      style: lightMonoTheme,
     },
     {
-      name: "Color of The Year 2022",
-      id: "colorOfTheYear2022",
-      style: colorOfTheYear2022,
+      ...darkMonoTheme.identifier,
+      style: darkMonoTheme,
+    },
+    {
+      ...darkFallTheme.identifier,
+      style: darkFallTheme,
+    },
+    {
+      ...colorOfTheYear2023.identifier,
+      style: colorOfTheYear2023,
     },
   ],
 };
 
-export default themeConstants;
+export default THEME_CONSTANTS;
