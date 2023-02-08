@@ -1,4 +1,4 @@
-import icon from "./darkColorTheme.png";
+import icon from "./darkFallTheme.png";
 const palette = {
   white: {
     600: "#F5F5F5",
@@ -20,25 +20,23 @@ const palette = {
   purple: "#5A31F4",
   green: "#0ECD9D",
   orange: "#F49D1A",
-  primary: "#5A31F4",
-  2022: "#6463B1",
+  primary: "#CABFAB",
 };
 
-export const darkColorTheme = {
+export const darkFallTheme = {
   identifier: {
-    id: "darkColorTheme",
-    name: "Dark with accent color theme",
+    id: "darkFallTheme",
+    name: "Dark Fall",
     icon,
   },
   colors: {
-    header: palette.primary,
-    cardBackground: "#eabdc8",
+    cardBackground: "#CABFAB",
     background: palette.black[600],
     foreground: palette.white[600],
-    primary: palette.white[600],
+    primary: palette.primary,
     secondary: palette.black[400],
-    header: palette.black[600],
-    textHeader: palette.white[600],
+    header: palette.primary,
+    textHeader: palette.black[600],
     incomeAmount: "#00B19B",
     incomeSymbol: "#008888",
     success: palette.green,
@@ -96,13 +94,11 @@ export const darkColorTheme = {
     },
     buttonDisabled: {
       buttonStyle: {
-        backgroundColor: palette.white[200],
-        borderColor: palette.white[600],
+        backgroundColor: palette.black[300],
         borderRadius: 16,
-        borderWidth: 1,
       },
       textStyle: {
-        color: palette.white[600],
+        color: palette.black[100],
         fontSize: 16,
       },
     },

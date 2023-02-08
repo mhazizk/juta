@@ -25,7 +25,7 @@ const palette = {
 export const lightMonoTheme = {
   identifier: {
     id: "lightMonoTheme",
-    name: "Light mono theme",
+    name: "Light Mono",
     icon,
   },
   colors: {
@@ -96,7 +96,7 @@ export const lightMonoTheme = {
         borderRadius: 16,
       },
       textStyle: {
-        color: palette.black[600],
+        color: palette.white[600],
         fontSize: 16,
       },
     },

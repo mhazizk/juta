@@ -25,7 +25,7 @@ const palette = {
 export const darkMonoTheme = {
   identifier: {
     id: "darkMonoTheme",
-    name: "Dark mono theme",
+    name: "Dark Mono",
     icon,
   },
   colors: {
@@ -92,13 +92,11 @@ export const darkMonoTheme = {
     },
     buttonDisabled: {
       buttonStyle: {
-        backgroundColor: palette.white[200],
-        borderColor: palette.white[600],
+        backgroundColor: palette.black[300],
         borderRadius: 16,
-        borderWidth: 1,
       },
       textStyle: {
-        color: palette.white[600],
+        color: palette.black[100],
         fontSize: 16,
       },
     },
