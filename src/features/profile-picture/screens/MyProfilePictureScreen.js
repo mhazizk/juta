@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import {
   useGlobalAppSettings,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as ImagePicker from "expo-image-picker";
@@ -20,9 +21,11 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import Loading from "../../../components/Loading";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const MyProfilePictureScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [previousImage, setPreviousImage] = useState(null);
   const [image, setImage] = useState(null);
@@ -51,13 +54,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-          //   alignItems: "center",
-        }}
-      >
+      <CustomScrollView>
         <View
           style={{
             padding: 32,
@@ -69,7 +66,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                borderColor: appSettings.theme.style.colors.primary,
+                borderColor: globalTheme.colors.primary,
                 height: 200,
                 width: 200,
                 borderRadius: 200 / 2,
@@ -80,7 +77,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
               <IonIcons
                 name="person"
                 size={64}
-                color={appSettings.theme.style.colors.primary}
+                color={globalTheme.colors.primary}
               />
             </View>
           )}
@@ -172,7 +169,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
             </View>
           </View>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

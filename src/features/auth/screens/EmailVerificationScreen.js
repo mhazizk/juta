@@ -7,16 +7,19 @@ import screenList from "../../../navigations/ScreenList";
 import LottieView from "lottie-react-native";
 import {
   useGlobalAppSettings,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const EmailVerificationScreen = ({ route, navigation }) => {
   const fromScreen = route.params?.fromScreen || null;
   const userAccountWithNewEmail = route.params?.userAccountWithNewEmail || null;
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [loginTimerInSeconds, setLoginTimerInSeconds] = useState(null);
@@ -145,13 +148,10 @@ const EmailVerificationScreen = ({ route, navigation }) => {
   }, [resendLinkTimerInSeconds]);
 
   return (
-    <ScrollView
+    <CustomScrollView
       contentContainerStyle={{
-        minHeight: "100%",
-        backgroundColor: appSettings.theme.style.colors.background,
-        alignItems: "flex-start",
         justifyContent: "center",
-        paddingHorizontal: 16,
+        alignItems: "flex-start",
       }}
     >
       <TextPrimary
@@ -245,7 +245,7 @@ const EmailVerificationScreen = ({ route, navigation }) => {
           </View>
         </>
       )}
-    </ScrollView>
+    </CustomScrollView>
   );
 };
 

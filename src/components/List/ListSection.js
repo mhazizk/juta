@@ -1,13 +1,18 @@
 import { View } from "react-native";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 const ListSection = ({ noMargin, marginTop, children, backgroundColor }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       <View
         style={{
+          width: "100%",
           marginTop: marginTop ? marginTop : 0,
           marginBottom: noMargin ? 0 : 16,
           overflow: "hidden",
@@ -16,7 +21,7 @@ const ListSection = ({ noMargin, marginTop, children, backgroundColor }) => {
           backgroundColor:
             backgroundColor ||
             utils.HexToRgb({
-              hex: appSettings.theme.style.colors.foreground,
+              hex: globalTheme.colors.foreground,
               opacity: 0.07,
             }),
         }}

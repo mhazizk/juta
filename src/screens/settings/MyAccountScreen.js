@@ -5,7 +5,7 @@ import { Alert, ScrollView, View } from "react-native";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023";
+import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
@@ -22,14 +22,17 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 import { getDeviceId } from "../../utils";
 
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const { dispatchCategories } = useGlobalCategories();
   const { dispatchLogbooks } = useGlobalLogbooks();
@@ -51,12 +54,7 @@ const MyAccountScreen = ({ item, navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
@@ -67,7 +65,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Profile */}
               <ListItem
                 pressable
-                leftLabel="Change Profile Picture"
+                leftLabel="Change profile picture"
                 iconLeftName="person"
                 iconPack="IonIcons"
                 onPress={() =>
@@ -78,16 +76,16 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Display Name */}
               <ListItem
                 pressable
-                leftLabel="Change Display Name"
+                leftLabel="Change display name"
                 rightLabel={userAccount.displayName}
                 iconLeftName="create"
                 iconPack="IonIcons"
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
-                    title: "Change Display Name",
+                    title: "Change display name",
                     modalType: "textInput",
                     maxLength: 14,
-                    default: userAccount.displayName,
+                    defaultOption: userAccount.displayName,
                     selected: (item) => {
                       const modifiedUserAcount = {
                         ...userAccount,
@@ -116,7 +114,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Email */}
               <ListItem
                 pressable
-                leftLabel="Change Email"
+                leftLabel="Change email"
                 rightLabel={userAccount.email}
                 iconLeftName="mail"
                 iconPack="IonIcons"
@@ -128,7 +126,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Change Password */}
               <ListItem
                 pressable
-                leftLabel="Change Password"
+                leftLabel="Change password"
                 iconLeftName="key"
                 iconPack="IonIcons"
                 onPress={() =>
@@ -183,7 +181,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Active Devices */}
               <ListItem
                 pressable
-                leftLabel="Active Devices"
+                leftLabel="Active devices"
                 rightLabel={userAccount.devicesLoggedIn?.length + " device(s)"}
                 iconLeftName="laptop-outline"
                 iconPack="IonIcons"
@@ -194,8 +192,10 @@ const MyAccountScreen = ({ item, navigation }) => {
               {/* // TAG : Log out */}
               <ListItem
                 pressable
+                isDanger
                 leftLabel="Log out account"
                 iconLeftName="log-out-outline"
+                iconLeftColor={globalTheme.colors.danger}
                 iconPack="IonIcons"
                 onPress={() =>
                   Alert.alert("Log out", "Are you sure you want to log out?", [
@@ -249,7 +249,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
               }}
             >
               <Loading />
@@ -257,7 +257,7 @@ const MyAccountScreen = ({ item, navigation }) => {
             </View>
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

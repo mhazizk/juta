@@ -3,33 +3,30 @@ import { FlatList, Image, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../../src/assets/themes/globalStyles";
-import APP_SETTINGS from "../../config/appSettings";
+import APP_SETTINGS from "../../../config/appSettings";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
+} from "../../../reducers/GlobalContext";
 
 // Image Import
 import Onboarding from "react-native-onboarding-swiper";
-import colorOfTheYear2022 from "../../../src/assets/img/colorOfTheYear2022.png";
-import colorOfTheYear2023 from "../../../src/assets/img/colorOfTheYear2023.png";
-import dark from "../../../src/assets/img/dark.png";
-import doneSetup from "../../../src/assets/img/doneSetup.png";
-import large from "../../../src/assets/img/large.png";
-import light from "../../../src/assets/img/light.png";
-import medium from "../../../src/assets/img/medium.png";
-import small from "../../../src/assets/img/small.png";
-import { lightTheme } from "../../../src/assets/themes/lightTheme";
-import screenList from "../../navigations/ScreenList";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import doneSetup from "../../../../src/assets/img/doneSetup.png";
+import large from "../../../../src/assets/img/large.png";
+import medium from "../../../../src/assets/img/medium.png";
+import small from "../../../../src/assets/img/small.png";
+import screenList from "../../../navigations/ScreenList";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import uuid from "react-native-uuid";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import categoriesFallback from "../../reducers/fallback-state/categoriesFallback";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import categoriesFallback from "../../../reducers/fallback-state/categoriesFallback";
+import THEME_CONSTANTS from "../../../constants/themeConstants";
+import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -42,60 +39,18 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
   const [selectedAppSettings, setSelectedAppSettings] = useState({
+    ...appSettingsFallback,
+    uid: userAccount.uid,
     _timestamps: {
       created_at: Date.now(),
       created_by: userAccount.uid,
-      updated_by: userAccount.uid,
       updated_at: Date.now(),
+      updated_by: userAccount.uid,
     },
-    uid: userAccount.uid,
-    theme: { name: "Light Theme", id: "light", style: lightTheme },
-    fontSize: "medium",
-    language: "english",
-    locale: "en-US",
-    dashboardSettings: {
-      showRecentTransactions: true,
-      showTotalBalanceWidget: true,
-      showTotalExpenseWidget: true,
-      showTotalIncomeWidget: true,
-      showMyBudgetsWidget: true,
-      showMyLogbooksWidget: true,
-    },
-    searchSettings: {
-      showTransactionsResult: true,
-      showSettingsResult: true,
-    },
-    logbookSettings: {
-      defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-      secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
-      showSecondaryCurrency: false,
-      showTransactionNotes: true,
-      showTransactionTime: true,
-      dailySummary: "expense-only",
-    },
-    currencyRate: {
-      data: [
-        { name: "USD", rate: 1 },
-        { name: "IDR", rate: 14000 },
-      ],
-      updatedAt: Date.now(),
-    },
-    currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    // hiddenScreens: [screenList.onboardingScreen, screenList.initialSetupScreen],
-    hiddenScreens: [],
   });
-  // const [newUserAccount, setNewUserAccount] = useState({
-  //   profile: {
-  //     displayName: "",
-  //     photoURL: null,
-  //   },
-  //   account: {
-  //     premium: false,
-  //     user_id: userId,
-  //   },
-  // });
   const [newLogbook, setNewLogbook] = useState({
     _timestamps: {
       created_at: null,
@@ -113,46 +68,33 @@ const InitialSetupScreen = ({ route, navigation }) => {
     group_id: null,
   });
 
-  useEffect(() => {}, [appSettings, newLogbook]);
+  useEffect(() => {
+    setTimeout(() => {
+      dispatchGlobalTheme({
+        type: REDUCER_ACTIONS.THEME.SET,
+        payload: selectedAppSettings.theme_id,
+      });
+    }, 1);
+  }, [selectedAppSettings.theme_id]);
 
-  const findImage = (data) => {
-    switch (true) {
-      // Theme Image
-      case data === "light":
-        return light;
-      case data === "dark":
-        return dark;
-      case data === "colorOfTheYear2022":
-        return colorOfTheYear2022;
-      case data === "colorOfTheYear2023":
-        return colorOfTheYear2023;
-
-      // Font Size Image
-      case data === "small":
-        return small;
-      case data === "medium":
-        return medium;
-      case data === "large":
-        return large;
-
-      default:
-        return light;
-    }
+  const findThemeIcon = (themeId) => {
+    return THEME_CONSTANTS.OPTIONS.find((theme) => {
+      return theme.id === themeId;
+    }).icon;
   };
 
-  const selectedColor = (data) => {
+  const findFontIcon = (fontSize) => {
     switch (true) {
-      case data === "light":
-        return "#000";
-      case data === "dark":
-        return "#eee";
-      case data === "colorOfTheYear2022":
-        return "#6463B1";
-      case data === "colorOfTheYear2023":
-        return "#BC2649";
+      // Font Size Image
+      case fontSize === "small":
+        return small;
+      case fontSize === "medium":
+        return medium;
+      case fontSize === "large":
+        return large;
 
-      default:
-        return "transparent";
+      defaultOption:
+        return medium;
     }
   };
 
@@ -168,7 +110,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
       },
     };
 
-    // const logbookToDispatcha = {
+    // const logbookToDispatch = {
     //   _timestamps: {
     //     created_at: Date.now(),
     //     updated_at: Date.now(),
@@ -255,8 +197,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Select Theme
     {
       backgroundColor:
-        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
-        selectedAppSettings.theme.style.colors.background,
+        // selectedAppSettings.theme_id === "dark" ? "#111" : "#fff",
+        globalTheme.colors.background,
       image: <Image />,
       title: (
         <>
@@ -264,7 +206,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{
               position: "absolute",
               top: "5%",
-              color: selectedColor(selectedAppSettings.theme.id),
+              color: globalTheme.colors.primary,
+              // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 30,
             }}
           >
@@ -274,7 +217,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{ flexDirection: "row", alignItems: "center", width: 200 }}
           >
             <FlatList
-              data={APP_SETTINGS.THEME.OPTIONS}
+              data={THEME_CONSTANTS.OPTIONS}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 return (
@@ -284,7 +227,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                       onPress={() => {
                         setSelectedAppSettings({
                           ...selectedAppSettings,
-                          theme: item,
+                          theme_id: item.id,
                         });
                         setTimeout(() => onboardingRef.current.goNext(), 1000);
                       }}
@@ -316,8 +259,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
                               alignItems: "center",
                               borderWidth: 4,
                               borderColor:
-                                selectedAppSettings.theme.id === item.id
-                                  ? selectedColor(item.id)
+                                selectedAppSettings.theme_id === item.id
+                                  ? globalTheme.colors.primary
                                   : "transparent",
                               borderRadius: 18,
                               padding: 0,
@@ -325,15 +268,11 @@ const InitialSetupScreen = ({ route, navigation }) => {
                             }}
                           >
                             <Image
-                              source={findImage(item.id)}
+                              source={findThemeIcon(item.id)}
                               style={{ width: 80, height: 80 }}
                             />
                           </View>
-                          <Text
-                            style={[
-                              selectedAppSettings.theme.style.text.textPrimary,
-                            ]}
-                          >
+                          <Text style={[globalTheme.text.textPrimary]}>
                             {item.name}
                           </Text>
                         </View>
@@ -352,7 +291,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Select Font Size
     // {
     //   backgroundColor:
-    //     selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
+    //     selectedAppSettings.theme_id === "dark" ? "#111" : "#fff",
     //   image: <Image />,
     //   title: (
     //     <>
@@ -360,7 +299,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     //         style={{
     //           position: "absolute",
     //           top: "5%",
-    //           color: selectedColor(selectedAppSettings.theme.id),
+    //           color: selectedColor(selectedAppSettings.theme_id),
     //           fontSize: 30,
     //         }}
     //       >
@@ -413,7 +352,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     //                           borderWidth: 4,
     //                           borderColor:
     //                             selectedAppSettings.fontSize === item
-    //                               ? selectedColor(selectedAppSettings.theme.id)
+    //                               ? selectedColor(selectedAppSettings.theme_id)
     //                               : "transparent",
     //                           borderRadius: 18,
     //                           padding: 0,
@@ -421,7 +360,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     //                         }}
     //                       >
     //                         <Image
-    //                           source={findImage(item)}
+    //                           source={findFontIcon(item)}
     //                           style={{ width: 80, height: 80 }}
     //                         />
     //                       </View>
@@ -457,8 +396,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Select Default Currency
     {
       backgroundColor:
-        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
-        selectedAppSettings.theme.style.colors.background,
+        // selectedAppSettings.theme_id === "dark" ? "#111" : "#fff",
+        globalTheme.colors.background,
       image: <Image />,
       title: (
         <>
@@ -466,7 +405,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{
               position: "absolute",
               top: "5%",
-              color: selectedColor(selectedAppSettings.theme.id),
+              color: globalTheme.colors.primary,
+              // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 30,
             }}
           >
@@ -521,7 +461,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                               borderColor:
                                 selectedAppSettings.logbookSettings
                                   .defaultCurrency.isoCode === item.isoCode
-                                  ? selectedColor(selectedAppSettings.theme.id)
+                                  ? globalTheme.colors.primary
                                   : "transparent",
                               borderRadius: 18,
                               padding: 0,
@@ -531,11 +471,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                             <CountryFlag isoCode={item.isoCode} size={32} />
                             {/* <Text style={{ fontSize: 24 }}>Rp</Text> */}
                           </View>
-                          <Text
-                            style={[
-                              selectedAppSettings.theme.style.text.textPrimary,
-                            ]}
-                          >
+                          <Text style={[globalTheme.text.textPrimary]}>
                             {item.name} / {item.symbol}
                           </Text>
                         </View>
@@ -554,8 +490,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     // TAG : Create First Logbook
     {
       backgroundColor:
-        // selectedAppSettings.theme.id === "dark" ? "#111" : "#fff",
-        selectedAppSettings.theme.style.colors.background,
+        // selectedAppSettings.theme_id === "dark" ? "#111" : "#fff",
+        globalTheme.colors.background,
       image: <Image />,
       title: (
         <>
@@ -564,7 +500,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
               paddingHorizontal: 16,
               position: "absolute",
               top: "5%",
-              color: selectedColor(selectedAppSettings.theme.id),
+              color: globalTheme.colors.primary,
+              // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 30,
             }}
           >
@@ -576,7 +513,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
               position: "absolute",
               top: "10%",
               textAlign: "center",
-              color: selectedColor(selectedAppSettings.theme.id),
+              color: globalTheme.colors.primary,
+              // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 18,
             }}
           >
@@ -588,7 +526,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
               position: "absolute",
               bottom: "5%",
               textAlign: "center",
-              color: selectedColor(selectedAppSettings.theme.id),
+              color: globalTheme.colors.primary,
+              // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 18,
             }}
           >
@@ -600,7 +539,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
                 title: "New Logbook",
                 modalType: "textInput",
                 placeholder: "Enter new logbook name ...",
-                default: newLogbook.logbook_name || "",
+                defaultOption: newLogbook.logbook_name || "",
                 selected: (item) =>
                   setNewLogbook({
                     ...newLogbook,
@@ -620,12 +559,12 @@ const InitialSetupScreen = ({ route, navigation }) => {
               <IonIcons
                 name="book"
                 size={80}
-                color={selectedAppSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
               <Text
                 style={[
                   {
-                    ...selectedAppSettings.theme.style.text.textPrimary,
+                    ...globalTheme.text.textPrimary,
                   },
                   {
                     paddingVertical: 16,
@@ -639,7 +578,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
               <IonIcons
                 name="add"
                 size={32}
-                color={selectedAppSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
               {/* <TextInput
                             placeholder="Type new logbook name ..."
@@ -656,7 +595,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     },
 
     {
-      backgroundColor: selectedAppSettings.theme.style.colors.background,
+      backgroundColor: globalTheme.colors.background,
       image: <Image source={doneSetup} style={{ width: 250, height: 250 }} />,
       title: "Everything is Set !",
       subtitle: "Finish Setup and start using Cash Log App",

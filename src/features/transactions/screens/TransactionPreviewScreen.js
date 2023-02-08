@@ -25,28 +25,24 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 import * as utils from "../../../utils";
 import ImageViewer from "../../image-viewer/components/ImageViewer";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const [category, setCategory] = useState();
 
   // TAG : useState Section //
-
-  // Theme State
-  const [theme, setTheme] = useState({
-    theme: "lightTheme",
-    fontSize: "medium",
-  });
 
   // Transaction State
   const [transaction, setTransaction] = useState(null);
@@ -109,14 +105,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   return (
     <>
       {transaction && selectedCategory && (
-        <ScrollView
-          contentContainerStyle={{
-            // flex: 1,
-            justifyContent: "center",
-            minHeight: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
-          }}
-        >
+        <CustomScrollView>
           {/* // TAG : Amount Section */}
           <View
             style={{
@@ -152,8 +141,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeSymbol
-                        : appSettings.theme.style.text.textSecondary.color,
+                        ? globalTheme.colors.incomeSymbol
+                        : globalTheme.text.textSecondary.color,
                   }}
                 />
                 <TextPrimary
@@ -165,8 +154,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     fontSize: 36,
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeAmount
-                        : appSettings.theme.style.text.textPrimary.color,
+                        ? globalTheme.colors.incomeAmount
+                        : globalTheme.text.textPrimary.color,
                   }}
                 />
               </View>
@@ -189,8 +178,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeSymbol
-                        : appSettings.theme.style.text.textSecondary.color,
+                        ? globalTheme.colors.incomeSymbol
+                        : globalTheme.text.textSecondary.color,
                   }}
                 />
                 <TextPrimary
@@ -208,12 +197,34 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     fontSize: 24,
                     color:
                       transaction.details.in_out === "income"
-                        ? appSettings.theme.style.colors.incomeAmount
-                        : appSettings.theme.style.text.textPrimary.color,
+                        ? globalTheme.colors.incomeAmount
+                        : globalTheme.text.textPrimary.color,
                   }}
                 />
               </View>
             </View>
+          </View>
+
+          {/* // TAG : Details Section */}
+          <View
+            style={[
+              {
+                justifyContent: "flex-start",
+                paddingBottom: 16,
+                paddingLeft: 16,
+                width: "100%",
+              },
+            ]}
+          >
+            <TextPrimary
+              label={`${
+                transaction.details.in_out[0].toUpperCase() +
+                transaction.details.in_out.substring(1)
+              } Details`}
+              style={{
+                fontSize: 24,
+              }}
+            />
           </View>
 
           <ListSection>
@@ -222,7 +233,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               leftLabel="Type"
               iconLeftName="coins"
               iconPack="FontAwesome5"
-              rightLabelColor={appSettings.theme.style.colors.foreground}
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
                 !transaction?.details?.type
                   ? "Pick type"
@@ -235,7 +246,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               leftLabel="Date"
               iconLeftName="calendar"
               iconPack="IonIcons"
-              rightLabelColor={appSettings.theme.style.colors.foreground}
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
                 new Date(transaction?.details?.date).toDateString() +
                 " " +
@@ -247,7 +258,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               leftLabel="Logbook"
               iconLeftName="book"
               iconPack="IonIcons"
-              rightLabelColor={appSettings.theme.style.colors.foreground}
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
                 route?.params?.selectedLogbook?.name[0]?.toUpperCase() +
                 route?.params?.selectedLogbook?.name?.substring(1)
@@ -262,7 +273,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     selectedCategory?.name.substring(1)
                   : "Pick Category"
               }
-              rightLabelColor={appSettings.theme.style.colors.foreground}
+              rightLabelColor={globalTheme.colors.foreground}
               iconPack="IonIcons"
               iconLeftName="pricetags"
               useRightLabelContainer
@@ -274,15 +285,15 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 padding: 8,
                 borderRadius: 8,
-                backgroundColor: appSettings.theme.style.colors.secondary,
+                backgroundColor: globalTheme.colors.secondary,
               }}
               iconColorInContainer={
                 selectedCategory?.icon?.color === "default"
-                  ? appSettings.theme.style.colors.foreground
+                  ? globalTheme.colors.foreground
                   : selectedCategory?.icon?.color
               }
               rightLabelStyle={{
-                color: appSettings.theme.style.text.textPrimary.color,
+                color: globalTheme.text.textPrimary.color,
               }}
             />
           </ListSection>
@@ -292,7 +303,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               leftLabel="Notes"
               iconLeftName="document-text"
               iconPack="IonIcons"
-              rightLabelColor={appSettings.theme.style.colors.foreground}
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
                 transaction?.details?.notes
                   ? transaction?.details?.notes
@@ -367,7 +378,6 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     selectedRepeatSection: selectedRepeatSection,
                   })
                 }
-                theme={theme.theme}
               />
             </View>
 
@@ -377,7 +387,6 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 label="Delete"
                 type="danger"
                 // width={150}
-                theme={theme.theme}
                 onPress={() =>
                   Alert.alert(
                     "Delete Transaction",
@@ -420,7 +429,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               />
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );

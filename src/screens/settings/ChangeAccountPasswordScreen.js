@@ -25,6 +25,7 @@ import {
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 import { getDeviceId } from "../../utils";
 
 const ChangeAccountPasswordScreen = ({ item, navigation }) => {
@@ -90,14 +91,7 @@ const ChangeAccountPasswordScreen = ({ item, navigation }) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          width: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-          alignItems: "center",
-        }}
-      >
+      <CustomScrollView>
         {userAccount && !isLoading && (
           <>
             {/* <ListSection> */}
@@ -201,7 +195,7 @@ const ChangeAccountPasswordScreen = ({ item, navigation }) => {
             <TextPrimary label="Updating password..." />
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

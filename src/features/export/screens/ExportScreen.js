@@ -15,6 +15,7 @@ import { ListItem } from "../../../components/List";
 import { TextPrimary } from "../../../components/Text";
 import Loading from "../../../components/Loading";
 import screenList from "../../../navigations/ScreenList";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const ExportScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -120,12 +121,9 @@ const ExportScreen = ({ navigation }) => {
 
   return (
     <>
-      <ScrollView
+      <CustomScrollView
         contentContainerStyle={{
-          minHeight: "100%",
           justifyContent: "flex-start",
-          //   alignItems: "center",
-          backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         {!screenLoading && (
@@ -164,7 +162,7 @@ const ExportScreen = ({ navigation }) => {
                       //   console.log(item);
                       setSelectedLogbook(item);
                     },
-                    default: {
+                    defaultOption: {
                       ...selectedLogbook,
                       name: selectedLogbook.logbook_name,
                     },
@@ -286,7 +284,7 @@ const ExportScreen = ({ navigation }) => {
             </View>
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

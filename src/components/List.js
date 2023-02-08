@@ -1,10 +1,15 @@
 import { Dimensions, TouchableNativeFeedback, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
 import Loading from "./Loading";
+import ListSection from "./List/ListSection";
+import CountryFlag from "react-native-country-flag";
 
 export const ListItem = ({
   leftLabel,
@@ -13,8 +18,12 @@ export const ListItem = ({
   secondaryLabel,
   thirdLabel,
   iconPack,
+  isDanger,
   useRightLabelContainer = false,
   rightLabelContainerStyle,
+  useFlagIcon,
+  flagIsoCode,
+  flagIconSize = 18,
   iconColorInContainer,
   iconInRightContainerName,
   rightLabelStyle,
@@ -31,12 +40,17 @@ export const ListItem = ({
   iconRightColor,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       <TouchableNativeFeedback onPress={pressable ? onPress : null}>
-        <View style={appSettings.theme.style.list.listContainer}>
+        <View
+          style={{
+            ...globalTheme.list.listContainer,
+            // backgroundColor: isDanger ? globalTheme.colors.danger : null,
+          }}
+        >
           {iconPack === "IonIcons" && (
             <IonIcons
               name={iconLeftName}
@@ -45,8 +59,8 @@ export const ListItem = ({
                 iconLeftColor
                   ? iconLeftColor
                   : !disabled
-                  ? appSettings.theme.style.colors.foreground
-                  : appSettings.theme.style.text.textSecondary.color
+                  ? globalTheme.colors.foreground
+                  : globalTheme.text.textSecondary.color
               }
               style={{ paddingRight: 16 }}
             />
@@ -56,8 +70,8 @@ export const ListItem = ({
               name={iconLeftName}
               color={
                 iconLeftColor || disabled
-                  ? appSettings.theme.style.text.textSecondary.color
-                  : appSettings.theme.style.colors.foreground
+                  ? globalTheme.text.textSecondary.color
+                  : globalTheme.colors.foreground
               }
               size={18}
               style={{
@@ -68,7 +82,7 @@ export const ListItem = ({
           )}
           <View
             style={{
-              ...appSettings.theme.style.list.listItem,
+              ...globalTheme.list.listItem,
               flexDirection: "row",
               // maxWidth: "100%",
             }}
@@ -77,7 +91,11 @@ export const ListItem = ({
               {leftLabel && !disabled && (
                 <TextPrimary
                   label={leftLabel}
-                  // style={{ color: leftLabelColor || null }}
+                  style={{
+                    color: isDanger
+                      ? globalTheme.colors.danger
+                      : globalTheme.text.textPrimary.color,
+                  }}
                 />
               )}
               {secondaryLabel && !disabled && (
@@ -91,8 +109,7 @@ export const ListItem = ({
                 label={rightLabel}
                 style={{
                   color:
-                    rightLabelColor ||
-                    appSettings.theme.style.text.textSecondary.color,
+                    rightLabelColor || globalTheme.text.textSecondary.color,
                 }}
               />
             )}
@@ -101,6 +118,16 @@ export const ListItem = ({
                 <View
                   style={[{ ...rightLabelContainerStyle }, { maxWidth: "70%" }]}
                 >
+                  {useFlagIcon && (
+                    <CountryFlag
+                      isoCode={flagIsoCode}
+                      size={flagIconSize}
+                      style={{
+                        marginRight: 8,
+                      }}
+                    />
+                  )}
+
                   {iconInRightContainerName && (
                     <IonIcons
                       name={iconInRightContainerName}
@@ -109,9 +136,7 @@ export const ListItem = ({
                         (iconRightName === "checkmark-circle" ? 22 : 18)
                       }
                       color={
-                        iconColorInContainer ||
-                        appSettings.theme.style.colors.foreground ||
-                        lightTheme.colors.foreground
+                        iconColorInContainer || globalTheme.colors.foreground
                       }
                       style={{ paddingRight: 8 }}
                     />
@@ -136,11 +161,10 @@ export const ListItem = ({
               }
               color={
                 disabled
-                  ? appSettings.theme.style.colors.secondary
+                  ? globalTheme.colors.secondary
                   : iconRightColor
                   ? iconRightColor
-                  : appSettings.theme.style.colors.foreground ||
-                    lightTheme.colors.foreground
+                  : globalTheme.colors.foreground
               }
               style={{ paddingLeft: 16 }}
             />
@@ -176,29 +200,30 @@ export const ListTable = ({
   iconRightSize,
   iconRightColor,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
       {pressable && (
         <TouchableNativeFeedback onPress={onPress}>
-          <View style={appSettings.theme.style.list.listContainer}>
+          {/* <View style={globalTheme.list.listContainer}> */}
+          <View
+            style={{
+              width: "100%",
+            }}
+          >
             {iconPack === "IonIcons" && (
               <IonIcons
                 name={iconLeftName}
                 size={18}
-                color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
-                }
+                color={iconLeftColor || globalTheme.colors.foreground}
                 style={{ paddingRight: 16 }}
               />
             )}
             {iconPack === "FontAwesome5" && (
               <FontAwesome5Icon
                 name={iconLeftName}
-                color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
-                }
+                color={iconLeftColor || globalTheme.colors.foreground}
                 size={18}
                 style={{
                   transform: [{ scaleX: -1 }],
@@ -206,7 +231,7 @@ export const ListTable = ({
                 }}
               />
             )}
-            <View style={appSettings.theme.style.list.listItem}>
+            <View style={globalTheme.list.listItem}>
               {leftLabel && <TextPrimary label={leftLabel} />}
               {rightLabel && <TextSecondary label={rightLabel} />}
             </View>
@@ -218,41 +243,46 @@ export const ListTable = ({
                   iconRightSize ||
                   (iconRightName === "checkmark-circle" ? 22 : 18)
                 }
-                color={
-                  iconRightColor ||
-                  appSettings.theme.style.colors.foreground ||
-                  lightTheme.colors.foreground
-                }
+                color={iconRightColor || globalTheme.colors.foreground}
                 style={{ paddingLeft: 16 }}
               />
             )}
             {isLoading && <Loading size={18} />}
             {/* )} */}
+            {/* </View> */}
           </View>
         </TouchableNativeFeedback>
       )}
 
       {!pressable && (
-        <View style={appSettings.theme.style.list.listContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+          }}
+        >
           {iconLeftName && (
             <IonIcons
               name={iconLeftName}
               size={18}
-              color={
-                iconLeftColor ||
-                appSettings.theme.style.colors.foreground ||
-                lightTheme.colors.foreground
-              }
+              color={iconLeftColor || globalTheme.colors.foreground}
               style={{
                 paddingRight: 16,
                 // flex: titleMode ? 1 : 0,
               }}
             />
           )}
-          <View style={appSettings.theme.style.list.listItem}>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+            }}
+          >
             <View
               style={{
-                paddingRight: titleMode ? 34 : 0,
+                paddingRight: titleMode ? 32 : 0,
                 flex: 3,
                 alignItems: titleMode ? "center" : "flex-start",
               }}
@@ -263,16 +293,28 @@ export const ListTable = ({
               style={{
                 flex: 1,
                 alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {middleLabel && (
+              {(typeof middleLabel === "string" ||
+                typeof rightLabel === "number" ||
+                titleMode) && (
                 <TextPrimary
                   label={middleLabel}
                   style={{
-                    color:
-                      middleLabelColor ||
-                      appSettings.theme.style.colors.foreground,
+                    color: middleLabelColor || globalTheme.colors.foreground,
                   }}
+                />
+              )}
+              {typeof middleLabel === "boolean" && !titleMode && (
+                <IonIcons
+                  name={middleLabel ? "checkmark-sharp" : "close"}
+                  size={18}
+                  color={
+                    middleLabel
+                      ? globalTheme.colors.success
+                      : globalTheme.colors.danger
+                  }
                 />
               )}
             </View>
@@ -280,16 +322,29 @@ export const ListTable = ({
               style={{
                 flex: 1,
                 alignItems: "center",
+                justifyContent: "center",
+                paddingRight: titleMode ? 0 : 32,
               }}
             >
-              {rightLabel && (
+              {(typeof rightLabel === "string" ||
+                typeof rightLabel === "number" ||
+                titleMode) && (
                 <TextPrimary
                   label={rightLabel}
                   style={{
-                    color:
-                      rightLabelColor ||
-                      appSettings.theme.style.colors.foreground,
+                    color: rightLabelColor || globalTheme.colors.foreground,
                   }}
+                />
+              )}
+              {typeof rightLabel === "boolean" && !titleMode && (
+                <IonIcons
+                  name={rightLabel ? "checkmark-sharp" : "close"}
+                  size={18}
+                  color={
+                    rightLabel
+                      ? globalTheme.colors.success
+                      : globalTheme.colors.danger
+                  }
                 />
               )}
             </View>
@@ -298,10 +353,7 @@ export const ListTable = ({
             <IonIcons
               name={iconRightName}
               size={iconRightName === "checkmark-circle" ? 22 : 18}
-              color={
-                appSettings.theme.style.colors.foreground ||
-                lightTheme.colors.foreground
-              }
+              color={globalTheme.colors.foreground}
               style={{ paddingLeft: 16 }}
             />
           )}
@@ -335,14 +387,15 @@ export const TransactionListItem = ({
   iconRightName,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
       <TouchableNativeFeedback onPress={() => onPress()}>
         <View
           style={{
-            ...appSettings.theme.style.list.listContainer,
+            ...globalTheme.list.listContainer,
             justifyContent: "space-between",
           }}
         >
@@ -351,13 +404,13 @@ export const TransactionListItem = ({
             <IonIcons
               name={iconLeftName}
               size={18}
-              color={iconLeftColor || appSettings.theme.style.colors.foreground}
+              color={iconLeftColor || globalTheme.colors.foreground}
               style={{ paddingRight: 16 }}
             />
           )}
 
           {/* Line Container */}
-          <View style={appSettings.theme.style.list.listItem}>
+          <View style={globalTheme.list.listItem}>
             <View
               style={{
                 flexDirection: "column",
@@ -377,8 +430,8 @@ export const TransactionListItem = ({
                   name={isRepeated ? "repeat" : "ellipse"}
                   color={
                     isRepeated
-                      ? appSettings.theme.style.colors.foreground
-                      : appSettings.theme.style.colors.secondary
+                      ? globalTheme.colors.foreground
+                      : globalTheme.colors.secondary
                   }
                   size={isRepeated ? 16 : 8}
                   style={{
@@ -447,8 +500,8 @@ export const TransactionListItem = ({
                         paddingRight: 8,
                         color:
                           transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeSymbol
-                            : appSettings.theme.style.text.textSecondary.color,
+                            ? globalTheme.colors.incomeSymbol
+                            : globalTheme.text.textSecondary.color,
                       }}
                     />
                     <TextPrimary
@@ -456,8 +509,8 @@ export const TransactionListItem = ({
                         fontSize: 18,
                         color:
                           transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeAmount
-                            : appSettings.theme.style.text.textPrimary.color,
+                            ? globalTheme.colors.incomeAmount
+                            : globalTheme.text.textPrimary.color,
                       }}
                       // label={utils.FormatCurrency({
                       //   amount: transactionAmount,
@@ -488,8 +541,8 @@ export const TransactionListItem = ({
                         paddingRight: 8,
                         color:
                           transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeSymbol
-                            : appSettings.theme.style.text.textSecondary.color,
+                            ? globalTheme.colors.incomeSymbol
+                            : globalTheme.text.textSecondary.color,
                       }}
                     />
                     <TextPrimary
@@ -497,8 +550,8 @@ export const TransactionListItem = ({
                         fontSize: 14,
                         color:
                           transactionType === "income"
-                            ? appSettings.theme.style.colors.incomeAmount
-                            : appSettings.theme.style.text.textPrimary.color,
+                            ? globalTheme.colors.incomeAmount
+                            : globalTheme.text.textPrimary.color,
                       }}
                       // label={utils.FormatCurrency({
                       //   amount: transactionAmount,
@@ -525,10 +578,7 @@ export const TransactionListItem = ({
               <IonIcons
                 name={iconRightName}
                 size={iconRightName === "checkmark-circle" ? 22 : 18}
-                color={
-                  appSettings.theme.style.colors.foreground ||
-                  lightTheme.colors.foreground
-                }
+                color={globalTheme.colors.foreground}
                 style={{ paddingLeft: 16 }}
               />
             )}
@@ -566,7 +616,8 @@ export const SearchResultListItem = ({
   iconRightName,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
@@ -574,7 +625,7 @@ export const SearchResultListItem = ({
         <TouchableNativeFeedback onPress={() => onPress()}>
           <View
             style={{
-              ...appSettings.theme.style.list.listContainer,
+              ...globalTheme.list.listContainer,
               justifyContent: "space-between",
             }}
           >
@@ -583,15 +634,13 @@ export const SearchResultListItem = ({
               <IonIcons
                 name={iconLeftName}
                 size={18}
-                color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
-                }
+                color={iconLeftColor || globalTheme.colors.foreground}
                 style={{ paddingRight: 16 }}
               />
             )}
 
             {/* Line Container */}
-            <View style={appSettings.theme.style.list.listItem}>
+            <View style={globalTheme.list.listItem}>
               <View
                 style={{
                   flexDirection: "column",
@@ -611,7 +660,7 @@ export const SearchResultListItem = ({
                   {repeatId && (
                     <IonIcons
                       name="repeat"
-                      color={appSettings.theme.style.colors.foreground}
+                      color={globalTheme.colors.foreground}
                       size={16}
                       style={{
                         paddingLeft: 8,
@@ -620,7 +669,7 @@ export const SearchResultListItem = ({
                   )}
                   <IonIcons
                     name="at"
-                    color={appSettings.theme.style.text.textSecondary.color}
+                    color={globalTheme.text.textSecondary.color}
                     size={16}
                     style={{ paddingHorizontal: 8 }}
                   />
@@ -650,7 +699,7 @@ export const SearchResultListItem = ({
                       />
                       <IonIcons
                         name="ellipse"
-                        color={appSettings.theme.style.colors.secondary}
+                        color={globalTheme.colors.secondary}
                         size={8}
                         style={{ paddingHorizontal: 8 }}
                       />
@@ -709,9 +758,8 @@ export const SearchResultListItem = ({
                             fontSize: 14,
                             color:
                               transactionType === "income"
-                                ? appSettings.theme.style.colors.incomeSymbol
-                                : appSettings.theme.style.text.textSecondary
-                                    .color,
+                                ? globalTheme.colors.incomeSymbol
+                                : globalTheme.text.textSecondary.color,
                           }}
                         />
                         <TextPrimary
@@ -719,9 +767,8 @@ export const SearchResultListItem = ({
                             fontSize: 18,
                             color:
                               transactionType === "income"
-                                ? appSettings.theme.style.colors.incomeAmount
-                                : appSettings.theme.style.text.textPrimary
-                                    .color,
+                                ? globalTheme.colors.incomeAmount
+                                : globalTheme.text.textPrimary.color,
                           }}
                           label={utils.GetFormattedNumber({
                             value: transactionAmount,
@@ -745,9 +792,8 @@ export const SearchResultListItem = ({
                             fontSize: 14,
                             color:
                               transactionType === "income"
-                                ? appSettings.theme.style.colors.incomeSymbol
-                                : appSettings.theme.style.text.textSecondary
-                                    .color,
+                                ? globalTheme.colors.incomeSymbol
+                                : globalTheme.text.textSecondary.color,
                           }}
                         />
                         <TextPrimary
@@ -755,9 +801,8 @@ export const SearchResultListItem = ({
                             fontSize: 14,
                             color:
                               transactionType === "income"
-                                ? appSettings.theme.style.colors.incomeAmount
-                                : appSettings.theme.style.text.textPrimary
-                                    .color,
+                                ? globalTheme.colors.incomeAmount
+                                : globalTheme.text.textPrimary.color,
                           }}
                           label={utils.GetFormattedNumber({
                             value: utils.ConvertCurrency({
@@ -781,10 +826,7 @@ export const SearchResultListItem = ({
                 <IonIcons
                   name={iconRightName}
                   size={iconRightName === "checkmark-circle" ? 22 : 18}
-                  color={
-                    appSettings.theme.style.colors.foreground ||
-                    lightTheme.colors.foreground
-                  }
+                  color={globalTheme.colors.foreground}
                   style={{ paddingLeft: 16 }}
                 />
               )}
@@ -810,7 +852,8 @@ export const CardList = ({
   iconRightName,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   const screenWidth = Dimensions.get("window").width;
   const spentWidth = `${(spent / limit) * 100}%`;
@@ -821,7 +864,7 @@ export const CardList = ({
         {/* Card Container */}
         <View
           style={{
-            backgroundColor: appSettings.theme.style.colors.secondary,
+            backgroundColor: globalTheme.colors.secondary,
             padding: 16,
             borderRadius: 16,
           }}
@@ -830,9 +873,7 @@ export const CardList = ({
             {iconPack === "FontAwesome5" && (
               <FontAwesome5Icon
                 name={iconLeftName}
-                color={
-                  iconLeftColor || appSettings.theme.style.colors.background
-                }
+                color={iconLeftColor || globalTheme.colors.background}
                 size={54}
                 style={{
                   position: "absolute",
@@ -842,14 +883,12 @@ export const CardList = ({
                 }}
               />
             )}
-            <View style={appSettings.theme.style.list.listItem}>
+            <View style={globalTheme.list.listItem}>
               {/* Title Section */}
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <FontAwesome5Icon
                   name={iconLeftName}
-                  color={
-                    iconLeftColor || appSettings.theme.style.colors.foreground
-                  }
+                  color={iconLeftColor || globalTheme.colors.foreground}
                   size={20}
                   style={{
                     transform: [{ scaleX: -1 }],
@@ -873,7 +912,7 @@ export const CardList = ({
                   position: "absolute",
                   height: 10,
                   width: "100%",
-                  backgroundColor: appSettings.theme.style.colors.foreground,
+                  backgroundColor: globalTheme.colors.foreground,
                   borderRadius: 16,
                 }}
               />
@@ -889,7 +928,7 @@ export const CardList = ({
                     position: "relative",
                     height: 10,
                     width: "100%",
-                    backgroundColor: appSettings.theme.style.colors.primary,
+                    backgroundColor: globalTheme.colors.primary,
                     borderRadius: 16,
                   }}
                 />

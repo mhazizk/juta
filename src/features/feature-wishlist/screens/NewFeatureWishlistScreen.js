@@ -9,6 +9,7 @@ import CustomTextInput from "../../../components/CustomTextInput";
 import {
   useGlobalAppSettings,
   useGlobalFeatureWishlist,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import wishlistModel from "../model/wishlistModel";
@@ -22,11 +23,13 @@ import LOADING_TYPES from "../../../screens/modal/loading.type";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import filterBadWords from "../../../api/filterBadWords";
 import Loading from "../../../components/Loading";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const NewFeatureWishlistScreen = ({ navigation }) => {
   const titleInputRef = useRef(null);
   const descriptionInputRef = useRef(null);
   const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const { userAccount } = useGlobalUserAccount();
   const [newWishlist, setNewWishlist] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,12 +123,9 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
   return (
     <>
       {newWishlist && (
-        <ScrollView
+        <CustomScrollView
           contentContainerStyle={{
-            minHeight: "100%",
-            alignItems: "center",
-            padding: 16,
-            backgroundColor: appSettings.theme.style.colors.background,
+            paddingTop: 16,
           }}
         >
           <TextPrimary
@@ -137,7 +137,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
           />
           <IonIcons
             name="bulb"
-            color={appSettings.theme.style.colors.foreground}
+            color={globalTheme.colors.foreground}
             size={48}
           />
           <TextPrimary
@@ -165,7 +165,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
                 paddingLeft: 16,
                 paddingBottom: 8,
                 alignSelf: "flex-start",
-                color: appSettings.theme.style.colors.danger,
+                color: globalTheme.colors.danger,
               }}
             />
           )}
@@ -187,7 +187,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
                 paddingLeft: 16,
                 paddingBottom: 8,
                 alignSelf: "flex-start",
-                color: appSettings.theme.style.colors.danger,
+                color: globalTheme.colors.danger,
               }}
             />
           )}
@@ -222,7 +222,7 @@ const NewFeatureWishlistScreen = ({ navigation }) => {
               )}
             </View>
           </View>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );

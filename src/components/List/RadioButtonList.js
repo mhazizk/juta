@@ -1,10 +1,14 @@
 import { TouchableNativeFeedback, View } from "react-native";
 import { TextPrimary } from "../Text";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 
 const RadioButtonList = ({ items, selected, onChange }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       {items.map((item) => (
@@ -25,7 +29,7 @@ const RadioButtonList = ({ items, selected, onChange }) => {
           >
             <View
               style={{
-                ...appSettings.theme.style.list.listItem,
+                ...globalTheme.list.listItem,
                 flex: 1,
                 maxWidth: "80%",
                 paddingVertical: 8,
@@ -41,9 +45,9 @@ const RadioButtonList = ({ items, selected, onChange }) => {
               style={{
                 // borderColor:
                 //   selected === item.value
-                //     ? appSettings.theme.style.colors.primary
-                //     : appSettings.theme.style.colors.secondary,
-                borderColor: appSettings.theme.style.colors.primary,
+                //     ? globalTheme.colors.primary
+                //     : globalTheme.colors.secondary,
+                borderColor: globalTheme.colors.primary,
                 backgroundColor: "transparent",
                 height: 20,
                 width: 20,
@@ -58,7 +62,7 @@ const RadioButtonList = ({ items, selected, onChange }) => {
                 style={{
                   backgroundColor:
                     selected === item.value
-                      ? appSettings.theme.style.colors.primary
+                      ? globalTheme.colors.primary
                       : "transparent",
                   height: 12,
                   width: 12,

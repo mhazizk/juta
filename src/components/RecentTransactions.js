@@ -6,6 +6,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../reducers/GlobalContext";
 import { ListItem, SearchResultListItem, TransactionListItem } from "./List";
 import { TextPrimary, TextSecondary } from "./Text";
@@ -21,6 +22,7 @@ const RecentTransactions = ({
   title,
 }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -68,7 +70,7 @@ const RecentTransactions = ({
               const iconColor = utils.FindById.findCategoryColorById({
                 id: transaction.details.category_id,
                 categories: categories.categories,
-                defaultColor: appSettings.theme.style.colors.foreground,
+                defaultColor: globalTheme.colors.foreground,
               });
               const iconName = utils.FindById.findCategoryIconNameById({
                 id: transaction.details.category_id,

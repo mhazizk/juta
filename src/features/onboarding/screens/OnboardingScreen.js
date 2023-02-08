@@ -1,17 +1,16 @@
 import { Image } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import OnboardingImg1 from "../../assets/img/onboarding2.png";
-import OnboardingImg2 from "../../assets/img/onboarding2.png";
-import OnboardingImg3 from "../../assets/img/onboarding3.png";
-import OnboardingImg4 from "../../assets/img/onboarding4.png";
-import OnboardingImg5 from "../../assets/img/onboarding5.png";
-import { lightTheme } from "../../assets/themes/lightTheme";
-import screenList from "../../navigations/ScreenList";
-import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
-import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
-import persistStorage from "../../reducers/persist/persistStorage";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import OnboardingImg1 from "../../../assets/img/onboarding2.png";
+import OnboardingImg2 from "../../../assets/img/onboarding2.png";
+import OnboardingImg3 from "../../../assets/img/onboarding3.png";
+import OnboardingImg4 from "../../../assets/img/onboarding4.png";
+import OnboardingImg5 from "../../../assets/img/onboarding5.png";
+import screenList from "../../../navigations/ScreenList";
+import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
+import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import PERSIST_ACTIONS from "../../../reducers/persist/persist.actions";
+import persistStorage from "../../../reducers/persist/persistStorage";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 
 const OnboardingScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();

@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
-  Text,
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -11,30 +9,60 @@ import {
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles, globalTheme } from "../../assets/themes/globalStyles";
 import {
   ButtonDisabled,
   ButtonPrimary,
   ButtonPrimaryDanger,
   ButtonSecondary,
-  ButtonSecondaryDanger,
 } from "../../components/Button";
+import CustomTextInput from "../../components/CustomTextInput";
 import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
-import APP_SETTINGS from "../../config/appSettings";
 import {
   useGlobalAppSettings,
-  useGlobalLoading,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 
+/**
+ *
+ * @function ModalScreen
+ * @description Modal screen
+ *
+ * @param {title} string
+ * @param {modalType} string
+ * @param {defaultOption} string
+ * @param {props} object
+ * @param {keyboardType} string
+ * @param {maxLength} number
+ * @param {iconProps} object
+ * @param {placeholder} string
+ * @param {mainButtonLabel} string
+ *
+ * @returns {selected} object
+ */
 const ModalScreen = ({ route, navigation }) => {
-  const { appSettings, dispathAppSettings } = useGlobalAppSettings();
-  const [localLoading, setLocalLoading] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const {
+    title,
+    modalType,
+    defaultOption = null,
+    props,
+    keyboardType = "default",
+    maxLength = null,
+    iconProps = null,
+    placeholder = "Type here...",
+    // Action buttons
+    mainButtonLabel = "Save",
+    // Returns
+    selected,
+  } = route.params;
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+  const [selectedItem, setSelectedItem] = useState(null);
   const [textInput, setTextInput] = useState(null);
+  const [showButton, setShowButton] = useState(false);
 
   const colors = [
-    { name: "Default", color: appSettings.theme.style.colors.foreground },
+    { name: "Default", color: globalTheme.colors.foreground },
     { name: "Red", color: "#FF5252" },
     { name: "Blue", color: "#2196F3" },
     { name: "Green", color: "#4CAF50" },
@@ -44,39 +72,29 @@ const ModalScreen = ({ route, navigation }) => {
   ];
 
   useEffect(() => {
-    // refresh
-    console.log(selected);
-  }, [selected]);
+    if (!!selectedItem || !!textInput) {
+      setShowButton(true);
+    } else {
+      setShowButton(false);
+    }
+  }, [selectedItem, textInput]);
 
   useEffect(() => {
-    // refresh
-    console.log(textInput);
-  }, [textInput]);
-
-  useEffect(() => {}, [localLoading]);
-
-  useEffect(() => {
-    setSelected(route?.params?.default);
-    setTextInput(route?.params?.default);
-    // console.log(route.params.default)
-    // console.log(selected)
+    setSelectedItem(defaultOption);
+    setTextInput(defaultOption);
   }, []);
 
   const onPressReturn = () => {
-    const { modalType } = route.params;
     switch (true) {
       case modalType === "list" ||
         modalType === "currencyList" ||
         modalType === "colorPicker" ||
         modalType === "iconPicker":
-        return route.params.selected(selected);
+        return selected(selectedItem);
       case modalType === "textInput":
-        return route.params.selected(textInput);
-
-      // return !textInput ? route.params.selected(route.params?.placeholder) : route.params.selected(textInput);
+        return selected(textInput);
 
       default:
-        console.log("thrd");
         return;
     }
   };
@@ -95,7 +113,7 @@ const ModalScreen = ({ route, navigation }) => {
       <View
         style={[
           {
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
           },
           {
             display: "flex",
@@ -108,37 +126,38 @@ const ModalScreen = ({ route, navigation }) => {
         ]}
       >
         <View style={{ padding: 16 }}>
-          <TextPrimary label={route?.params?.title} style={{ fontSize: 24 }} />
+          <TextPrimary label={title} style={{ fontSize: 24 }} />
         </View>
 
         {/* // TAG : Flatlist Category Props */}
-        {route.params?.modalType === "list" && (
+        {modalType === "list" && (
           <FlatList
-            data={route?.params?.props}
+            data={props}
             keyExtractor={(item, id) => item?.name + id}
             renderItem={({ item }) => (
               <>
                 <ListItem
                   pressable
-                  iconLeftName={
-                    item?.icon?.name || route?.params?.iconProps?.name
-                  }
-                  iconPack={item?.icon?.pack || route?.params?.iconProps?.pack}
+                  iconLeftName={item?.icon?.name || iconProps?.name}
+                  iconPack={item?.icon?.pack || iconProps?.pack}
                   iconLeftColor={
-                    route?.params?.iconProps?.color
-                      ? route?.params?.iconProps?.color
+                    iconProps?.color
+                      ? iconProps?.color
                       : item?.icon?.color === "default"
-                      ? appSettings.theme.style.colors.foreground
+                      ? globalTheme.colors.foreground
                       : item?.icon?.color
                   }
                   iconRightName={
-                    selected?.name == item?.name ? "checkmark-circle" : null
+                    // selectedItem?.id === item?.id ||
+                    selectedItem?.name === item?.name
+                      ? "checkmark-circle"
+                      : null
                   }
                   leftLabel={
                     item?.name[0].toUpperCase() + item?.name.substring(1)
                   }
                   onPress={() => {
-                    setSelected(item);
+                    setSelectedItem(item);
                   }}
                 />
               </>
@@ -147,22 +166,22 @@ const ModalScreen = ({ route, navigation }) => {
         )}
 
         {/* // TAG : Flatlist Params Currency */}
-        {route.params?.modalType === "currencyList" && (
+        {modalType === "currencyList" && (
           <FlatList
-            data={route?.params?.props}
+            data={props}
             keyExtractor={(item, id) => item?.name + id}
             renderItem={({ item }) => (
               <>
                 <TouchableNativeFeedback
                   onPress={() => {
-                    setSelected(item);
+                    setSelectedItem(item);
                   }}
                 >
-                  <View style={appSettings.theme.style.list.listContainer}>
+                  <View style={globalTheme.list.listContainer}>
                     <CountryFlag isoCode={item?.isoCode} size={18} />
                     <View
                       style={{
-                        ...appSettings.theme.style.list.listItem,
+                        ...globalTheme.list.listItem,
                         paddingLeft: 16,
                       }}
                     >
@@ -176,9 +195,9 @@ const ModalScreen = ({ route, navigation }) => {
                         size={22}
                         style={{
                           display:
-                            selected?.name == item?.name ? "flex" : "none",
+                            selectedItem?.name == item?.name ? "flex" : "none",
                         }}
-                        color={appSettings.theme.style.colors.foreground}
+                        color={globalTheme.colors.foreground}
                       />
                     </View>
                   </View>
@@ -189,7 +208,7 @@ const ModalScreen = ({ route, navigation }) => {
         )}
 
         {/* // TAG : Text Input Params */}
-        {route.params?.modalType === "textInput" && (
+        {modalType === "textInput" && (
           <View
             style={{
               paddingLeft: 16,
@@ -200,33 +219,23 @@ const ModalScreen = ({ route, navigation }) => {
             }}
           >
             <TextInput
-              keyboardType={
-                route.params?.keyboardType
-                  ? route.params.keyboardType
-                  : "default"
-              }
+              keyboardType={keyboardType}
               style={{
                 paddingHorizontal: 16,
                 fontSize: 16,
-                borderRadius: 8,
+                borderRadius: 16,
                 borderWidth: 1,
                 height: 48,
                 flex: 1,
-                borderColor: appSettings.theme.style.colors.primary,
-                color: appSettings.theme.style.text.textPrimary.color,
+                borderColor: globalTheme.colors.primary,
+                color: globalTheme.text.textPrimary.color,
               }}
-              placeholder={
-                route.params?.placeholder
-                  ? route.params.placeholder
-                  : "Type here...."
-              }
-              placeholderTextColor={
-                appSettings.theme.style.text.textSecondary.color
-              }
-              defaultValue={route.params?.default ? route.params.default : ""}
+              placeholder={placeholder}
+              placeholderTextColor={globalTheme.text.textSecondary.color}
+              defaultValue={defaultOption || ""}
               value={textInput}
               onChangeText={(input) => setTextInput(input)}
-              maxLength={route?.params?.maxLength || null}
+              maxLength={maxLength}
             />
             {textInput && (
               <IonIcons
@@ -234,30 +243,28 @@ const ModalScreen = ({ route, navigation }) => {
                 name="close-circle"
                 size={20}
                 style={{ paddingHorizontal: 16 }}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
               />
             )}
           </View>
         )}
 
         {/* // TAG : Option Flatlist Params */}
-        {route.params?.modalType === "action" && (
+        {modalType === "action" && (
           <>
             {/* <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'center', padding: 16 }}> */}
 
             {/* // TAG : Delete Action */}
             <TouchableNativeFeedback onPress={() => {}}>
-              <View style={appSettings.theme.style.list.listContainer}>
+              <View style={globalTheme.list.listContainer}>
                 <IonIcons
                   name="trash"
                   size={18}
                   // color={item?.icon?.color}
                   style={{ paddingRight: 16 }}
                 />
-                <View style={globalStyles.lightTheme.listItem}>
-                  <Text style={globalStyles.lightTheme.textPrimary}>
-                    Delete
-                  </Text>
+                <View style={globalTheme.list.listItem}>
+                  <TextPrimary label="Delete" />
                 </View>
               </View>
             </TouchableNativeFeedback>
@@ -266,7 +273,7 @@ const ModalScreen = ({ route, navigation }) => {
         )}
 
         {/* // TAG : Pick Color */}
-        {route.params?.modalType === "colorPicker" && (
+        {modalType === "colorPicker" && (
           <FlatList
             horizontal
             // numColumns={4}
@@ -285,7 +292,7 @@ const ModalScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={{ marginRight: 8 }}
                   onPress={() => {
-                    setSelected(item);
+                    setSelectedItem(item);
                   }}
                 >
                   {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
@@ -304,10 +311,10 @@ const ModalScreen = ({ route, navigation }) => {
                     <IonIcons
                       name="checkmark-sharp"
                       size={24}
-                      color={appSettings.theme.style.colors.background}
+                      color={globalTheme.colors.background}
                       style={{
                         display:
-                          selected?.color === item?.color ? "flex" : "none",
+                          selectedItem?.color === item?.color ? "flex" : "none",
                       }}
                     />
                   </View>
@@ -320,12 +327,12 @@ const ModalScreen = ({ route, navigation }) => {
         )}
 
         {/* // TAG : Pick Icon */}
-        {route.params?.modalType === "iconPicker" && (
+        {modalType === "iconPicker" && (
           <FlatList
             numColumns={6}
             columnWrapperStyle={{ justifyContent: "space-between", padding: 8 }}
             showsHorizontalScrollIndicator={false}
-            data={route?.params?.props}
+            data={props}
             style={{ height: "100%" }}
             contentContainerStyle={{
               paddingHorizontal: 16,
@@ -339,7 +346,7 @@ const ModalScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={{ marginRight: 8 }}
                   onPress={() => {
-                    setSelected(item);
+                    setSelectedItem(item);
                   }}
                 >
                   {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
@@ -352,8 +359,8 @@ const ModalScreen = ({ route, navigation }) => {
                       borderWidth: 2,
                       borderRadius: 48 / 2,
                       borderColor:
-                        selected?.name === item.name
-                          ? appSettings.theme.style.colors.primary
+                        selectedItem?.name === item.name
+                          ? globalTheme.colors.primary
                           : "transparent",
                       alignItems: "center",
                       justifyContent: "center",
@@ -365,12 +372,12 @@ const ModalScreen = ({ route, navigation }) => {
                         size={24}
                         color={
                           item.color === "default"
-                            ? appSettings.theme.style.colors.foreground
+                            ? globalTheme.colors.foreground
                             : item.color
                         }
                       />
                     )}
-                    {/* <IonIcons name='checkmark-sharp' size={24} color={appSettings.theme.style.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
+                    {/* <IonIcons name='checkmark-sharp' size={24} color={globalTheme.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
                   </View>
 
                   {/* </View> */}
@@ -394,92 +401,75 @@ const ModalScreen = ({ route, navigation }) => {
             <ButtonSecondary
               label="Cancel"
               onPress={() => navigation.goBack()}
-              theme={appSettings.theme.style}
             />
           </View>
           {/* // TAG : Save Button */}
           <View style={{ paddingLeft: 8 }}>
-            {/* {localLoading && */}
-            {/* <ActivityIndicator
-                                size={32}
-                                color='#fff'
-                                style={{ backgroundColor: '#bbb', borderRadius: 8, height: 48, width: 80 }}
-                            /> */}
-            {/* } */}
-
-            {/* {!localLoading && */}
-            {!selected && (
+            {!showButton && (
               <>
-                <ButtonDisabled
-                  label={route.params?.mainButtonLabel || "Save"}
-                />
+                <ButtonDisabled label={mainButtonLabel} />
               </>
             )}
-            {route.params?.mainButtonLabel?.toLowerCase() !== "delete" &&
-              selected && (
-                <ButtonPrimary
-                  label={route.params?.mainButtonLabel || "Save"}
-                  onPress={() => {
-                    if (route.params?.modalType === "textInput" && !textInput) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter a value",
-                        [
-                          {
-                            text: "OK",
-                            onPress: () => console.log("OK Pressed"),
-                          },
-                        ],
-                        { cancelable: false }
-                      );
-                    }
+            {mainButtonLabel?.toLowerCase() !== "delete" && showButton && (
+              <ButtonPrimary
+                label={mainButtonLabel}
+                onPress={() => {
+                  if (modalType === "textInput" && !textInput) {
+                    Alert.alert(
+                      "Error",
+                      "Please enter a value",
+                      [
+                        {
+                          text: "OK",
+                          onPress: () => console.log("OK Pressed"),
+                        },
+                      ],
+                      { cancelable: false }
+                    );
+                  }
 
-                    if (route.params?.modalType === "textInput" && textInput) {
-                      onPressReturn();
-                      navigation.goBack();
-                    }
+                  if (modalType === "textInput" && textInput) {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
 
-                    if (route.params?.modalType !== "textInput") {
-                      onPressReturn();
-                      navigation.goBack();
-                    }
-                  }}
-                  theme={appSettings.theme.style}
-                />
-              )}
-            {route.params?.mainButtonLabel?.toLowerCase() === "delete" &&
-              selected && (
-                <ButtonPrimaryDanger
-                  label={route.params?.mainButtonLabel}
-                  onPress={() => {
-                    if (route.params?.modalType === "textInput" && !textInput) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter a value",
-                        [
-                          {
-                            text: "OK",
-                            onPress: () => console.log("OK Pressed"),
-                          },
-                        ],
-                        { cancelable: false }
-                      );
-                    }
+                  if (modalType !== "textInput") {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
+                }}
+              />
+            )}
+            {mainButtonLabel?.toLowerCase() === "delete" && showButton && (
+              <ButtonPrimaryDanger
+                label={mainButtonLabel}
+                onPress={() => {
+                  if (modalType === "textInput" && !textInput) {
+                    Alert.alert(
+                      "Error",
+                      "Please enter a value",
+                      [
+                        {
+                          text: "OK",
+                          onPress: () => console.log("OK Pressed"),
+                        },
+                      ],
+                      { cancelable: false }
+                    );
+                  }
 
-                    if (route.params?.modalType === "textInput" && textInput) {
-                      onPressReturn();
-                      navigation.goBack();
-                    }
+                  if (modalType === "textInput" && textInput) {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
 
-                    if (route.params?.modalType !== "textInput") {
-                      onPressReturn();
-                      navigation.goBack();
-                    }
-                  }}
-                  theme={appSettings.theme.style}
-                />
-              )}
-            {/* } */}
+                  if (modalType !== "textInput") {
+                    onPressReturn();
+                    navigation.goBack();
+                  }
+                }}
+              />
+            )}
           </View>
         </View>
       </View>

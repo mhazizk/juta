@@ -1,6 +1,9 @@
 import { Dimensions, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 import { TextPrimary } from "../Text";
 
@@ -20,8 +23,8 @@ export const RoundProgressBar = ({
   color,
   backgroundColor,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       <View>
@@ -34,7 +37,7 @@ export const RoundProgressBar = ({
           hideLegend={true}
           chartConfig={{
             // backgroundColor:
-            //   backgroundColor || appSettings.theme.style.colors.background,
+            //   backgroundColor || globalTheme.colors.background,
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
             decimalPlaces: 2, // optional, defaults to 2dp
@@ -44,16 +47,16 @@ export const RoundProgressBar = ({
                 : utils.HexToRgb({
                     hex:
                       spent / limit >= 1
-                        ? appSettings.theme.style.colors.danger
+                        ? globalTheme.colors.danger
                         : spent / limit >= 0.8
-                        ? appSettings.theme.style.colors.warn
-                        : appSettings.theme.style.colors.success,
+                        ? globalTheme.colors.warn
+                        : globalTheme.colors.success,
                     opacity: opacity,
                   }),
-            // color: (opacity = 1) =>appSettings.theme.style.colors.primary,
+            // color: (opacity = 1) =>globalTheme.colors.primary,
             labelColor: (opacity = 0.5) =>
               utils.HexToRgb({
-                hex: appSettings.theme.style.colors.primary,
+                hex: globalTheme.colors.primary,
                 opacity: opacity,
               }),
             style: {
@@ -84,7 +87,7 @@ export const RoundProgressBar = ({
             style={{
               fontSize: fontSize || 34,
               color:
-                fontColor || appSettings.theme.style.text.textPrimary.color,
+                fontColor || globalTheme.text.textPrimary.color,
             }}
           />
           {label && <TextPrimary label={label} />}

@@ -1,6 +1,6 @@
 import { Image, TouchableNativeFeedback, View } from "react-native";
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
-import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import { useGlobalAppSettings, useGlobalTheme } from "../../../reducers/GlobalContext";
 import subscriptionTypes from "../model/subscriptionType";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Path, Svg } from "react-native-svg";
@@ -13,6 +13,7 @@ const SubscriptionTypeCard = ({
   onPress,
 }) => {
   const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
 
   return (
     <>
@@ -26,7 +27,7 @@ const SubscriptionTypeCard = ({
       >
         <View
           style={{
-            // backgroundColor: appSettings.theme.style.colors.secondary,
+            // backgroundColor: globalTheme.colors.secondary,
             height: 150,
             padding: 16,
             zIndex: 1,
@@ -34,7 +35,7 @@ const SubscriptionTypeCard = ({
               currentSubscriptionType === subscriptionType.id ? 2 : 0,
             borderColor:
               currentSubscriptionType === subscriptionType.id
-                ? appSettings.theme.style.colors.success
+                ? globalTheme.colors.success
                 : "transparent",
           }}
         >
@@ -83,7 +84,7 @@ const SubscriptionTypeCard = ({
                 borderRadius: 8,
                 width: 86,
                 alignItems: "center",
-                backgroundColor: appSettings.theme.style.colors.success,
+                backgroundColor: globalTheme.colors.success,
               }}
             >
               <TextButtonPrimary

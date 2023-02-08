@@ -10,6 +10,7 @@ import {
 import {
   useGlobalAppSettings,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../../reducers/GlobalContext";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -25,7 +26,8 @@ const TransactionList = ({
   // TAG : useState Section //
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const [transactionsDate, setTransactionsDate] = useState(null);
   const [groupSortedTransactions, setGroupSortedTransactions] = useState(null);
   const [mappedTransactions, setMappedTransactions] = useState([]);
@@ -164,7 +166,7 @@ const TransactionList = ({
               paddingHorizontal: 16,
               paddingVertical: 0,
             },
-            { backgroundColor: appSettings.theme.style.colors.background },
+            { backgroundColor: globalTheme.colors.background },
           ]}
         >
           <TextPrimary
@@ -198,7 +200,7 @@ const TransactionList = ({
                 <IonIcons
                   name="close-circle"
                   size={20}
-                  color={appSettings.theme.style.colors.foreground}
+                  color={globalTheme.colors.foreground}
                   style={{ paddingRight: 8 }}
                 />
                 <TextPrimary label="Clear Selection" />
@@ -254,7 +256,7 @@ const TransactionList = ({
                     },
                     {
                       backgroundColor:
-                        appSettings.theme.style.colors.background,
+                        globalTheme.colors.background,
                     },
                   ]}
                 >
@@ -271,7 +273,7 @@ const TransactionList = ({
                   {/* // TAG : Sum Amount */}
                   <View
                     style={{
-                      backgroundColor: appSettings.theme.style.colors.secondary,
+                      backgroundColor: globalTheme.colors.secondary,
                       padding: 8,
                       borderRadius: 8,
                     }}
@@ -333,7 +335,7 @@ const TransactionList = ({
                     iconLeftColor={utils.FindById.findCategoryColorById({
                       id: item.details.category_id,
                       categories: categories,
-                      defaultColor: appSettings.theme.style.colors.foreground,
+                      defaultColor: globalTheme.colors.foreground,
                     })}
                     logbookCurrency={selectedLogbook.logbook_currency}
                     secondaryCurrency={
@@ -364,7 +366,7 @@ const TransactionList = ({
           <Entypo
             name="documents"
             size={48}
-            color={appSettings.theme.style.colors.secondary}
+            color={globalTheme.colors.secondary}
             style={{ padding: 16 }}
           />
           <TextSecondary label="No Transactions" />

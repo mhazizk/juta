@@ -1,18 +1,16 @@
 import { ScrollView, View } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 import TermsOfService from "../components/TermsOfService";
 
 const TermsOfServiceScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   return (
     <>
-      <ScrollView
+      <CustomScrollView
         contentContainerStyle={{
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 16,
-          backgroundColor: appSettings.theme.style.colors.background,
+          paddingTop: 16,
         }}
       >
         <View
@@ -31,7 +29,7 @@ const TermsOfServiceScreen = ({ navigation }) => {
           />
           <TermsOfService />
         </View>
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

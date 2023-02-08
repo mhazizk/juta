@@ -1,12 +1,4 @@
-import {
-  Image, StyleSheet, Text,
-  TouchableNativeFeedback, View
-} from "react-native";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import {
-  globalStyles,
-  globalTheme
-} from "../../assets/themes/globalStyles";
+import { StyleSheet, Text, View } from "react-native";
 import { ListItem } from "../../components/List";
 import UserHeaderComponent from "../../components/UserHeader";
 

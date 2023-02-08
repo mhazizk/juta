@@ -112,8 +112,6 @@ const screenList = {
 
   // Setttings Screen
   settingsScreen: "Settings Screen",
-  currencySettingsScreen: "Currency Settings Screen",
-  personalizationSettingsScreen: "Personalization Settings Screen",
   dataSettingsScreen: "Data Settings Screen",
   developerSettingsScreen: "Developer Settings Screen",
   aboutScreen: "About Screen",

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Dimensions, Image, TouchableOpacity, View } from "react-native";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
 import CoinsImg from "../assets/img/coins.png";
@@ -13,8 +16,8 @@ const TotalExpenseWidget = ({
   cardHeight,
   onPress,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   useEffect(() => {
     // refresh
   }, []);
@@ -24,7 +27,7 @@ const TotalExpenseWidget = ({
       <TouchableOpacity
         onPress={() => onPress()}
         style={{
-          shadowColor: appSettings.theme.style.colors.foreground,
+          shadowColor: globalTheme.colors.foreground,
           shadowOffset: {
             width: 0,
             height: 2,
@@ -38,7 +41,7 @@ const TotalExpenseWidget = ({
         <View
           style={{
             backgroundColor:
-              // appSettings.theme.style.colors.secondary,
+              // globalTheme.colors.secondary,
               "#FFE088",
             padding: 16,
             borderRadius: 16,
@@ -64,7 +67,7 @@ const TotalExpenseWidget = ({
                 <TextPrimary
                   style={{
                     zIndex: 1,
-                    color: appSettings.theme.style.colors.black,
+                    color: globalTheme.colors.black,
                     textAlign: "center",
                     textAlignVertical: "center",
                   }}
@@ -112,14 +115,14 @@ const TotalExpenseWidget = ({
                     label={appSettings.logbookSettings.defaultCurrency.symbol}
                     style={{
                       paddingRight: 4,
-                      color: appSettings.theme.style.colors.black,
+                      color: globalTheme.colors.black,
                     }}
                   />
                   <TextPrimary
                     style={{
                       fontSize: 32,
                       fontWeight: "bold",
-                      color: appSettings.theme.style.colors.black,
+                      color: globalTheme.colors.black,
                     }}
                     label={utils.GetFormattedNumber({
                       value: activeBudget.spent,
@@ -131,7 +134,7 @@ const TotalExpenseWidget = ({
                 <TextPrimary
                   style={{
                     zIndex: 1,
-                    color: appSettings.theme.style.colors.black,
+                    color: globalTheme.colors.black,
                   }}
                   label="Total Expense this week"
                 />
@@ -159,20 +162,20 @@ const TotalExpenseWidget = ({
                   symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                   rangeDay={graph?.rangeDay}
                   //  Graph Style
-                  successColor={appSettings.theme.style.colors.success}
+                  successColor={globalTheme.colors.success}
                   primaryColor={utils.HexToRgb({
-                    hex: appSettings.theme.style.colors.white,
+                    hex: globalTheme.colors.white,
                     opacity: 0.1,
                   })}
-                  overBudgetBarColor={appSettings.theme.style.colors.danger}
-                  warnBudgetBarColor={appSettings.theme.style.colors.warn}
+                  overBudgetBarColor={globalTheme.colors.danger}
+                  warnBudgetBarColor={globalTheme.colors.warn}
                   shadowBarColor={utils.HexToRgb({
-                    hex: appSettings.theme.style.colors.success,
+                    hex: globalTheme.colors.success,
                     opacity: 0,
                   })}
                   width={Dimensions.get("window").width - 32}
                   height={cardHeight - 32}
-                  textColor={appSettings.theme.style.text.textSecondary.color}
+                  textColor={globalTheme.text.textSecondary.color}
                   barRadius={8}
                   barWidth={
                     graph?.rangeDay === 7 ? 28 : graph?.rangeDay === 30 ? 8 : 16

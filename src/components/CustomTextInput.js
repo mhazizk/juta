@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { TextInput, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { TextPrimary } from "./Text";
 
 const CustomTextInput = ({
@@ -18,6 +21,7 @@ const CustomTextInput = ({
   returnKeyType,
 }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const rightButton = () => {
@@ -30,7 +34,7 @@ const CustomTextInput = ({
             }}
             name="eye"
             size={20}
-            color={appSettings.theme.style.colors.foreground}
+            color={globalTheme.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
         );
@@ -42,7 +46,7 @@ const CustomTextInput = ({
             }}
             name="eye-off"
             size={20}
-            color={appSettings.theme.style.colors.foreground}
+            color={globalTheme.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
         );
@@ -55,7 +59,7 @@ const CustomTextInput = ({
             }}
             name="close-circle"
             size={20}
-            color={appSettings.theme.style.colors.foreground}
+            color={globalTheme.colors.foreground}
             style={{ paddingHorizontal: 16 }}
           />
         );
@@ -88,7 +92,7 @@ const CustomTextInput = ({
       <IonIcons
         name={iconName}
         size={20}
-        color={appSettings.theme.style.colors.primary}
+        color={globalTheme.colors.primary}
         style={{ paddingHorizontal: 16 }}
       />
     );
@@ -104,12 +108,12 @@ const CustomTextInput = ({
             width: "100%",
             overflow: "hidden",
             flexDirection: "row",
-            borderColor: appSettings.theme.style.colors.primary,
+            borderColor: globalTheme.colors.primary,
             justifyContent: "space-between",
             borderRadius: 16,
             borderWidth: 1,
-            backgroundColor: appSettings.theme.style.colors.background,
-            margin: 8,
+            backgroundColor: globalTheme.colors.background,
+            marginVertical: 8,
           }}
         >
           {leftIcon(inputType)}
@@ -119,11 +123,9 @@ const CustomTextInput = ({
             keyboardType={inputType === "password" ? "default" : "default"}
             returnKeyType={returnKeyType || "default"}
             placeholder={placeholder || "Type something here ..."}
-            placeholderTextColor={
-              appSettings.theme.style.text.textSecondary.color
-            }
+            placeholderTextColor={globalTheme.text.textSecondary.color}
             style={{
-              ...appSettings.theme.style.text.textPrimary,
+              ...globalTheme.text.textPrimary,
               flex: 1,
               paddingLeft: 0,
               height: 48,
@@ -141,7 +143,7 @@ const CustomTextInput = ({
           <TextPrimary
             label={title}
             style={{
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
               paddingHorizontal: 8,
               position: "absolute",
               top: 0,

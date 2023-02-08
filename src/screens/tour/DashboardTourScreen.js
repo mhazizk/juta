@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Dimensions, View } from "react-native";
 import { Circle, Defs, Mask, Rect, Svg } from "react-native-svg";
-import { useGlobalAppSettings } from "../../reducers/GlobalContext";
+import { useGlobalAppSettings, useGlobalTheme } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 const DashboardTourScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const [dashboardComponentToShow, setDashboardComponentToShow] = useState([
     "expense",
     "my budget",
@@ -20,7 +21,7 @@ const DashboardTourScreen = ({ navigation }) => {
           // zIndex: 1,
           height: "100%",
           backgroundColor: utils.HexToRgb({
-            hex: appSettings.theme.style.colors.background,
+            hex: globalTheme.colors.background,
             opacity: 0.5,
           }),
         }}

@@ -13,11 +13,13 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
 const AnalyticsScreen = () => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -175,7 +177,7 @@ const AnalyticsScreen = () => {
         <View
           style={{
             // paddingHorizontal: 16,
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             height: "100%",
           }}
         >
@@ -183,7 +185,7 @@ const AnalyticsScreen = () => {
             <View
               style={{
                 height: 345,
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -245,18 +247,18 @@ const AnalyticsScreen = () => {
                     symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                     rangeDay={graph?.rangeDay}
                     //  Graph Style
-                    successColor={appSettings.theme.style.colors.success}
-                    primaryColor={appSettings.theme.style.colors.foreground}
-                    overBudgetBarColor={appSettings.theme.style.colors.danger}
-                    warnBudgetBarColor={appSettings.theme.style.colors.warn}
+                    successColor={globalTheme.colors.success}
+                    primaryColor={globalTheme.colors.foreground}
+                    overBudgetBarColor={globalTheme.colors.danger}
+                    warnBudgetBarColor={globalTheme.colors.warn}
                     shadowBarColor={utils.HexToRgb({
-                      hex: appSettings.theme.style.colors.secondary,
+                      hex: globalTheme.colors.secondary,
                       opacity: 0.5,
                     })}
                     width={Dimensions.get("window").width}
                     height={220}
                     showAxisLabels
-                    textColor={appSettings.theme.style.text.textSecondary.color}
+                    textColor={globalTheme.text.textSecondary.color}
                     barRadius={8}
                     barWidth={
                       graph?.rangeDay === 7
@@ -328,7 +330,7 @@ const AnalyticsScreen = () => {
                     style={{
                       height: 345,
                       backgroundColor:
-                        appSettings.theme.style.colors.background,
+                        globalTheme.colors.background,
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -350,7 +352,7 @@ const AnalyticsScreen = () => {
                     })}
                     iconLeftColor={
                       item?.category.icon.color === "default"
-                        ? appSettings.theme.style.colors.primary
+                        ? globalTheme.colors.primary
                         : item?.category.icon.color
                     }
                     iconLeftName={item?.category.icon.name}
@@ -374,7 +376,7 @@ const AnalyticsScreen = () => {
             >
               <IonIcons
                 name="analytics"
-                color={appSettings.theme.style.colors.secondary}
+                color={globalTheme.colors.secondary}
                 size={48}
                 style={{
                   paddingBottom: 16,
@@ -401,7 +403,7 @@ const AnalyticsScreen = () => {
         <View
           style={{
             height: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             alignItems: "center",
             justifyContent: "center",
           }}

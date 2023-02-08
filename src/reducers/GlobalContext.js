@@ -7,12 +7,14 @@ import globalFeatureWishlistReducer from "./globalFeatureWishlistReducer";
 import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
 import globalSortedTransactionsReducer from "./globalSortedTransactionsReducer";
+import globalThemeReducer from "./globalThemeReducer";
 import globalUserAccountReducer from "./globalUserAccountReducer";
 import initialAppSettings from "./initial-state/initialAppSettings";
 import initialBadgeCounter from "./initial-state/initialBadgeCounter";
 import initialBudgets from "./initial-state/initialBudgets";
 import initialCategories from "./initial-state/initialCategories";
 import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
+import initialGlobalTheme from "./initial-state/initialGlobalTheme";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
 import initialSortedTransactions from "./initial-state/initialSortedTransactions";
@@ -30,6 +32,7 @@ const globalCategoriesContext = createContext();
 const globalBadgeCounterContext = createContext();
 const globalGroupsContext = createContext();
 const globalRepeatedTransactionsContext = createContext();
+const globalThemeContext = createContext();
 const globalFeatureWishlistContext = createContext();
 
 // TAG : useContext //
@@ -55,6 +58,10 @@ export const useGlobalBudgets = () => {
 
 export const useGlobalAppSettings = () => {
   return useContext(globalSettingsContext);
+};
+
+export const useGlobalTheme = () => {
+  return useContext(globalThemeContext);
 };
 
 export const useGlobalUserAccount = () => {
@@ -91,6 +98,10 @@ export const GlobalStateProvider = ({ children }) => {
     globalAppSettingsReducer,
     initialAppSettings
   );
+  const [globalTheme, dispatchGlobalTheme] = useReducer(
+    globalThemeReducer,
+    initialGlobalTheme
+  );
   const [sortedTransactions, dispatchSortedTransactions] = useReducer(
     globalSortedTransactionsReducer,
     initialSortedTransactions
@@ -125,7 +136,6 @@ export const GlobalStateProvider = ({ children }) => {
   );
 
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
-  const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
 
   return (
     <>
@@ -135,65 +145,72 @@ export const GlobalStateProvider = ({ children }) => {
           dispatchAppSettings: dispatchAppSettings,
         }}
       >
-        <globalUserAccountContext.Provider
+        <globalThemeContext.Provider
           value={{
-            userAccount: userAccount,
-            dispatchUserAccount: dispatchUserAccount,
+            globalTheme,
+            dispatchGlobalTheme,
           }}
         >
-          <globalLogbooksContext.Provider
+          <globalUserAccountContext.Provider
             value={{
-              logbooks: logbooks,
-              dispatchLogbooks: dispatchLogbooks,
+              userAccount: userAccount,
+              dispatchUserAccount: dispatchUserAccount,
             }}
           >
-            <globalCategoriesContext.Provider
+            <globalLogbooksContext.Provider
               value={{
-                categories: categories,
-                dispatchCategories: dispatchCategories,
+                logbooks: logbooks,
+                dispatchLogbooks: dispatchLogbooks,
               }}
             >
-              <globalSortedTransactionsContext.Provider
+              <globalCategoriesContext.Provider
                 value={{
-                  sortedTransactions: sortedTransactions,
-                  dispatchSortedTransactions: dispatchSortedTransactions,
+                  categories: categories,
+                  dispatchCategories: dispatchCategories,
                 }}
               >
-                <globalBudgetsContext.Provider
+                <globalSortedTransactionsContext.Provider
                   value={{
-                    budgets: budgets,
-                    dispatchBudgets: dispatchBudgets,
+                    sortedTransactions: sortedTransactions,
+                    dispatchSortedTransactions: dispatchSortedTransactions,
                   }}
                 >
-                  <globalBadgeCounterContext.Provider
+                  <globalBudgetsContext.Provider
                     value={{
-                      badgeCounter: badgeCounter,
-                      dispatchBadgeCounter: dispatchBadgeCounter,
+                      budgets: budgets,
+                      dispatchBudgets: dispatchBudgets,
                     }}
                   >
-                    <globalRepeatedTransactionsContext.Provider
+                    <globalBadgeCounterContext.Provider
                       value={{
-                        repeatedTransactions: repeatedTransactions,
-                        dispatchRepeatedTransactions:
-                          dispatchRepeatedTransactions,
+                        badgeCounter: badgeCounter,
+                        dispatchBadgeCounter: dispatchBadgeCounter,
                       }}
                     >
-                      <globalFeatureWishlistContext.Provider
+                      <globalRepeatedTransactionsContext.Provider
                         value={{
-                          globalFeatureWishlist: globalFeatureWishlist,
-                          dispatchGlobalFeatureWishlist:
-                            dispatchGlobalFeatureWishlist,
+                          repeatedTransactions: repeatedTransactions,
+                          dispatchRepeatedTransactions:
+                            dispatchRepeatedTransactions,
                         }}
                       >
-                        {children}
-                      </globalFeatureWishlistContext.Provider>
-                    </globalRepeatedTransactionsContext.Provider>
-                  </globalBadgeCounterContext.Provider>
-                </globalBudgetsContext.Provider>
-              </globalSortedTransactionsContext.Provider>
-            </globalCategoriesContext.Provider>
-          </globalLogbooksContext.Provider>
-        </globalUserAccountContext.Provider>
+                        <globalFeatureWishlistContext.Provider
+                          value={{
+                            globalFeatureWishlist: globalFeatureWishlist,
+                            dispatchGlobalFeatureWishlist:
+                              dispatchGlobalFeatureWishlist,
+                          }}
+                        >
+                          {children}
+                        </globalFeatureWishlistContext.Provider>
+                      </globalRepeatedTransactionsContext.Provider>
+                    </globalBadgeCounterContext.Provider>
+                  </globalBudgetsContext.Provider>
+                </globalSortedTransactionsContext.Provider>
+              </globalCategoriesContext.Provider>
+            </globalLogbooksContext.Provider>
+          </globalUserAccountContext.Provider>
+        </globalThemeContext.Provider>
       </globalSettingsContext.Provider>
     </>
   );

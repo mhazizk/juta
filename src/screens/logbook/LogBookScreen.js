@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Loading from "../../components/Loading";
-import { TextButtonPrimary, TextSecondary } from "../../components/Text";
+import {
+  TextButtonPrimary,
+  TextPrimary,
+  TextSecondary,
+} from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -12,6 +16,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -19,8 +24,8 @@ import TransactionList from "../../features/transactions/components/TransactionL
 const { width, height } = Dimensions.get("screen");
 
 const LogbookScreen = ({ route, navigation }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -117,8 +122,7 @@ const LogbookScreen = ({ route, navigation }) => {
             setSelectedLogbooks(sortedTransactions.logbookToOpen);
             break;
 
-          default:
-            setSelectedLogbooks({
+            defaultOption: setSelectedLogbooks({
               name: logbooks.logbooks[0].logbook_name,
               logbook_id: logbooks.logbooks[0].logbook_id,
               logbook_currency: logbooks.logbooks[0].logbook_currency,
@@ -188,7 +192,7 @@ const LogbookScreen = ({ route, navigation }) => {
         <View
           style={{
             height: "100%",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
           }}
         >
           {/* Header */}
@@ -197,7 +201,7 @@ const LogbookScreen = ({ route, navigation }) => {
             <View
               style={[
                 {
-                  backgroundColor: appSettings.theme.style.colors.header,
+                  backgroundColor: globalTheme.colors.header,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -226,7 +230,7 @@ const LogbookScreen = ({ route, navigation }) => {
                     selected: (item) => {
                       setTargetLogbook(item);
                     },
-                    default: { name: selectedLogbook?.name },
+                    defaultOption: { name: selectedLogbook?.name },
                   })
                 }
               >
@@ -241,8 +245,7 @@ const LogbookScreen = ({ route, navigation }) => {
                       alignItems: "center",
                     },
                     {
-                      backgroundColor:
-                        appSettings.theme.style.colors.foreground,
+                      backgroundColor: globalTheme.colors.foreground,
                     },
                   ]}
                 >
@@ -257,7 +260,7 @@ const LogbookScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="chevron-down"
                     size={18}
-                    color={appSettings.theme.style.colors.background}
+                    color={globalTheme.colors.background}
                     style={{ flexShrink: 0, paddingHorizontal: 16 }}
                   />
                 </View>
@@ -265,8 +268,11 @@ const LogbookScreen = ({ route, navigation }) => {
 
               {/* Number of Transactions */}
               <View style={{ flex: 1, alignItems: "flex-end" }}>
-                <TextSecondary
+                <TextPrimary
                   label={(countTransactions() || "No") + " Transactions"}
+                  style={{
+                    color: globalTheme.colors.textHeader,
+                  }}
                 />
                 {/* <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary }}>
                                 {!filteredTransactions.length ? 'No' : countTransactions(filteredTransactions)} Transactions
@@ -304,7 +310,7 @@ const LogbookScreen = ({ route, navigation }) => {
       {screenLoading && (
         <View
           style={{
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             height: "100%",
             width: "100%",
             justifyContent: "center",

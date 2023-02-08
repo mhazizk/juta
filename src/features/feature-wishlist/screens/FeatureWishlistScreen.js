@@ -16,6 +16,7 @@ import { TextPrimary, TextSecondary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
   useGlobalFeatureWishlist,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import WishlistItem from "../components/WishlistItem";
@@ -25,6 +26,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 const FeatureWishlistScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   const { globalFeatureWishlist } = useGlobalFeatureWishlist();
   const [publicWishlist, setPublicWishlist] = useState([]);
@@ -118,7 +120,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
           // padding: 16,
         }}
       >
@@ -142,7 +144,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
               paddingBottom: showFeatureWishlist.public ? 8 : 0,
               borderBottomWidth: 2,
               borderBottomColor: showFeatureWishlist.public
-                ? appSettings.theme.style.colors.foreground
+                ? globalTheme.colors.foreground
                 : "transparent",
               alignItems: "center",
               justifyContent: "center",
@@ -176,7 +178,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
               paddingBottom: showFeatureWishlist.private ? 8 : 0,
               borderBottomWidth: 2,
               borderBottomColor: showFeatureWishlist.private
-                ? appSettings.theme.style.colors.foreground
+                ? globalTheme.colors.foreground
                 : "transparent",
               alignItems: "center",
               justifyContent: "center",
@@ -203,9 +205,14 @@ const FeatureWishlistScreen = ({ navigation }) => {
             }
             data={publicWishlist}
             style={{
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
               minHeight: publicWishlist.length > 0 ? "100%" : 0,
               paddingVertical: 16,
+            }}
+            contentContainerStyle={{
+              alignItems: "center",
+              width: "100%",
+              paddingHorizontal: 16,
             }}
             ListFooterComponent={() => (
               <>
@@ -219,7 +226,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
                     <IonIcons
                       name="checkmark-circle-outline"
                       size={20}
-                      color={appSettings.theme.style.colors.foreground}
+                      color={globalTheme.colors.foreground}
                     />
                     <TextPrimary label="That's all for now" />
                   </View>
@@ -311,7 +318,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
             }
             data={privateWishlist}
             style={{
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
               minHeight: privateWishlist.length > 0 ? "100%" : 0,
               paddingVertical: 16,
             }}
@@ -327,7 +334,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
                     {/* <IonIcons
                       name="checkmark-circle-outline"
                       size={20}
-                      color={appSettings.theme.style.colors.foreground}
+                      color={globalTheme.colors.foreground}
                     /> */}
                     {/* <TextPrimary label="That's all for now" /> */}
                   </View>
@@ -443,13 +450,13 @@ const FeatureWishlistScreen = ({ navigation }) => {
               height: "100%",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
             }}
           >
             <IonIcons
               name="document-text-outline"
               size={64}
-              color={appSettings.theme.style.colors.secondary}
+              color={globalTheme.colors.secondary}
             />
             <TextSecondary
               label="No feature wishlist yet"
@@ -465,7 +472,7 @@ const FeatureWishlistScreen = ({ navigation }) => {
             height: "100%",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
           }}
         >
           <Loading />

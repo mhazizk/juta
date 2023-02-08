@@ -1,29 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
+  TextInput, View
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import SearchResultTab from "../../components/SearchResultTab";
 import { TextSecondary } from "../../components/Text";
-import UserHeaderComponent from "../../components/UserHeader";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
 } from "../../reducers/GlobalContext";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 import TransactionsSearchResults from "./TransactionsSearchResults";
 
 const SearchScreen = ({ navigation }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -47,7 +41,7 @@ const SearchScreen = ({ navigation }) => {
     <>
       <View
         style={{
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
           height: "100%",
         }}
       >
@@ -55,7 +49,7 @@ const SearchScreen = ({ navigation }) => {
         <View
           style={{
             display: "flex",
-            backgroundColor: appSettings.theme.style.colors.header,
+            backgroundColor: globalTheme.colors.header,
             alignItems: "center",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -70,17 +64,17 @@ const SearchScreen = ({ navigation }) => {
               alignItems: "center",
               overflow: "hidden",
               flexDirection: "row",
-              borderColor: appSettings.theme.style.colors.primary,
+              borderColor: globalTheme.colors.primary,
               justifyContent: "space-between",
               borderRadius: 16,
               borderWidth: 1,
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
             }}
           >
             <IonIcons
               name="search"
               size={24}
-              color={appSettings.theme.style.colors.primary}
+              color={globalTheme.colors.primary}
               style={{ paddingHorizontal: 16 }}
             />
             <TextInput
@@ -88,10 +82,10 @@ const SearchScreen = ({ navigation }) => {
               returnKeyType="search"
               placeholder="I am looking for ..."
               placeholderTextColor={
-                appSettings.theme.style.text.textSecondary.color
+                globalTheme.text.textSecondary.color
               }
               style={{
-                ...appSettings.theme.style.text.textPrimary,
+                ...globalTheme.text.textPrimary,
                 flex: 1,
                 paddingLeft: 0,
                 height: 48,
@@ -107,7 +101,7 @@ const SearchScreen = ({ navigation }) => {
                 }}
                 name="close-circle"
                 size={24}
-                color={appSettings.theme.style.colors.foreground}
+                color={globalTheme.colors.foreground}
                 style={{ paddingHorizontal: 16 }}
               />
             )}
@@ -120,7 +114,7 @@ const SearchScreen = ({ navigation }) => {
           {/* <TouchableOpacity
                     onPress={() => { alert(`Feature on progress ...\n${searchQuery?.searchText}`) }}>
                     <View style={{ flex: 1, display: 'flex', height: 36, width: 36, alignItems: 'center', justifyContent: 'center' }}>
-                        <IonIcons name='search-outline' size={24} color={appSettings.theme.style.colors.foreground} />
+                        <IonIcons name='search-outline' size={24} color={globalTheme.colors.foreground} />
                     </View>
                 </TouchableOpacity> */}
         </View>
@@ -143,12 +137,7 @@ const SearchScreen = ({ navigation }) => {
         {/* {console.log(searchQuery)} */}
 
         {!searchQuery && (
-          <ScrollView
-            contentContainerStyle={{
-              backgroundColor: appSettings.theme.style.colors.background,
-              height: "100%",
-            }}
-          >
+          <CustomScrollView>
             <View
               style={{
                 height: "100%",
@@ -159,12 +148,12 @@ const SearchScreen = ({ navigation }) => {
               <IonIcons
                 name="search"
                 size={48}
-                color={appSettings.theme.style.colors.secondary}
+                color={globalTheme.colors.secondary}
                 style={{ padding: 16 }}
               />
               <TextSecondary label="Looking for something ?" />
             </View>
-          </ScrollView>
+          </CustomScrollView>
         )}
       </View>
     </>

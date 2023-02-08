@@ -10,34 +10,32 @@ import UserHeaderComponent from "../../../components/UserHeader";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
-  useGlobalBudgets, useGlobalLogbooks,
+  useGlobalBudgets,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalUserAccount
+  useGlobalTheme,
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 import SubscriptionStatus from "../components/SubscriptionStatus";
 
 const MySubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const {globalTheme} = useGlobalTheme()
   const { logbooks } = useGlobalLogbooks();
   const { budgets } = useGlobalBudgets();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {}, [userAccount]);
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {userAccount && !isLoading && (
           <>
             <UserHeaderComponent />
@@ -62,9 +60,7 @@ const MySubscriptionScreen = ({ item, navigation }) => {
                 iconLeftName="pricetag"
                 iconRightName="chevron-forward"
                 iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.paywallScreen)
-                }
+                onPress={() => navigation.navigate(screenList.paywallScreen)}
               />
             </ListSection>
           </>
@@ -76,7 +72,7 @@ const MySubscriptionScreen = ({ item, navigation }) => {
                 flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: appSettings.theme.style.colors.background,
+                backgroundColor: globalTheme.colors.background,
               }}
             >
               <Loading />
@@ -84,7 +80,7 @@ const MySubscriptionScreen = ({ item, navigation }) => {
             </View>
           </>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

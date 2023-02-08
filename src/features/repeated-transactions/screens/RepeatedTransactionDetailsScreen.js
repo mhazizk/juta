@@ -10,14 +10,17 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import RepeatedTransactionHeader from "../components/RepeatedTransactionHeader";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
@@ -57,7 +60,10 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
     <>
       <View
         style={{
-          backgroundColor: appSettings.theme.style.colors.background,
+          alignItems: "center",
+          paddingTop: 16,
+          paddingHorizontal: 16,
+          backgroundColor: globalTheme.colors.background,
         }}
       >
         <RepeatedTransactionHeader
@@ -69,15 +75,11 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
           }}
         />
       </View>
-      <ScrollView
+      <CustomScrollView
         contentContainerStyle={{
-          // width: Dimensions.get("window").width,
-          // width: "100%",
-          height: "100%",
+          // height: "100%",
           flex: !transactionsInRepeat.length ? 1 : 0,
-          // alignItems: "center",
           justifyContent: "flex-start",
-          backgroundColor: appSettings.theme.style.colors.background,
         }}
       >
         {transactionsInRepeat.length > 0 && (
@@ -119,8 +121,7 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
                         iconLeftColor={utils.FindById.findCategoryColorById({
                           id: item.details.category_id,
                           categories: categories.categories,
-                          defaultColor:
-                            appSettings.theme.style.colors.foreground,
+                          defaultColor: globalTheme.colors.foreground,
                         })}
                         logbookCurrency={
                           utils.FindById.findLogbookById({
@@ -168,12 +169,12 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
               flex: 1,
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: appSettings.theme.style.colors.background,
+              backgroundColor: globalTheme.colors.background,
             }}
           >
             <IonIcons
               name="repeat"
-              color={appSettings.theme.style.colors.secondary}
+              color={globalTheme.colors.secondary}
               size={36}
               style={{
                 // transform: [{ scaleX: -1 }],
@@ -192,7 +193,7 @@ const RepeatedTransactionsDetailsScreen = ({ route, navigation }) => {
             />
           </View>
         )}
-      </ScrollView>
+      </CustomScrollView>
     </>
   );
 };

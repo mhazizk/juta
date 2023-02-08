@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { globalStyles } from "../../assets/themes/globalStyles";
 import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import APP_SETTINGS from "../../config/appSettings";
@@ -10,6 +9,7 @@ import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import uuid from "react-native-uuid";
@@ -21,15 +21,14 @@ import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
 
-  const styleSelection =
-    APP_SETTINGS.THEME.USER == "light" ? globalStyles : globalStyles.darkTheme;
 
   useEffect(() => {
     // refresh
@@ -53,7 +52,7 @@ const ActionScreen = ({ route, navigation }) => {
       {/* // TAG : Content card */}
       <View
         style={{
-          backgroundColor: appSettings.theme.style.colors.background,
+          backgroundColor: globalTheme.colors.background,
           display: "flex",
           justifyContent: "flex-start",
           alignItems: "center",
@@ -99,7 +98,7 @@ const ActionScreen = ({ route, navigation }) => {
                   flexDirection: "column",
                   padding: 16,
                   margin: 0,
-                  // backgroundColor: appSettings.theme.style.colors.primary,
+                  // backgroundColor: globalTheme.colors.primary,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -108,7 +107,7 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="pencil"
                     size={48}
-                    color={appSettings.theme.style.colors.primary}
+                    color={globalTheme.colors.primary}
                   />
                 </View>
                 <TextPrimary label="Transaction" />
@@ -214,7 +213,7 @@ const ActionScreen = ({ route, navigation }) => {
                   flexDirection: "column",
                   padding: 16,
                   margin: 0,
-                  // backgroundColor: appSettings.theme.style.colors.primary,
+                  // backgroundColor: globalTheme.colors.primary,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -223,7 +222,7 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="book"
                     size={48}
-                    color={appSettings.theme.style.colors.primary}
+                    color={globalTheme.colors.primary}
                   />
                 </View>
                 <TextPrimary label="LogBook" />

@@ -1,27 +1,23 @@
-import { colorOfTheYear2022 } from "../assets/themes/colorOfTheYear2022";
-import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023";
-import { darkTheme } from "../assets/themes/darkTheme";
-import { lightTheme } from "../assets/themes/lightTheme";
 
 const APP_SETTINGS = {
-  THEME: {
-    DEFAULT: { name: "Light Theme", id: "light", style: lightTheme },
-    USER: { name: "Light Theme", id: "light", style: lightTheme },
-    OPTIONS: [
-      { name: "Light Theme", id: "light", style: lightTheme },
-      { name: "Dark Theme", id: "dark", style: darkTheme },
-      {
-        name: "Color of The Year 2023",
-        id: "colorOfTheYear2023",
-        style: colorOfTheYear2023,
-      },
-      {
-        name: "Color of The Year 2022",
-        id: "colorOfTheYear2022",
-        style: colorOfTheYear2022,
-      },
-    ],
-  },
+  // THEME: {
+  //   DEFAULT: { name: "Light Theme", id: "light", style: lightMonoTheme },
+  //   USER: { name: "Light Theme", id: "light", style: lightMonoTheme },
+  //   OPTIONS: [
+  //     { name: "Light Theme", id: "light", style: lightMonoTheme },
+  //     { name: "Dark Theme", id: "dark", style: darkMonoTheme },
+  //     {
+  //       name: "Color of The Year 2023",
+  //       id: "colorOfTheYear2023",
+  //       style: colorOfTheYear2023,
+  //     },
+  //     {
+  //       name: "Color of The Year 2022",
+  //       id: "colorOfTheYear2022",
+  //       style: darkColorTheme,
+  //     },
+  //   ],
+  // },
   FONT_SIZE: {
     DEFAULT: "medium",
     USER: "medium",

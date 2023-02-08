@@ -9,6 +9,7 @@ import {
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import ListSection from "../../components/List/ListSection";
+import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const MyLogbooksScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -49,10 +50,9 @@ const MyLogbooksScreen = ({ navigation }) => {
   return (
     <>
       {loadedLogbooks && (
-        <ScrollView
+        <CustomScrollView
           contentContainerStyle={{
-            backgroundColor: appSettings.theme.style.colors.background,
-            minHeight: "100%",
+            justifyContent: "flex-start",
           }}
         >
           <ListSection marginTop={16}>
@@ -79,7 +79,7 @@ const MyLogbooksScreen = ({ navigation }) => {
               );
             })}
           </ListSection>
-        </ScrollView>
+        </CustomScrollView>
       )}
     </>
   );

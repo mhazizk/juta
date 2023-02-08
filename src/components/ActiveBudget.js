@@ -2,7 +2,10 @@ import { Dimensions, TouchableOpacity, View } from "react-native";
 import TextTicker from "react-native-text-ticker";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../reducers/GlobalContext";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
 import { TextButtonPrimary, TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
@@ -25,8 +28,8 @@ export const ActiveBudget = ({
   startDate,
   transactionList,
 }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const screenWidth = Dimensions.get("window").width;
   const spentWidth = `${(spent / limit) * 100}%`;
 
@@ -36,7 +39,7 @@ export const ActiveBudget = ({
         {/* Card Container */}
         <View
           style={{
-            backgroundColor: appSettings.theme.style.colors.background,
+            backgroundColor: globalTheme.colors.background,
             padding: 16,
             borderRadius: 16,
             // minHeight: 300,
@@ -47,7 +50,7 @@ export const ActiveBudget = ({
               <FontAwesome5Icon
                 name={iconLeftName}
                 color={
-                  iconLeftColor || appSettings.theme.style.colors.background
+                  iconLeftColor || globalTheme.colors.background
                 }
                 size={54}
                 style={{
@@ -69,7 +72,7 @@ export const ActiveBudget = ({
               <FontAwesome5Icon
                 name={iconLeftName}
                 color={
-                  iconLeftColor || appSettings.theme.style.colors.foreground
+                  iconLeftColor || globalTheme.colors.foreground
                 }
                 size={20}
                 style={{
@@ -93,7 +96,7 @@ export const ActiveBudget = ({
                   <IonIcons
                     name="repeat"
                     size={20}
-                    color={appSettings.theme.style.colors.foreground}
+                    color={globalTheme.colors.foreground}
                   />
                 )}
               </View>
@@ -113,7 +116,7 @@ export const ActiveBudget = ({
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: appSettings.theme.style.colors.secondary,
+                  backgroundColor: globalTheme.colors.secondary,
                   borderRadius: 16,
                   paddingVertical: 8,
                   paddingHorizontal: 16,
@@ -129,12 +132,12 @@ export const ActiveBudget = ({
                   size={20}
                   style={{
                     paddingHorizontal: 8,
-                    color: appSettings.theme.style.colors.foreground,
+                    color: globalTheme.colors.foreground,
                   }}
                 />
                 {/* <View
                   style={{
-                    backgroundColor: appSettings.theme.style.colors.secondary,
+                    backgroundColor: globalTheme.colors.secondary,
                     borderRadius: 16,
                     paddingVertical: 8,
                     paddingHorizontal: 16,
@@ -182,7 +185,7 @@ export const ActiveBudget = ({
                     width: 16,
                     borderRadius: 50,
                     backgroundColor: utils.HexToRgb({
-                      hex: appSettings.theme.style.colors.foreground,
+                      hex: globalTheme.colors.foreground,
                     }),
                   }}
                 />
@@ -197,7 +200,7 @@ export const ActiveBudget = ({
                   />
                   <TextTicker
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       fontSize: 16,
                     }}
                     duration={3000}
@@ -209,7 +212,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: limit,
-                        currency: appSettings.logbookSettings.defaultCurrency.name,
+                        currency:
+                          appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -236,10 +240,10 @@ export const ActiveBudget = ({
                     backgroundColor: utils.HexToRgb({
                       hex:
                         spent / limit >= 1
-                          ? appSettings.theme.style.colors.danger
+                          ? globalTheme.colors.danger
                           : spent / limit >= 0.8
-                          ? appSettings.theme.style.colors.warn
-                          : appSettings.theme.style.colors.success,
+                          ? globalTheme.colors.warn
+                          : globalTheme.colors.success,
                     }),
                   }}
                 />
@@ -254,7 +258,7 @@ export const ActiveBudget = ({
                   />
                   <TextTicker
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       fontSize: 16,
                     }}
                     duration={3000}
@@ -266,7 +270,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: spent,
-                        currency: appSettings.logbookSettings.defaultCurrency.name,
+                        currency:
+                          appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -293,10 +298,10 @@ export const ActiveBudget = ({
                       opacity: 0.4,
                       hex:
                         spent / limit >= 1
-                          ? appSettings.theme.style.colors.danger
+                          ? globalTheme.colors.danger
                           : spent / limit >= 0.8
-                          ? appSettings.theme.style.colors.warn
-                          : appSettings.theme.style.colors.success,
+                          ? globalTheme.colors.warn
+                          : globalTheme.colors.success,
                     }),
                   }}
                 />
@@ -311,7 +316,7 @@ export const ActiveBudget = ({
                   />
                   <TextTicker
                     style={{
-                      ...appSettings.theme.style.text.textPrimary,
+                      ...globalTheme.text.textPrimary,
                       fontSize: 16,
                     }}
                     duration={3000}
@@ -323,7 +328,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.GetFormattedNumber({
                         value: limit - spent,
-                        currency: appSettings.logbookSettings.defaultCurrency.name,
+                        currency:
+                          appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -338,7 +344,7 @@ export const ActiveBudget = ({
                 style={{
                   borderRadius: 16,
                   padding: 16,
-                  backgroundColor: appSettings.theme.style.colors.danger,
+                  backgroundColor: globalTheme.colors.danger,
                   flexDirection: "row",
                   alignItems: "center",
                 }}
@@ -347,7 +353,7 @@ export const ActiveBudget = ({
                   name="warning"
                   size={32}
                   color={
-                    appSettings.theme.style.button.buttonPrimary.textStyle.color
+                    globalTheme.button.buttonPrimary.textStyle.color
                   }
                   style={{ paddingRight: 16 }}
                 />
@@ -366,7 +372,7 @@ export const ActiveBudget = ({
                 style={{
                   borderRadius: 16,
                   padding: 16,
-                  backgroundColor: appSettings.theme.style.colors.warn,
+                  backgroundColor: globalTheme.colors.warn,
                   flexDirection: "row",
                   alignItems: "center",
                 }}
@@ -375,7 +381,7 @@ export const ActiveBudget = ({
                   name="warning"
                   size={32}
                   color={
-                    appSettings.theme.style.button.buttonPrimary.textStyle.color
+                    globalTheme.button.buttonPrimary.textStyle.color
                   }
                   style={{ paddingRight: 16 }}
                 />
@@ -394,7 +400,8 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency: appSettings.logbookSettings.defaultCurrency.name,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
@@ -409,7 +416,7 @@ export const ActiveBudget = ({
                   borderRadius: 16,
                   padding: 16,
                   marginVertical: 8,
-                  backgroundColor: appSettings.theme.style.colors.success,
+                  backgroundColor: globalTheme.colors.success,
                   flexDirection: "row",
                   alignItems: "center",
                 }}
@@ -418,7 +425,7 @@ export const ActiveBudget = ({
                   name="checkmark-circle-outline"
                   size={32}
                   color={
-                    appSettings.theme.style.button.buttonPrimary.textStyle.color
+                    globalTheme.button.buttonPrimary.textStyle.color
                   }
                   style={{ paddingRight: 16 }}
                 />
@@ -437,7 +444,8 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency: appSettings.logbookSettings.defaultCurrency.name,
+                      currency:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />

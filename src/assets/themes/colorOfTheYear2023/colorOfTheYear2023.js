@@ -1,3 +1,4 @@
+import icon from "./colorOfTheYear2023.png";
 const palette = {
   white: {
     600: "#F5F5F5",
@@ -23,18 +24,24 @@ const palette = {
 };
 
 export const colorOfTheYear2023 = {
+  identifier: {
+    id: "colorOfTheYear2023",
+    name: "Color of the Year 2023",
+    icon,
+  },
   colors: {
     background: palette.white[600],
     foreground: palette.black[600],
     primary: palette.primary,
     secondary: palette.white[400],
     header: palette.primary,
-    cardBackground: '#eabdc8',
+    cardBackground: "#eabdc8",
     textHeader: palette.white[600],
+    incomeAmount: "#008888",
+    incomeSymbol: "#00B19B",
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
-    failure: palette.red,
   },
   text: {
     textPrimary: {
@@ -61,16 +68,12 @@ export const colorOfTheYear2023 = {
       fontSize: 16,
       color: palette.red,
     },
-    textFailure: {
-      fontSize: 16,
-      color: palette.red,
-    },
   },
   button: {
     buttonPrimary: {
       buttonStyle: {
         backgroundColor: palette.black[600],
-        borderRadius: 8,
+        borderRadius: 16,
       },
       textStyle: {
         color: palette.white[600],
@@ -81,7 +84,7 @@ export const colorOfTheYear2023 = {
       buttonStyle: {
         backgroundColor: "transparent",
         borderColor: palette.black[600],
-        borderRadius: 8,
+        borderRadius: 16,
         borderWidth: 1,
       },
       textStyle: {
@@ -90,26 +93,46 @@ export const colorOfTheYear2023 = {
       },
     },
     buttonDisabled: {
-      backgroundColor: palette.white[200],
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.white[200],
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
     buttonSuccess: {
-      backgroundColor: palette.green,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.green,
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
     buttonWarn: {
-      backgroundColor: palette.orange,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: palette.orange,
+        borderRadius: 16,
+      },
+      textStyle: {
+        color: palette.black[600],
+        fontSize: 16,
+      },
     },
     buttonDanger: {
-      backgroundColor: "transparent",
-      borderColor: palette.red,
-      borderRadius: 8,
-      borderWidth: 1,
-    },
-    buttonFailure: {
-      backgroundColor: palette.red,
-      borderRadius: 8,
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.red,
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[600],
+        fontSize: 16,
+      },
     },
   },
   list: {

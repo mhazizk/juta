@@ -31,14 +31,6 @@ const useFirestoreSubscriptions = ({
   badgeCounter,
   dispatchBadgeCounter,
 }) => {
-  // const userAccountRef = useRef(userAccount);
-  // const appSettingsRef = useRef(appSettings);
-  // const logbooksRef = useRef(logbooks);
-  // const sortedTransactionsRef = useRef(sortedTransactions);
-  // const categoriesRef = useRef(categories);
-  // const budgetsRef = useRef(budgets);
-  // const badgeCounterRef = useRef(badgeCounter);
-
   console.log("useFirestoreSubscriptions");
   // TAG : App Settings Subscription //
   const unsubscribeAppSettings = firestore.getAndListenOneDoc(
@@ -50,7 +42,7 @@ const useFirestoreSubscriptions = ({
         payload: 1,
       });
       dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
         payload: data,
       });
     },
