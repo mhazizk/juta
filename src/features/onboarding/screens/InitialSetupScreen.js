@@ -15,10 +15,10 @@ import {
 
 // Image Import
 import Onboarding from "react-native-onboarding-swiper";
-import doneSetup from "../../../src/assets/img/doneSetup.png";
-import large from "../../../src/assets/img/large.png";
-import medium from "../../../src/assets/img/medium.png";
-import small from "../../../src/assets/img/small.png";
+import doneSetup from "../../../../src/assets/img/doneSetup.png";
+import large from "../../../../src/assets/img/large.png";
+import medium from "../../../../src/assets/img/medium.png";
+import small from "../../../../src/assets/img/small.png";
 import screenList from "../../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import uuid from "react-native-uuid";

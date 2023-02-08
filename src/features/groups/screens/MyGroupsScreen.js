@@ -1,9 +1,7 @@
 import { signOut } from "firebase/auth";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  Alert, View
-} from "react-native";
+import { Alert, View } from "react-native";
 import auth from "../../../api/firebase/auth";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
@@ -18,9 +16,11 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const MyGroupsScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const { globalTheme } = useGlobalAppSettings();
   const { appSettings, dispatchSettings } = useGlobalAppSettings();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
   const { dispatchCategories } = useGlobalCategories();
@@ -42,12 +42,7 @@ const MyGroupsScreen = ({ item, navigation }) => {
 
   return (
     <>
-      <View
-        style={{
-          height: "100%",
-          backgroundColor: appSettings.theme.style.colors.background,
-        }}
-      >
+      <CustomScrollView>
         {userAccount && (
           <>
             <UserHeaderComponent />
@@ -76,7 +71,7 @@ const MyGroupsScreen = ({ item, navigation }) => {
                     title: "Change Display Name",
                     modalType: "textInput",
                     maxLength: 14,
-                    default: userAccount.displayName,
+                    defaultOption: userAccount.displayName,
                     selected: (item) => {
                       dispatchUserAccount({
                         type: REDUCER_ACTIONS.USER_ACCOUNT.DISPLAY_NAME.SET,
@@ -110,7 +105,9 @@ const MyGroupsScreen = ({ item, navigation }) => {
                 pressable
                 leftLabel="Account Type"
                 rightLabel={
-                  userAccount?.subscription?.plan === 'premium' ? "Premium Account" : "Basic Account"
+                  userAccount?.subscription?.plan === "premium"
+                    ? "Premium Account"
+                    : "Basic Account"
                 }
                 iconLeftName="checkmark"
                 iconPack="IonIcons"
@@ -161,7 +158,7 @@ const MyGroupsScreen = ({ item, navigation }) => {
             </ListSection>
           </>
         )}
-      </View>
+      </CustomScrollView>
     </>
   );
 };
