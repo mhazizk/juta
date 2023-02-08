@@ -136,7 +136,6 @@ export const GlobalStateProvider = ({ children }) => {
   );
 
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
-  const [isFirstTime, setIsFirstTime] = useState(true); // Maybe not needed
 
   return (
     <>
