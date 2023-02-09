@@ -29,7 +29,6 @@ const ActionScreen = ({ route, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
 
-
   useEffect(() => {
     // refresh
     // console.log(selected)
@@ -115,7 +114,7 @@ const ActionScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* // TAG : New LogBook */}
+          {/* // TAG : New Logbook */}
           <View
             style={{
               flex: 1,
@@ -147,8 +146,8 @@ const ActionScreen = ({ route, navigation }) => {
                 if (logbookLimit > logbooks.logbooks?.length) {
                   navigation.navigate(screenList.modalScreen, {
                     modalType: "textInput",
-                    title: "Create New Log Book",
-                    placeholder: "Enter new log book name ...",
+                    title: "Create new Logbook",
+                    placeholder: "Enter new logbook name ...",
                     selected: (item) => {
                       const newLogbook = {
                         _timestamps: {
@@ -225,7 +224,7 @@ const ActionScreen = ({ route, navigation }) => {
                     color={globalTheme.colors.primary}
                   />
                 </View>
-                <TextPrimary label="LogBook" />
+                <TextPrimary label="Logbook" />
               </View>
             </TouchableOpacity>
           </View>
