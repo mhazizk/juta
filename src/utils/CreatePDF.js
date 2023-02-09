@@ -85,7 +85,7 @@ const html = ({
         <html>
             <head>
             <meta charset="utf-8">
-            <title>CashLog Account Statement</title>
+            <title>Juta Account Statement</title>
             <style>
             body {
                 font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
@@ -457,7 +457,7 @@ const pdfFooter = `
         padding:16px;
         text-align:center"
         >
-        Copyright Cashlog 2023
+        Copyright Juta 2023
         </div>`;
 
 const createPDF = async ({
