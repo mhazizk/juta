@@ -11,6 +11,7 @@ import {
 import { ListItem, SearchResultListItem, TransactionListItem } from "./List";
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
+import ListSection from "./List/ListSection";
 
 const RecentTransactions = ({
   route,
@@ -27,25 +28,19 @@ const RecentTransactions = ({
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
-
-  const [recentTransactions, setRecentTransactions] = useState({
-    status: "initial",
-    result: [],
-  });
+  const [showList, setShowList] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [recentTransactions, setRecentTransactions] = useState([]);
 
   useEffect(() => {
-    setRecentTransactions({
-      status: "loading",
-      result: [],
-    });
+    setShowList(false);
+    setIsLoading(true);
     getRecentTransactions();
   }, []);
 
   useEffect(() => {
-    setRecentTransactions({
-      status: "loading",
-      result: [],
-    });
+    setShowList(false);
+    setIsLoading(true);
     getRecentTransactions();
   }, [sortedTransactions]);
 
@@ -157,15 +152,13 @@ const RecentTransactions = ({
         : (finalArray = finalArray);
 
       if (finalArray.length) {
-        setRecentTransactions({
-          status: "done",
-          result: finalArray,
-        });
+        setRecentTransactions(finalArray);
+        setIsLoading(false);
+        setShowList(true);
       } else {
-        setRecentTransactions({
-          status: "done",
-          result: [],
-        });
+        setRecentTransactions([]);
+        setIsLoading(false);
+        setShowList(false);
       }
     }
   };
@@ -174,22 +167,27 @@ const RecentTransactions = ({
     <>
       <TextPrimary
         label={title || "Recent Transactions"}
-        style={{ fontSize: 18, fontWeight: "bold", paddingHorizontal: 16 }}
-      />
-      <View
         style={{
-          flex: 0,
-          flexDirection: "column",
-          paddingTop: 8,
+          alignSelf: "flex-start",
+          fontSize: 18,
+          fontWeight: "bold",
         }}
-      >
-        <FlatList
-          data={recentTransactions.result}
-          keyExtractor={(item) => item.transaction.transaction_id}
-          renderItem={({ item }) => (
-            <>
-              {recentTransactions.status === "done" &&
-                recentTransactions.result.length && (
+      />
+      {!showList && (
+        <TextSecondary
+          label={`No ${title || "Recent Transactions"}`}
+          style={{ alignSelf: "flex-start", paddingVertical: 8 }}
+        />
+      )}
+      <ListSection marginTop={8}>
+        {!isLoading && (
+          <FlatList
+            nestedScrollEnabled
+            data={recentTransactions}
+            keyExtractor={(item) => item.transaction.transaction_id}
+            renderItem={({ item }) => (
+              <>
+                {showList && (
                   <SearchResultListItem
                     pressable
                     // transactionType={findCategoryTypeById(
@@ -231,16 +229,11 @@ const RecentTransactions = ({
                     }
                   />
                 )}
-            </>
-          )}
-        />
-        {!recentTransactions.result.length && (
-          <TextSecondary
-            label={`No ${title || "Recent Transactions"}`}
-            style={{ paddingHorizontal: 16 }}
+              </>
+            )}
           />
         )}
-      </View>
+      </ListSection>
     </>
   );
 };
