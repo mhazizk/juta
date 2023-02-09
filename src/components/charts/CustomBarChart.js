@@ -43,12 +43,12 @@ export const CustomBarChart = ({
   const maxAmount = () => {
     const max = (shadowGraph[0].y / 1000).toFixed(0);
     switch (true) {
-      case max < 1:
-        return `${shadowGraph[0].y}`;
-      case 1 <= max < 1000:
-        return `${max} k`;
       case max >= 1000:
         return `${(max / 1000).toFixed(1)} M`;
+      case 1 <= max < 1000:
+        return `${max} K`;
+      case max < 1:
+        return `${shadowGraph[0].y}`;
       default:
         return `${max}`;
     }
@@ -87,9 +87,10 @@ export const CustomBarChart = ({
             padding={{
               top: 0,
               bottom: showAxisLabels ? 36 : 0,
-              left: showAxisLabels ? 46 : 40,
+              left: showAxisLabels ? maxAmount().length * 8 : 40,
               right: showAxisLabels ? 0 : 40,
             }}
+            // 64
             height={height || 200}
             width={width || 200}
             domainPadding={{ x: [maxAmount().length * 8, 30] }}
@@ -97,7 +98,7 @@ export const CustomBarChart = ({
             maxDomain={{ y: shadowGraph[0].y }}
             // animate={{ duration: 1000 }}
           >
-            {/* Shadow Graph */}
+            {/* // TAG : Shadow Graph */}
             {showAxisLabels && (
               <VictoryBar
                 fixLabelOverlap={true}
@@ -116,7 +117,7 @@ export const CustomBarChart = ({
                 data={shadowGraph}
               />
             )}
-            {/* Main Graph */}
+            {/* // TAG : Main Graph */}
             <VictoryBar
               data={mainGraph}
               fixLabelOverlap={true}
@@ -272,7 +273,7 @@ export const CustomBarChart = ({
               }
             />
 
-            {/* Limit Line */}
+            {/* // TAG : Limit Line */}
             {limitLine && showAxisLabels && (
               <VictoryLine
                 // animate={{ duration: 1000 }}
@@ -338,12 +339,12 @@ export const CustomBarChart = ({
                   style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
                 />
 
-                {/* Limit Amount */}
+                {/* // TAG : Limit Amount */}
                 {limitLine && (
                   <VictoryLabel
                     datum={{ x: 0.3, y: limitLine[0].y }}
                     textAnchor="end"
-                    text={`${(limitLine[0].y / 1000).toFixed(0)} k`}
+                    text={`${(limitLine[0].y / 1000).toFixed(0)} K`}
                     // backgroundPadding={{ right: 0 }}
                     style={{
                       fill: primaryColor,
