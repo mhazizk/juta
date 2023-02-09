@@ -4,6 +4,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 // import "intl/locale-data/jsonp/en";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -717,27 +718,52 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }
               iconRightName="add"
               onPress={async () => {
-                // No permissions request is necessary for launching the image library
-                let result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  allowsMultipleSelection: true,
-                  quality: 1,
-                });
-
-                const { canceled, assets } = result;
-                const uri = assets.map((asset) => asset.uri);
-                if (!result.canceled) {
-                  setTransaction({
-                    ...transaction,
-                    details: {
-                      ...transaction.details,
-                      attachment_URL: [
-                        ...transaction.details.attachment_URL,
-                        ...uri,
-                      ],
-                    },
+                if (
+                  getSubscriptionLimit(
+                    userAccount.subscription.plan,
+                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                  )
+                ) {
+                  // No permissions request is necessary for launching the image library
+                  let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    allowsMultipleSelection: true,
+                    quality: 1,
                   });
+
+                  const { canceled, assets } = result;
+                  const uri = assets.map((asset) => asset.uri);
+                  if (!result.canceled) {
+                    setTransaction({
+                      ...transaction,
+                      details: {
+                        ...transaction.details,
+                        attachment_URL: [
+                          ...transaction.details.attachment_URL,
+                          ...uri,
+                        ],
+                      },
+                    });
+                  }
+                } else {
+                  Alert.alert(
+                    "Upgrade to Premium",
+                    "Upgrade to premium to use attachment images",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Upgrade",
+                        onPress: () => {
+                          navigation.navigate(screenList.mySubscriptionScreen);
+                        },
+                      },
+                    ]
+                  );
+                  return;
                 }
               }}
             />
