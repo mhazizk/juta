@@ -14,10 +14,10 @@ const globalThemeReducer = (state, action) => {
         return theme.id === action.payload;
       });
 
-      if (targetThemeId === identifier.id) {
-        return state;
-      } else {
+      if (targetThemeId !== identifier.id) {
         return foundTargetTheme.style;
+      } else {
+        return state;
       }
 
     default:
