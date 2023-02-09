@@ -73,7 +73,7 @@ const UpdatePasswordScreen = ({ route, navigation }) => {
         <View
           style={{
             // paddingHorizontal: 16,
-            paddingVertical: 0,
+            paddingTop: 16,
             width: "100%",
             alignItems: "center",
             justifyContent: "center",
