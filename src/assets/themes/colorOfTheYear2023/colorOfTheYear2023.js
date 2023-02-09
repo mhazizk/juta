@@ -30,6 +30,7 @@ export const colorOfTheYear2023 = {
     icon,
   },
   colors: {
+    cardText: palette.white[600],
     background: palette.white[600],
     foreground: palette.black[600],
     primary: palette.primary,
