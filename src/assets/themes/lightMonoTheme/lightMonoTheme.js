@@ -29,6 +29,8 @@ export const lightMonoTheme = {
     icon,
   },
   colors: {
+    cardBackground: palette.black[600],
+    cardText: palette.white[600],
     background: palette.white[600],
     foreground: palette.black[600],
     primary: palette.black[600],
