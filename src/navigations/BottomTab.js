@@ -1,32 +1,29 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
 // Screens
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import DashboardScreen from "../features/dashboard/screens/DashboardScreen";
+import LogbookScreen from "../features/logbook/screens/LogbookScreen";
 import {
-  useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalUserAccount
 } from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
-import UserScreen from "../screens/user/UserScreen";
-import DashboardScreen from "../screens/dashboard/DashboardScreen";
-import LogbookScreen from "../screens/logbook/LogbookScreen";
 import SearchScreen from "../screens/search/SearchScreen";
+import UserScreen from "../screens/user/UserScreen";
 import screenList from "./ScreenList";
-import { TextPrimary } from "../components/Text";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTab = ({ route, navigation }) => {
   const [activeTab, setActiveTab] = useState();
-  const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   const { badgeCounter } = useGlobalBadgeCounter();
 
@@ -190,7 +187,9 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.tab?.actionTab === 0 ? null : badgeCounter?.tab?.actionTab,
+                badgeCounter?.tab?.actionTab === 0
+                  ? null
+                  : badgeCounter?.tab?.actionTab,
               tabBarItemStyle: {
                 alignSelf: "center",
                 marginBottom: 28,
@@ -220,7 +219,9 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.tab?.searchTab === 0 ? null : badgeCounter?.tab?.searchTab,
+                badgeCounter?.tab?.searchTab === 0
+                  ? null
+                  : badgeCounter?.tab?.searchTab,
             }}
             name={screenList.searchScreen}
             component={SearchScreen}
@@ -238,7 +239,9 @@ const BottomTab = ({ route, navigation }) => {
                 maxWidth: 13,
               },
               tabBarBadge:
-                badgeCounter?.tab?.userTab === 0 ? null : badgeCounter?.tab?.userTab,
+                badgeCounter?.tab?.userTab === 0
+                  ? null
+                  : badgeCounter?.tab?.userTab,
             }}
             name={screenList.userScreen}
             component={UserScreen}
