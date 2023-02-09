@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import { useGlobalTheme } from "../reducers/GlobalContext";
 
 const CustomScrollView = ({
