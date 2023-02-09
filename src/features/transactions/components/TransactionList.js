@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { SectionList, View } from "react-native";
+import { Dimensions, SectionList, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { TransactionListItem } from "../../../components/List";
 import {
@@ -15,6 +15,8 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import * as utils from "../../../utils";
+import ListSection from "../../../components/List/ListSection";
+import TransactionListSection from "../../../components/List/TransactionListSection";
 
 const TransactionList = ({
   selectedLogbook,
@@ -27,7 +29,7 @@ const TransactionList = ({
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const [transactionsDate, setTransactionsDate] = useState(null);
   const [groupSortedTransactions, setGroupSortedTransactions] = useState(null);
   const [mappedTransactions, setMappedTransactions] = useState([]);
@@ -235,8 +237,14 @@ const TransactionList = ({
           initialNumToRender={20}
           maxToRenderPerBatch={20}
           windowSize={7}
+          scrollsToTop
           updateCellsBatchingPeriod={1000}
-          contentContainerStyle={{ paddingBottom: 16 }}
+          contentContainerStyle={{
+            width: "100%",
+            alignItems: "center",
+            paddingHorizontal: 16,
+            paddingBottom: 16,
+          }}
           // removeClippedSubviews
           sections={mappedTransactions}
           keyExtractor={(item, index) => index.toString()}
@@ -244,19 +252,17 @@ const TransactionList = ({
           renderSectionHeader={({ section }) => (
             <>
               {mappedTransactions && (
+                // TAG : Header container
                 <View
                   style={[
                     {
+                      width: Dimensions.get("window").width - 32,
                       paddingTop: 16,
-                      paddingBottom: 8,
-                      paddingHorizontal: 16,
+                      paddingBottom: 16,
                       flexDirection: "row",
                       alignItems: "center",
-                      justifyContent: "space-between",
-                    },
-                    {
-                      backgroundColor:
-                        globalTheme.colors.background,
+                      justifyContent: "center",
+                      backgroundColor: globalTheme.colors.background,
                     },
                   ]}
                 >
@@ -268,6 +274,10 @@ const TransactionList = ({
                       currentDate: date,
                       locale: appSettings.locale,
                     })}
+                    style={{
+                      paddingLeft: 16,
+                      flex: 1,
+                    }}
                   />
 
                   {/* // TAG : Sum Amount */}
@@ -276,6 +286,7 @@ const TransactionList = ({
                       backgroundColor: globalTheme.colors.secondary,
                       padding: 8,
                       borderRadius: 8,
+                      alignItems: "flex-end",
                     }}
                   >
                     {/* // TAG : Main Currency */}
@@ -304,50 +315,54 @@ const TransactionList = ({
               )}
             </>
           )}
-          renderItem={({ item }) => {
+          renderItem={({ item, index, section }) => {
             return (
               <>
-                {/* <Text>{item.details.amount}</Text> */}
-                {mappedTransactions && (
-                  <TransactionListItem
-                    // transactionId={item.transaction_id}
-                    categoryName={utils.FindById.findCategoryNameById({
-                      id: item.details.category_id,
-                      categories: categories,
-                    })}
-                    isRepeated={item.repeat_id ? true : false}
-                    // categoryType={findCategoryTypeById(
-                    //   item.details.category_id
-                    // )}
-                    transactionHour={
-                      appSettings.logbookSettings.showTransactionTime &&
-                      item.details.date
-                    }
-                    transactionType={item.details.in_out}
-                    transactionNotes={
-                      appSettings.logbookSettings.showTransactionNotes &&
-                      item.details.notes
-                    }
-                    iconLeftName={utils.FindById.findCategoryIconNameById({
-                      id: item.details.category_id,
-                      categories: categories,
-                    })}
-                    iconLeftColor={utils.FindById.findCategoryColorById({
-                      id: item.details.category_id,
-                      categories: categories,
-                      defaultColor: globalTheme.colors.foreground,
-                    })}
-                    logbookCurrency={selectedLogbook.logbook_currency}
-                    secondaryCurrency={
-                      appSettings.logbookSettings.secondaryCurrency
-                    }
-                    showSecondaryCurrency={
-                      appSettings.logbookSettings.showSecondaryCurrency
-                    }
-                    transactionAmount={item.details.amount}
-                    onPress={() => onPress(item)}
-                  />
-                )}
+                <TransactionListSection
+                  isFirstItem={index === 0}
+                  isLastItem={index === section.data.length - 1}
+                >
+                  {mappedTransactions && (
+                    <TransactionListItem
+                      // transactionId={item.transaction_id}
+                      categoryName={utils.FindById.findCategoryNameById({
+                        id: item.details.category_id,
+                        categories: categories,
+                      })}
+                      isRepeated={item.repeat_id ? true : false}
+                      // categoryType={findCategoryTypeById(
+                      //   item.details.category_id
+                      // )}
+                      transactionHour={
+                        appSettings.logbookSettings.showTransactionTime &&
+                        item.details.date
+                      }
+                      transactionType={item.details.in_out}
+                      transactionNotes={
+                        appSettings.logbookSettings.showTransactionNotes &&
+                        item.details.notes
+                      }
+                      iconLeftName={utils.FindById.findCategoryIconNameById({
+                        id: item.details.category_id,
+                        categories: categories,
+                      })}
+                      iconLeftColor={utils.FindById.findCategoryColorById({
+                        id: item.details.category_id,
+                        categories: categories,
+                        defaultColor: globalTheme.colors.foreground,
+                      })}
+                      logbookCurrency={selectedLogbook.logbook_currency}
+                      secondaryCurrency={
+                        appSettings.logbookSettings.secondaryCurrency
+                      }
+                      showSecondaryCurrency={
+                        appSettings.logbookSettings.showSecondaryCurrency
+                      }
+                      transactionAmount={item.details.amount}
+                      onPress={() => onPress(item)}
+                    />
+                  )}
+                </TransactionListSection>
               </>
             );
           }}
