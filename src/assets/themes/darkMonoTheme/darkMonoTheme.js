@@ -29,6 +29,8 @@ export const darkMonoTheme = {
     icon,
   },
   colors: {
+    cardBackground: palette.white[600],
+    cardText: palette.black[600],
     background: palette.black[600],
     foreground: palette.white[600],
     primary: palette.white[600],

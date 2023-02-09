@@ -39,6 +39,7 @@ import persistStorage from "../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import Loading from "../../components/Loading";
+import Footer from "../../components/Footer";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -561,19 +562,7 @@ const SplashScreen = ({ route, navigation }) => {
         />
         <Loading />
 
-        {/* App Version */}
-        <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-          }}
-        >
-          <Text>Cash Log</Text>
-          <Text>v.1.0.0</Text>
-        </View>
+        <Footer />
       </CustomScrollView>
     </>
   );

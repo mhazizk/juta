@@ -46,7 +46,7 @@ const OnboardingScreen = ({ navigation }) => {
               />
             ),
             title: "Welcome",
-            subtitle: "to Cash Log",
+            subtitle: "to Juta",
           },
           {
             backgroundColor: "#00695C",

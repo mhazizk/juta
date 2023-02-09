@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
-import { ListItem } from "../../components/List";
-import screenList from "../../navigations/ScreenList";
+import { ListItem } from "../../../components/List";
+import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalUserAccount,
-} from "../../reducers/GlobalContext";
-import ListSection from "../../components/List/ListSection";
-import CustomScrollView from "../../shared-components/CustomScrollView";
+} from "../../../reducers/GlobalContext";
+import ListSection from "../../../components/List/ListSection";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 
 const MyLogbooksScreen = ({ navigation }) => {
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();

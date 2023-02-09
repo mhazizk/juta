@@ -5,7 +5,13 @@ import {
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
 
-const ListSection = ({ noMargin, marginTop, children, backgroundColor }) => {
+const ListSection = ({
+  noMargin,
+  marginTop,
+  marginBottom = 16,
+  children,
+  backgroundColor,
+}) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   return (
@@ -14,7 +20,7 @@ const ListSection = ({ noMargin, marginTop, children, backgroundColor }) => {
         style={{
           width: "100%",
           marginTop: marginTop ? marginTop : 0,
-          marginBottom: noMargin ? 0 : 16,
+          marginBottom: noMargin ? 0 : marginBottom,
           overflow: "hidden",
           borderRadius: 16,
           marginHorizontal: 16,

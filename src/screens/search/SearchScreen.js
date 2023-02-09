@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  TextInput, View
-} from "react-native";
+import { TextInput, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { TextSecondary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
@@ -81,9 +79,7 @@ const SearchScreen = ({ navigation }) => {
               ref={inputRef}
               returnKeyType="search"
               placeholder="I am looking for ..."
-              placeholderTextColor={
-                globalTheme.text.textSecondary.color
-              }
+              placeholderTextColor={globalTheme.text.textSecondary.color}
               style={{
                 ...globalTheme.text.textPrimary,
                 flex: 1,
@@ -137,22 +133,20 @@ const SearchScreen = ({ navigation }) => {
         {/* {console.log(searchQuery)} */}
 
         {!searchQuery && (
-          <CustomScrollView>
-            <View
-              style={{
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IonIcons
-                name="search"
-                size={48}
-                color={globalTheme.colors.secondary}
-                style={{ padding: 16 }}
-              />
-              <TextSecondary label="Looking for something ?" />
-            </View>
+          <CustomScrollView
+            contentContainerStyle={{
+              flex: 1,
+              minHeight: null,
+              justifyContent: "center",
+            }}
+          >
+            <IonIcons
+              name="search"
+              size={48}
+              color={globalTheme.colors.secondary}
+              style={{ padding: 16 }}
+            />
+            <TextSecondary label="Looking for something ?" />
           </CustomScrollView>
         )}
       </View>

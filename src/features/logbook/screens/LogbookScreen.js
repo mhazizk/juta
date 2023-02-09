@@ -3,13 +3,9 @@ import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import Loading from "../../components/Loading";
-import {
-  TextButtonPrimary,
-  TextPrimary,
-  TextSecondary,
-} from "../../components/Text";
-import screenList from "../../navigations/ScreenList";
+import Loading from "../../../components/Loading";
+import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
+import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
@@ -17,10 +13,12 @@ import {
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
-} from "../../reducers/GlobalContext";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
+} from "../../../reducers/GlobalContext";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 // import Swipeable from 'react-native-gesture-handler/Swipeable';
-import TransactionList from "../../features/transactions/components/TransactionList";
+import TransactionList from "../../../features/transactions/components/TransactionList";
+import * as utils from "../../../utils";
+import TextTicker from "react-native-text-ticker";
 const { width, height } = Dimensions.get("screen");
 
 const LogbookScreen = ({ route, navigation }) => {
@@ -34,7 +32,7 @@ const LogbookScreen = ({ route, navigation }) => {
   // const [logbooks, setLogbooks] = useState(null);
   // const [categories, setCategories] = useState(null);
   const [transactions, setTransactions] = useState(null);
-  const [selectedLogbook, setSelectedLogbooks] = useState(null);
+  const [selectedLogbook, setSelectedLogbook] = useState(null);
   const [targetLogbook, setTargetLogbook] = useState(null);
   const [selectedLogbooksCurrency, setSelectedLogbookCurrency] = useState(null);
   const [filteredTransactions, setFilteredTransactions] = useState(null);
@@ -42,10 +40,6 @@ const LogbookScreen = ({ route, navigation }) => {
     mode: false,
     length: 0,
   });
-  // const [counter, setCounter] = useState({
-  //   logbookDeleteCounter: 0,
-  //   logbookPatchCounter: 0,
-  // });
   const [screenLoading, setScreenLoading] = useState(false);
   const [componentLoading, setComponentLoading] = useState(false);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
@@ -58,12 +52,6 @@ const LogbookScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // setTimeout(() => {
-    //   dispatchBadgeCounter({
-    //     type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-    //     payload: "0",
-    //   });
-    // }, 1);
     logbookToBeSelected();
     filterTransactions();
   }, [sortedTransactions.groupSorted]);
@@ -90,6 +78,24 @@ const LogbookScreen = ({ route, navigation }) => {
     }
   }, [screenLoading]);
 
+  useEffect(() => {
+    // if (filteredTransactions) {
+    //   // console.log(filtered)
+    //   let sum = [];
+    //   filteredTransactions.transactions.forEach((section) =>
+    //     section.data.forEach((transaction) => {
+    //       if (transaction.details.in_out === "expense") {
+    //         sum.push(-transaction.details.amount);
+    //       }
+    //       if (transaction.details.in_out === "income") {
+    //         sum.push(transaction.details.amount);
+    //       }
+    //     })
+    //   );
+    //   const totalSum = sum.reduce((prev, curr) => prev + curr, 0) || 0;
+    //   setTotalBalance(totalSum);
+    // }
+  }, [filteredTransactions]);
   const logbookToBeSelected = (logbook) => {
     setFilteredTransactions(null);
     if (
@@ -98,16 +104,16 @@ const LogbookScreen = ({ route, navigation }) => {
       logbooks.logbooks.length
     ) {
       if (targetLogbook) {
-        setSelectedLogbooks(targetLogbook);
+        setSelectedLogbook(targetLogbook);
         setTargetLogbook(null);
       } else {
         switch (true) {
           case logbook:
-            setSelectedLogbooks(logbook);
+            setSelectedLogbook(logbook);
             break;
 
           case !selectedLogbook || !sortedTransactions?.logbookToOpen:
-            setSelectedLogbooks({
+            setSelectedLogbook({
               name: logbooks.logbooks[0].logbook_name,
               logbook_id: logbooks.logbooks[0].logbook_id,
               logbook_currency: logbooks.logbooks[0].logbook_currency,
@@ -119,10 +125,10 @@ const LogbookScreen = ({ route, navigation }) => {
             break;
 
           case sortedTransactions?.logbookToOpen:
-            setSelectedLogbooks(sortedTransactions.logbookToOpen);
+            setSelectedLogbook(sortedTransactions.logbookToOpen);
             break;
 
-            defaultOption: setSelectedLogbooks({
+            defaultOption: setSelectedLogbook({
               name: logbooks.logbooks[0].logbook_name,
               logbook_id: logbooks.logbooks[0].logbook_id,
               logbook_currency: logbooks.logbooks[0].logbook_currency,
@@ -144,10 +150,10 @@ const LogbookScreen = ({ route, navigation }) => {
       const filtered = sortedTransactions.groupSorted.find((logbook) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
-      setFilteredTransactions(
-        filtered.transactions.map((transaction) => transaction)
-      );
+      // console.log(filtered)
+      setFilteredTransactions(filtered.transactions.map((section) => section));
     }
+
     // if (selectedLogbook && sortedTransactions) {
     //   const filtered = sortedTransactions.groupSorted.filter((logbook) => {
     //     return logbook.logbook_id === selectedLogbook.logbook_id;
@@ -171,7 +177,7 @@ const LogbookScreen = ({ route, navigation }) => {
   //   };
   // }, [selectedLogbook, sortedTransactions.logbookToOpen]);
 
-  const countTransactions = () => {
+  const countTransactions = (selectedLogbook) => {
     if (selectedLogbook) {
       const filtered = sortedTransactions?.groupSorted?.find((logbook) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
@@ -183,6 +189,26 @@ const LogbookScreen = ({ route, navigation }) => {
         )
       );
       return array.length;
+    }
+  };
+
+  const totalBalance = (selectedLogbook) => {
+    if (selectedLogbook) {
+      const filtered = sortedTransactions?.groupSorted?.find((logbook) => {
+        return logbook.logbook_id === selectedLogbook.logbook_id;
+      });
+      let sum = [];
+      filtered?.transactions?.forEach((section) =>
+        section.data.forEach((transaction) => {
+          if (transaction.details.in_out === "expense") {
+            sum.push(-transaction.details.amount);
+          }
+          if (transaction.details.in_out === "income") {
+            sum.push(transaction.details.amount);
+          }
+        })
+      );
+      return sum.reduce((prev, curr) => prev + curr, 0) || 0;
     }
   };
 
@@ -269,11 +295,52 @@ const LogbookScreen = ({ route, navigation }) => {
               {/* Number of Transactions */}
               <View style={{ flex: 1, alignItems: "flex-end" }}>
                 <TextPrimary
-                  label={(countTransactions() || "No") + " Transactions"}
+                  label={
+                    (countTransactions(selectedLogbook) || "No") +
+                    " Transactions"
+                  }
                   style={{
                     color: globalTheme.colors.textHeader,
                   }}
                 />
+                <TextPrimary
+                  style={{
+                    color: totalBalance(selectedLogbook)
+                      .toString()
+                      .includes("-")
+                      ? globalTheme.colors.danger
+                      : globalTheme.colors.textHeader,
+                  }}
+                  label={`${
+                    appSettings.logbookSettings.defaultCurrency.symbol
+                  } ${utils.GetFormattedNumber({
+                    value: totalBalance(selectedLogbook),
+                    currency: appSettings.logbookSettings.defaultCurrency.name,
+                  })}`}
+                />
+                {appSettings.logbookSettings.showSecondaryCurrency && (
+                  <TextPrimary
+                    style={{
+                      color: totalBalance(selectedLogbook)
+                        .toString()
+                        .includes("-")
+                        ? globalTheme.colors.danger
+                        : globalTheme.colors.textHeader,
+                    }}
+                    label={`${
+                      appSettings.logbookSettings.secondaryCurrency.symbol
+                    } ${utils.GetFormattedNumber({
+                      value: utils.ConvertCurrency({
+                        amount: totalBalance(selectedLogbook),
+                        from: selectedLogbook.logbook_currency.name,
+                        target:
+                          appSettings.logbookSettings.secondaryCurrency.name,
+                      }),
+                      currency:
+                        appSettings.logbookSettings.secondaryCurrency.name,
+                    })}`}
+                  />
+                )}
                 {/* <Text numberOfLines={1} style={{ ...globalStyles.lightTheme.textSecondary }}>
                                 {!filteredTransactions.length ? 'No' : countTransactions(filteredTransactions)} Transactions
                             </Text> */}

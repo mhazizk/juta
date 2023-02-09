@@ -5,6 +5,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ButtonSwitch } from "../../components/Button";
 import { CustomBarChart } from "../../components/charts/CustomBarChart";
 import { TransactionListItem } from "../../components/List";
+import TransactionListSection from "../../components/List/TransactionListSection";
 import Loading from "../../components/Loading";
 import { TextPrimary, TextSecondary } from "../../components/Text";
 import {
@@ -19,7 +20,7 @@ import * as utils from "../../utils";
 
 const AnalyticsScreen = () => {
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -271,7 +272,7 @@ const AnalyticsScreen = () => {
                 </>
               )}
 
-              {/* Range selector */}
+              {/* // TAG : Range selector */}
               <View
                 style={{
                   flexDirection: "row",
@@ -282,24 +283,30 @@ const AnalyticsScreen = () => {
               >
                 <ButtonSwitch
                   onPress={() => {
-                    setShowGraph(false);
-                    setGraph({ ...graph, rangeDay: 7 });
+                    if (graph?.rangeDay !== 7) {
+                      setShowGraph(false);
+                      setGraph({ ...graph, rangeDay: 7 });
+                    }
                   }}
                   condition={graph?.rangeDay === 7}
                   label="Last week"
                 />
                 <ButtonSwitch
                   onPress={() => {
-                    setShowGraph(false);
-                    setGraph({ ...graph, rangeDay: 30 });
+                    if (graph?.rangeDay !== 30) {
+                      setShowGraph(false);
+                      setGraph({ ...graph, rangeDay: 30 });
+                    }
                   }}
                   condition={graph?.rangeDay === 30}
                   label="Last month"
-                  />
+                />
                 <ButtonSwitch
                   onPress={() => {
-                    setShowGraph(false);
-                    setGraph({ ...graph, rangeDay: 365});
+                    if (graph?.rangeDay !== 365) {
+                      setShowGraph(false);
+                      setGraph({ ...graph, rangeDay: 365 });
+                    }
                   }}
                   condition={graph?.rangeDay === 365}
                   label="Last year"
@@ -309,60 +316,70 @@ const AnalyticsScreen = () => {
           )}
 
           {/* // TODO add average spent amount  */}
-          {showGraph && !componentLoading && (
+          {showGraph && (
             <TextPrimary
               label="Expense by category"
               style={{
                 paddingVertical: 16,
-                paddingHorizontal: 16,
+                paddingHorizontal: 32,
                 fontSize: 18,
               }}
             />
+          )}
+          {componentLoading && (
+            <View
+              style={{
+                height: (Dimensions.get("window").height - 220) / 2,
+                // flex: 1,
+                backgroundColor: globalTheme.colors.background,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Loading />
+            </View>
           )}
           <FlatList
             data={spentList}
             nestedScrollEnabled={true}
             keyExtractor={(item) => item?.category.id}
-            renderItem={({ item }) => (
+            contentContainerStyle={{
+              paddingBottom: 16,
+              paddingHorizontal: 16,
+              alignItems: "center",
+            }}
+            renderItem={({ item, index }) => (
               <>
-                {componentLoading && (
-                  <View
-                    style={{
-                      height: 345,
-                      backgroundColor:
-                        globalTheme.colors.background,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Loading />
-                  </View>
-                )}
-                {spentList.length && !componentLoading && (
-                  <TransactionListItem
-                    onPress={() => {}}
-                    categoryName={
-                      item?.category.name[0].toUpperCase() +
-                      item?.category.name.slice(1)
-                    }
-                    rightLabel={utils.GetFormattedNumber({
-                      value: item?.totalSpent,
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
-                    })}
-                    iconLeftColor={
-                      item?.category.icon.color === "default"
-                        ? globalTheme.colors.primary
-                        : item?.category.icon.color
-                    }
-                    iconLeftName={item?.category.icon.name}
-                    // iconLeftColor={item?.category.icon.color}
-                    logbookCurrency={
-                      appSettings.logbookSettings.defaultCurrency
-                    }
-                    transactionAmount={item?.totalSpent}
-                  />
-                )}
+                <TransactionListSection
+                  isFirstItem={index === 0}
+                  isLastItem={index === spentList.length - 1}
+                >
+                  {spentList.length && !componentLoading && (
+                    <TransactionListItem
+                      onPress={() => {}}
+                      categoryName={
+                        item?.category.name[0].toUpperCase() +
+                        item?.category.name.slice(1)
+                      }
+                      rightLabel={utils.GetFormattedNumber({
+                        value: item?.totalSpent,
+                        currency:
+                          appSettings.logbookSettings.defaultCurrency.name,
+                      })}
+                      iconLeftColor={
+                        item?.category.icon.color === "default"
+                          ? globalTheme.colors.primary
+                          : item?.category.icon.color
+                      }
+                      iconLeftName={item?.category.icon.name}
+                      // iconLeftColor={item?.category.icon.color}
+                      logbookCurrency={
+                        appSettings.logbookSettings.defaultCurrency
+                      }
+                      transactionAmount={item?.totalSpent}
+                    />
+                  )}
+                </TransactionListSection>
               </>
             )}
           />
@@ -402,7 +419,7 @@ const AnalyticsScreen = () => {
       {screenLoading && (
         <View
           style={{
-            height: "100%",
+            flex: 1,
             backgroundColor: globalTheme.colors.background,
             alignItems: "center",
             justifyContent: "center",

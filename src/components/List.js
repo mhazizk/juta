@@ -10,6 +10,7 @@ import * as utils from "../utils";
 import Loading from "./Loading";
 import ListSection from "./List/ListSection";
 import CountryFlag from "react-native-country-flag";
+import TextTicker from "react-native-text-ticker";
 
 export const ListItem = ({
   leftLabel,
@@ -396,96 +397,118 @@ export const TransactionListItem = ({
         <View
           style={{
             ...globalTheme.list.listContainer,
-            justifyContent: "space-between",
+            // width: "100%",
           }}
         >
-          {/* Outer Left Side */}
-          {iconLeftName && (
-            <IonIcons
-              name={iconLeftName}
-              size={18}
-              color={iconLeftColor || globalTheme.colors.foreground}
-              style={{ paddingRight: 16 }}
-            />
-          )}
+          {/* // TAG : Left side + right side */}
+          <View
+            style={{
+              flexDirection: "row",
+              // width: "100%",
+              // justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {/* // TAG : icon */}
+            {iconLeftName && (
+              <IonIcons
+                name={iconLeftName}
+                size={18}
+                color={iconLeftColor || globalTheme.colors.foreground}
+                style={{ paddingRight: 16 }}
+              />
+            )}
 
-          {/* Line Container */}
-          <View style={globalTheme.list.listItem}>
+            {/* Line Container */}
             <View
               style={{
-                flexDirection: "column",
+                ...globalTheme.list.listItem,
+                width: "100%",
                 justifyContent: "space-between",
+                // alignItems: "center",
               }}
             >
-              {/* Top Left Side */}
+              {/* // TAG : Left side */}
               <View
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  flex: 1,
                 }}
               >
-                {categoryName && <TextPrimary label={categoryName} />}
-                <IonIcons
-                  name={isRepeated ? "repeat" : "ellipse"}
-                  color={
-                    isRepeated
-                      ? globalTheme.colors.foreground
-                      : globalTheme.colors.secondary
-                  }
-                  size={isRepeated ? 16 : 8}
+                {/* // TAG : Top Left Side */}
+                <View
                   style={{
-                    display: transactionHour || isRepeated ? "flex" : "none",
-                    paddingHorizontal: 8,
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
                   }}
-                />
-                {transactionHour && (
-                  <>
-                    <TextSecondary
-                      // label={new Date(transactionHour).toLocaleTimeString(
-                      //   appSettings.locale,
-                      //   { hour: "2-digit", minute: "2-digit" }
-                      // )}
-                      label={
-                        new Date(transactionHour)
-                          .getHours()
-                          .toString()
-                          .padStart(2, "0") +
-                        ":" +
-                        new Date(transactionHour)
-                          .getMinutes()
-                          .toString()
-                          .padStart(2, "0")
-                      }
-                      // label={getTime(transactionHour)}
-                      style={{ fontSize: 14 }}
-                    />
-                  </>
+                >
+                  {categoryName && <TextPrimary label={categoryName} />}
+                  <IonIcons
+                    name={isRepeated ? "repeat" : "ellipse"}
+                    color={
+                      isRepeated
+                        ? globalTheme.colors.foreground
+                        : globalTheme.colors.secondary
+                    }
+                    size={isRepeated ? 16 : 8}
+                    style={{
+                      display: transactionHour || isRepeated ? "flex" : "none",
+                      paddingHorizontal: 8,
+                    }}
+                  />
+                  {transactionHour && (
+                    <>
+                      <TextSecondary
+                        // label={new Date(transactionHour).toLocaleTimeString(
+                        //   appSettings.locale,
+                        //   { hour: "2-digit", minute: "2-digit" }
+                        // )}
+                        label={
+                          new Date(transactionHour)
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0") +
+                          ":" +
+                          new Date(transactionHour)
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")
+                        }
+                        // label={getTime(transactionHour)}
+                        style={{ fontSize: 14 }}
+                      />
+                    </>
+                  )}
+                </View>
+                {/* // TAG : Bottom Left Side */}
+                {showDate && (
+                  <TextSecondary
+                    label={new Date(transactionDate).toDateString()}
+                    numberOfLines={1}
+                    style={{ fontSize: 14 }}
+                  />
+                )}
+                {transactionNotes && (
+                  <TextSecondary
+                    label={transactionNotes}
+                    numberOfLines={1}
+                    style={{ fontSize: 14 }}
+                  />
                 )}
               </View>
-              {/* Bottom Left Side */}
-              {/* <TextSecondary label={transactionId} /> */}
-              {showDate && (
-                <TextSecondary
-                  label={new Date(transactionDate).toDateString()}
-                  numberOfLines={1}
-                  style={{ fontSize: 14 }}
-                />
-              )}
-              {transactionNotes && (
-                <TextSecondary
-                  label={transactionNotes}
-                  numberOfLines={1}
-                  style={{ fontSize: 14 }}
-                />
-              )}
-            </View>
 
-            {/* // SECTION : Right Side */}
-            {/* // TAG : Main Currency */}
-            <View style={{ flexDirection: "column", justifyContent: "center" }}>
-              {transactionAmount && (
-                <>
+              {/* // SECTION : Right Side */}
+              {/* // TAG : Main Currency */}
+              <View
+                style={{
+                  // flexDirection: "column",
+                  // justifyContent: "center",
+                  alignItems: "flex-end",
+                }}
+              >
+                {transactionAmount && (
                   <View
                     style={{
                       flexDirection: "row",
@@ -522,11 +545,9 @@ export const TransactionListItem = ({
                       })}
                     />
                   </View>
-                </>
-              )}
-              {/* // TAG : Secondary Currency */}
-              {showSecondaryCurrency && (
-                <>
+                )}
+                {/* // TAG : Secondary Currency */}
+                {showSecondaryCurrency && (
                   <View
                     style={{
                       flexDirection: "row",
@@ -567,21 +588,9 @@ export const TransactionListItem = ({
                       })}
                     />
                   </View>
-                </>
-              )}
+                )}
+              </View>
             </View>
-          </View>
-
-          {/* Right Side */}
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            {iconRightName && (
-              <IonIcons
-                name={iconRightName}
-                size={iconRightName === "checkmark-circle" ? 22 : 18}
-                color={globalTheme.colors.foreground}
-                style={{ paddingLeft: 16 }}
-              />
-            )}
           </View>
         </View>
       </TouchableNativeFeedback>
@@ -626,209 +635,216 @@ export const SearchResultListItem = ({
           <View
             style={{
               ...globalTheme.list.listContainer,
-              justifyContent: "space-between",
             }}
           >
-            {/* Outer Left Side */}
-            {iconLeftName && (
-              <IonIcons
-                name={iconLeftName}
-                size={18}
-                color={iconLeftColor || globalTheme.colors.foreground}
-                style={{ paddingRight: 16 }}
-              />
-            )}
+            {/* // TAG : left side + right side */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {/* // TAG : Icon */}
+              {iconLeftName && (
+                <IonIcons
+                  name={iconLeftName}
+                  size={18}
+                  color={iconLeftColor || globalTheme.colors.foreground}
+                  style={{ paddingRight: 16 }}
+                />
+              )}
 
-            {/* Line Container */}
-            <View style={globalTheme.list.listItem}>
+              {/* Line Container */}
               <View
                 style={{
-                  flexDirection: "column",
+                  ...globalTheme.list.listItem,
+                  width: "100%",
                   justifyContent: "space-between",
-                  flex: 1,
                 }}
               >
-                {/* Top Left Side */}
+                {/* // TAG : Left side */}
                 <View
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    flex: 1,
+                    paddingVertical: 4,
                   }}
                 >
-                  {categoryName && <TextPrimary label={categoryName} />}
-                  {repeatId && (
+                  {/* // TAG : Top Left Side */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                    }}
+                  >
+                    {categoryName && <TextPrimary label={categoryName} />}
                     <IonIcons
-                      name="repeat"
-                      color={globalTheme.colors.foreground}
-                      size={16}
-                      style={{
-                        paddingLeft: 8,
-                      }}
-                    />
-                  )}
-                  <IonIcons
-                    name="at"
-                    color={globalTheme.text.textSecondary.color}
-                    size={16}
-                    style={{ paddingHorizontal: 8 }}
-                  />
-                  {logbookName && (
-                    <TextPrimary
-                      label={
-                        logbookName.length > 15
-                          ? logbookName.substring(0, 15) + "..."
-                          : logbookName
+                      name={repeatId ? "repeat" : "at"}
+                      color={
+                        repeatId
+                          ? globalTheme.colors.foreground
+                          : globalTheme.text.textSecondary.color
                       }
+                      size={16}
+                      style={{ paddingHorizontal: 4 }}
+                    />
+                    <TextTicker
+                      style={{
+                        ...globalTheme.text.textPrimary,
+                        fontSize: 16,
+                      }}
+                      duration={3000}
+                      loop
+                      bounce
+                      repeatSpacer={50}
+                      marqueeDelay={1000}
+                      shouldAnimateTreshold={10}
+                    >
+                      {logbookName && (
+                        <TextPrimary
+                          label={
+                            logbookName.length > 15
+                              ? logbookName.substring(0, 15) + "..."
+                              : logbookName
+                          }
+                        />
+                      )}
+                    </TextTicker>
+                  </View>
+                  {/* // TAG : Middle Left Side */}
+                  {transactionDate && (
+                    <>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <TextSecondary
+                          label={utils.RelativeDate({
+                            dateToCheck: transactionDate,
+                            locale: appSettings.locale,
+                            currentDate: Date.now(),
+                          })}
+                          style={{ fontSize: 14 }}
+                        />
+                        <IonIcons
+                          name="ellipse"
+                          color={globalTheme.colors.secondary}
+                          size={8}
+                          style={{ paddingHorizontal: 8 }}
+                        />
+                        <TextSecondary
+                          label={
+                            new Date(transactionDate)
+                              .getHours()
+                              .toString()
+                              .padStart(2, "0") +
+                            ":" +
+                            new Date(transactionDate)
+                              .getMinutes()
+                              .toString()
+                              .padStart(2, "0")
+                          }
+                          style={{ fontSize: 14 }}
+                        />
+                      </View>
+                    </>
+                  )}
+
+                  {/* Bottom Left Side */}
+                  {transactionNotes && (
+                    <TextSecondary
+                      label={
+                        transactionNotes.length > 40
+                          ? transactionNotes.substring(0, 40) + "..."
+                          : transactionNotes
+                      }
+                      style={{ fontSize: 14 }}
+                      numberOfLines={1}
                     />
                   )}
                 </View>
-                {/* Middle Left Side */}
-                {transactionDate && (
-                  <>
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <TextSecondary
-                        label={utils.RelativeDate({
-                          dateToCheck: transactionDate,
-                          locale: appSettings.locale,
-                          currentDate: Date.now(),
-                        })}
-                        style={{ fontSize: 14 }}
-                      />
-                      <IonIcons
-                        name="ellipse"
-                        color={globalTheme.colors.secondary}
-                        size={8}
-                        style={{ paddingHorizontal: 8 }}
-                      />
-                      <TextSecondary
-                        label={
-                          new Date(transactionDate)
-                            .getHours()
-                            .toString()
-                            .padStart(2, "0") +
-                          ":" +
-                          new Date(transactionDate)
-                            .getMinutes()
-                            .toString()
-                            .padStart(2, "0")
-                        }
-                        style={{ fontSize: 14 }}
-                      />
-                    </View>
-                  </>
-                )}
-
-                {/* Bottom Left Side */}
-                {transactionNotes && (
-                  <TextSecondary
-                    label={
-                      transactionNotes.length > 40
-                        ? transactionNotes.substring(0, 40) + "..."
-                        : transactionNotes
-                    }
-                    style={{ fontSize: 14 }}
-                    numberOfLines={1}
-                  />
-                )}
               </View>
-
               {/* // TAG : Right Side */}
               {transactionAmount && (
-                <>
-                  <View
-                    style={{
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    {logbookCurrency && (
-                      <View
+                <View
+                  style={{
+                    alignItems: "flex-end",
+                    marginLeft: 4,
+                  }}
+                >
+                  {/* // TAG : Main currency */}
+                  {logbookCurrency && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                      }}
+                    >
+                      <TextSecondary
+                        label={logbookCurrency.symbol}
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "flex-end",
+                          paddingRight: 8,
+                          fontSize: 14,
+                          color:
+                            transactionType === "income"
+                              ? globalTheme.colors.incomeSymbol
+                              : globalTheme.text.textSecondary.color,
                         }}
-                      >
-                        <TextSecondary
-                          label={logbookCurrency.symbol}
-                          style={{
-                            paddingRight: 8,
-                            fontSize: 14,
-                            color:
-                              transactionType === "income"
-                                ? globalTheme.colors.incomeSymbol
-                                : globalTheme.text.textSecondary.color,
-                          }}
-                        />
-                        <TextPrimary
-                          style={{
-                            fontSize: 18,
-                            color:
-                              transactionType === "income"
-                                ? globalTheme.colors.incomeAmount
-                                : globalTheme.text.textPrimary.color,
-                          }}
-                          label={utils.GetFormattedNumber({
-                            value: transactionAmount,
-                            currency: logbookCurrency.name,
-                          })}
-                        />
-                      </View>
-                    )}
-                    {showSecondaryCurrency && (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <TextSecondary
-                          label={secondaryCurrency.symbol}
-                          style={{
-                            paddingRight: 8,
-                            fontSize: 14,
-                            color:
-                              transactionType === "income"
-                                ? globalTheme.colors.incomeSymbol
-                                : globalTheme.text.textSecondary.color,
-                          }}
-                        />
-                        <TextPrimary
-                          style={{
-                            fontSize: 14,
-                            color:
-                              transactionType === "income"
-                                ? globalTheme.colors.incomeAmount
-                                : globalTheme.text.textPrimary.color,
-                          }}
-                          label={utils.GetFormattedNumber({
-                            value: utils.ConvertCurrency({
-                              amount: transactionAmount,
-                              from: logbookCurrency.name,
-                              target: secondaryCurrency.name,
-                            }),
-                            currency: secondaryCurrency.name,
-                          })}
-                        />
-                      </View>
-                    )}
-                  </View>
-                </>
-              )}
-            </View>
+                      />
 
-            {/* Right Side */}
-            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-              {iconRightName && (
-                <IonIcons
-                  name={iconRightName}
-                  size={iconRightName === "checkmark-circle" ? 22 : 18}
-                  color={globalTheme.colors.foreground}
-                  style={{ paddingLeft: 16 }}
-                />
+                      <TextPrimary
+                        style={{
+                          fontSize: 18,
+                          color:
+                            transactionType === "income"
+                              ? globalTheme.colors.incomeAmount
+                              : globalTheme.text.textPrimary.color,
+                        }}
+                        label={utils.GetFormattedNumber({
+                          value: transactionAmount,
+                          currency: logbookCurrency.name,
+                        })}
+                      />
+                    </View>
+                  )}
+                  {/* // TAG : Secondary currency */}
+                  {showSecondaryCurrency && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                      }}
+                    >
+                      <TextSecondary
+                        label={secondaryCurrency.symbol}
+                        style={{
+                          paddingRight: 8,
+                          fontSize: 14,
+                          color:
+                            transactionType === "income"
+                              ? globalTheme.colors.incomeSymbol
+                              : globalTheme.text.textSecondary.color,
+                        }}
+                      />
+                      <TextPrimary
+                        style={{
+                          fontSize: 14,
+                          color:
+                            transactionType === "income"
+                              ? globalTheme.colors.incomeAmount
+                              : globalTheme.text.textPrimary.color,
+                        }}
+                        label={utils.GetFormattedNumber({
+                          value: utils.ConvertCurrency({
+                            amount: transactionAmount,
+                            from: logbookCurrency.name,
+                            target: secondaryCurrency.name,
+                          }),
+                          currency: secondaryCurrency.name,
+                        })}
+                      />
+                    </View>
+                  )}
+                </View>
               )}
             </View>
           </View>

@@ -30,7 +30,8 @@ export const darkFallTheme = {
     icon,
   },
   colors: {
-    cardBackground: "#CABFAB",
+    cardBackground: "#FFEFD6",
+    cardText: palette.black[600],
     background: palette.black[600],
     foreground: palette.white[600],
     primary: palette.primary,

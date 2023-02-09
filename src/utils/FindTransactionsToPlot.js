@@ -265,7 +265,7 @@ const findTransactionsToPlot = ({
           limitLine: [],
         },
       });
-      setShowGraph(true);
+      setShowGraph(false);
     }
     // }
   }

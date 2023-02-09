@@ -5,10 +5,10 @@
            width: 30%;"
     src="src/assets/icons/juta-app-icon.png" 
     alt="Juta logo"/>
-</p>
+
 Juta
 
-Mobile Expense Tracker
+Your Mobile Expense Tracker
 
 <a href="https://play.google.com/store/apps/details?id=app.juta">
 <img 
@@ -62,6 +62,26 @@ Juta has many features to help you manage your daily spendings:
 Coming soon at juta official web
 
 ## Release Notes
+
+### 0.6.7-alpha (on progress)
+
+- New features:
+  - on progress
+- Bugfixes:
+  - on progress
+
+### 0.6.4-alpha
+
+- New features:
+  - Add total balance in logbook screen
+  - Add secondary currency in logbook screen
+  - Add marquee on long text in item list
+- Bugfixes:
+  - Fix expense widget in Dashboard screen
+  - Fix button switch stuck on Analytics screen
+  - Fix graph on Analytics screen
+  - Fix theme scheme
+  - Fix text overlays each other when the text is long in search results
 
 ### 0.6.0-alpha
 

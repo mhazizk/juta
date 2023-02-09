@@ -1,34 +1,36 @@
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
-// import "intl/locale-data/jsonp/en";
-import CountryFlag from "react-native-country-flag";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import {
-  ButtonSecondary,
-  ButtonSecondaryDanger,
-} from "../../components/Button";
-import { TextPrimary } from "../../components/Text";
-import * as utils from "../../utils";
+  TextInput, View
+} from "react-native";
+// import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
+// import "intl/locale-data/jsonp/en";
+import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
-} from "../../reducers/GlobalContext";
-import screenList from "../../navigations/ScreenList";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import firestore from "../../api/firebase/firestore";
-import CustomScrollView from "../../shared-components/CustomScrollView";
-import ListSection from "../../components/List/ListSection";
-import { ListItem } from "../../components/List";
+  useGlobalUserAccount,
+} from "../../../reducers/GlobalContext";
+import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
+import { TextPrimary } from "../../../components/Text";
+import APP_SETTINGS from "../../../config/appSettings";
+import * as utils from "../../../utils";
+import screenList from "../../../navigations/ScreenList";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
+import { ListItem } from "../../../components/List";
+import ListSection from "../../../components/List/ListSection";
 
-const LogbookPreviewScren = ({ route, navigation }) => {
+const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
-  const { globalTheme } = useGlobalTheme();
+  const { userAccount } = useGlobalUserAccount();
+  // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
   // TAG : useState Section //
@@ -37,7 +39,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   const [logbook, setLogbook] = useState(null);
 
   // Selected Logbook State
-  const [selectedLogbook, setSelectedLogbook] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState(null);
 
   const [logbookToOpen, setLogbookToOpen] = useState(null);
 
@@ -54,15 +56,17 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    setLogbook(route?.params?.logbook);
-  }, [route?.params?.logbook]);
-
-  useEffect(() => {
     // refresh
     // console.log(transaction.details)
     // findCategoryNameById();
     // findCategoryIconNameById();
     // findLogbookNamebyId();
+
+    if (!selectedCurrency && logbook) {
+      setSelectedCurrency(logbook.logbook_currency);
+    }
+
+    console.log(logbook);
   }, [logbook]);
 
   useEffect(() => {
@@ -71,11 +75,10 @@ const LogbookPreviewScren = ({ route, navigation }) => {
 
   useEffect(() => {
     // refresh
-  }, [selectedLogbook]);
+    console.log(selectedCurrency);
+  }, [selectedCurrency]);
 
   useEffect(() => {}, [logbookToOpen]);
-
-  useEffect(() => {}, [sortedTransactions]);
 
   // TAG : Function Section //
 
@@ -115,82 +118,9 @@ const LogbookPreviewScren = ({ route, navigation }) => {
     return sum.reduce((prev, curr) => prev + curr, 0);
   };
 
-  const deleteLogbook = () => {
-    switch (true) {
-      case countTransactions() > 0:
-        Alert.alert(
-          "Delete This Logbook ?",
-          "Cannot delete logbook with transactions. Please delete all transactions in this logbook first.",
-          [
-            {
-              text: "OK",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ],
-          { cancelable: false }
-        );
-        return;
-
-      case logbooks.logbooks.length === 1:
-        Alert.alert(
-          "Delete This Logbook ?",
-          "Cannot delete last logbook. Please create a new logbook first.",
-          [
-            {
-              text: "OK",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ],
-          { cancelable: false }
-        );
-        return;
-
-      case logbooks.logbooks.length > 1 && countTransactions() === 0:
-        Alert.alert(
-          "Delete This Logbook ?",
-          "This action cannot be undone. All transactions in this logbook will be deleted.",
-          [
-            {
-              text: "Cancel",
-              onPress: () => {},
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => {
-                setTimeout(async () => {
-                  await firestore.deleteData(
-                    FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                    logbook.logbook_id
-                  );
-                }, 5000);
-
-                navigation.navigate(screenList.loadingScreen, {
-                  label: "Deleting Logbook ...",
-                  loadingType: "deleteOneLogbook",
-                  deleteLogbook: logbook,
-                  logbookToOpen: null,
-                  reducerUpdatedAt: Date.now(),
-                  // initialLogbookDeleteCounter: logbooks.logbookDeleteCounter,
-                  // initialSortedLogbookDeleteCounter:
-                  //   sortedTransactions.sortedLogbookDeleteCounter,
-                });
-              },
-            },
-          ],
-          { cancelable: false }
-        );
-        return;
-      default:
-        break;
-    }
-  };
-
   return (
     <>
-      {logbook && (
+      {logbook && selectedCurrency && (
         <CustomScrollView>
           {/* // TAG : Logbook Name Section */}
           <View
@@ -208,14 +138,41 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               style={{ padding: 16 }}
               color={globalTheme.colors.foreground}
             />
-            <TextPrimary
-              label={
-                route?.params?.logbook.logbook_name[0].toUpperCase() +
-                route?.params?.logbook.logbook_name.substring(1)
-              }
-              style={{ fontSize: 24 }}
+            <TextInput
+              maxLength={30}
+              textAlign="center"
+              returnKeyType="done"
+              placeholder="Type logbook name ..."
+              placeholderTextColor={globalTheme.text.textSecondary.color}
+              style={[
+                {
+                  ...globalTheme.text.textPrimary,
+                  paddingLeft: 0,
+                  paddingVertical: 16,
+                  minHeight: 24,
+                  fontSize: 24,
+                },
+                {},
+              ]}
+              onChangeText={(string) => {
+                setLogbook({
+                  ...logbook,
+                  logbook_name: string,
+                });
+              }}
+              clearButtonMode="while-editing"
+              defaultValue={logbook.logbook_name}
+              value={logbook.logbook_name}
             />
-            {/* </View> */}
+            {logbook.logbook_name && (
+              <IonIcons
+                onPress={() => setLogbook({ ...logbook, logbook_name: "" })}
+                name="close-circle"
+                size={20}
+                style={{ padding: 16 }}
+                color={globalTheme.colors.foreground}
+              />
+            )}
           </View>
           {/* </ScrollView> */}
 
@@ -234,9 +191,11 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           <ListSection>
             {/* // TAG : Main currency */}
             <ListItem
+              pressable
               iconLeftName="coins"
               iconPack="FontAwesome5"
               leftLabel="Main currency"
+              iconRightName="chevron-forward"
               useRightLabelContainer
               useFlagIcon
               flagIsoCode={logbook.logbook_currency.isoCode}
@@ -251,6 +210,26 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 borderRadius: 8,
                 backgroundColor: globalTheme.colors.secondary,
               }}
+              onPress={() => {
+                navigation.navigate(screenList.modalScreen, {
+                  title: "Main Currency",
+                  modalType: "currencyList",
+                  props: APP_SETTINGS.CURRENCY.OPTIONS,
+                  selected: (item) => {
+                    const currency = {
+                      name: item.name,
+                      isoCode: item.isoCode,
+                      symbol: item.symbol,
+                    };
+                    setSelectedCurrency(currency);
+                    setLogbook({
+                      ...logbook,
+                      logbook_currency: currency,
+                    });
+                  },
+                  defaultOption: selectedCurrency,
+                });
+              }}
             />
 
             {/* // TAG : Total balace */}
@@ -258,19 +237,17 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               iconLeftName="cash"
               iconPack="IonIcons"
               leftLabel="Total balance"
-              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
+                logbook.logbook_currency.symbol
               } ${utils.GetFormattedNumber({
                 value: sumBalance(),
-                currency: appSettings.logbookSettings.defaultCurrency.name,
+                currency: logbook.logbook_currency.name,
               })}`}
             />
             {/* // TAG : Total transactions */}
             <ListItem
               iconLeftName="book"
               iconPack="IonIcons"
-              rightLabelColor={globalTheme.colors.foreground}
               leftLabel="Total transactions"
               rightLabel={(countTransactions() || "No") + " Transactions"}
             />
@@ -287,27 +264,45 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               paddingHorizontal: 48,
             }}
           >
-            {/* // TAG : Edit Button */}
+            {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
-                label="Edit"
-                onPress={() =>
-                  navigation.navigate(screenList.editLogbookScreen, {
-                    logbook: logbook,
-                    selectedLogbook: selectedLogbook,
-                    selectedCategory: selectedCategory,
-                  })
-                }
+                label="Cancel"
+                onPress={() => navigation.goBack()}
               />
             </View>
 
-            {/* // TAG : Delete Button */}
-            <View style={{ flex: 1, paddingLeft: 8 }}>
-              <ButtonSecondaryDanger
-                label="Delete"
-                type="danger"
+            {/* // TAG : Save Button */}
+            <View style={{ flex: 2, paddingLeft: 8 }}>
+              <ButtonPrimary
+                label="Save"
                 onPress={() => {
-                  deleteLogbook();
+                  const finalLogbook = {
+                    ...logbook,
+                    _timestamps: {
+                      ...logbook._timestamps,
+                      updated_at: Date.now(),
+                      updated_by: userAccount.uid,
+                    },
+                  };
+
+                  setTimeout(async () => {
+                    await firestore.setData(
+                      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+                      finalLogbook.logbook_id,
+                      finalLogbook
+                    );
+                  }, 5000);
+
+                  navigation.navigate(screenList.loadingScreen, {
+                    label: "Saving Logbook ...",
+                    loadingType: "patchLogbook",
+                    logbookToOpen: logbookToOpen,
+                    patchLogbook: finalLogbook,
+                    reducerUpdatedAt: Date.now(),
+                    // initialLogbookPatchCounter: logbooks.logbookPatchCounter,
+                    // initialSortedLogbookPatchCounter: sortedTransactions.sortedLogbookPatchCounter
+                  });
                 }}
               />
             </View>
@@ -318,4 +313,4 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   );
 };
 
-export default LogbookPreviewScren;
+export default EditLogbookScreen;

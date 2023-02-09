@@ -598,7 +598,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
       backgroundColor: globalTheme.colors.background,
       image: <Image source={doneSetup} style={{ width: 250, height: 250 }} />,
       title: "Everything is Set !",
-      subtitle: "Finish Setup and start using Cash Log App",
+      subtitle: "Finish Setup and start using Juta App",
     },
   ];
 
