@@ -150,7 +150,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 <TextPrimary
                   label={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currency: selectedLogbook.logbook_currency.name,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
@@ -195,8 +195,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                         appSettings.logbookSettings.secondaryCurrency.name,
                       globalCurrencyRates: globalCurrencyRates,
                     }),
-                    currency:
-                      appSettings.logbookSettings.secondaryCurrency.name,
+                    currencyIsoCode:
+                      appSettings.logbookSettings.secondaryCurrency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
