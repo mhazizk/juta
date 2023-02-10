@@ -10,7 +10,7 @@ const handleUserSignUp = async ({ email, password }) => {
       const user = userCredential.user;
       return user;
     } catch (error) {
-      if (++count == maxTries) {
+      if (++count == maxCount) {
         switch (true) {
           case error.message.includes("email-already-in-use"):
             Alert.alert("Account", "Email address is already registered");
