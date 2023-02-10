@@ -304,9 +304,11 @@ const TransactionList = ({
                         style={{ paddingRight: 8 }}
                       />
                       <TextPrimary
-                        label={utils.GetFormattedNumber({
+                        label={utils.getFormattedNumber({
                           value: sumAmount(section.data),
                           currency: selectedLogbook.logbook_currency.name,
+                          negativeSymbol:
+                            appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
                       />
                     </View>
