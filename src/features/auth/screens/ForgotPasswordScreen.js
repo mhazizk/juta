@@ -56,11 +56,10 @@ const ForgotPasswordScreen = () => {
 
   return (
     <CustomScrollView
-      contentContainerStyle={
-        {
-          // justifyContent: "center",
-        }
-      }
+      contentContainerStyle={{
+        flex: 1,
+        justifyContent: "center",
+      }}
     >
       <View
         style={{
