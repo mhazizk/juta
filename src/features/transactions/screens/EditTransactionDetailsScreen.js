@@ -266,9 +266,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 textAlign="center"
                 returnKeyType="done"
                 keyboardType="number-pad"
-                placeholder={utils.GetFormattedNumber({
+                placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
                   currency: appSettings.logbookSettings.defaultCurrency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 placeholderTextColor={globalTheme.text.textSecondary.color}
                 style={[
@@ -305,13 +307,17 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   });
                 }}
                 clearButtonMode="while-editing"
-                defaultValue={utils.GetFormattedNumber({
+                defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
                   currency: selectedLogbook.logbook_currency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
-                value={utils.GetFormattedNumber({
+                value={utils.getFormattedNumber({
                   value: transaction.details.amount,
                   currency: selectedLogbook.logbook_currency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
               />
             </View>
