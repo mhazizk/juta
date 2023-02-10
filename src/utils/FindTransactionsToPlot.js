@@ -241,23 +241,30 @@ const findTransactionsToPlot = ({
         });
       }
 
-      setActiveBudget({
-        ...activeBudget,
-        spent: totalSpent,
-        limit: dailyLimit,
-      });
-      setGraph({
-        ...graph,
-        // status:
-        //   mainGraph.length || shadowGraph.length || limitLine.length
-        //     ? "done"
-        //     : "empty",
-        graphData: { mainGraph, shadowGraph, limitLine },
-      });
-      setShowGraph(true);
+      if (transactionList.length > 0) {
+        setActiveBudget({
+          ...activeBudget,
+          spent: totalSpent,
+          limit: dailyLimit,
+        });
+        setGraph({
+          ...graph,
+          graphData: { mainGraph, shadowGraph, limitLine },
+        });
+        setShowGraph(true);
+      } else {
+        setGraph({
+          rangeDay: 7,
+          graphData: {
+            mainGraph: [],
+            shadowGraph: [],
+            limitLine: [],
+          },
+        });
+        setShowGraph(false);
+      }
     } else {
       setGraph({
-        // status: "empty",
         rangeDay: 7,
         graphData: {
           mainGraph: [],
