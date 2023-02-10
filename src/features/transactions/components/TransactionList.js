@@ -306,7 +306,7 @@ const TransactionList = ({
                       <TextPrimary
                         label={utils.getFormattedNumber({
                           value: sumAmount(section.data),
-                          currency: selectedLogbook.logbook_currency.name,
+                          currencyisoCode: selectedLogbook.logbook_currency.isoCode,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
