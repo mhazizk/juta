@@ -101,8 +101,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-      defaultOption:
-        break;
+        defaultOption: break;
     }
   };
 
@@ -127,8 +126,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-      defaultOption:
-        break;
+        defaultOption: break;
     }
   };
 
@@ -205,13 +203,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 // placeholderTextColor={
                 //   globalTheme.text.textSecondary.color
                 // }
-                placeholder={utils.GetFormattedNumber({
+                placeholder={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
                   currency: appSettings.logbookSettings.defaultCurrency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
-                placeholderTextColor={
-                  globalTheme.text.textSecondary.color
-                }
+                placeholderTextColor={globalTheme.text.textSecondary.color}
                 style={[
                   {
                     ...globalTheme.text.textPrimary,
@@ -243,13 +241,17 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   });
                 }}
                 clearButtonMode="while-editing"
-                defaultValue={utils.GetFormattedNumber({
+                defaultValue={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
                   currency: selectedLogbook.logbook_currency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
-                value={utils.GetFormattedNumber({
+                value={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
                   currency: selectedLogbook.logbook_currency.name,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
               />
             </View>
@@ -354,7 +356,9 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                       repeat_status: item.repeat_status,
                     });
                   },
-                  defaultOption: { name: localRepeatedTransaction.repeat_status },
+                  defaultOption: {
+                    name: localRepeatedTransaction.repeat_status,
+                  },
                 })
               }
             />
@@ -514,9 +518,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                     returnKeyType="done"
                     keyboardType="default"
                     placeholder="Add additional notes ..."
-                    placeholderTextColor={
-                      globalTheme.text.textSecondary.color
-                    }
+                    placeholderTextColor={globalTheme.text.textSecondary.color}
                     style={{
                       ...globalTheme.text.textPrimary,
                       flex: 5,
@@ -859,8 +861,7 @@ const handleDelete = ({
         reducerUpdatedAt: Date.now(),
       };
       break;
-    defaultOption:
-      break;
+      defaultOption: break;
   }
   navigation.navigate(screenList.loadingScreen, opt);
 };
@@ -1019,8 +1020,7 @@ const handleSave = ({
 
           break;
 
-        defaultOption:
-          break;
+          defaultOption: break;
       }
 
       // //   TODO : continue this to loading screen and reducer
@@ -1066,10 +1066,9 @@ const handleSave = ({
         reducerUpdatedAt: Date.now(),
       });
 
-    // TODO : continue 'next' case
+      // TODO : continue 'next' case
 
-    defaultOption:
-      console.log("masuk default");
+      defaultOption: console.log("masuk default");
       break;
   }
 };
@@ -1114,7 +1113,6 @@ const getNextRepeatDate = (
         (numberOfTransactionsToBeLogged + 1) * newRepeatRange
       );
 
-    defaultOption:
-      return 1674405411283;
+      defaultOption: return 1674405411283;
   }
 };
