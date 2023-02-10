@@ -85,7 +85,9 @@ const TotalExpenseWidget = ({
     if (isFocused) {
       setShowGraph(false);
       setWidgetLoading(true);
-      findTransactions();
+      setTimeout(() => {
+        findTransactions();
+      }, 1);
     }
   }, [isFocused]);
 
@@ -158,10 +160,23 @@ const TotalExpenseWidget = ({
                     style={{
                       zIndex: 1,
                       color: globalTheme.colors.cardText,
-                      textAlign: "center",
-                      textAlignVertical: "center",
+                      alignSelf: "flex-start",
+                      justifyContent: "flex-end",
+                      paddingLeft: 16,
+                      fontSize: 20,
+                      fontWeight: "bold",
                     }}
-                    label="Add transactions to see your expense graph here"
+                    label="No expenses"
+                  />
+                  <TextPrimary
+                    style={{
+                      zIndex: 1,
+                      color: globalTheme.colors.cardText,
+                      alignSelf: "flex-start",
+                      paddingLeft: 16,
+                      fontSize: 20,
+                    }}
+                    label="in last 7 days"
                   />
                 </View>
                 <Image
@@ -229,8 +244,8 @@ const TotalExpenseWidget = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: activeBudget.spent,
-                          currency:
-                            appSettings.logbookSettings.defaultCurrency.name,
+                          currencyIsoCode:
+                            appSettings.logbookSettings.defaultCurrency.isoCode,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
@@ -273,8 +288,8 @@ const TotalExpenseWidget = ({
                                 .name,
                             globalCurrencyRates: globalCurrencyRates,
                           }),
-                          currency:
-                            appSettings.logbookSettings.secondaryCurrency.name,
+                          currencyIsoCode:
+                            appSettings.logbookSettings.secondaryCurrency.isoCode,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
@@ -293,7 +308,7 @@ const TotalExpenseWidget = ({
                     zIndex: 0,
                   }}
                 >
-                  <CustomBarChart
+                  {/* <CustomBarChart
                     //   Graph Data
                     mainGraph={graph?.graphData?.mainGraph}
                     shadowGraph={graph?.graphData?.shadowGraph}
@@ -327,7 +342,7 @@ const TotalExpenseWidget = ({
                         ? 8
                         : 16
                     }
-                  />
+                  /> */}
                 </View>
               </>
             )}
