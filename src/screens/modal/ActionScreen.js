@@ -3,7 +3,6 @@ import { Alert, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { ButtonSecondary } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
-import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -87,9 +86,10 @@ const ActionScreen = ({ route, navigation }) => {
           >
             <TouchableOpacity
               style={{ flex: 1 }}
-              onPress={() =>
-                navigation.navigate(screenList.newTransactionDetailsScreen)
-              }
+              onPress={() => {
+                navigation.goBack();
+                navigation.navigate(screenList.newTransactionDetailsScreen);
+              }}
             >
               <View
                 style={{
@@ -128,6 +128,7 @@ const ActionScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={{ flex: 1 }}
               onPress={() => {
+                navigation.goBack();
                 // get logbook limit from subscription plan
                 const logbookLimit = getSubscriptionLimit(
                   userAccount.subscription.plan,
@@ -139,7 +140,19 @@ const ActionScreen = ({ route, navigation }) => {
                   // show alert
                   Alert.alert(
                     "Logbook Limit Reached",
-                    `You have reached the limit of ${logbookLimit} logbooks. Please upgrade your subscription to add more logbooks.`
+                    `You have reached the limit of ${logbookLimit} logbooks. Please upgrade your subscription to add more logbooks.`,
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Upgrade",
+                        onPress: () => {
+                          navigation.navigate(screenList.mySubscriptionScreen);
+                        },
+                      },
+                    ]
                   );
                 }
                 // if not, proceed
