@@ -182,15 +182,17 @@ const UserScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate(screenList.aboutScreen)}
               />
               {/* // TAG : Developer*/}
-              <ListItem
-                pressable
-                leftLabel="Developer"
-                iconLeftName="code"
-                iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.developerSettingsScreen)
-                }
-              />
+              {__DEV__ && (
+                <ListItem
+                  pressable
+                  leftLabel="Developer"
+                  iconLeftName="code"
+                  iconPack="IonIcons"
+                  onPress={() =>
+                    navigation.navigate(screenList.developerSettingsScreen)
+                  }
+                />
+              )}
             </ListSection>
           </>
         )}
