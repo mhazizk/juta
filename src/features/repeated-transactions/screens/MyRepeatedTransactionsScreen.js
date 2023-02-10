@@ -80,10 +80,10 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
                       iconRightSize={12}
                       rightLabel={utils.getFormattedNumber({
                         value: repeatSection.repeat_amount,
-                        currency: utils.FindById.findLogbookById({
+                        currencyIsoCode: utils.FindById.findLogbookById({
                           id: repeatSection.repeat_logbook_id,
                           logbooks: logbooks.logbooks,
-                        }).logbook_currency?.name,
+                        }).logbook_currency?.isoCode,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
