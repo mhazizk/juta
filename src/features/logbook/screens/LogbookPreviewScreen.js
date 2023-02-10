@@ -263,7 +263,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 appSettings.logbookSettings.defaultCurrency.symbol
               } ${utils.getFormattedNumber({
                 value: sumBalance(),
-                currency: appSettings.logbookSettings.defaultCurrency.name,
+                currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
