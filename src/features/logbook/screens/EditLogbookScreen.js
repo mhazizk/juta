@@ -239,7 +239,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 logbook.logbook_currency.symbol
               } ${utils.getFormattedNumber({
                 value: sumBalance(),
-                currency: logbook.logbook_currency.name,
+                currencyIsoCode: logbook.logbook_currency.isoCode,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
