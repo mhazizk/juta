@@ -109,7 +109,7 @@ const UserScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
               />
               {/* // TAG : My Repeated Transactions */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="My Repeated Transactions"
                 iconLeftName="repeat"
@@ -121,7 +121,7 @@ const UserScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.myRepeatedTransactionsScreen)
                 }
-              />
+              /> */}
             </ListSection>
             <ListSection>
               {/* // TAG : Settings */}
