@@ -261,9 +261,11 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               rightLabelColor={globalTheme.colors.foreground}
               rightLabel={`${
                 appSettings.logbookSettings.defaultCurrency.symbol
-              } ${utils.GetFormattedNumber({
+              } ${utils.getFormattedNumber({
                 value: sumBalance(),
                 currency: appSettings.logbookSettings.defaultCurrency.name,
+                negativeSymbol:
+                  appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
             />
             {/* // TAG : Total transactions */}
