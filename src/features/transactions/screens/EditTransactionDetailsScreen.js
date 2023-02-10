@@ -268,7 +268,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 keyboardType="number-pad"
                 placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: appSettings.logbookSettings.defaultCurrency.name,
+                  currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -293,7 +293,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   let float = 0;
                   if (string) {
                     console.log({ string });
-                    float = utils.RemoveNumberSeparator({
+                    float = utils.removeNumberSeparator({
                       value: string,
                       currency: selectedLogbook.logbook_currency.name,
                     });
@@ -309,13 +309,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 clearButtonMode="while-editing"
                 defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
