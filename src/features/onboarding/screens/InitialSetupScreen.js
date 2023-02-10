@@ -30,6 +30,9 @@ import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFal
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
 import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRate";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
+import Loading from "../../../components/Loading";
+import { TextPrimary } from "../../../components/Text";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -46,6 +49,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedAppSettings, setSelectedAppSettings] = useState({
     ...appSettingsFallback,
     uid: userAccount.uid,
@@ -102,123 +106,128 @@ const InitialSetupScreen = ({ route, navigation }) => {
     }
   };
 
-  const finalizeSetup = async () => {
-    // Check Logbook
-    const logbookToDispatch = {
-      ...newLogbook,
-      logbook_name: newLogbook.logbook_name || "My Logbook",
-      _timestamps: {
-        ...newLogbook._timestamps,
-        created_at: Date.now(),
-        updated_at: Date.now(),
-      },
-    };
-
-    // const logbookToDispatch = {
-    //   _timestamps: {
-    //     created_at: Date.now(),
-    //     updated_at: Date.now(),
-    //   },
-    //   _id: newLogbook.logbook_id,
-    //   uid: newLogbook.uid,
-    //   logbook_currency: newLogbook.logbook_currency,
-    //   logbook_type: "basic",
-    //   logbook_id: newLogbook.logbook_id,
-    //   logbook_name: newLogbook.logbook_name || "My Logbook",
-    //   logbook_records: [],
-    //   logbook_categories: [],
-    //   __v: 0,
-    // };
-
-    dispatchAppSettings({
-      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-      payload: selectedAppSettings,
-    });
-
-    const newCategories = categoriesFallback({
-      uid: userAccount.uid,
-      created_by: userAccount.uid,
-      updated_by: userAccount.uid,
-    });
-
-    dispatchCategories({
-      type: REDUCER_ACTIONS.CATEGORIES.SET,
-      payload: newCategories,
-    });
-
-    dispatchLogbooks({
-      type: REDUCER_ACTIONS.LOGBOOKS.SET,
-      payload: logbookToDispatch,
-    });
-
-    dispatchSortedTransactions({
-      type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
-      payload: [
-        {
-          logbook_id: newLogbook.logbook_id,
-          transactions: [],
+  const finalizeSetup = () => {
+    setIsLoading(true);
+    setTimeout(async () => {
+      // Check Logbook
+      const logbookToDispatch = {
+        ...newLogbook,
+        logbook_name: newLogbook.logbook_name || "My Logbook",
+        _timestamps: {
+          ...newLogbook._timestamps,
+          created_at: Date.now(),
+          updated_at: Date.now(),
         },
-      ],
-    });
-    const newCurrencyRateList = await getCurrencyRate(globalCurrencyRates.data);
+      };
 
-    const currencyRatesToDispatch = {
-      ...initialGlobalCurrencyRates,
-      uid: userAccount.uid,
-      data: newCurrencyRateList,
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: userAccount.uid,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-    };
-    dispatchGlobalCurrencyRates({
-      type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
-      payload: currencyRatesToDispatch,
-    });
+      // const logbookToDispatch = {
+      //   _timestamps: {
+      //     created_at: Date.now(),
+      //     updated_at: Date.now(),
+      //   },
+      //   _id: newLogbook.logbook_id,
+      //   uid: newLogbook.uid,
+      //   logbook_currency: newLogbook.logbook_currency,
+      //   logbook_type: "basic",
+      //   logbook_id: newLogbook.logbook_id,
+      //   logbook_name: newLogbook.logbook_name || "My Logbook",
+      //   logbook_records: [],
+      //   logbook_categories: [],
+      //   __v: 0,
+      // };
 
-    const saveCategories = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.CATEGORIES,
-      userAccount.uid,
-      newCategories
-      // initialCategories.categories
-    );
-
-    const saveAppSettings = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-      userAccount.uid,
-      selectedAppSettings
-    );
-
-    const saveLogbook = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-      logbookToDispatch.logbook_id,
-      logbookToDispatch
-    );
-
-    const saveCurrencyRates = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-      userAccount.uid,
-      currencyRatesToDispatch
-    );
-
-    // TODO : test with new account
-    Promise.all([
-      saveCategories,
-      saveLogbook,
-      saveAppSettings,
-      saveCurrencyRates,
-    ])
-      .then(() => {
-        return navigation.replace(screenList.splashScreen, {
-          fromScreen: screenList.initialSetupScreen,
-          targetScreen: screenList.bottomTabNavigator,
-        });
-      })
-      .catch((err) => {
-        alert(err);
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+        payload: selectedAppSettings,
       });
+
+      const newCategories = categoriesFallback({
+        uid: userAccount.uid,
+        created_by: userAccount.uid,
+        updated_by: userAccount.uid,
+      });
+
+      dispatchCategories({
+        type: REDUCER_ACTIONS.CATEGORIES.SET,
+        payload: newCategories,
+      });
+
+      dispatchLogbooks({
+        type: REDUCER_ACTIONS.LOGBOOKS.SET,
+        payload: logbookToDispatch,
+      });
+
+      dispatchSortedTransactions({
+        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
+        payload: [
+          {
+            logbook_id: newLogbook.logbook_id,
+            transactions: [],
+          },
+        ],
+      });
+      const newCurrencyRateList = await getCurrencyRate(
+        globalCurrencyRates.data
+      );
+
+      const currencyRatesToDispatch = {
+        ...initialGlobalCurrencyRates,
+        uid: userAccount.uid,
+        data: newCurrencyRateList,
+        _timestamps: {
+          created_at: Date.now(),
+          created_by: userAccount.uid,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      dispatchGlobalCurrencyRates({
+        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+        payload: currencyRatesToDispatch,
+      });
+
+      const saveCategories = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+        userAccount.uid,
+        newCategories
+        // initialCategories.categories
+      );
+
+      const saveAppSettings = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        userAccount.uid,
+        selectedAppSettings
+      );
+
+      const saveLogbook = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+        logbookToDispatch.logbook_id,
+        logbookToDispatch
+      );
+
+      const saveCurrencyRates = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+        userAccount.uid,
+        currencyRatesToDispatch
+      );
+
+      // TODO : test with new account
+      Promise.all([
+        saveCategories,
+        saveLogbook,
+        saveAppSettings,
+        saveCurrencyRates,
+      ])
+        .then(() => {
+          return navigation.replace(screenList.splashScreen, {
+            fromScreen: screenList.initialSetupScreen,
+            targetScreen: screenList.bottomTabNavigator,
+          });
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }, 1);
   };
 
   const pages = [
@@ -608,13 +617,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
                 size={32}
                 color={globalTheme.colors.foreground}
               />
-              {/* <TextInput
-                            placeholder="Type new logbook name ..."
-                            textAlign='center'
-                            style={{ ...globalStyles.lightTheme.textPrimary }}
-                            onChangeText={(text) => setNewLogbook({ ...newLogbook, logbook_name: text })}
-                            value={newLogbook.logbook_name}
-                        /> */}
             </View>
           </TouchableOpacity>
         </>
@@ -632,15 +634,28 @@ const InitialSetupScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <Onboarding
-        ref={onboardingRef}
-        transitionAnimationDuration={250}
-        showSkip={false}
-        onDone={() => {
-          finalizeSetup();
-        }}
-        pages={pages}
-      />
+      {!isLoading && (
+        <Onboarding
+          ref={onboardingRef}
+          transitionAnimationDuration={250}
+          showSkip={false}
+          onDone={() => {
+            finalizeSetup();
+          }}
+          pages={pages}
+        />
+      )}
+      {isLoading && (
+        <CustomScrollView
+          contentContainerStyle={{
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <Loading />
+          <TextPrimary label="Finishing Setup..." />
+        </CustomScrollView>
+      )}
     </>
   );
 };
