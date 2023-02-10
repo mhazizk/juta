@@ -6,6 +6,7 @@ const convertCurrency = ({ amount, from, target, globalCurrencyRates }) => {
   const newAmount = amountInDollar * targetRate;
 
   return newAmount;
+  return amount;
 };
 
 export default convertCurrency;
