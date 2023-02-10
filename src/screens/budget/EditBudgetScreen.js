@@ -211,16 +211,16 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   ? utils
                       .getFormattedNumber({
                         value: patchBudget.limit,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })
                       .slice(0, 15) + "..."
                   : utils.getFormattedNumber({
                       value: patchBudget.limit,
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })
@@ -245,8 +245,8 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     ? null
                     : utils.getFormattedNumber({
                         value: patchBudget.limit,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       }),
@@ -310,7 +310,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               }}
             />
             {/* // TAG : Repeat */}
-            <CheckList
+            {/* <CheckList
               singleChecklist
               pressable
               item={true}
@@ -321,7 +321,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               onPress={() => {
                 setPatchBudget({ ...patchBudget, repeat: !patchBudget.repeat });
               }}
-            />
+            /> */}
           </ListSection>
 
           {/* // TAG : Action Button */}
