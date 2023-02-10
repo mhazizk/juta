@@ -1,35 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import {
   ButtonDisabled,
-  ButtonPrimary,
-  ButtonSecondary,
+  ButtonPrimary
 } from "../../../components/Button";
 import CustomTextInput from "../../../components/CustomTextInput";
 import {
-  useGlobalAppSettings,
-  useGlobalFeatureWishlist,
-  useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalAppSettings, useGlobalTheme,
+  useGlobalUserAccount
 } from "../../../reducers/GlobalContext";
 import wishlistModel from "../model/wishlistModel";
 import uuid from "react-native-uuid";
 import { TextPrimary } from "../../../components/Text";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import screenList from "../../../navigations/ScreenList";
-import LOADING_TYPES from "../../../screens/modal/loading.type";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import filterBadWords from "../../../api/filterBadWords";
 import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import filterBadWords from "../../../api/rapidapi/filterBadWords";
 
 const NewFeatureWishlistScreen = ({ navigation }) => {
   const titleInputRef = useRef(null);
   const descriptionInputRef = useRef(null);
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const { userAccount } = useGlobalUserAccount();
   const [newWishlist, setNewWishlist] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
