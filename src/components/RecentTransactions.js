@@ -176,7 +176,10 @@ const RecentTransactions = ({
       {!showList && (
         <TextSecondary
           label={`No ${title || "Recent Transactions"}`}
-          style={{ alignSelf: "flex-start", paddingVertical: 8 }}
+          style={{
+            alignSelf: "flex-start",
+            paddingVertical: 8,
+          }}
         />
       )}
       <ListSection marginTop={8}>
