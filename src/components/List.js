@@ -542,7 +542,7 @@ export const TransactionListItem = ({
                       // })}
                       label={utils.getFormattedNumber({
                         value: transactionAmount,
-                        currency: logbookCurrency.name,
+                        currencyIsoCode: logbookCurrency.isoCode,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -584,7 +584,7 @@ export const TransactionListItem = ({
                           target: secondaryCurrency.name,
                           globalCurrencyRates: globalCurrencyRates,
                         }),
-                        currency: secondaryCurrency.name,
+                        currencyIsoCode: secondaryCurrency.isoCode,
                       })}
                     />
                   </View>
@@ -802,7 +802,7 @@ export const SearchResultListItem = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: transactionAmount,
-                          currency: logbookCurrency.name,
+                          currencyIsoCode: logbookCurrency.isoCode,
                         })}
                       />
                     </View>
@@ -840,7 +840,7 @@ export const SearchResultListItem = ({
                             target: secondaryCurrency.name,
                             globalCurrencyRates: globalCurrencyRates,
                           }),
-                          currency: secondaryCurrency.name,
+                          currencyIsoCode: secondaryCurrency.isoCode,
                         })}
                       />
                     </View>
@@ -957,8 +957,8 @@ export const CardList = ({
                   <TextPrimary
                     label={utils.getFormattedNumber({
                       value: spent,
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}
                   />
                 </View>
