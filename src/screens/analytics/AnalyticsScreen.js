@@ -224,8 +224,8 @@ const AnalyticsScreen = () => {
                         style={{ fontSize: 36, fontWeight: "bold" }}
                         label={utils.getFormattedNumber({
                           value: activeBudget?.spent,
-                          currency:
-                            appSettings.logbookSettings.defaultCurrency.name,
+                          currencyIsoCode:
+                            appSettings.logbookSettings.defaultCurrency.isoCode,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
@@ -365,8 +365,8 @@ const AnalyticsScreen = () => {
                       }
                       rightLabel={utils.getFormattedNumber({
                         value: item?.totalSpent,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
