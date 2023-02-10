@@ -21,6 +21,8 @@ import passwordConditionsList from "../model/passwordConditionsList";
 import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
 import passwordCheck from "../model/passwordCheck";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import { useAuthState } from "react-firebase-hooks/auth";
+import auth from "../../../api/firebase/auth";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -37,6 +39,7 @@ const SignUpScreen = ({ route, navigation }) => {
   const [passwordConditions, setPasswordConditions] = useState(
     passwordConditionsList
   );
+  const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {}, []);
 
@@ -90,6 +93,40 @@ const SignUpScreen = ({ route, navigation }) => {
   const inputPasswordRef = useRef(null);
   const inputConfirmPasswordRef = useRef(null);
 
+  const handleNewAccount = (user) => {
+    const account = userAccountModel({
+      displayName: displayName,
+      uid: user.uid,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      photoURL: user.photoURL,
+    });
+
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.USERS,
+        account.uid,
+        account
+      );
+      // await postLogSnagEvent(
+      //   account.displayName,
+      //   LOGSNAG_EVENT_TYPES.USER_SIGNUP
+      // );
+      await handleUserUpdateProfile({
+        displayName,
+        photoURL: null,
+      }).catch((error) => {
+        alert(error);
+        setScreenLoading(false);
+      });
+    }, 1);
+    setTimeout(() => {
+      navigation.replace(screenList.emailVerificationScreen, {
+        fromScreen: screenList.signUpScreen,
+      });
+    }, 1000);
+  };
+
   const finalCheck = (action) => {
     if (!email?.includes("@")) {
       alert("Please fill in email");
@@ -102,42 +139,20 @@ const SignUpScreen = ({ route, navigation }) => {
       setTimeout(() => {
         handleUserSignUp({ email, password, displayName })
           .then((user) => {
-            const account = userAccountModel({
-              displayName: displayName,
-              uid: user.uid,
-              email: user.email,
-              emailVerified: user.emailVerified,
-              photoURL: user.photoURL,
-            });
-
-            setTimeout(async () => {
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                account.uid,
-                account
-              );
-              // await postLogSnagEvent(
-              //   account.displayName,
-              //   LOGSNAG_EVENT_TYPES.USER_SIGNUP
-              // );
-              await handleUserUpdateProfile({
-                displayName,
-                photoURL: null,
-              }).catch((error) => {
-                alert(error);
-                setScreenLoading(false);
-              });
-            }, 1);
-            setTimeout(() => {
-              navigation.replace(screenList.emailVerificationScreen, {
-                fromScreen: screenList.signUpScreen,
-              });
-            }, 1000);
+            handleNewAccount(user);
           })
           .catch((error) => {
             // alert(error);
-            console.log(error);
-            setScreenLoading(false);
+            switch (error.code) {
+              case "auth/email-already-in-use":
+                if (user.email === email) {
+                  handleNewAccount(user);
+                }
+                break;
+              default:
+                setScreenLoading(false);
+                break;
+            }
           });
       }, 1);
       return;
@@ -356,7 +371,8 @@ const SignUpScreen = ({ route, navigation }) => {
         )}
         {screenLoading && (
           <>
-            <Loading lottie size={56} />
+            <Loading />
+            {/* <Loading lottie size={56} /> */}
             <TextPrimary
               label="Signing you up ..."
               style={{ paddingVertical: 16 }}
