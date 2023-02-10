@@ -103,12 +103,14 @@ const RepeatedTransactionHeader = ({ onPress, repeatSection }) => {
                   }}
                 />
                 <TextPrimary
-                  label={utils.GetFormattedNumber({
+                  label={utils.getFormattedNumber({
                     value: repeatSection.repeat_amount,
                     currency: utils.FindById.findLogbookById({
                       id: repeatSection.repeat_logbook_id,
                       logbooks: logbooks.logbooks,
                     }),
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                 />
               </View>
