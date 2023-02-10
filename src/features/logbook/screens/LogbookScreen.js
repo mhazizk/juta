@@ -10,6 +10,7 @@ import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -28,7 +29,7 @@ const LogbookScreen = ({ route, navigation }) => {
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
-
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   // const [logbooks, setLogbooks] = useState(null);
   // const [categories, setCategories] = useState(null);
   const [transactions, setTransactions] = useState(null);
@@ -313,9 +314,11 @@ const LogbookScreen = ({ route, navigation }) => {
                   }}
                   label={`${
                     appSettings.logbookSettings.defaultCurrency.symbol
-                  } ${utils.GetFormattedNumber({
+                  } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
                     currency: appSettings.logbookSettings.defaultCurrency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
                 />
                 {appSettings.logbookSettings.showSecondaryCurrency && (
@@ -329,15 +332,18 @@ const LogbookScreen = ({ route, navigation }) => {
                     }}
                     label={`${
                       appSettings.logbookSettings.secondaryCurrency.symbol
-                    } ${utils.GetFormattedNumber({
-                      value: utils.ConvertCurrency({
+                    } ${utils.getFormattedNumber({
+                      value: utils.convertCurrency({
                         amount: totalBalance(selectedLogbook),
                         from: selectedLogbook.logbook_currency.name,
                         target:
                           appSettings.logbookSettings.secondaryCurrency.name,
+                        globalCurrencyRates: globalCurrencyRates,
                       }),
                       currency:
                         appSettings.logbookSettings.secondaryCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                     })}`}
                   />
                 )}
