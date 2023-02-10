@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  TextInput, View
-} from "react-native";
+import { TextInput, View } from "react-native";
 // import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
 // import "intl/locale-data/jsonp/en";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -14,7 +12,6 @@ import {
 } from "../../../reducers/GlobalContext";
 import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
 import { TextPrimary } from "../../../components/Text";
-import APP_SETTINGS from "../../../config/appSettings";
 import * as utils from "../../../utils";
 import screenList from "../../../navigations/ScreenList";
 import firestore from "../../../api/firebase/firestore";
@@ -22,6 +19,7 @@ import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectio
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
+import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -214,7 +212,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Main Currency",
                   modalType: "currencyList",
-                  props: APP_SETTINGS.CURRENCY.OPTIONS,
+                  props: CURRENCY_CONSTANTS.OPTIONS,
                   selected: (item) => {
                     const currency = {
                       name: item.name,
@@ -239,9 +237,11 @@ const EditLogbookScreen = ({ route, navigation }) => {
               leftLabel="Total balance"
               rightLabel={`${
                 logbook.logbook_currency.symbol
-              } ${utils.GetFormattedNumber({
+              } ${utils.getFormattedNumber({
                 value: sumBalance(),
                 currency: logbook.logbook_currency.name,
+                negativeSymbol:
+                  appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
             />
             {/* // TAG : Total transactions */}
