@@ -1,3 +1,4 @@
+import CURRENCY_CONSTANTS from "../constants/currencyConstants";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 /**
@@ -16,40 +17,23 @@ import { useGlobalAppSettings } from "../reducers/GlobalContext";
  */
 const getFormattedNumber = ({
   value,
-  currency,
-  thousandSeparator,
+  currencyIsoCode,
+  // thousandSeparator,
   negativeSymbol,
-  decimalSeparator,
-  significantDigits,
-  showTrailingZeros,
-  symbol,
+  // decimalSeparator,
+  // significantDigits,
+  // showTrailingZeros,
+  // symbol,
   showSymbol,
   symbolPosition = "after",
   showSymbolSpace = true,
 }) => {
-  switch (true) {
-    case currency === "USD":
-      symbol = "$";
-      thousandSeparator = ",";
-      decimalSeparator = ".";
-      significantDigits = 2;
-      showTrailingZeros = true;
-      break;
-    case currency === "IDR":
-      symbol = "Rp";
-      thousandSeparator = ".";
-      significantDigits = 0;
-      showTrailingZeros = false;
-      decimalSeparator = ",";
-      break;
-    default:
-      symbol = "Rp";
-      thousandSeparator = ".";
-      significantDigits = 0;
-      showTrailingZeros = false;
-      decimalSeparator = ",";
-      break;
-  }
+  const { symbol, thousandSeparator, decimalSeparator, significantDigits } =
+    CURRENCY_CONSTANTS.OPTIONS.find((option) => {
+      return option.isoCode === currencyIsoCode;
+    });
+
+  const showTrailingZeros = significantDigits > 0 ? true : false;
 
   // Check negative sign
   let isNegative = false;
@@ -82,15 +66,15 @@ const getFormattedNumber = ({
     : formattedIntegerPart;
 
   // Add symbol
-  if (showSymbol && Boolean(symbol)) {
-    const formattedValueWithSymbol =
-      symbolPosition === "after"
-        ? `${formattedValue} ${symbol}`
-        : `${symbol} ${formattedValue}`;
-    return showSymbolSpace
-      ? formattedValueWithSymbol
-      : formattedValueWithSymbol.replace(" ", "");
-  }
+  // if (showSymbol && Boolean(symbol)) {
+  //   const formattedValueWithSymbol =
+  //     symbolPosition === "after"
+  //       ? `${formattedValue} ${symbol}`
+  //       : `${symbol} ${formattedValue}`;
+  //   return showSymbolSpace
+  //     ? formattedValueWithSymbol
+  //     : formattedValueWithSymbol.replace(" ", "");
+  // }
 
   if (isNegative) {
     const removedSymbol = formattedValue.replace("-", "");
