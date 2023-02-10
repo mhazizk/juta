@@ -3,6 +3,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalTheme,
 } from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
@@ -390,7 +391,7 @@ export const TransactionListItem = ({
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   return (
     <>
       <TouchableNativeFeedback onPress={() => onPress()}>
@@ -539,9 +540,11 @@ export const TransactionListItem = ({
                       //   amount: transactionAmount,
                       //   currency: currency.name,
                       // })}
-                      label={utils.GetFormattedNumber({
+                      label={utils.getFormattedNumber({
                         value: transactionAmount,
                         currency: logbookCurrency.name,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
                     />
                   </View>
@@ -574,15 +577,12 @@ export const TransactionListItem = ({
                             ? globalTheme.colors.incomeAmount
                             : globalTheme.text.textPrimary.color,
                       }}
-                      // label={utils.FormatCurrency({
-                      //   amount: transactionAmount,
-                      //   currency: currency.name,
-                      // })}
-                      label={utils.GetFormattedNumber({
-                        value: utils.ConvertCurrency({
+                      label={utils.getFormattedNumber({
+                        value: utils.convertCurrency({
                           amount: transactionAmount,
                           from: logbookCurrency.name,
                           target: secondaryCurrency.name,
+                          globalCurrencyRates: globalCurrencyRates,
                         }),
                         currency: secondaryCurrency.name,
                       })}
@@ -627,7 +627,7 @@ export const SearchResultListItem = ({
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   return (
     <>
       {pressable && (
@@ -800,7 +800,7 @@ export const SearchResultListItem = ({
                               ? globalTheme.colors.incomeAmount
                               : globalTheme.text.textPrimary.color,
                         }}
-                        label={utils.GetFormattedNumber({
+                        label={utils.getFormattedNumber({
                           value: transactionAmount,
                           currency: logbookCurrency.name,
                         })}
@@ -833,11 +833,12 @@ export const SearchResultListItem = ({
                               ? globalTheme.colors.incomeAmount
                               : globalTheme.text.textPrimary.color,
                         }}
-                        label={utils.GetFormattedNumber({
-                          value: utils.ConvertCurrency({
+                        label={utils.getFormattedNumber({
+                          value: utils.convertCurrency({
                             amount: transactionAmount,
                             from: logbookCurrency.name,
                             target: secondaryCurrency.name,
+                            globalCurrencyRates: globalCurrencyRates,
                           }),
                           currency: secondaryCurrency.name,
                         })}
@@ -954,7 +955,7 @@ export const CardList = ({
                   <IonIcons name="chevron-up" size={20} />
                   <TextPrimary label={`${(spent / limit) * 100}% spent`} />
                   <TextPrimary
-                    label={utils.GetFormattedNumber({
+                    label={utils.getFormattedNumber({
                       value: spent,
                       currency:
                         appSettings.logbookSettings.defaultCurrency.name,
