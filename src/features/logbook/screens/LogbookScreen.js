@@ -304,6 +304,7 @@ const LogbookScreen = ({ route, navigation }) => {
                     color: globalTheme.colors.textHeader,
                   }}
                 />
+                {/* // TAG : Total main balance */}
                 <TextPrimary
                   style={{
                     color: totalBalance(selectedLogbook)
@@ -316,11 +317,12 @@ const LogbookScreen = ({ route, navigation }) => {
                     appSettings.logbookSettings.defaultCurrency.symbol
                   } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
-                    currency: appSettings.logbookSettings.defaultCurrency.name,
+                    currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
                 />
+                {/* // TAG : Total secondary balance */}
                 {appSettings.logbookSettings.showSecondaryCurrency && (
                   <TextPrimary
                     style={{
@@ -340,8 +342,8 @@ const LogbookScreen = ({ route, navigation }) => {
                           appSettings.logbookSettings.secondaryCurrency.name,
                         globalCurrencyRates: globalCurrencyRates,
                       }),
-                      currency:
-                        appSettings.logbookSettings.secondaryCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.secondaryCurrency.isoCode,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })}`}
