@@ -411,7 +411,9 @@ const SettingsScreen = ({ navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
                     modalType: "currencyList",
-                    props: CURRENCY_CONSTANTS.OPTIONS,
+                    props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                      return a.name > b.name ? 1 : -1;
+                    }),
                     selected: (item) => {
                       setLogbookSettings({
                         ...logbookSettings,
@@ -437,7 +439,9 @@ const SettingsScreen = ({ navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
                     modalType: "currencyList",
-                    props: CURRENCY_CONSTANTS.OPTIONS,
+                    props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                      return a.name > b.name ? 1 : -1;
+                    }),
                     selected: (item) => {
                       setLogbookSettings({
                         ...logbookSettings,
@@ -489,7 +493,7 @@ const SettingsScreen = ({ navigation }) => {
                       "Upgrade your subscription",
                       "This feature is only available for premium users. Please upgrade your subscription to unlock this feature.",
                       [
-                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
                         {
                           text: "Upgrade",
                           onPress: () => {
@@ -502,10 +506,10 @@ const SettingsScreen = ({ navigation }) => {
                 }}
               />
 
-              {/* // TAG : Update Currency Rate */}
+              {/* // TAG : Update Currency Rates */}
               <ListItem
                 pressable
-                leftLabel="Update currency rate"
+                leftLabel="Update currency rates"
                 rightLabel={
                   isLoading
                     ? "Updating... "
@@ -548,7 +552,7 @@ const SettingsScreen = ({ navigation }) => {
                 leftLabel="Negative currency symbol"
                 rightLabel={utils.getFormattedNumber({
                   value: -123,
-                  currency: logbookSettings.defaultCurrency,
+                  currencyIsoCode: logbookSettings.defaultCurrency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
