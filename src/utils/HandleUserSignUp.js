@@ -24,6 +24,7 @@ const handleUserSignUp = async ({ email, password }) => {
             break;
         }
       }
+      Alert.alert("Account", error.message.replace("Firebase: ", ""));
       return Promise.reject(error);
     }
   }
