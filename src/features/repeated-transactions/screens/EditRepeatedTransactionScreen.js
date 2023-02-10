@@ -205,7 +205,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 // }
                 placeholder={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currency: appSettings.logbookSettings.defaultCurrency.name,
+                  currencyIsoCode:
+                    appSettings.logbookSettings.defaultCurrency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -230,7 +231,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   let float = 0;
                   if (string) {
                     // console.log({ string });
-                    float = utils.RemoveNumberSeparator({
+                    float = utils.removeNumberSeparator({
                       value: string,
                       currency: selectedLogbook.logbook_currency.name,
                     });
@@ -243,13 +244,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 clearButtonMode="while-editing"
                 defaultValue={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
