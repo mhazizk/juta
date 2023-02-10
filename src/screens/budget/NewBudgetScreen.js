@@ -204,15 +204,15 @@ const NewBudgetScreen = ({ navigation }) => {
                 ? utils
                     .getFormattedNumber({
                       value: newBudget.limit,
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })
                     .slice(0, 15) + "..."
                 : utils.getFormattedNumber({
                     value: newBudget.limit,
-                    currency: appSettings.logbookSettings.defaultCurrency.name,
+                    currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })
@@ -237,8 +237,8 @@ const NewBudgetScreen = ({ navigation }) => {
                   ? null
                   : utils.getFormattedNumber({
                       value: newBudget.limit,
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     }),
@@ -301,7 +301,7 @@ const NewBudgetScreen = ({ navigation }) => {
             }}
           />
           {/* // TAG : Repeat */}
-          <CheckList
+          {/* <CheckList
             singleChecklist
             pressable
             item={true}
@@ -312,7 +312,7 @@ const NewBudgetScreen = ({ navigation }) => {
             onPress={() => {
               setNewBudget({ ...newBudget, repeat: !newBudget.repeat });
             }}
-          />
+          /> */}
         </ListSection>
 
         {/* // TAG : Action Button */}
