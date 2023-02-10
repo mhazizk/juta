@@ -209,16 +209,20 @@ const EditBudgetScreen = ({ navigation, route }) => {
               } ${
                 patchBudget.limit.toString().length > 15
                   ? utils
-                      .GetFormattedNumber({
+                      .getFormattedNumber({
                         value: patchBudget.limit,
                         currency:
                           appSettings.logbookSettings.defaultCurrency.name,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })
                       .slice(0, 15) + "..."
-                  : utils.GetFormattedNumber({
+                  : utils.getFormattedNumber({
                       value: patchBudget.limit,
                       currency:
                         appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                     })
               }`}
               rightLabelContainerStyle={{
@@ -239,10 +243,12 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   inputType: "number",
                   defaultOption: !patchBudget.limit
                     ? null
-                    : utils.GetFormattedNumber({
+                    : utils.getFormattedNumber({
                         value: patchBudget.limit,
                         currency:
                           appSettings.logbookSettings.defaultCurrency.name,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       }),
                   selected: (string) => {
                     const removedThousands = string
