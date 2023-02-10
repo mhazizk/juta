@@ -25,6 +25,7 @@ const TotalExpenseWidget = ({
   const { appSettings } = useGlobalAppSettings();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { budgets } = useGlobalBudgets();
+  const { globalCurrencyRates } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const { logbooks } = useGlobalLogbooks();
   const { categories } = useGlobalCategories();
@@ -156,7 +157,7 @@ const TotalExpenseWidget = ({
                   <TextPrimary
                     style={{
                       zIndex: 1,
-                      color: globalTheme.colors.black,
+                      color: globalTheme.colors.cardText,
                       textAlign: "center",
                       textAlignVertical: "center",
                     }}
@@ -193,40 +194,93 @@ const TotalExpenseWidget = ({
                     zIndex: 1,
                   }}
                 >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <TextSecondary
-                      label={appSettings.logbookSettings.defaultCurrency.symbol}
-                      style={{
-                        paddingRight: 4,
-                        color: globalTheme.colors.cardText,
-                      }}
-                    />
-                    <TextPrimary
-                      style={{
-                        fontSize: 32,
-                        fontWeight: "bold",
-                        color: globalTheme.colors.cardText,
-                      }}
-                      label={utils.GetFormattedNumber({
-                        value: activeBudget.spent,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
-                      })}
-                    />
-                  </View>
                   <TextPrimary
                     style={{
-                      zIndex: 1,
+                      fontSize: 20,
+                      fontStyle: "bold",
                       color: globalTheme.colors.cardText,
+                      paddingBottom: 4,
                     }}
                     label="Total expense this week"
                   />
+                  <View>
+                    {/* // TAG : Main currency */}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <TextSecondary
+                        label={
+                          appSettings.logbookSettings.defaultCurrency.symbol
+                        }
+                        style={{
+                          paddingRight: 4,
+                          color: globalTheme.colors.cardText,
+                        }}
+                      />
+                      <TextPrimary
+                        style={{
+                          fontSize: 32,
+                          fontWeight: "bold",
+                          color: globalTheme.colors.cardText,
+                        }}
+                        label={utils.getFormattedNumber({
+                          value: activeBudget.spent,
+                          currency:
+                            appSettings.logbookSettings.defaultCurrency.name,
+                          negativeSymbol:
+                            appSettings.logbookSettings.negativeCurrencySymbol,
+                        })}
+                      />
+                    </View>
+                    {/* // TAG : Secondary currency */}
+                    <View
+                      style={{
+                        // width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: appSettings.logbookSettings
+                          .showSecondaryCurrency
+                          ? "flex-end"
+                          : "center",
+                      }}
+                    >
+                      <TextSecondary
+                        label={
+                          appSettings.logbookSettings.secondaryCurrency.symbol
+                        }
+                        style={{
+                          paddingRight: 4,
+                          color: globalTheme.colors.cardText,
+                        }}
+                      />
+                      <TextPrimary
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          color: globalTheme.colors.cardText,
+                        }}
+                        label={utils.getFormattedNumber({
+                          value: utils.convertCurrency({
+                            amount: activeBudget.spent,
+                            from: appSettings.logbookSettings.defaultCurrency
+                              .name,
+                            target:
+                              appSettings.logbookSettings.secondaryCurrency
+                                .name,
+                            globalCurrencyRates: globalCurrencyRates,
+                          }),
+                          currency:
+                            appSettings.logbookSettings.secondaryCurrency.name,
+                          negativeSymbol:
+                            appSettings.logbookSettings.negativeCurrencySymbol,
+                        })}
+                      />
+                    </View>
+                  </View>
                 </View>
 
                 <View
