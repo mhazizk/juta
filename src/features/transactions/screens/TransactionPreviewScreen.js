@@ -22,6 +22,7 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -39,6 +40,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const [category, setCategory] = useState();
 
@@ -146,9 +148,11 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
                 <TextPrimary
-                  label={utils.GetFormattedNumber({
+                  label={utils.getFormattedNumber({
                     value: transaction.details.amount,
                     currency: selectedLogbook.logbook_currency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                   style={{
                     fontSize: 36,
@@ -183,15 +187,18 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
                 <TextPrimary
-                  label={utils.GetFormattedNumber({
-                    value: utils.ConvertCurrency({
+                  label={utils.getFormattedNumber({
+                    value: utils.convertCurrency({
                       amount: transaction.details.amount,
                       from: selectedLogbook.logbook_currency.name,
                       target:
                         appSettings.logbookSettings.secondaryCurrency.name,
+                      globalCurrencyRates: globalCurrencyRates,
                     }),
                     currency:
                       appSettings.logbookSettings.secondaryCurrency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                   style={{
                     fontSize: 24,
