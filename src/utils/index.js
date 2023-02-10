@@ -6,7 +6,7 @@ export { default as RelativeDate } from "./RelativeDate";
 export { default as GetSpentList } from "./GetSpentList";
 export { default as FindTransactionsToPlot } from "./FindTransactionsToPlot";
 export { default as getFormattedNumber } from "./getFormattedNumber";
-export { default as RemoveNumberSeparator } from "./RemoveNumberSeparator";
+export { default as removeNumberSeparator } from "./RemoveNumberSeparator";
 export { default as FormatHyphenInStrings } from "./FormatHyphenInStrings";
 export { default as convertCurrency } from "./convertCurrency";
 export { default as HandleUserLogin } from "./HandleUserLogin";
