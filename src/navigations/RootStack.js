@@ -56,6 +56,7 @@ import {
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -94,6 +95,8 @@ const RootStack = () => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -115,6 +118,7 @@ const RootStack = () => {
   const repeatedTransactionsRef = useRef(repeatedTransactions);
   const badgeCounterRef = useRef(badgeCounter);
   const globalThemeRef = useRef(globalTheme);
+  const globalCurrencyRatesRef = useRef(globalCurrencyRates);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -144,6 +148,9 @@ const RootStack = () => {
 
       badgeCounter: badgeCounterRef,
       dispatchBadgeCounter: dispatchBadgeCounter,
+
+      globalCurrencyRates: globalCurrencyRatesRef,
+      dispatchGlobalCurrencyRates: dispatchGlobalCurrencyRates,
     });
   }, [
     userAccountRef,
@@ -154,6 +161,7 @@ const RootStack = () => {
     budgetsRef,
     badgeCounterRef,
     globalThemeRef,
+    globalCurrencyRatesRef,
   ]);
 
   // TAG : useEffect for state
