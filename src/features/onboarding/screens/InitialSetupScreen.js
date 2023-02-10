@@ -3,10 +3,10 @@ import { FlatList, Image, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import APP_SETTINGS from "../../../config/appSettings";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -27,6 +27,9 @@ import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectio
 import categoriesFallback from "../../../reducers/fallback-state/categoriesFallback";
 import THEME_CONSTANTS from "../../../constants/themeConstants";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
+import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
+import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
+import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRate";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -36,6 +39,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
   // const { transactions, dispatchTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -93,8 +98,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
       case fontSize === "large":
         return large;
 
-      defaultOption:
-        return medium;
+        defaultOption: return medium;
     }
   };
 
@@ -131,11 +135,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
       payload: selectedAppSettings,
     });
 
-    // dispatchCategories({
-    //   type: REDUCER_ACTIONS.CATEGORIES.SET,
-    //   payload: userCategories,
-    // });
-
     const newCategories = categoriesFallback({
       uid: userAccount.uid,
       created_by: userAccount.uid,
@@ -161,6 +160,23 @@ const InitialSetupScreen = ({ route, navigation }) => {
         },
       ],
     });
+    const newCurrencyRateList = await getCurrencyRate(globalCurrencyRates.data);
+
+    const currencyRatesToDispatch = {
+      ...initialGlobalCurrencyRates,
+      uid: userAccount.uid,
+      data: newCurrencyRateList,
+      _timestamps: {
+        created_at: Date.now(),
+        created_by: userAccount.uid,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
+    dispatchGlobalCurrencyRates({
+      type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+      payload: currencyRatesToDispatch,
+    });
 
     const saveCategories = await firestore.setData(
       FIRESTORE_COLLECTION_NAMES.CATEGORIES,
@@ -181,7 +197,19 @@ const InitialSetupScreen = ({ route, navigation }) => {
       logbookToDispatch
     );
 
-    Promise.all([saveCategories, saveLogbook, saveAppSettings])
+    const saveCurrencyRates = await firestore.setData(
+      FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+      userAccount.uid,
+      currencyRatesToDispatch
+    );
+
+    // TODO : test with new account
+    Promise.all([
+      saveCategories,
+      saveLogbook,
+      saveAppSettings,
+      saveCurrencyRates,
+    ])
       .then(() => {
         return navigation.replace(screenList.splashScreen, {
           fromScreen: screenList.initialSetupScreen,
@@ -416,7 +444,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{ flexDirection: "row", alignItems: "center", width: 200 }}
           >
             <FlatList
-              data={APP_SETTINGS.CURRENCY.OPTIONS}
+              data={CURRENCY_CONSTANTS.OPTIONS}
               keyExtractor={(item) => item.isoCode}
               renderItem={({ item }) => {
                 return (
