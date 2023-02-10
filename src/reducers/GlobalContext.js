@@ -3,6 +3,7 @@ import globalAppSettingsReducer from "./globalAppSettingsReducer";
 import globalBadgeCounterReducer from "./globalBadgeCounterReducer";
 import globalBudgetsReducer from "./globalBudgetsReducer";
 import globalCategoriesReducer from "./globalCategoriesReducer";
+import globalCurrencyRatesReducer from "./globalCurrencyRatesReducer";
 import globalFeatureWishlistReducer from "./globalFeatureWishlistReducer";
 import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
@@ -14,6 +15,7 @@ import initialBadgeCounter from "./initial-state/initialBadgeCounter";
 import initialBudgets from "./initial-state/initialBudgets";
 import initialCategories from "./initial-state/initialCategories";
 import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
+import initialGlobalCurrencyRates from "./initial-state/initialGlobalCurrencyRate";
 import initialGlobalTheme from "./initial-state/initialGlobalTheme";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
@@ -34,6 +36,7 @@ const globalGroupsContext = createContext();
 const globalRepeatedTransactionsContext = createContext();
 const globalThemeContext = createContext();
 const globalFeatureWishlistContext = createContext();
+const globalCurrencyRatesContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -88,6 +91,10 @@ export const useGlobalFeatureWishlist = () => {
   return useContext(globalFeatureWishlistContext);
 };
 
+export const useGlobalCurrencyRates = () => {
+  return useContext(globalCurrencyRatesContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -133,6 +140,10 @@ export const GlobalStateProvider = ({ children }) => {
   const [repeatedTransactions, dispatchRepeatedTransactions] = useReducer(
     globalRepeatedTransactionsReducer,
     initialRepeatedTransactions
+  );
+  const [globalCurrencyRates, dispatchGlobalCurrencyRates] = useReducer(
+    globalCurrencyRatesReducer,
+    initialGlobalCurrencyRates
   );
 
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
@@ -201,7 +212,14 @@ export const GlobalStateProvider = ({ children }) => {
                               dispatchGlobalFeatureWishlist,
                           }}
                         >
-                          {children}
+                          <globalCurrencyRatesContext.Provider
+                            value={{
+                              globalCurrencyRates,
+                              dispatchGlobalCurrencyRates,
+                            }}
+                          >
+                            {children}
+                          </globalCurrencyRatesContext.Provider>
                         </globalFeatureWishlistContext.Provider>
                       </globalRepeatedTransactionsContext.Provider>
                     </globalBadgeCounterContext.Provider>
