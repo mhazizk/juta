@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { Alert, AppState, TouchableOpacity, View } from "react-native";
 import uuid from "react-native-uuid";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../api/firebase/auth";
@@ -108,7 +108,7 @@ const RootStack = () => {
   const [lastSettingsUpdate, setLastSettingsUpdate] = useState(
     appSettings?._timestamps?.updated_at
   );
-
+  const appState = useRef(AppState.currentState);
   const userAccountRef = useRef(userAccount);
   const appSettingsRef = useRef(appSettings);
   const logbooksRef = useRef(logbooks);
@@ -166,12 +166,29 @@ const RootStack = () => {
 
   // TAG : useEffect for state
   useEffect(() => {
-    updateSubscriptionStatus({
-      appSettings,
-      dispatchAppSettings,
-      userAccount,
-      dispatchUserAccount,
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        auth.currentUser.reload().then(async () => {
+          updateSubscriptionStatus({
+            appSettings,
+            dispatchAppSettings,
+            userAccount,
+            dispatchUserAccount,
+          });
+        });
+        console.log("App has come to the foreground!");
+        // console.log(appState.current);
+      }
+      appState.current = nextAppState;
+      console.log(appState.current);
     });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {}, [userAccount]);
@@ -194,6 +211,10 @@ const RootStack = () => {
       }, 1);
     }
   }, [appSettings?.theme_id]);
+
+  useEffect(() => {
+    console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
+  }, [globalCurrencyRates]);
 
   const noHeader = {
     headerShown: false,
