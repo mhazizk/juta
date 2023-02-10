@@ -411,13 +411,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     });
                   }}
                   clearButtonMode="while-editing"
-                  defaultValue={utils.GetFormattedNumber({
+                  defaultValue={utils.getFormattedNumber({
                     value: transaction.details.amount,
                     currency: selectedLogbook.logbook_currency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
-                  value={utils.GetFormattedNumber({
+                  value={utils.getFormattedNumber({
                     value: transaction.details.amount,
                     currency: selectedLogbook.logbook_currency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                 />
               </View>
