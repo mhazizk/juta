@@ -7,6 +7,7 @@ const FIRESTORE_COLLECTION_NAMES = {
   BUDGETS: "budgets",
   SETTINGS: "settings",
   APP_SETTINGS: "appSettings",
+  CURRENCY_RATES: "currencyRates",
   FEATURE_WISHLIST: "featureWishlist",
 };
 
