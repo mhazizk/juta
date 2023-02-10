@@ -202,15 +202,19 @@ const NewBudgetScreen = ({ navigation }) => {
             } ${
               newBudget.limit.toString().length > 15
                 ? utils
-                    .GetFormattedNumber({
+                    .getFormattedNumber({
                       value: newBudget.limit,
                       currency:
                         appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                     })
                     .slice(0, 15) + "..."
-                : utils.GetFormattedNumber({
+                : utils.getFormattedNumber({
                     value: newBudget.limit,
                     currency: appSettings.logbookSettings.defaultCurrency.name,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })
             }`}
             rightLabelContainerStyle={{
@@ -231,10 +235,12 @@ const NewBudgetScreen = ({ navigation }) => {
                 inputType: "number",
                 defaultOption: !newBudget.limit
                   ? null
-                  : utils.GetFormattedNumber({
+                  : utils.getFormattedNumber({
                       value: newBudget.limit,
                       currency:
                         appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                     }),
                 selected: (string) => {
                   const removedThousands = string
