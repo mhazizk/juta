@@ -314,10 +314,10 @@ const LogbookScreen = ({ route, navigation }) => {
                       : globalTheme.colors.textHeader,
                   }}
                   label={`${
-                    appSettings.logbookSettings.defaultCurrency.symbol
+                    selectedLogbook.logbook_currency.symbol
                   } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
-                    currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
