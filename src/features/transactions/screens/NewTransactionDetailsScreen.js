@@ -810,8 +810,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 </View>
               </TouchableNativeFeedback>
             </ListSection>
-            <ListSection>
-              {/* // TAG : Repeat */}
+            {/* // TAG : Repeat */}
+            {/* // TODO : hold the release of repeat */}
+            {/* <ListSection>
               <ListItem
                 pressable
                 leftLabel="Repeat"
@@ -973,9 +974,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }}
                 />
               )}
-            </ListSection>
+            </ListSection> */}
             {/* // TAG : Attachment Image */}
-            <ListSection>
+            {/* // TODO : hold the release of attachments */}
+            {/* <ListSection>
               <ListItem
                 pressable
                 disabled={
@@ -1142,7 +1144,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </>
               )}
-            </ListSection>
+            </ListSection> */}
 
             {/* // TAG : Action Button */}
             <View
