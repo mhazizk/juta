@@ -218,7 +218,10 @@ const AnalyticsScreen = () => {
                         label={
                           appSettings.logbookSettings.defaultCurrency.symbol
                         }
-                        style={{ paddingRight: 8 }}
+                        style={{
+                          fontSize: 24,
+                          paddingRight: 8
+                        }}
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
