@@ -29,7 +29,7 @@ import THEME_CONSTANTS from "../../../constants/themeConstants";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
-import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRate";
+import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRates";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
