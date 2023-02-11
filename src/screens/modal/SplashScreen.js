@@ -41,7 +41,7 @@ import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import Loading from "../../components/Loading";
 import Footer from "../../components/Footer";
-import initialGlobalCurrencyRates from "../../reducers/initial-state/initialGlobalCurrencyRate";
+import initialGlobalCurrencyRates from "../../reducers/initial-state/initialGlobalCurrencyRates";
 import userAccountModel from "../../model/userAccountModel";
 // import useAuth from "../../hooks/useAuth";
 
