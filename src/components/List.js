@@ -778,6 +778,7 @@ export const SearchResultListItem = ({
                     <View
                       style={{
                         flexDirection: "row",
+                        alignItems: "center",
                       }}
                     >
                       <TextSecondary
@@ -812,6 +813,7 @@ export const SearchResultListItem = ({
                     <View
                       style={{
                         flexDirection: "row",
+                        alignItems: "center",
                       }}
                     >
                       <TextSecondary
