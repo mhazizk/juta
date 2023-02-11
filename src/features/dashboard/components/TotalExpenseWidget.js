@@ -232,6 +232,7 @@ const TotalExpenseWidget = ({
                           appSettings.logbookSettings.defaultCurrency.symbol
                         }
                         style={{
+                          fontSize: 24,
                           paddingRight: 4,
                           color: globalTheme.colors.cardText,
                         }}
@@ -252,49 +253,53 @@ const TotalExpenseWidget = ({
                       />
                     </View>
                     {/* // TAG : Secondary currency */}
-                    <View
-                      style={{
-                        // width: "100%",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: appSettings.logbookSettings
-                          .showSecondaryCurrency
-                          ? "flex-end"
-                          : "center",
-                      }}
-                    >
-                      <TextSecondary
-                        label={
-                          appSettings.logbookSettings.secondaryCurrency.symbol
-                        }
+                    {appSettings.logbookSettings.showSecondaryCurrency && (
+                      <View
                         style={{
-                          paddingRight: 4,
-                          color: globalTheme.colors.cardText,
+                          // width: "100%",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: appSettings.logbookSettings
+                            .showSecondaryCurrency
+                            ? "flex-end"
+                            : "center",
                         }}
-                      />
-                      <TextPrimary
-                        style={{
-                          fontSize: 24,
-                          fontWeight: "bold",
-                          color: globalTheme.colors.cardText,
-                        }}
-                        label={utils.getFormattedNumber({
-                          value: utils.convertCurrency({
-                            amount: activeBudget.spent,
-                            from: appSettings.logbookSettings.defaultCurrency
-                              .name,
-                            target:
-                              appSettings.logbookSettings.secondaryCurrency
+                      >
+                        <TextSecondary
+                          label={
+                            appSettings.logbookSettings.secondaryCurrency.symbol
+                          }
+                          style={{
+                            paddingRight: 4,
+                            color: globalTheme.colors.cardText,
+                          }}
+                        />
+                        <TextPrimary
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            color: globalTheme.colors.cardText,
+                          }}
+                          label={utils.getFormattedNumber({
+                            value: utils.convertCurrency({
+                              amount: activeBudget.spent,
+                              from: appSettings.logbookSettings.defaultCurrency
                                 .name,
-                            globalCurrencyRates: globalCurrencyRates,
-                          }),
-                          currencyIsoCode:
-                            appSettings.logbookSettings.secondaryCurrency.isoCode,
-                          negativeSymbol:
-                            appSettings.logbookSettings.negativeCurrencySymbol,
-                        })}
-                      />
-                    </View>
+                              target:
+                                appSettings.logbookSettings.secondaryCurrency
+                                  .name,
+                              globalCurrencyRates: globalCurrencyRates,
+                            }),
+                            currencyIsoCode:
+                              appSettings.logbookSettings.secondaryCurrency
+                                .isoCode,
+                            negativeSymbol:
+                              appSettings.logbookSettings
+                                .negativeCurrencySymbol,
+                          })}
+                        />
+                      </View>
+                    )}
                   </View>
                 </View>
 
@@ -308,7 +313,7 @@ const TotalExpenseWidget = ({
                     zIndex: 0,
                   }}
                 >
-                  {/* <CustomBarChart
+                  <CustomBarChart
                     //   Graph Data
                     mainGraph={graph?.graphData?.mainGraph}
                     shadowGraph={graph?.graphData?.shadowGraph}
@@ -342,7 +347,7 @@ const TotalExpenseWidget = ({
                         ? 8
                         : 16
                     }
-                  /> */}
+                  />
                 </View>
               </>
             )}
