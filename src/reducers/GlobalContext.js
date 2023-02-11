@@ -15,7 +15,7 @@ import initialBadgeCounter from "./initial-state/initialBadgeCounter";
 import initialBudgets from "./initial-state/initialBudgets";
 import initialCategories from "./initial-state/initialCategories";
 import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
-import initialGlobalCurrencyRates from "./initial-state/initialGlobalCurrencyRate";
+import initialGlobalCurrencyRates from "./initial-state/initialGlobalCurrencyRates";
 import initialGlobalTheme from "./initial-state/initialGlobalTheme";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
