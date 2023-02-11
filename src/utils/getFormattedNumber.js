@@ -28,8 +28,8 @@ const getFormattedNumber = ({
   symbolPosition = "after",
   showSymbolSpace = true,
 }) => {
-  const { symbol, thousandSeparator, decimalSeparator, significantDigits } =
-    CURRENCY_CONSTANTS.OPTIONS.find((option) => {
+  const { thousandSeparator, decimalSeparator, significantDigits } =
+    CURRENCY_CONSTANTS?.OPTIONS?.find((option) => {
       return option.isoCode === currencyIsoCode;
     });
 
