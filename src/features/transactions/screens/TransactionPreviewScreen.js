@@ -140,6 +140,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     route?.params?.selectedLogbook?.logbook_currency.symbol
                   }
                   style={{
+                    fontSize: 24,
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
@@ -319,7 +320,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
             />
           </ListSection>
           {/* // TAG : Attachment */}
-          <ListSection>
+          {/* // TODO : hold the release of attachments */}
+          {/* <ListSection>
             <ListItem
               // pressable
               leftLabel="Attachment Images"
@@ -359,7 +361,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 </>
               )}
             />
-          </ListSection>
+          </ListSection> */}
 
           {/* // TAG : Action Button */}
           <View
