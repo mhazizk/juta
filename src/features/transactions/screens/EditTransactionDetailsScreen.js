@@ -253,6 +253,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               <TextSecondary
                 label={selectedLogbook.logbook_currency.symbol}
                 style={{
+                  fontSize: 24,
                   paddingRight: 8,
                   color:
                     transaction.details.in_out === "income"
@@ -268,7 +269,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 keyboardType="number-pad"
                 placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
+                  currencyIsoCode:
+                    appSettings.logbookSettings.defaultCurrency.isoCode,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -705,7 +707,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Attachment Image */}
-          <ListSection>
+          {/* // TODO : hold the release of attachments */}
+          {/* <ListSection>
             <ListItem
               pressable
               disabled={
@@ -869,7 +872,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               </>
             )}
-          </ListSection>
+          </ListSection> */}
 
           {/* // TAG : Action Button */}
           <View
