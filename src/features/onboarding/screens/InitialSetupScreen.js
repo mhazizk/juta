@@ -86,6 +86,13 @@ const InitialSetupScreen = ({ route, navigation }) => {
     }, 1);
   }, [selectedAppSettings.theme_id]);
 
+  useEffect(() => {
+    setNewLogbook({
+      ...newLogbook,
+      logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
+    });
+  }, [selectedAppSettings.logbookSettings.defaultCurrency]);
+
   const findThemeIcon = (themeId) => {
     return THEME_CONSTANTS.OPTIONS.find((theme) => {
       return theme.id === themeId;
@@ -211,7 +218,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
         currencyRatesToDispatch
       );
 
-      // TODO : test with new account
       Promise.all([
         saveCategories,
         saveLogbook,
@@ -309,9 +315,15 @@ const InitialSetupScreen = ({ route, navigation }) => {
                               style={{ width: 80, height: 80 }}
                             />
                           </View>
-                          <Text style={[globalTheme.text.textPrimary]}>
-                            {item.name}
-                          </Text>
+                          <TextPrimary
+                            label={item.name}
+                            style={{
+                              paddingTop:
+                                selectedAppSettings.theme_id === item.id
+                                  ? 8
+                                  : 0,
+                            }}
+                          />
                         </View>
                       </View>
                     </TouchableOpacity>
@@ -463,7 +475,10 @@ const InitialSetupScreen = ({ route, navigation }) => {
                       onPress={() => {
                         setSelectedAppSettings({
                           ...selectedAppSettings,
-                          currency: item,
+                          logbookSettings: {
+                            ...selectedAppSettings.logbookSettings,
+                            defaultCurrency: item,
+                          },
                         });
                         setTimeout(() => onboardingRef.current.goNext(), 1000);
                       }}
@@ -508,9 +523,16 @@ const InitialSetupScreen = ({ route, navigation }) => {
                             <CountryFlag isoCode={item.isoCode} size={32} />
                             {/* <Text style={{ fontSize: 24 }}>Rp</Text> */}
                           </View>
-                          <Text style={[globalTheme.text.textPrimary]}>
-                            {item.name} / {item.symbol}
-                          </Text>
+                          <TextPrimary
+                            label={`${item.name} / ${item.symbol}`}
+                            style={{
+                              paddingTop:
+                                selectedAppSettings.logbookSettings
+                                  .defaultCurrency.isoCode === item.isoCode
+                                  ? 8
+                                  : 0,
+                            }}
+                          />
                         </View>
                       </View>
                     </TouchableOpacity>
