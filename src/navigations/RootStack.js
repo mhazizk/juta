@@ -171,7 +171,7 @@ const RootStack = () => {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        auth.currentUser.reload().then(async () => {
+        auth.currentUser?.reload().then(async () => {
           updateSubscriptionStatus({
             appSettings,
             dispatchAppSettings,
