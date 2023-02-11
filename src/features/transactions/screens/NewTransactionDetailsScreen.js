@@ -363,6 +363,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     appSettings.logbookSettings.defaultCurrency.symbol
                   }
                   style={{
+                    fontSize: 24,
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
@@ -397,7 +398,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     let float = 0;
                     if (string) {
                       console.log({ string });
-                      float = utils.RemoveNumberSeparator({
+                      float = utils.removeNumberSeparator({
                         value: string,
                         currency: selectedLogbook.logbook_currency.name,
                       });
@@ -411,13 +412,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     });
                   }}
                   clearButtonMode="while-editing"
-                  defaultValue={utils.GetFormattedNumber({
+                  defaultValue={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currency: selectedLogbook.logbook_currency.name,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
-                  value={utils.GetFormattedNumber({
+                  value={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currency: selectedLogbook.logbook_currency.name,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                 />
               </View>
@@ -805,8 +810,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 </View>
               </TouchableNativeFeedback>
             </ListSection>
-            <ListSection>
-              {/* // TAG : Repeat */}
+            {/* // TAG : Repeat */}
+            {/* // TODO : hold the release of repeat */}
+            {/* <ListSection>
               <ListItem
                 pressable
                 leftLabel="Repeat"
@@ -968,9 +974,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }}
                 />
               )}
-            </ListSection>
+            </ListSection> */}
             {/* // TAG : Attachment Image */}
-            <ListSection>
+            {/* // TODO : hold the release of attachments */}
+            {/* <ListSection>
               <ListItem
                 pressable
                 disabled={
@@ -1137,7 +1144,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </>
               )}
-            </ListSection>
+            </ListSection> */}
 
             {/* // TAG : Action Button */}
             <View

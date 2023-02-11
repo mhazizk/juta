@@ -3,10 +3,10 @@ import { FlatList, Image, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import APP_SETTINGS from "../../../config/appSettings";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -27,6 +27,12 @@ import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectio
 import categoriesFallback from "../../../reducers/fallback-state/categoriesFallback";
 import THEME_CONSTANTS from "../../../constants/themeConstants";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
+import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
+import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
+import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRate";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
+import Loading from "../../../components/Loading";
+import { TextPrimary } from "../../../components/Text";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -36,11 +42,14 @@ const InitialSetupScreen = ({ route, navigation }) => {
   // const { transactions, dispatchTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedAppSettings, setSelectedAppSettings] = useState({
     ...appSettingsFallback,
     uid: userAccount.uid,
@@ -77,6 +86,13 @@ const InitialSetupScreen = ({ route, navigation }) => {
     }, 1);
   }, [selectedAppSettings.theme_id]);
 
+  useEffect(() => {
+    setNewLogbook({
+      ...newLogbook,
+      logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
+    });
+  }, [selectedAppSettings.logbookSettings.defaultCurrency]);
+
   const findThemeIcon = (themeId) => {
     return THEME_CONSTANTS.OPTIONS.find((theme) => {
       return theme.id === themeId;
@@ -93,104 +109,131 @@ const InitialSetupScreen = ({ route, navigation }) => {
       case fontSize === "large":
         return large;
 
-      defaultOption:
-        return medium;
+        defaultOption: return medium;
     }
   };
 
-  const finalizeSetup = async () => {
-    // Check Logbook
-    const logbookToDispatch = {
-      ...newLogbook,
-      logbook_name: newLogbook.logbook_name || "My Logbook",
-      _timestamps: {
-        ...newLogbook._timestamps,
-        created_at: Date.now(),
-        updated_at: Date.now(),
-      },
-    };
-
-    // const logbookToDispatch = {
-    //   _timestamps: {
-    //     created_at: Date.now(),
-    //     updated_at: Date.now(),
-    //   },
-    //   _id: newLogbook.logbook_id,
-    //   uid: newLogbook.uid,
-    //   logbook_currency: newLogbook.logbook_currency,
-    //   logbook_type: "basic",
-    //   logbook_id: newLogbook.logbook_id,
-    //   logbook_name: newLogbook.logbook_name || "My Logbook",
-    //   logbook_records: [],
-    //   logbook_categories: [],
-    //   __v: 0,
-    // };
-
-    dispatchAppSettings({
-      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-      payload: selectedAppSettings,
-    });
-
-    // dispatchCategories({
-    //   type: REDUCER_ACTIONS.CATEGORIES.SET,
-    //   payload: userCategories,
-    // });
-
-    const newCategories = categoriesFallback({
-      uid: userAccount.uid,
-      created_by: userAccount.uid,
-      updated_by: userAccount.uid,
-    });
-
-    dispatchCategories({
-      type: REDUCER_ACTIONS.CATEGORIES.SET,
-      payload: newCategories,
-    });
-
-    dispatchLogbooks({
-      type: REDUCER_ACTIONS.LOGBOOKS.SET,
-      payload: logbookToDispatch,
-    });
-
-    dispatchSortedTransactions({
-      type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
-      payload: [
-        {
-          logbook_id: newLogbook.logbook_id,
-          transactions: [],
+  const finalizeSetup = () => {
+    setIsLoading(true);
+    setTimeout(async () => {
+      // Check Logbook
+      const logbookToDispatch = {
+        ...newLogbook,
+        logbook_name: newLogbook.logbook_name || "My Logbook",
+        _timestamps: {
+          ...newLogbook._timestamps,
+          created_at: Date.now(),
+          updated_at: Date.now(),
         },
-      ],
-    });
+      };
 
-    const saveCategories = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.CATEGORIES,
-      userAccount.uid,
-      newCategories
-      // initialCategories.categories
-    );
+      // const logbookToDispatch = {
+      //   _timestamps: {
+      //     created_at: Date.now(),
+      //     updated_at: Date.now(),
+      //   },
+      //   _id: newLogbook.logbook_id,
+      //   uid: newLogbook.uid,
+      //   logbook_currency: newLogbook.logbook_currency,
+      //   logbook_type: "basic",
+      //   logbook_id: newLogbook.logbook_id,
+      //   logbook_name: newLogbook.logbook_name || "My Logbook",
+      //   logbook_records: [],
+      //   logbook_categories: [],
+      //   __v: 0,
+      // };
 
-    const saveAppSettings = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-      userAccount.uid,
-      selectedAppSettings
-    );
-
-    const saveLogbook = await firestore.setData(
-      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-      logbookToDispatch.logbook_id,
-      logbookToDispatch
-    );
-
-    Promise.all([saveCategories, saveLogbook, saveAppSettings])
-      .then(() => {
-        return navigation.replace(screenList.splashScreen, {
-          fromScreen: screenList.initialSetupScreen,
-          targetScreen: screenList.bottomTabNavigator,
-        });
-      })
-      .catch((err) => {
-        alert(err);
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+        payload: selectedAppSettings,
       });
+
+      const newCategories = categoriesFallback({
+        uid: userAccount.uid,
+        created_by: userAccount.uid,
+        updated_by: userAccount.uid,
+      });
+
+      dispatchCategories({
+        type: REDUCER_ACTIONS.CATEGORIES.SET,
+        payload: newCategories,
+      });
+
+      dispatchLogbooks({
+        type: REDUCER_ACTIONS.LOGBOOKS.SET,
+        payload: logbookToDispatch,
+      });
+
+      dispatchSortedTransactions({
+        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.INIT_SETUP,
+        payload: [
+          {
+            logbook_id: newLogbook.logbook_id,
+            transactions: [],
+          },
+        ],
+      });
+      const newCurrencyRateList = await getCurrencyRate(
+        globalCurrencyRates.data
+      );
+
+      const currencyRatesToDispatch = {
+        ...initialGlobalCurrencyRates,
+        uid: userAccount.uid,
+        data: newCurrencyRateList,
+        _timestamps: {
+          created_at: Date.now(),
+          created_by: userAccount.uid,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      dispatchGlobalCurrencyRates({
+        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+        payload: currencyRatesToDispatch,
+      });
+
+      const saveCategories = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+        userAccount.uid,
+        newCategories
+        // initialCategories.categories
+      );
+
+      const saveAppSettings = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        userAccount.uid,
+        selectedAppSettings
+      );
+
+      const saveLogbook = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+        logbookToDispatch.logbook_id,
+        logbookToDispatch
+      );
+
+      const saveCurrencyRates = await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+        userAccount.uid,
+        currencyRatesToDispatch
+      );
+
+      Promise.all([
+        saveCategories,
+        saveLogbook,
+        saveAppSettings,
+        saveCurrencyRates,
+      ])
+        .then(() => {
+          return navigation.replace(screenList.splashScreen, {
+            fromScreen: screenList.initialSetupScreen,
+            targetScreen: screenList.bottomTabNavigator,
+          });
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }, 1);
   };
 
   const pages = [
@@ -272,9 +315,15 @@ const InitialSetupScreen = ({ route, navigation }) => {
                               style={{ width: 80, height: 80 }}
                             />
                           </View>
-                          <Text style={[globalTheme.text.textPrimary]}>
-                            {item.name}
-                          </Text>
+                          <TextPrimary
+                            label={item.name}
+                            style={{
+                              paddingTop:
+                                selectedAppSettings.theme_id === item.id
+                                  ? 8
+                                  : 0,
+                            }}
+                          />
                         </View>
                       </View>
                     </TouchableOpacity>
@@ -416,7 +465,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{ flexDirection: "row", alignItems: "center", width: 200 }}
           >
             <FlatList
-              data={APP_SETTINGS.CURRENCY.OPTIONS}
+              data={CURRENCY_CONSTANTS.OPTIONS}
               keyExtractor={(item) => item.isoCode}
               renderItem={({ item }) => {
                 return (
@@ -426,7 +475,10 @@ const InitialSetupScreen = ({ route, navigation }) => {
                       onPress={() => {
                         setSelectedAppSettings({
                           ...selectedAppSettings,
-                          currency: item,
+                          logbookSettings: {
+                            ...selectedAppSettings.logbookSettings,
+                            defaultCurrency: item,
+                          },
                         });
                         setTimeout(() => onboardingRef.current.goNext(), 1000);
                       }}
@@ -471,9 +523,16 @@ const InitialSetupScreen = ({ route, navigation }) => {
                             <CountryFlag isoCode={item.isoCode} size={32} />
                             {/* <Text style={{ fontSize: 24 }}>Rp</Text> */}
                           </View>
-                          <Text style={[globalTheme.text.textPrimary]}>
-                            {item.name} / {item.symbol}
-                          </Text>
+                          <TextPrimary
+                            label={`${item.name} / ${item.symbol}`}
+                            style={{
+                              paddingTop:
+                                selectedAppSettings.logbookSettings
+                                  .defaultCurrency.isoCode === item.isoCode
+                                  ? 8
+                                  : 0,
+                            }}
+                          />
                         </View>
                       </View>
                     </TouchableOpacity>
@@ -580,13 +639,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
                 size={32}
                 color={globalTheme.colors.foreground}
               />
-              {/* <TextInput
-                            placeholder="Type new logbook name ..."
-                            textAlign='center'
-                            style={{ ...globalStyles.lightTheme.textPrimary }}
-                            onChangeText={(text) => setNewLogbook({ ...newLogbook, logbook_name: text })}
-                            value={newLogbook.logbook_name}
-                        /> */}
             </View>
           </TouchableOpacity>
         </>
@@ -604,15 +656,28 @@ const InitialSetupScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <Onboarding
-        ref={onboardingRef}
-        transitionAnimationDuration={250}
-        showSkip={false}
-        onDone={() => {
-          finalizeSetup();
-        }}
-        pages={pages}
-      />
+      {!isLoading && (
+        <Onboarding
+          ref={onboardingRef}
+          transitionAnimationDuration={250}
+          showSkip={false}
+          onDone={() => {
+            finalizeSetup();
+          }}
+          pages={pages}
+        />
+      )}
+      {isLoading && (
+        <CustomScrollView
+          contentContainerStyle={{
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <Loading />
+          <TextPrimary label="Finishing Setup..." />
+        </CustomScrollView>
+      )}
     </>
   );
 };

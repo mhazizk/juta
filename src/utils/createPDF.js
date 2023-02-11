@@ -1,7 +1,7 @@
 import * as Print from "expo-print";
 import * as FileSystem from "expo-file-system";
 import FindById from "./FindById";
-import getFormattedNumber from "./FormatNumber";
+import getFormattedNumber from "./getFormattedNumber";
 
 const td = `
         <td
@@ -79,6 +79,7 @@ const html = ({
   categories,
   openingBalance,
   transactionData,
+  negativeCurrencySymbol,
 }) => {
   return `
         <!DOCTYPE html>
@@ -109,6 +110,7 @@ const html = ({
                   categories,
                   logbook,
                   transactionData,
+                  negativeCurrencySymbol,
                 })}
                 ${pdfFooter}
             </body>
@@ -197,7 +199,7 @@ const pdfHeader = ({
                 :
             </td>
             <td>
-                ${logbook.logbook_currency.name}
+                ${logbook.logbook_currency.isoCode}
             </td>
         </tr>
         <tr>
@@ -224,6 +226,7 @@ const table = ({
   categories,
   logbook,
   transactionData,
+  negativeCurrencySymbol,
 }) => {
   return `
         <table
@@ -241,8 +244,13 @@ const table = ({
               categories,
               logbook,
               transactionData,
+              negativeCurrencySymbol,
             })}
-            ${tableSummary({ logbook, transactionData })}
+            ${tableSummary({
+              logbook,
+              transactionData,
+              negativeCurrencySymbol,
+            })}
         </table>`;
 };
 
@@ -282,6 +290,7 @@ const mapData = ({
   categories,
   logbook,
   transactionData,
+  negativeCurrencySymbol,
 }) => {
   const trColor = (index) => {
     const backgroundColor = index % 2 ? "white" : "#E5E5E5";
@@ -351,7 +360,8 @@ const mapData = ({
                       transaction.details.in_out === "income"
                         ? getFormattedNumber({
                             value: transaction.details.amount,
-                            currency: logbook.logbook_currency.name,
+                            currencyIsoCode: logbook.logbook_currency.isoCode,
+                            negativeSymbol: negativeCurrencySymbol,
                           })
                         : "-"
                     }
@@ -361,7 +371,8 @@ const mapData = ({
                       transaction.details.in_out === "expense"
                         ? getFormattedNumber({
                             value: transaction.details.amount,
-                            currency: logbook.logbook_currency.name,
+                            currencyIsoCode: logbook.logbook_currency.isoCode,
+                            negativeSymbol: negativeCurrencySymbol,
                           })
                         : "-"
                     }
@@ -369,7 +380,8 @@ const mapData = ({
                 ${tdAlignRight}
                 ${getFormattedNumber({
                   value: balance,
-                  currency: logbook.logbook_currency.name,
+                  currencyIsoCode: logbook.logbook_currency.isoCode,
+                  negativeSymbol: negativeCurrencySymbol,
                 })}
                 </td>
             </tr>
@@ -402,7 +414,7 @@ const mapData = ({
 };
 
 // TAG : Table Summary Footer
-const tableSummary = ({ logbook, transactionData }) => {
+const tableSummary = ({ logbook, transactionData, negativeCurrencySymbol }) => {
   const allExpense = [];
   const allIncome = [];
   transactionData.forEach((transaction) => {
@@ -430,13 +442,15 @@ const tableSummary = ({ logbook, transactionData }) => {
         ${tdAlignRight}
         ${getFormattedNumber({
           value: allIncome.reduce((a, b) => a + b, 0),
-          currency: logbook.logbook_currency.name,
+          currencyIsoCode: logbook.logbook_currency.isoCode,
+          negativeSymbol: negativeCurrencySymbol,
         })}
         </td>
         ${tdAlignRight}
             ${getFormattedNumber({
               value: allExpense.reduce((a, b) => a + b, 0),
-              currency: logbook.logbook_currency.name,
+              currencyIsoCode: logbook.logbook_currency.isoCode,
+              negativeSymbol: negativeCurrencySymbol,
             })}
         </td>
         ${tdAlignRight}
@@ -444,7 +458,8 @@ const tableSummary = ({ logbook, transactionData }) => {
               value:
                 allIncome.reduce((a, b) => a + b, 0) -
                 allExpense.reduce((a, b) => a + b, 0),
-              currency: logbook.logbook_currency.name,
+              currencyIsoCode: logbook.logbook_currency.isoCode,
+              negativeSymbol: negativeCurrencySymbol,
             })}
         </td>
         </tr>`;
@@ -470,9 +485,10 @@ const createPDF = async ({
   openingBalance,
   transactionData,
   fileName,
+  appSettings,
 }) => {
   const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-
+  const { negativeCurrencySymbol } = appSettings.logbookSettings;
   const options = {
     html: html({
       displayName,
@@ -483,6 +499,7 @@ const createPDF = async ({
       categories,
       openingBalance,
       transactionData,
+      negativeCurrencySymbol,
     }),
     fileName: fileName,
     base64: false,

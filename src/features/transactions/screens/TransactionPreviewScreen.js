@@ -22,6 +22,7 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -39,6 +40,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const [category, setCategory] = useState();
 
@@ -138,6 +140,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     route?.params?.selectedLogbook?.logbook_currency.symbol
                   }
                   style={{
+                    fontSize: 24,
                     paddingRight: 8,
                     color:
                       transaction.details.in_out === "income"
@@ -146,9 +149,11 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
                 <TextPrimary
-                  label={utils.GetFormattedNumber({
+                  label={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currency: selectedLogbook.logbook_currency.name,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                   style={{
                     fontSize: 36,
@@ -183,15 +188,18 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
                 <TextPrimary
-                  label={utils.GetFormattedNumber({
-                    value: utils.ConvertCurrency({
+                  label={utils.getFormattedNumber({
+                    value: utils.convertCurrency({
                       amount: transaction.details.amount,
                       from: selectedLogbook.logbook_currency.name,
                       target:
                         appSettings.logbookSettings.secondaryCurrency.name,
+                      globalCurrencyRates: globalCurrencyRates,
                     }),
-                    currency:
-                      appSettings.logbookSettings.secondaryCurrency.name,
+                    currencyIsoCode:
+                      appSettings.logbookSettings.secondaryCurrency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                   style={{
                     fontSize: 24,
@@ -312,7 +320,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
             />
           </ListSection>
           {/* // TAG : Attachment */}
-          <ListSection>
+          {/* // TODO : hold the release of attachments */}
+          {/* <ListSection>
             <ListItem
               // pressable
               leftLabel="Attachment Images"
@@ -352,7 +361,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 </>
               )}
             />
-          </ListSection>
+          </ListSection> */}
 
           {/* // TAG : Action Button */}
           <View

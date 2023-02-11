@@ -25,15 +25,9 @@ const appSettingsFallback = {
     secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
     showSecondaryCurrency: false,
     showTransactionNotes: true,
+    negativeCurrencySymbol: "-",
     showTransactionTime: true,
     dailySummary: "expense-only",
-  },
-  currencyRate: {
-    data: [
-      { name: "USD", rate: 1 },
-      { name: "IDR", rate: 14000 },
-    ],
-    updatedAt: 1673275538634,
   },
   hiddenScreens: [],
   currency: { name: "IDR", symbol: "Rp", isoCode: "id" },

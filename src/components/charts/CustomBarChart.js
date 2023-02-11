@@ -10,6 +10,7 @@ import {
 } from "victory-native";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
@@ -39,36 +40,79 @@ export const CustomBarChart = ({
   onPress,
 }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { globalTheme } = useGlobalTheme();
   const maxAmount = () => {
-    const max = (shadowGraph[0].y / 1000).toFixed(0);
+    const { rate } = globalCurrencyRates.data?.find(
+      (rate) =>
+        rate.isoCode === appSettings.logbookSettings.defaultCurrency.isoCode
+    );
+    const useAbbreviation = rate >= 1000;
+    let max = Math.floor(shadowGraph[0].y) / 1000;
     switch (true) {
       case max >= 1000:
         return `${(max / 1000).toFixed(1)} M`;
+      case !useAbbreviation && max < 1:
+        return `${Number(shadowGraph[0].y)}`;
+      case useAbbreviation && max < 1:
+        return `${max.toFixed(1)}`;
       case 1 <= max < 1000:
-        return `${max} K`;
-      case max < 1:
-        return `${shadowGraph[0].y}`;
+        return `${max.toFixed(1)} K`;
       default:
         return `${max}`;
     }
   };
 
-  const chartConfig = {
-    // backgroundGradientFrom: "transparent",
-    backgroundGradientFromOpacity: 0,
-    // backgroundGradientTo: "transparent",
-    backgroundGradientToOpacity: 0,
-    fillShadowGradientFrom: "#ff0000",
-    fillShadowGradientTo: "#fff000",
-    color: (opacity = 1) =>
-      utils.HexToRgb({ hex: successColor, opacity: opacity }),
-    labelColor: (opacity = 1) =>
-      utils.HexToRgb({ hex: successColor, opacity: opacity }),
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 1,
-    useShadowColorFromDataset: false, // optional
+  const getLeftPadding = (showAxisLabels, rangeDay) => {
+    const maxAmountString = String(maxAmount());
+    const length = maxAmountString?.length;
+    const isUsingAbbreviation =
+      maxAmountString?.includes("K") || maxAmountString?.includes("M");
+    if (showAxisLabels) {
+      switch (true) {
+        case isUsingAbbreviation:
+          switch (true) {
+            case rangeDay === 7:
+              return length * 12;
+            case rangeDay === 30:
+              return length * 8;
+            case rangeDay === 365:
+              return length * 10;
+            default:
+              break;
+          }
+        case !isUsingAbbreviation:
+          const leftSpace = length - 2;
+          switch (true) {
+            case rangeDay === 7:
+              return (length - leftSpace) * 30;
+            case rangeDay === 30:
+              return (length - leftSpace) * 16;
+            case rangeDay === 365:
+              return (length - leftSpace) * 24;
+
+            default:
+              break;
+          }
+      }
+    }
   };
+
+  // const chartConfig = {
+  //   // backgroundGradientFrom: "transparent",
+  //   backgroundGradientFromOpacity: 0,
+  //   // backgroundGradientTo: "transparent",
+  //   backgroundGradientToOpacity: 0,
+  //   fillShadowGradientFrom: "#ff0000",
+  //   fillShadowGradientTo: "#fff000",
+  //   color: (opacity = 1) =>
+  //     utils.HexToRgb({ hex: successColor, opacity: opacity }),
+  //   labelColor: (opacity = 1) =>
+  //     utils.HexToRgb({ hex: successColor, opacity: opacity }),
+  //   strokeWidth: 2, // optional, default 3
+  //   barPercentage: 1,
+  //   useShadowColorFromDataset: false, // optional
+  // };
   return (
     <>
       {mainGraph.length && shadowGraph.length && (
@@ -87,13 +131,15 @@ export const CustomBarChart = ({
             padding={{
               top: 0,
               bottom: showAxisLabels ? 36 : 0,
-              left: showAxisLabels ? maxAmount().length * 8 : 40,
+              left: getLeftPadding(showAxisLabels, rangeDay),
               right: showAxisLabels ? 0 : 40,
             }}
             // 64
             height={height || 200}
             width={width || 200}
-            domainPadding={{ x: [maxAmount().length * 8, 30] }}
+            domainPadding={{
+              x: [maxAmount().length * 2, 30],
+            }}
             // domainPadding={{ x: [56, 30] }}
             maxDomain={{ y: shadowGraph[0].y }}
             // animate={{ duration: 1000 }}

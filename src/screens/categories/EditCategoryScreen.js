@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import { ionIcons } from "../../assets/iconPack/ionIcons";
+import ionIcons from "../../assets/iconPacks/ionIcons";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
@@ -73,8 +73,9 @@ const EditCategoryScreen = ({ route, navigation }) => {
             <TouchableNativeFeedback
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Pick Icon",
+                  title: "Pick icon",
                   modalType: "iconPicker",
+                  mainButtonLabel: "Select",
                   props: ionIcons,
                   defaultOption: category.category.icon,
                   selected: (item) => {

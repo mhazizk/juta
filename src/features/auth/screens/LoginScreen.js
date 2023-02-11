@@ -274,7 +274,8 @@ const LoginScreen = ({ route, navigation }) => {
         )}
         {screenLoading && (
           <>
-            <Loading lottie size={150} />
+            <Loading />
+            {/* <Loading lottie size={150} /> */}
             {/* <TextPrimary
               label="Logging you in ..."
               style={{ paddingVertical: 16 }}

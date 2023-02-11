@@ -253,6 +253,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               <TextSecondary
                 label={selectedLogbook.logbook_currency.symbol}
                 style={{
+                  fontSize: 24,
                   paddingRight: 8,
                   color:
                     transaction.details.in_out === "income"
@@ -266,9 +267,12 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 textAlign="center"
                 returnKeyType="done"
                 keyboardType="number-pad"
-                placeholder={utils.GetFormattedNumber({
+                placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: appSettings.logbookSettings.defaultCurrency.name,
+                  currencyIsoCode:
+                    appSettings.logbookSettings.defaultCurrency.isoCode,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 placeholderTextColor={globalTheme.text.textSecondary.color}
                 style={[
@@ -291,7 +295,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   let float = 0;
                   if (string) {
                     console.log({ string });
-                    float = utils.RemoveNumberSeparator({
+                    float = utils.removeNumberSeparator({
                       value: string,
                       currency: selectedLogbook.logbook_currency.name,
                     });
@@ -305,13 +309,17 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   });
                 }}
                 clearButtonMode="while-editing"
-                defaultValue={utils.GetFormattedNumber({
+                defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
-                value={utils.GetFormattedNumber({
+                value={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currency: selectedLogbook.logbook_currency.name,
+                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
               />
             </View>
@@ -699,7 +707,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Attachment Image */}
-          <ListSection>
+          {/* // TODO : hold the release of attachments */}
+          {/* <ListSection>
             <ListItem
               pressable
               disabled={
@@ -863,7 +872,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               </>
             )}
-          </ListSection>
+          </ListSection> */}
 
           {/* // TAG : Action Button */}
           <View

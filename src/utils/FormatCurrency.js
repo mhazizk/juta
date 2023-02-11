@@ -1,5 +1,5 @@
 // TAG : Format Currency
-const formatCurrency = ({ amount, currency }) => {
+const formatCurrency = ({ amount, currency, negativeSymbol }) => {
   // let checkAmount = String(amount).replace(/[^a-zA-Z0-9 ]/g, '');
   // let checkAmount = String(amount).replace(/[^, ]/g, '');
 
@@ -38,9 +38,19 @@ const formatCurrency = ({ amount, currency }) => {
     default:
       break;
   }
-  return negative
-    ? `(${String(showFormattedAmount)})`
-    : `${String(showFormattedAmount)}`;
+
+  if (negative) {
+    switch (negativeSymbol) {
+      case "-":
+        return `-${String(showFormattedAmount)}`;
+      case "()":
+        return `(${String(showFormattedAmount)})`;
+      default:
+        break;
+    }
+  } else {
+    return String(showFormattedAmount);
+  }
 };
 
 export const locale = ["IDR", "USD"];

@@ -49,9 +49,7 @@ export const ActiveBudget = ({
             {iconPack === "FontAwesome5" && (
               <FontAwesome5Icon
                 name={iconLeftName}
-                color={
-                  iconLeftColor || globalTheme.colors.background
-                }
+                color={iconLeftColor || globalTheme.colors.background}
                 size={54}
                 style={{
                   position: "absolute",
@@ -71,9 +69,7 @@ export const ActiveBudget = ({
             >
               <FontAwesome5Icon
                 name={iconLeftName}
-                color={
-                  iconLeftColor || globalTheme.colors.foreground
-                }
+                color={iconLeftColor || globalTheme.colors.foreground}
                 size={20}
                 style={{
                   transform: [{ scaleX: -1 }],
@@ -210,10 +206,12 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.GetFormattedNumber({
+                      label={utils.getFormattedNumber({
                         value: limit,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
                     />
                   </TextTicker>
@@ -268,10 +266,10 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.GetFormattedNumber({
+                      label={utils.getFormattedNumber({
                         value: spent,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
                       })}
                     />
                   </TextTicker>
@@ -326,10 +324,10 @@ export const ActiveBudget = ({
                     marqueeDelay={1000}
                   >
                     <TextPrimary
-                      label={utils.GetFormattedNumber({
+                      label={utils.getFormattedNumber({
                         value: limit - spent,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
                       })}
                     />
                   </TextTicker>
@@ -352,9 +350,7 @@ export const ActiveBudget = ({
                 <IonIcons
                   name="warning"
                   size={32}
-                  color={
-                    globalTheme.button.buttonPrimary.textStyle.color
-                  }
+                  color={globalTheme.button.buttonPrimary.textStyle.color}
                   style={{ paddingRight: 16 }}
                 />
                 <View style={{ justifyContent: "center", flex: 1 }}>
@@ -380,9 +376,7 @@ export const ActiveBudget = ({
                 <IonIcons
                   name="warning"
                   size={32}
-                  color={
-                    globalTheme.button.buttonPrimary.textStyle.color
-                  }
+                  color={globalTheme.button.buttonPrimary.textStyle.color}
                   style={{ paddingRight: 16 }}
                 />
                 <View style={{ justifyContent: "center", flex: 1 }}>
@@ -393,15 +387,15 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
-                    } ${utils.GetFormattedNumber({
+                    } ${utils.getFormattedNumber({
                       value: utils.DailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
@@ -424,9 +418,7 @@ export const ActiveBudget = ({
                 <IonIcons
                   name="checkmark-circle-outline"
                   size={32}
-                  color={
-                    globalTheme.button.buttonPrimary.textStyle.color
-                  }
+                  color={globalTheme.button.buttonPrimary.textStyle.color}
                   style={{ paddingRight: 16 }}
                 />
                 <View style={{ justifyContent: "center", flex: 1 }}>
@@ -437,15 +429,15 @@ export const ActiveBudget = ({
                   <TextButtonPrimary
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
-                    } ${utils.GetFormattedNumber({
+                    } ${utils.getFormattedNumber({
                       value: utils.DailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
-                      currency:
-                        appSettings.logbookSettings.defaultCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />

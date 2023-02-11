@@ -10,6 +10,7 @@ import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -28,7 +29,7 @@ const LogbookScreen = ({ route, navigation }) => {
     useGlobalSortedTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
-
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   // const [logbooks, setLogbooks] = useState(null);
   // const [categories, setCategories] = useState(null);
   const [transactions, setTransactions] = useState(null);
@@ -303,6 +304,7 @@ const LogbookScreen = ({ route, navigation }) => {
                     color: globalTheme.colors.textHeader,
                   }}
                 />
+                {/* // TAG : Total main balance */}
                 <TextPrimary
                   style={{
                     color: totalBalance(selectedLogbook)
@@ -312,12 +314,15 @@ const LogbookScreen = ({ route, navigation }) => {
                       : globalTheme.colors.textHeader,
                   }}
                   label={`${
-                    appSettings.logbookSettings.defaultCurrency.symbol
-                  } ${utils.GetFormattedNumber({
+                    selectedLogbook.logbook_currency.symbol
+                  } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
-                    currency: appSettings.logbookSettings.defaultCurrency.name,
+                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
                 />
+                {/* // TAG : Total secondary balance */}
                 {appSettings.logbookSettings.showSecondaryCurrency && (
                   <TextPrimary
                     style={{
@@ -329,15 +334,18 @@ const LogbookScreen = ({ route, navigation }) => {
                     }}
                     label={`${
                       appSettings.logbookSettings.secondaryCurrency.symbol
-                    } ${utils.GetFormattedNumber({
-                      value: utils.ConvertCurrency({
+                    } ${utils.getFormattedNumber({
+                      value: utils.convertCurrency({
                         amount: totalBalance(selectedLogbook),
                         from: selectedLogbook.logbook_currency.name,
                         target:
                           appSettings.logbookSettings.secondaryCurrency.name,
+                        globalCurrencyRates: globalCurrencyRates,
                       }),
-                      currency:
-                        appSettings.logbookSettings.secondaryCurrency.name,
+                      currencyIsoCode:
+                        appSettings.logbookSettings.secondaryCurrency.isoCode,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                     })}`}
                   />
                 )}

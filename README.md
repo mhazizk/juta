@@ -63,23 +63,37 @@ Coming soon at juta official web
 
 ## Release Notes
 
-### 0.6.7-alpha (on progress)
+### 0.7.0-alpha (on progress)
 
 - New features:
-  - on progress
+  <!-- - Add support for currency conversion from default logbook currency to main currency -->
 - Bugfixes:
-  - on progress
+  <!-- - Fix graph limit line on analytics screen
+  - Fix budget screen
+  - Fix budget widget -->
+
+### 0.6.7-alpha
+
+- New features:
+  - Add negative currency symbol options
+  - Add new currency support:
+    - EUR, GBP, JPY
+- Bugfixes:
+  - Fix secondary currency sync
+  - Fix graph position in analytics screen
+  - Fix logbook not showing its currency
+  - Fix logbook currency not set on initial setup
 
 ### 0.6.4-alpha
 
 - New features:
-  - Add total balance in logbook screen
-  - Add secondary currency in logbook screen
+  - Add total balance on logbook screen
+  - Add secondary currency on logbook screen
   - Add marquee on long text in item list
 - Bugfixes:
-  - Fix expense widget in Dashboard screen
-  - Fix button switch stuck on Analytics screen
-  - Fix graph on Analytics screen
+  - Fix expense widget on dashboard
+  - Fix button switch stuck on analytics screen
+  - Fix graph on analytics screen
   - Fix theme scheme
   - Fix text overlays each other when the text is long in search results
 

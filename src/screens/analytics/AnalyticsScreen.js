@@ -218,14 +218,19 @@ const AnalyticsScreen = () => {
                         label={
                           appSettings.logbookSettings.defaultCurrency.symbol
                         }
-                        style={{ paddingRight: 8 }}
+                        style={{
+                          fontSize: 24,
+                          paddingRight: 8
+                        }}
                       />
                       <TextPrimary
                         style={{ fontSize: 36, fontWeight: "bold" }}
-                        label={utils.GetFormattedNumber({
+                        label={utils.getFormattedNumber({
                           value: activeBudget?.spent,
-                          currency:
-                            appSettings.logbookSettings.defaultCurrency.name,
+                          currencyIsoCode:
+                            appSettings.logbookSettings.defaultCurrency.isoCode,
+                          negativeSymbol:
+                            appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
                       />
                     </View>
@@ -361,10 +366,12 @@ const AnalyticsScreen = () => {
                         item?.category.name[0].toUpperCase() +
                         item?.category.name.slice(1)
                       }
-                      rightLabel={utils.GetFormattedNumber({
+                      rightLabel={utils.getFormattedNumber({
                         value: item?.totalSpent,
-                        currency:
-                          appSettings.logbookSettings.defaultCurrency.name,
+                        currencyIsoCode:
+                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
                       iconLeftColor={
                         item?.category.icon.color === "default"

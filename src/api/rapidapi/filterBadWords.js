@@ -1,6 +1,4 @@
-import REDUCER_ACTIONS from "../reducers/reducer.action";
 import axios from "axios";
-import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 const filterBadWords = async (text) => {
   const options = {

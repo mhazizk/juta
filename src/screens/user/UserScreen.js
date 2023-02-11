@@ -109,7 +109,7 @@ const UserScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
               />
               {/* // TAG : My Repeated Transactions */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="My Repeated Transactions"
                 iconLeftName="repeat"
@@ -121,7 +121,7 @@ const UserScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.myRepeatedTransactionsScreen)
                 }
-              />
+              /> */}
             </ListSection>
             <ListSection>
               {/* // TAG : Settings */}
@@ -182,15 +182,17 @@ const UserScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate(screenList.aboutScreen)}
               />
               {/* // TAG : Developer*/}
-              <ListItem
-                pressable
-                leftLabel="Developer"
-                iconLeftName="code"
-                iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.developerSettingsScreen)
-                }
-              />
+              {__DEV__ && (
+                <ListItem
+                  pressable
+                  leftLabel="Developer"
+                  iconLeftName="code"
+                  iconPack="IonIcons"
+                  onPress={() =>
+                    navigation.navigate(screenList.developerSettingsScreen)
+                  }
+                />
+              )}
             </ListSection>
           </>
         )}

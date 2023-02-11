@@ -1,6 +1,10 @@
+import CURRENCY_CONSTANTS from "../constants/currencyConstants";
+import { useGlobalAppSettings } from "../reducers/GlobalContext";
+
 /**
  * Formats a number. Supports changing symbol, thousand and decimal separators and more (see props).
  * @param value The value to format
+ * @param currency The currency to use
  * @param thousandSeparator The separator to use between thousands
  * @param decimalSeparator The separator to use before decimals
  * @param significantDigits The number of significant digits to show
@@ -13,39 +17,30 @@
  */
 const getFormattedNumber = ({
   value,
-  thousandSeparator,
-  decimalSeparator,
-  significantDigits,
-  showTrailingZeros,
-  currency,
-  symbol,
+  currencyIsoCode,
+  // thousandSeparator,
+  negativeSymbol,
+  // decimalSeparator,
+  // significantDigits,
+  // showTrailingZeros,
+  // symbol,
   showSymbol,
   symbolPosition = "after",
   showSymbolSpace = true,
 }) => {
-  switch (true) {
-    case currency === "USD":
-      symbol = "$";
-      thousandSeparator = ",";
-      decimalSeparator = ".";
-      significantDigits = 2;
-      showTrailingZeros = true;
-      break;
-    case currency === "IDR":
-      symbol = "Rp";
-      thousandSeparator = ".";
-      significantDigits = 0;
-      showTrailingZeros = false;
-      decimalSeparator = ",";
-      break;
-    default:
-      symbol = "Rp";
-      thousandSeparator = ".";
-      significantDigits = 0;
-      showTrailingZeros = false;
-      decimalSeparator = ",";
-      break;
+  const { thousandSeparator, decimalSeparator, significantDigits } =
+    CURRENCY_CONSTANTS?.OPTIONS?.find((option) => {
+      return option.isoCode === currencyIsoCode;
+    });
+
+  const showTrailingZeros = significantDigits > 0 ? true : false;
+
+  // Check negative sign
+  let isNegative = false;
+  if (String(value).slice(0, 1) === "-") {
+    isNegative = true;
   }
+
   const significantDigitsExponent = 10 ** significantDigits;
   const valueWithSignificantDigits = showTrailingZeros
     ? // If significant digits is 2 then this is e.g. 1.00, 1.10, 1.11
@@ -71,17 +66,29 @@ const getFormattedNumber = ({
     : formattedIntegerPart;
 
   // Add symbol
-  if (showSymbol && Boolean(symbol)) {
-    const formattedValueWithSymbol =
-      symbolPosition === "after"
-        ? `${formattedValue} ${symbol}`
-        : `${symbol} ${formattedValue}`;
-    return showSymbolSpace
-      ? formattedValueWithSymbol
-      : formattedValueWithSymbol.replace(" ", "");
-  }
+  // if (showSymbol && Boolean(symbol)) {
+  //   const formattedValueWithSymbol =
+  //     symbolPosition === "after"
+  //       ? `${formattedValue} ${symbol}`
+  //       : `${symbol} ${formattedValue}`;
+  //   return showSymbolSpace
+  //     ? formattedValueWithSymbol
+  //     : formattedValueWithSymbol.replace(" ", "");
+  // }
 
-  return formattedValue;
+  if (isNegative) {
+    const removedSymbol = formattedValue.replace("-", "");
+    switch (negativeSymbol) {
+      case "-":
+        return `-${removedSymbol}`;
+      case "()":
+        return `(${removedSymbol})`;
+      default:
+        break;
+    }
+  } else {
+    return formattedValue;
+  }
 };
 
 export default getFormattedNumber;

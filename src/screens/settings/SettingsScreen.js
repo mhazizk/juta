@@ -4,10 +4,10 @@ import CheckList from "../../components/CheckList";
 import { ListItem } from "../../components/List";
 import RadioButtonList from "../../components/List/RadioButtonList";
 import { TextPrimary } from "../../components/Text";
-import APP_SETTINGS from "../../config/appSettings";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -16,17 +16,24 @@ import * as utils from "../../utils";
 import SettingsHeaderList from "../../components/List/SettingsHeaderList";
 import ListSection from "../../components/List/ListSection";
 import Animated from "react-native-reanimated";
-import getCurrencyRate from "../../api/GetCurrencyRate";
+import getCurrencyRate from "../../api/rapidapi/getCurrencyRate";
 import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import THEME_CONSTANTS from "../../constants/themeConstants";
 import CustomScrollView from "../../shared-components/CustomScrollView";
+import NEGATIVE_CURRENCY_SYMBOL_CONSTANTS from "../../constants/negativeCurrencySymbolConstants";
+import LANGUAGE_CONSTANTS from "../../constants/languageConstants";
+import CURRENCY_CONSTANTS from "../../constants/currencyConstants";
+import FONT_SIZE_CONSTANTS from "../../constants/fontSizeConstants";
+import LOGBOOK_SETTINGS_CONSTANTS from "../../constants/logbookSettingsConstants";
 
 const SettingsScreen = ({ navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [dashboardSettings, setDashboardSettings] = useState(
     appSettings.dashboardSettings
@@ -37,32 +44,25 @@ const SettingsScreen = ({ navigation }) => {
   const [logbookSettings, setLogbookSettings] = useState(
     appSettings.logbookSettings
   );
-  const [currencyRate, setCurrencyRate] = useState(appSettings.currencyRate);
+  const [currencyRates, setCurrencyRates] = useState(globalCurrencyRates);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      const payload = {
-        currencyRate: currencyRate,
-        _timestamps: {
-          ...appSettings._timestamps,
-          updated_at: Date.now(),
-          updated_by: userAccount.uid,
-        },
-      };
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: payload,
-      });
-    }, 1);
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        { ...appSettings, ...payload }
-      );
-    }, 1000);
-  }, [currencyRate]);
+    console.log({ currencyRates });
+    // setTimeout(() => {
+    //   dispatchGlobalCurrencyRates({
+    //     type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
+    //     payload: currencyRates,
+    //   });
+    // }, 1);
+    // setTimeout(async () => {
+    //   await firestore.setData(
+    //     FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+    //     userAccount.uid,
+    //     currencyRates
+    //   );
+    // }, 1000);
+  }, [currencyRates]);
 
   useEffect(() => {
     const payload = {
@@ -140,8 +140,8 @@ const SettingsScreen = ({ navigation }) => {
   // }, [appSettings?.theme_id]);
 
   useEffect(() => {
-    console.log(currencyRate);
-  }, [currencyRate]);
+    console.log(currencyRates);
+  }, [currencyRates]);
   return (
     <>
       <CustomScrollView>
@@ -218,12 +218,12 @@ const SettingsScreen = ({ navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Font Size",
                     modalType: "list",
-                    props: APP_SETTINGS.FONT_SIZE.OPTIONS.map((option) => {
+                    props: FONT_SIZE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option };
                     }),
                     selected: (item) =>
                       dispatchAppSettings({
-                        type: REDUCER_ACTIONS.APP_SETTINGS.FONT_SIZE.SET,
+                        type: REDUCER_ACTIONS.FONT_SIZE_CONSTANTS.SET,
                         payload: item.name,
                       }),
                     defaultOption: { name: appSettings.fontSize },
@@ -245,7 +245,7 @@ const SettingsScreen = ({ navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Language",
                     modalType: "list",
-                    props: APP_SETTINGS.LANGUAGE.OPTIONS.map((option) => {
+                    props: LANGUAGE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option.name, locale: option.locale };
                     }),
                     selected: (item) => {
@@ -405,12 +405,15 @@ const SettingsScreen = ({ navigation }) => {
               }}
             />
             <ListSection>
+              {/* // TAG : Main currency */}
               <ListItem
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
                     modalType: "currencyList",
-                    props: APP_SETTINGS.CURRENCY.OPTIONS,
+                    props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                      return a.name > b.name ? 1 : -1;
+                    }),
                     selected: (item) => {
                       setLogbookSettings({
                         ...logbookSettings,
@@ -436,7 +439,9 @@ const SettingsScreen = ({ navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
                     modalType: "currencyList",
-                    props: APP_SETTINGS.CURRENCY.OPTIONS,
+                    props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                      return a.name > b.name ? 1 : -1;
+                    }),
                     selected: (item) => {
                       setLogbookSettings({
                         ...logbookSettings,
@@ -488,7 +493,7 @@ const SettingsScreen = ({ navigation }) => {
                       "Upgrade your subscription",
                       "This feature is only available for premium users. Please upgrade your subscription to unlock this feature.",
                       [
-                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
                         {
                           text: "Upgrade",
                           onPress: () => {
@@ -501,40 +506,77 @@ const SettingsScreen = ({ navigation }) => {
                 }}
               />
 
-              {/* // TAG : Update Currency Rate */}
+              {/* // TAG : Update Currency Rates */}
               <ListItem
                 pressable
-                leftLabel="Update currency rate"
+                leftLabel="Update currency rates"
                 rightLabel={
                   isLoading
                     ? "Updating... "
                     : "Last updated at : " +
-                      new Date(currencyRate.updatedAt).getDate() +
+                      new Date(currencyRates._timestamps.updated_at).getDate() +
                       "/" +
-                      (new Date(currencyRate.updatedAt).getMonth() + 1) +
+                      (new Date(
+                        currencyRates._timestamps.updated_at
+                      ).getMonth() +
+                        1) +
                       "/" +
-                      new Date(currencyRate.updatedAt).getFullYear()
+                      new Date(
+                        currencyRates._timestamps.updated_at
+                      ).getFullYear()
                 }
                 isLoading={isLoading}
-                // iconLeftName="checkmark"
-                // iconPack="IonIcons"
-                // onPress={() => alert("TODO : Add currency rate")}
-                // onPress={() =>
-                //   getCurrencyRate(appSettings.currencyRate).then((data) => {
-                //     setCurrencyRate({ data: data, updatedAt: new Date() });
-                //   })
-                // }
                 onPress={() => {
                   setIsLoading(true);
-                  getCurrencyRate(appSettings.currencyRate.data).then(
-                    (data) => {
-                      setCurrencyRate({ data: data, updatedAt: Date.now() });
-                      setIsLoading(false);
-                    }
-                  );
+                  getCurrencyRate(globalCurrencyRates.data).then((data) => {
+                    setCurrencyRates({
+                      ...globalCurrencyRates,
+                      data: data,
+                      _timestamps: {
+                        ...globalCurrencyRates._timestamps,
+                        updated_at: Date.now(),
+                        updated_by: userAccount.uid,
+                      },
+                    });
+                    setIsLoading(false);
+                  });
                 }}
 
                 // TODO : Add currency rate screen
+              />
+
+              {/* // TAG : Negative currency */}
+              <ListItem
+                pressable
+                iconLeftName="usd"
+                leftLabel="Negative currency symbol"
+                rightLabel={utils.getFormattedNumber({
+                  value: -123,
+                  currencyIsoCode: logbookSettings.defaultCurrency.isoCode,
+                  negativeSymbol:
+                    appSettings.logbookSettings.negativeCurrencySymbol,
+                })}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set negative currency symbol",
+                    modalType: "list",
+                    props: NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS,
+                    defaultOption:
+                      NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS.find(
+                        (item) => {
+                          return (
+                            item.id === logbookSettings.negativeCurrencySymbol
+                          );
+                        }
+                      ),
+                    selected: (item) => {
+                      setLogbookSettings({
+                        ...logbookSettings,
+                        negativeCurrencySymbol: item.id,
+                      });
+                    },
+                  });
+                }}
               />
             </ListSection>
 
@@ -549,7 +591,7 @@ const SettingsScreen = ({ navigation }) => {
             />
             <ListSection>
               <RadioButtonList
-                items={APP_SETTINGS.LOGBOOKS.DAILY_SUMMARY.OPTIONS.map(
+                items={LOGBOOK_SETTINGS_CONSTANTS.DAILY_SUMMARY.OPTIONS.map(
                   (option) => {
                     return {
                       name: utils.FormatHyphenInStrings(option),
@@ -571,7 +613,7 @@ const SettingsScreen = ({ navigation }) => {
               {/* // TAG : Show Transaction Time */}
               <CheckList
                 pressable
-                primaryLabel="Show Transaction Time"
+                primaryLabel="Show transaction time"
                 item={true}
                 selected={logbookSettings.showTransactionTime}
                 onPress={() => {
@@ -585,7 +627,7 @@ const SettingsScreen = ({ navigation }) => {
               <CheckList
                 pressable
                 item={true}
-                primaryLabel="Show Transaction Notes"
+                primaryLabel="Show transaction notes"
                 selected={logbookSettings.showTransactionNotes}
                 onPress={() => {
                   setLogbookSettings({

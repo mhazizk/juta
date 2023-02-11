@@ -40,12 +40,20 @@ const LogoutScreen = ({ navigation }) => {
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
           payload: null,
         });
-        await logOutRevenueCat();
-        setTimeout(() => {
+        setTimeout(async () => {
           navigation.reset({
             index: 0,
-            routes: [{ name: screenList.splashScreen }],
+            routes: [
+              {
+                name: screenList.loginScreen,
+                params: {
+                  fromScreen: screenList.logoutScreen,
+                  // targetScreen: screenList.loginScreen,
+                },
+              },
+            ],
           });
+          await logOutRevenueCat();
         }, 500);
       });
     }, 3000);
@@ -54,6 +62,7 @@ const LogoutScreen = ({ navigation }) => {
   return (
     <CustomScrollView
       contentContainerStyle={{
+        flex: 1,
         justifyContent: "center",
       }}
     >

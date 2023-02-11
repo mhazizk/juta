@@ -21,6 +21,9 @@ import {
   DEV_LOGSNAG_API_URL,
   DEV_SENTRY_DSN,
   REVENUE_CAT_GOOGLE_API_KEY,
+  RAPID_API_KEY,
+  RAPID_API_HOST,
+  RAPID_API_URL,
 } from "@env";
 
 const devEnv = {
@@ -43,6 +46,11 @@ const devEnv = {
   revenueCat: {
     googleApiKey: REVENUE_CAT_GOOGLE_API_KEY,
   },
+  rapidApi: {
+    apiKey: RAPID_API_KEY,
+    host: RAPID_API_HOST,
+    url: RAPID_API_URL,
+  },
 };
 
 const prodEnv = {
@@ -64,6 +72,11 @@ const prodEnv = {
   },
   revenueCat: {
     googleApiKey: REVENUE_CAT_GOOGLE_API_KEY,
+  },
+  rapidApi: {
+    apiKey: RAPID_API_KEY,
+    host: RAPID_API_HOST,
+    url: RAPID_API_URL,
   },
 };
 
