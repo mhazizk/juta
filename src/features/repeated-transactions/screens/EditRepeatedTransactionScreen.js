@@ -101,7 +101,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-        defaultOption: break;
+        default: break;
     }
   };
 
@@ -126,7 +126,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-        defaultOption: break;
+        default: break;
     }
   };
 
@@ -862,7 +862,7 @@ const handleDelete = ({
         reducerUpdatedAt: Date.now(),
       };
       break;
-      defaultOption: break;
+      default: break;
   }
   navigation.navigate(screenList.loadingScreen, opt);
 };
@@ -1021,7 +1021,7 @@ const handleSave = ({
 
           break;
 
-          defaultOption: break;
+          default: break;
       }
 
       // //   TODO : continue this to loading screen and reducer
