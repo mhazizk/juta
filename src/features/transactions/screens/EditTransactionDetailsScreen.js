@@ -213,7 +213,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
-        defaultOption: break;
+      default:
+        break;
     }
 
     return navigation.navigate(screenList.loadingScreen, {
