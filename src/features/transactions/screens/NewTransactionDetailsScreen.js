@@ -117,6 +117,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         in_out: "expense",
         amount: 0,
         type: "cash",
+        loan_details: {
+          lender_name: null,
+          borrower_name: null,
+          payment_due_date: null,
+          is_paid: false,
+        },
         date: Date.now(),
         notes: null,
         category_id: null,
@@ -192,66 +198,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   // TAG : useRef State //
   const inputNotes = useRef(null);
+  const inputLenderName = useRef(null);
   const inputAmount = useRef(null);
 
   // TAG : Function Section //
-
-  // Set Date in Date Picker
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    event.type === "set" && showMode("time", currentDate);
-    event.type === "dismissed";
-  };
-  const onChangeTime = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    switch (event.type) {
-      case "dismissed":
-        break;
-
-      case "set":
-        setTransaction({
-          ...transaction,
-          details: {
-            ...transaction.details,
-            date: new Date(currentDate).getTime(),
-          },
-        });
-        setLocalRepeatedTransactions({
-          ...localRepeatedTransactions,
-          repeat_start_date: new Date(currentDate).getTime(),
-        });
-        break;
-
-        defaultOption: break;
-    }
-  };
-
-  // Date Picker
-  const showMode = (currentMode, selectedDate) => {
-    if (currentMode === "date") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeDate,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-    if (currentMode === "time") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeTime,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-  };
-
-  // Date Picker
-  const showDatePicker = () => {
-    showMode("date", new Date(transaction.details.date));
-  };
 
   // Insert 'name' variable into User Logbooks
   const insertNameInUserLogBook = () => {
@@ -612,7 +562,38 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#00695c"
                       : globalTheme.text.textPrimary.color,
                 }}
-                onPress={showDatePicker}
+                onPress={utils.datePicker({
+                  initialDateInMillis: transaction?.details?.date,
+                  pickerStyle: "dateAndTime",
+                  callback: (dateInMillis) => {
+                    if (transaction.details.type === "loan") {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          date: dateInMillis,
+                          loan_details: {
+                            ...transaction.details.loan_details,
+                            payment_due_date:
+                              dateInMillis + 30 * 24 * 60 * 60 * 1000,
+                          },
+                        },
+                      });
+                    } else {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          date: dateInMillis,
+                        },
+                      });
+                    }
+                    setLocalRepeatedTransactions({
+                      ...localRepeatedTransactions,
+                      repeat_start_date: dateInMillis,
+                    });
+                  },
+                })}
               />
               {/* // TAG : From Logbook */}
               <ListItem
@@ -735,6 +716,133 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }
               />
             </ListSection>
+            {transaction.details.type === "loan" && (
+              <ListSection>
+                {/* // TAG : Payment due date section */}
+                <ListItem
+                  pressable
+                  leftLabel="Payment due date"
+                  rightLabel={
+                    !transaction?.details?.loan_details.payment_due_date
+                      ? "Pick date"
+                      : new Date(
+                          transaction.details.payment_due_date
+                        ).toDateString()
+                  }
+                  iconPack="IonIcons"
+                  iconLeftName="calendar"
+                  iconRightName="chevron-forward"
+                  useRightLabelContainer
+                  // iconInRightContainerName='book'
+                  rightLabelContainerStyle={{
+                    flexDirection: "row",
+                    maxWidth: "50%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 8,
+                    borderRadius: 8,
+                    backgroundColor: globalTheme.colors.secondary,
+                  }}
+                  rightLabelStyle={{
+                    color: globalTheme.text.textPrimary.color,
+                  }}
+                  onPress={utils.datePicker({
+                    initialDateInMillis:
+                      transaction?.details?.date + 30 * 24 * 60 * 60 * 1000,
+                    pickerStyle: "dateOnly",
+                    callback: (dateInMillis) => {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          loan_details: {
+                            ...transaction.details.loan_details,
+                            payment_due_date: dateInMillis,
+                          },
+                        },
+                      });
+                    },
+                  })}
+                />
+
+                {/* // TAG : Lender name */}
+                <TouchableNativeFeedback
+                  onPress={() => inputLenderName.current.focus()}
+                >
+                  <View style={globalTheme.list.listContainer}>
+                    <IonIcons
+                      name="person"
+                      size={18}
+                      style={{ paddingRight: 16 }}
+                      color={globalTheme.colors.foreground}
+                    />
+                    <View
+                      style={{
+                        ...globalTheme.list.listItem,
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TextPrimary label="Lender name" style={{ flex: 1 }} />
+
+                      {/* // TAG : Lender Input */}
+                      <TextInput
+                        ref={inputLenderName}
+                        textAlign="right"
+                        returnKeyType="done"
+                        keyboardType="default"
+                        placeholder="Add lender name..."
+                        placeholderTextColor={
+                          globalTheme.text.textSecondary.color
+                        }
+                        style={{
+                          ...globalTheme.text.textPrimary,
+                          flex: 5,
+                          height: 48,
+                          borderRadius: 8,
+                          fontSize: 16,
+                        }}
+                        onChangeText={(string) => {
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                lender_name: string,
+                              },
+                            },
+                          });
+                        }}
+                        clearButtonMode="while-editing"
+                        defaultValue={transaction.details.lenderName}
+                        value={transaction.details.lenderName}
+                      />
+                    </View>
+                    {transaction.details.notes && (
+                      <IonIcons
+                        onPress={() => {
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                lender_name: "",
+                              },
+                            },
+                          });
+                        }}
+                        name="close-circle"
+                        size={18}
+                        style={{ paddingLeft: 16 }}
+                        color={globalTheme.colors.foreground}
+                      />
+                    )}
+                  </View>
+                </TouchableNativeFeedback>
+              </ListSection>
+            )}
             <ListSection>
               {/* // TAG : Notes Section */}
               <TouchableNativeFeedback
