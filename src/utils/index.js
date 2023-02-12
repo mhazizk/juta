@@ -20,3 +20,4 @@ export { default as createPDF } from "./createPDF";
 export { default as repeatTransactionsHandler } from "./RepeatTransactionsHandler";
 export { default as findRepeatedTransactionSectionById } from "./FindRepeatedTransactionSectionById";
 export { default as createNewTransactionFromActiveRepeatedTransaction } from "./CreateNewTransactionFromActiveRepeatedTransaction";
+export { default as datePicker } from "./datePicker";
