@@ -1,7 +1,7 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 // Date Picker
-const showMode = ({ currentMode, selectedDate, callback }) => {
+const showMode = ({ currentMode, minimumDate, selectedDate, callback }) => {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     event.type === "set" && callback(currentDate);
@@ -15,6 +15,7 @@ const showMode = ({ currentMode, selectedDate, callback }) => {
       onChange: onChange,
       mode: currentMode,
       is24Hour: true,
+      minimumDate: minimumDate,
     });
   }
   if (currentMode === "time") {
@@ -24,15 +25,22 @@ const showMode = ({ currentMode, selectedDate, callback }) => {
       onChange: onChange,
       mode: currentMode,
       is24Hour: true,
+      minimumDate: minimumDate,
     });
   }
 };
 
 // Date Picker
-const datePicker = ({ initialDateInMillis, pickerStyle, callback }) => {
+const datePicker = ({
+  initialDateInMillis,
+  minimumDateInMillis,
+  pickerStyle,
+  callback,
+}) => {
   switch (pickerStyle) {
     case "dateOnly":
       showMode({
+        minimumDate: minimumDateInMillis ? new Date(minimumDateInMillis) : null,
         currentMode: "date",
         selectedDate: new Date(initialDateInMillis),
         callback: (date) => callback(new Date(date).getTime()),
@@ -40,10 +48,14 @@ const datePicker = ({ initialDateInMillis, pickerStyle, callback }) => {
       break;
     case "dateAndTime":
       showMode({
+        minimumDate: minimumDateInMillis ? new Date(minimumDateInMillis) : null,
         currentMode: "date",
         selectedDate: new Date(initialDateInMillis),
         callback: (date) =>
           showMode({
+            minimumDate: minimumDateInMillis
+              ? new Date(minimumDateInMillis)
+              : null,
             currentMode: "time",
             selectedDate: date,
             callback: (dateWithTime) =>
