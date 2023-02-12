@@ -226,11 +226,22 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
+      case transaction.details.type === "loan" &&
+        !transaction.details.loan_details.lender_name:
+        return alert("Please enter lender name");
+      case transaction.details.type === "loan" &&
+        !transaction.details.loan_details.borrower_name:
+        return alert("Please enter borrower name");
+      case transaction.details.type === "loan" &&
+        !transaction.details.loan_details.payment_due_date:
+        return alert("Please select payment due date");
+
         // case transaction.details.attachment_URL.length > 0:
         console.log("287");
 
-        // break;
-        defaultOption: break;
+      // break;
+      default:
+        break;
     }
 
     setTimeout(() => {
@@ -509,10 +520,41 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         ? [{ name: "cash" }, { name: "loan" }]
                         : [{ name: "cash" }],
                     selected: (item) => {
-                      setTransaction({
-                        ...transaction,
-                        details: { ...transaction.details, type: item.name },
-                      });
+                      switch (item.name) {
+                        case "cash":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              type: item.name,
+                              loan_details: {
+                                lender_name: null,
+                                borrower_name: null,
+                                payment_due_date: null,
+                                is_paid: false,
+                              },
+                            },
+                          });
+                          break;
+                        case "loan":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              type: item.name,
+                              loan_details: {
+                                lender_name: null,
+                                borrower_name: userAccount?.displayName,
+                                payment_due_date: null,
+                                is_paid: false,
+                              },
+                            },
+                          });
+                          break;
+
+                        default:
+                          break;
+                      }
                     },
                     defaultOption: { name: transaction.details.type },
                   })
@@ -562,38 +604,50 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? "#00695c"
                       : globalTheme.text.textPrimary.color,
                 }}
-                onPress={utils.datePicker({
-                  initialDateInMillis: transaction?.details?.date,
-                  pickerStyle: "dateAndTime",
-                  callback: (dateInMillis) => {
-                    if (transaction.details.type === "loan") {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          date: dateInMillis,
-                          loan_details: {
-                            ...transaction.details.loan_details,
-                            payment_due_date:
-                              dateInMillis + 30 * 24 * 60 * 60 * 1000,
+                onPress={() =>
+                  utils.datePicker({
+                    initialDateInMillis: transaction?.details?.date,
+                    pickerStyle: "dateAndTime",
+                    callback: (dateInMillis) => {
+                      if (transaction.details.type === "loan") {
+                        const isPaymentDueDateExist = Boolean(
+                          transaction.details.loan_details.payment_due_date
+                        );
+                        const dateMillisDifference =
+                          isPaymentDueDateExist &&
+                          Math.abs(
+                            transaction.details.loan_details.payment_due_date -
+                              transaction.details.date
+                          );
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            date: dateInMillis,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              payment_due_date: isPaymentDueDateExist
+                                ? dateInMillis + dateMillisDifference
+                                : dateInMillis + 7 * 24 * 60 * 60 * 1000,
+                            },
                           },
-                        },
+                        });
+                      } else {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            date: dateInMillis,
+                          },
+                        });
+                      }
+                      setLocalRepeatedTransactions({
+                        ...localRepeatedTransactions,
+                        repeat_start_date: dateInMillis,
                       });
-                    } else {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          date: dateInMillis,
-                        },
-                      });
-                    }
-                    setLocalRepeatedTransactions({
-                      ...localRepeatedTransactions,
-                      repeat_start_date: dateInMillis,
-                    });
-                  },
-                })}
+                    },
+                  })
+                }
               />
               {/* // TAG : From Logbook */}
               <ListItem
@@ -726,7 +780,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     !transaction?.details?.loan_details.payment_due_date
                       ? "Pick date"
                       : new Date(
-                          transaction.details.payment_due_date
+                          transaction.details.loan_details.payment_due_date
                         ).toDateString()
                   }
                   iconPack="IonIcons"
@@ -746,23 +800,28 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   rightLabelStyle={{
                     color: globalTheme.text.textPrimary.color,
                   }}
-                  onPress={utils.datePicker({
-                    initialDateInMillis:
-                      transaction?.details?.date + 30 * 24 * 60 * 60 * 1000,
-                    pickerStyle: "dateOnly",
-                    callback: (dateInMillis) => {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          loan_details: {
-                            ...transaction.details.loan_details,
-                            payment_due_date: dateInMillis,
+                  onPress={() =>
+                    utils.datePicker({
+                      minimumDateInMillis:
+                        transaction?.details?.date + 1 * 24 * 60 * 60 * 1000,
+                      initialDateInMillis:
+                        transaction.details.loan_details.payment_due_date ||
+                        transaction?.details?.date + 7 * 24 * 60 * 60 * 1000,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              payment_due_date: dateInMillis,
+                            },
                           },
-                        },
-                      });
-                    },
-                  })}
+                        });
+                      },
+                    })
+                  }
                 />
 
                 {/* // TAG : Lender name */}
@@ -783,7 +842,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         alignItems: "center",
                       }}
                     >
-                      <TextPrimary label="Lender name" style={{ flex: 1 }} />
+                      <TextPrimary
+                        label="Lender name"
+                        style={{ paddingRight: 4 }}
+                      />
 
                       {/* // TAG : Lender Input */}
                       <TextInput
@@ -815,11 +877,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                           });
                         }}
                         clearButtonMode="while-editing"
-                        defaultValue={transaction.details.lenderName}
-                        value={transaction.details.lenderName}
+                        defaultValue={
+                          transaction.details.loan_details.lender_name
+                        }
+                        value={transaction.details.loan_details.lender_name}
                       />
                     </View>
-                    {transaction.details.notes && (
+                    {transaction.details.loan_details.lender_name && (
                       <IonIcons
                         onPress={() => {
                           setTransaction({
