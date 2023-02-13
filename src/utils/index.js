@@ -21,3 +21,4 @@ export { default as repeatTransactionsHandler } from "./RepeatTransactionsHandle
 export { default as findRepeatedTransactionSectionById } from "./FindRepeatedTransactionSectionById";
 export { default as createNewTransactionFromActiveRepeatedTransaction } from "./CreateNewTransactionFromActiveRepeatedTransaction";
 export { default as datePicker } from "./datePicker";
+export { default as findTransactionsByIds } from "./findTransactionsByIds";
