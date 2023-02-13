@@ -30,6 +30,11 @@ import GroupPreviewScreen from "../features/groups/screens/GroupPreviewScreen";
 import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
 import NewGroupScreen from "../features/groups/screens/NewGroupScreen";
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
+import EditLoanContactScreen from "../features/loan/screens/EditLoanContactScreen";
+import LoanContactPreviewScreen from "../features/loan/screens/LoanContactPreviewScreen";
+import LoanContactSelectorScreen from "../features/loan/screens/LoanContactSelectorScreen";
+import MyLoansScreen from "../features/loan/screens/MyLoansScreen";
+import NewLoanContactScreen from "../features/loan/screens/NewLoanContactScreen";
 import EditLogbookScreen from "../features/logbook/screens/EditLogbookScreen";
 import LogbookPreviewScren from "../features/logbook/screens/LogbookPreviewScreen";
 import LogbookScreen from "../features/logbook/screens/LogbookScreen";
@@ -57,6 +62,7 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -97,6 +103,7 @@ const RootStack = () => {
     useGlobalSortedTransactions();
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
     useGlobalCurrencyRates();
+  const { globalLoan, dispatchGlobalLoan } = useGlobalLoan();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -119,6 +126,7 @@ const RootStack = () => {
   const badgeCounterRef = useRef(badgeCounter);
   const globalThemeRef = useRef(globalTheme);
   const globalCurrencyRatesRef = useRef(globalCurrencyRates);
+  const globalLoanRef = useRef(globalLoan);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -126,31 +134,34 @@ const RootStack = () => {
       subscribeAll: true,
 
       appSettings: appSettingsRef,
-      dispatchAppSettings: dispatchAppSettings,
+      dispatchAppSettings,
 
       userAccount: userAccountRef,
-      dispatchUserAccount: dispatchUserAccount,
+      dispatchUserAccount,
 
       logbooks: logbooksRef,
-      dispatchLogbooks: dispatchLogbooks,
+      dispatchLogbooks,
 
       sortedTransactions: sortedTransactionsRef,
-      dispatchSortedTransactions: dispatchSortedTransactions,
+      dispatchSortedTransactions,
 
       categories: categoriesRef,
-      dispatchCategories: dispatchCategories,
+      dispatchCategories,
 
       repeatedTransactions: repeatedTransactionsRef,
-      dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+      dispatchRepeatedTransactions,
 
       budgets: budgetsRef,
-      dispatchBudgets: dispatchBudgets,
+      dispatchBudgets,
 
       badgeCounter: badgeCounterRef,
-      dispatchBadgeCounter: dispatchBadgeCounter,
+      dispatchBadgeCounter,
 
       globalCurrencyRates: globalCurrencyRatesRef,
-      dispatchGlobalCurrencyRates: dispatchGlobalCurrencyRates,
+      dispatchGlobalCurrencyRates,
+
+      globalLoan: globalLoanRef,
+      dispatchGlobalLoan,
     });
   }, [
     userAccountRef,
@@ -162,6 +173,7 @@ const RootStack = () => {
     badgeCounterRef,
     globalThemeRef,
     globalCurrencyRatesRef,
+    globalLoanRef,
   ]);
 
   // TAG : useEffect for state
@@ -756,6 +768,95 @@ const RootStack = () => {
         options={{ ...showHeader, title: "User" }}
         name={screenList.userScreen}
         component={UserScreen}
+      />
+      {/* // SECTION : Loans */}
+      {/* // TAG : My Loans Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Loans",
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                style={{
+                  marginRight: 20,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  // get repeat limit from subscription plan
+                  const loanContactsLimit = getSubscriptionLimit(
+                    userAccount.subscription?.plan,
+                    SUBSCRIPTION_LIMIT.LOAN
+                  );
+
+                  // const currentLoanContacts = globalLoan.contacts.length;
+                  // TODO : commented out for testing
+                  const currentLoanContacts = 0;
+
+                  // check if user has reached the limit
+                  if (currentLoanContacts >= loanContactsLimit) {
+                    // show alert
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      `Upgrade your subscription to add new loan contacts.`,
+                      [
+                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
+                    );
+                  } else {
+                    navigation.navigate(screenList.newLoanContactScreen, {
+                      fromScreen: screenList.myLoansScreen,
+                      targetScreen: screenList.myLoansScreen,
+                    });
+                  }
+                }}
+              >
+                <IonIcons
+                  name="add"
+                  size={20}
+                  color={globalTheme.colors.textHeader}
+                />
+                <TextPrimary
+                  label="Add contact"
+                  style={{ color: globalTheme.colors.textHeader }}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+        name={screenList.myLoansScreen}
+        component={MyLoansScreen}
+      />
+      {/* // TAG : New Loan Contact Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "New Loan Contact" }}
+        name={screenList.newLoanContactScreen}
+        component={NewLoanContactScreen}
+      />
+      {/* // TAG : Edit Loan Contact Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "New Loan Contact" }}
+        name={screenList.editLoanContactScreen}
+        component={EditLoanContactScreen}
+      />
+      {/* // TAG : Loan Contact Preview Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Loan Contact Preview" }}
+        name={screenList.loanContactPreviewScreen}
+        component={LoanContactPreviewScreen}
+      />
+      {/* // TAG : Loan Contact Selector Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Select Loan Contact" }}
+        name={screenList.loanContactSelectorScreen}
+        component={LoanContactSelectorScreen}
       />
 
       {/* // SECTION : REPEATED TRANSACTIONS */}
