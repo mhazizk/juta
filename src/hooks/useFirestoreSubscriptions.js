@@ -33,6 +33,9 @@ const useFirestoreSubscriptions = ({
 
   globalCurrencyRates,
   dispatchGlobalCurrencyRates,
+
+  globalLoan,
+  dispatchGlobalLoan,
 }) => {
   console.log("useFirestoreSubscriptions");
   // TAG : App Settings Subscription //
@@ -64,6 +67,19 @@ const useFirestoreSubscriptions = ({
       });
       dispatchUserAccount({
         type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+        payload: data,
+      });
+    },
+    (error) => alert(error)
+  );
+
+  // TAG : Loan Contacts Subscription //
+  const unsubscribeLoan = firestore.getAndListenOneDoc(
+    FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+    uid,
+    (data) => {
+      dispatchGlobalLoan({
+        type: REDUCER_ACTIONS.LOAN.SET_MULTI_ACTIONS,
         payload: data,
       });
     },
@@ -294,6 +310,7 @@ const useFirestoreSubscriptions = ({
     unsubscribeBudgets;
     unsubscribeRepeatedTransactions;
     unsubscribeCurrencyRates;
+    unsubscribeLoan;
   }
   if (unsubscribeAll) {
     console.log("unsubscribeAll");
@@ -305,6 +322,7 @@ const useFirestoreSubscriptions = ({
     unsubscribeBudgets();
     unsubscribeRepeatedTransactions();
     unsubscribeCurrencyRates();
+    unsubscribeLoan();
   }
 };
 
