@@ -49,6 +49,11 @@ const getSubscriptionLimit = (subscriptionPlan, subscriptionLimit) => {
         return plan.identifier === SUBSCRIPTION_LIMIT.GROUPS;
       });
       break;
+    case SUBSCRIPTION_LIMIT.LOAN:
+      foundLimit = subscriptionFeaturesModel.find((plan) => {
+        return plan.identifier === SUBSCRIPTION_LIMIT.LOAN;
+      });
+      break;
 
     default:
       break;
