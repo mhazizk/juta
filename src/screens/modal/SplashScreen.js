@@ -7,6 +7,7 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -43,6 +44,7 @@ import Loading from "../../components/Loading";
 import Footer from "../../components/Footer";
 import initialGlobalCurrencyRates from "../../reducers/initial-state/initialGlobalCurrencyRates";
 import userAccountModel from "../../model/userAccountModel";
+import initialGlobalLoan from "../../reducers/initial-state/initialGlobalLoan";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -53,6 +55,7 @@ const SplashScreen = ({ route, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalLoan, dispatchGlobalLoan } = useGlobalLoan();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -236,6 +239,9 @@ const SplashScreen = ({ route, navigation }) => {
 
             globalCurrencyRates,
             dispatchGlobalCurrencyRates,
+
+            globalLoan,
+            dispatchGlobalLoan,
           });
 
           navigation.replace(targetScreen || screenList.bottomTabNavigator);
@@ -294,6 +300,11 @@ const SplashScreen = ({ route, navigation }) => {
       currUser.uid
     );
 
+    const loadLoanContactsFromFirestore = firestore.getOneDoc(
+      FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+      currUser.uid
+    );
+
     Promise.all([
       deviceId,
       deviceName,
@@ -306,6 +317,7 @@ const SplashScreen = ({ route, navigation }) => {
       loadBudgetsFromFirestore,
       loadRepeatedTransactionsFromFirestore,
       loadCurrencyRatesFromFirestore,
+      loadLoanContactsFromFirestore,
     ])
       .then((data) => {
         const deviceIdData = data[0];
@@ -319,6 +331,7 @@ const SplashScreen = ({ route, navigation }) => {
         const budgetsData = data[8];
         const repeatedTransactionsData = data[9];
         const currencyRatesData = data[10];
+        const loanContactsData = data[11];
         const otherDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
           (device) => device.device_id !== deviceIdData
         );
@@ -505,6 +518,18 @@ const SplashScreen = ({ route, navigation }) => {
             );
           }
         );
+        dispatchGlobalLoan({
+          type: REDUCER_ACTIONS.LOAN.FORCE_SET,
+          payload: loanContactsData || {
+            ...initialGlobalLoan,
+            uid: currUser.uid,
+            _timestamps: {
+              ...initialGlobalLoan._timestamps,
+              created_by: currUser.uid,
+              updated_by: currUser.uid,
+            },
+          },
+        });
 
         setTimeout(() => {
           useFirestoreSubscriptions({
@@ -537,6 +562,9 @@ const SplashScreen = ({ route, navigation }) => {
 
             globalCurrencyRates,
             dispatchGlobalCurrencyRates,
+
+            globalLoan,
+            dispatchGlobalLoan,
           });
         }, 1000);
 
