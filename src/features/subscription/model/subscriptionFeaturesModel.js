@@ -27,6 +27,14 @@ const subscriptionFeaturesModel = [
   },
   {
     id: 3,
+    identifier: SUBSCRIPTION_LIMIT.LOAN,
+    name: "Loan contacts",
+    iconName: "cash",
+    free: 1,
+    premium: 10,
+  },
+  {
+    id: 4,
     identifier: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
     name: "Secondary currency",
     iconName: "logo-usd",
@@ -34,7 +42,7 @@ const subscriptionFeaturesModel = [
     premium: true,
   },
   {
-    id: 4,
+    id: 5,
     identifier: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
     name: "Recurring transactions",
     iconName: "repeat",
@@ -42,7 +50,7 @@ const subscriptionFeaturesModel = [
     premium: true,
   },
   {
-    id: 5,
+    id: 6,
     identifier: SUBSCRIPTION_LIMIT.EXPORT_DATA,
     name: "Export data",
     iconName: "share-outline",
@@ -50,7 +58,7 @@ const subscriptionFeaturesModel = [
     premium: true,
   },
   {
-    id: 6,
+    id: 7,
     identifier: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST,
     name: "Feature wishlist",
     iconName: "bulb",
@@ -58,7 +66,7 @@ const subscriptionFeaturesModel = [
     premium: true,
   },
   {
-    id: 7,
+    id: 8,
     identifier: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
     name: "Attachment images",
     iconName: "image",
