@@ -63,6 +63,13 @@ const screenList = {
   newRepeatedTransactionScreen: "New Repeated Transaction Screen",
   repeatedTransactionDetailsScreen: "Repeated Transaction Details Screen",
 
+  // Loan Contact Screen
+  myLoansScreen: "My Loans Screen",
+  newLoanContactScreen: "New Loan Contact Screen",
+  editLoanContactScreen: "Edit Loan Contact Screen",
+  loanContactPreviewScreen: "Loan Contact Preview Screen",
+  loanContactSelectorScreen: "Loan Contact Selector Screen",
+
   // Search Screen
   searchScreen: "Search Screen",
 
