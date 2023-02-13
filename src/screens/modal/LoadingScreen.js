@@ -6,6 +6,7 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalFeatureWishlist,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -26,6 +27,56 @@ import postLogSnagEvent from "../../api/logsnag/postLogSnagEvent";
 import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
 
 const LoadingScreen = ({ route, navigation }) => {
+  const {
+    // navigation
+    fromScreen,
+    targetScreen,
+
+    // loadingType
+    loadingType,
+    reducerUpdatedAt,
+
+    // sortedTransactions
+    transaction,
+    insertedTransactions,
+    patchedTransactions,
+    deletedTransactions,
+    prevCategoryType,
+    prevTransaction,
+    patchTransaction,
+    deleteTransaction,
+
+    // logbooks
+    patchLogbook,
+    deleteLogbook,
+    logbookToOpen,
+
+    // categories
+    insertCategory,
+    patchCategory,
+    deleteCategory,
+    targetCategoryType,
+
+    // budgets
+    insertBudget,
+    patchBudget,
+    deleteBudget,
+
+    // loan
+    insertLoan,
+    insertLoanContact,
+    patchLoanContact,
+    deleteLoanContact,
+    patchLoan,
+    deleteLoan,
+    newGlobalLoanTimestamps,
+
+    // repeatedTransactions
+    repeatedTransaction,
+
+    // feature wishlist
+    featureWishlist,
+  } = route?.params;
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
@@ -39,6 +90,7 @@ const LoadingScreen = ({ route, navigation }) => {
     useGlobalFeatureWishlist();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
+  const { globalLoan, dispatchGlobalLoan } = useGlobalLoan();
 
   const [initial, setInitial] = useState(null);
 
@@ -49,41 +101,6 @@ const LoadingScreen = ({ route, navigation }) => {
     // TAG : Transaction Timeout
     setTimeout(
       () => {
-        const {
-          loadingType,
-          reducerUpdatedAt,
-
-          // sortedTransactions
-          transaction,
-          prevTransaction,
-          patchTransaction,
-          deleteTransaction,
-
-          // logbooks
-          patchLogbook,
-          deleteLogbook,
-          logbookToOpen,
-
-          // categories
-          insertCategory,
-          patchCategory,
-          deleteCategory,
-          targetCategoryType,
-
-          // budgets
-          insertBudget,
-          patchBudget,
-          deleteBudget,
-
-          // repeatedTransactions
-          repeatedTransaction,
-          patchedTransactions,
-          deletedTransactions,
-
-          // feature wishlist
-          featureWishlist,
-        } = route?.params;
-
         const logbooksReducerUpdatedAt = logbooks.reducerUpdatedAt;
         const categoriesReducerUpdatedAt = categories.reducerUpdatedAt;
         const budgetsReducerUpdatedAt = budgets.reducerUpdatedAt;
@@ -457,6 +474,28 @@ const LoadingScreen = ({ route, navigation }) => {
             }, 1000);
             break;
 
+          // TAG : Insert one loan contact method
+          case loadingType === LOADING_TYPES.LOAN.INSERT_ONE_CONTACT:
+            dispatchGlobalLoan({
+              type: REDUCER_ACTIONS.LOAN.INSERT_ONE_CONTACT,
+              payload: { insertLoanContact, newGlobalLoanTimestamps },
+            });
+            break;
+          // TAG : Patch one loan contact method
+          case loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
+            dispatchGlobalLoan({
+              type: REDUCER_ACTIONS.LOAN.PATCH_ONE_CONTACT,
+              payload: { patchLoanContact, newGlobalLoanTimestamps },
+            });
+            break;
+          // TAG : Delete one loan contact method
+          case loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+            dispatchGlobalLoan({
+              type: REDUCER_ACTIONS.LOAN.DELETE_ONE_CONTACT,
+              payload: { deleteLoanContact, newGlobalLoanTimestamps },
+            });
+            break;
+
           default:
             break;
         }
@@ -474,17 +513,6 @@ const LoadingScreen = ({ route, navigation }) => {
 
   // TAG : Sorted Transactions Listener
   useEffect(() => {
-    const {
-      loadingType,
-      reducerUpdatedAt,
-      insertedTransactions,
-      patchedTransactions,
-      deletedTransactions,
-      prevCategoryType,
-      targetCategoryType,
-      patchCategory,
-    } = route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === sortedTransactions.reducerUpdatedAt;
 
@@ -578,9 +606,6 @@ const LoadingScreen = ({ route, navigation }) => {
 
   // TAG : Categories Listener
   useEffect(() => {
-    const { loadingType, targetCategoryType, patchCategory, reducerUpdatedAt } =
-      route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === categories.reducerUpdatedAt;
 
@@ -614,8 +639,6 @@ const LoadingScreen = ({ route, navigation }) => {
 
   // TAG : Budgets Listener
   useEffect(() => {
-    const { loadingType, patchBudget, reducerUpdatedAt } = route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === budgets.reducerUpdatedAt;
 
@@ -642,9 +665,6 @@ const LoadingScreen = ({ route, navigation }) => {
 
   // TAG : Logbooks Listener
   useEffect(() => {
-    const { loadingType, patchLogbook, deleteLogbook, reducerUpdatedAt } =
-      route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === logbooks.reducerUpdatedAt;
 
@@ -675,15 +695,6 @@ const LoadingScreen = ({ route, navigation }) => {
 
   // TAG : Repeated Transactions Listener
   useEffect(() => {
-    const {
-      loadingType,
-      reducerUpdatedAt,
-      repeatedTransaction,
-      insertedTransactions,
-      patchedTransactions,
-      deletedTransactions,
-    } = route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === repeatedTransactions.reducerUpdatedAt;
 
@@ -793,9 +804,8 @@ const LoadingScreen = ({ route, navigation }) => {
     }
   }, [repeatedTransactions.reducerUpdatedAt]);
 
+  // TAG : Global feature wishlist listener
   useEffect(() => {
-    const { reducerUpdatedAt, featureWishlist, loadingType } = route?.params;
-
     const isReducerTimestampSame =
       reducerUpdatedAt === globalFeatureWishlist.reducerUpdatedAt;
 
@@ -808,7 +818,39 @@ const LoadingScreen = ({ route, navigation }) => {
       default:
         break;
     }
-  }, [globalFeatureWishlist.reeducerUpdatedAt]);
+  }, [globalFeatureWishlist.reducerUpdatedAt]);
+
+  // TAG : Global Loan Listener
+  useEffect(() => {
+    const isTimestampSame =
+      newGlobalLoanTimestamps.updated_at === globalLoan._timestamps.updated_at;
+
+    switch (true) {
+      case isTimestampSame &&
+        loadingType === LOADING_TYPES.LOAN.INSERT_ONE_CONTACT:
+        navigation.navigate(targetScreen);
+        break;
+      case isTimestampSame &&
+        loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
+        navigation.navigate(targetScreen);
+        break;
+      case isTimestampSame &&
+        loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+        navigation.navigate(targetScreen);
+        break;
+
+      default:
+        break;
+    }
+    // TODO : commented out for testing
+    // setTimeout(async () => {
+    //   await firestore.setData(
+    //     FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+    //     globalLoan.uid,
+    //     globalLoan
+    //   );
+    // }, 3000);
+  }, [globalLoan._timestamps.updated_at]);
 
   // TAG : Save Async Storage && dispatch Sorted Transactions
   // const saveAndLoad = async () => {
