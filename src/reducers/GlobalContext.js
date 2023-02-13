@@ -5,6 +5,7 @@ import globalBudgetsReducer from "./globalBudgetsReducer";
 import globalCategoriesReducer from "./globalCategoriesReducer";
 import globalCurrencyRatesReducer from "./globalCurrencyRatesReducer";
 import globalFeatureWishlistReducer from "./globalFeatureWishlistReducer";
+import globalLoanReducer from "./globalLoanReducer";
 import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
 import globalSortedTransactionsReducer from "./globalSortedTransactionsReducer";
@@ -16,6 +17,7 @@ import initialBudgets from "./initial-state/initialBudgets";
 import initialCategories from "./initial-state/initialCategories";
 import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
 import initialGlobalCurrencyRates from "./initial-state/initialGlobalCurrencyRates";
+import initialGlobalLoan from "./initial-state/initialGlobalLoan";
 import initialGlobalTheme from "./initial-state/initialGlobalTheme";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
@@ -37,6 +39,7 @@ const globalRepeatedTransactionsContext = createContext();
 const globalThemeContext = createContext();
 const globalFeatureWishlistContext = createContext();
 const globalCurrencyRatesContext = createContext();
+const globalLoanContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -95,6 +98,10 @@ export const useGlobalCurrencyRates = () => {
   return useContext(globalCurrencyRatesContext);
 };
 
+export const useGlobalLoan = () => {
+  return useContext(globalLoanContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -146,14 +153,19 @@ export const GlobalStateProvider = ({ children }) => {
     initialGlobalCurrencyRates
   );
 
+  const [globalLoan, dispatchGlobalLoan] = useReducer(
+    globalLoanReducer,
+    initialGlobalLoan
+  );
+
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
 
   return (
     <>
       <globalSettingsContext.Provider
         value={{
-          appSettings: appSettings,
-          dispatchAppSettings: dispatchAppSettings,
+          appSettings,
+          dispatchAppSettings,
         }}
       >
         <globalThemeContext.Provider
@@ -164,52 +176,50 @@ export const GlobalStateProvider = ({ children }) => {
         >
           <globalUserAccountContext.Provider
             value={{
-              userAccount: userAccount,
-              dispatchUserAccount: dispatchUserAccount,
+              userAccount,
+              dispatchUserAccount,
             }}
           >
             <globalLogbooksContext.Provider
               value={{
-                logbooks: logbooks,
-                dispatchLogbooks: dispatchLogbooks,
+                logbooks,
+                dispatchLogbooks,
               }}
             >
               <globalCategoriesContext.Provider
                 value={{
-                  categories: categories,
-                  dispatchCategories: dispatchCategories,
+                  categories,
+                  dispatchCategories,
                 }}
               >
                 <globalSortedTransactionsContext.Provider
                   value={{
-                    sortedTransactions: sortedTransactions,
-                    dispatchSortedTransactions: dispatchSortedTransactions,
+                    sortedTransactions,
+                    dispatchSortedTransactions,
                   }}
                 >
                   <globalBudgetsContext.Provider
                     value={{
-                      budgets: budgets,
-                      dispatchBudgets: dispatchBudgets,
+                      budgets,
+                      dispatchBudgets,
                     }}
                   >
                     <globalBadgeCounterContext.Provider
                       value={{
-                        badgeCounter: badgeCounter,
-                        dispatchBadgeCounter: dispatchBadgeCounter,
+                        badgeCounter,
+                        dispatchBadgeCounter,
                       }}
                     >
                       <globalRepeatedTransactionsContext.Provider
                         value={{
-                          repeatedTransactions: repeatedTransactions,
-                          dispatchRepeatedTransactions:
-                            dispatchRepeatedTransactions,
+                          repeatedTransactions,
+                          dispatchRepeatedTransactions,
                         }}
                       >
                         <globalFeatureWishlistContext.Provider
                           value={{
-                            globalFeatureWishlist: globalFeatureWishlist,
-                            dispatchGlobalFeatureWishlist:
-                              dispatchGlobalFeatureWishlist,
+                            globalFeatureWishlist,
+                            dispatchGlobalFeatureWishlist,
                           }}
                         >
                           <globalCurrencyRatesContext.Provider
@@ -218,7 +228,14 @@ export const GlobalStateProvider = ({ children }) => {
                               dispatchGlobalCurrencyRates,
                             }}
                           >
-                            {children}
+                            <globalLoanContext.Provider
+                              value={{
+                                globalLoan,
+                                dispatchGlobalLoan,
+                              }}
+                            >
+                              {children}
+                            </globalLoanContext.Provider>
                           </globalCurrencyRatesContext.Provider>
                         </globalFeatureWishlistContext.Provider>
                       </globalRepeatedTransactionsContext.Provider>
