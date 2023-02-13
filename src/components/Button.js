@@ -35,25 +35,6 @@ export const ButtonPrimary = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonPrimary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -76,6 +57,61 @@ export const ButtonPrimary = ({
     </>
   );
 };
+/**
+ * Button Primary Icon
+ *
+ * @param label, props, onPress, condition, theme, width, style
+ * @returns
+ */
+export const ButtonPrimaryIcon = ({
+  label,
+  props,
+  onPress,
+  condition,
+  iconName = null,
+  iconPack = null,
+  theme,
+  width,
+  style = null,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...globalTheme.button.buttonPrimary.buttonStyle },
+            {
+              flexDirection: "row",
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...style },
+          ]}
+        >
+          {iconPack === "IonIcons" && (
+            <IonIcons
+              name={iconName}
+              size={20}
+              color={globalTheme.button.buttonPrimary.textStyle.color}
+              style={{
+                paddingRight: 8,
+              }}
+            />
+          )}
+          <TextButtonPrimary label={label} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
 
 // TAG : Button Primary Danger
 export const ButtonPrimaryDanger = ({
@@ -92,26 +128,6 @@ export const ButtonPrimaryDanger = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-            {
-              backgroundColor: appSettings.theme.style.colors.danger,
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonPrimary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -151,24 +167,6 @@ export const ButtonDisabled = ({
 
   return (
     <>
-      {/* <View
-        style={[
-          { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-          {
-            backgroundColor: appSettings.theme.style.colors.secondary,
-            minWidth: 80,
-            minHeight: 48,
-            width: width || null,
-            paddingHorizontal: 16,
-            justifyContent: "center",
-            alignItems: "center",
-            // margin: 4
-          },
-          { ...(style || null) },
-        ]}
-      >
-        <TextButtonPrimary label={label} />
-      </View> */}
       <View
         style={[
           { ...globalTheme.button.buttonDisabled.buttonStyle },
@@ -204,25 +202,6 @@ export const ButtonSecondary = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonSecondary.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonSecondary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -261,25 +240,6 @@ export const ButtonSecondaryDanger = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonDanger.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextDanger label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
