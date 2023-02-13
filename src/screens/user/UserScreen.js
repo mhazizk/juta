@@ -108,6 +108,14 @@ const UserScreen = ({ navigation }) => {
                 iconPack="FontAwesome5"
                 onPress={() => navigation.navigate(screenList.myBudgetsScreen)}
               />
+              {/* // TAG : My Loans */}
+              <ListItem
+                pressable
+                leftLabel="My Loans"
+                iconLeftName="cash"
+                iconPack="IonIcons"
+                onPress={() => navigation.navigate(screenList.myLoansScreen)}
+              />
               {/* // TAG : My Repeated Transactions */}
               {/* <ListItem
                 pressable
