@@ -98,7 +98,7 @@ const DashboardScreen = ({ navigation }) => {
               }}
             >
               {/* // TAG : My Logbooks Widget */}
-              {appSettings.dashboardSettings.showMyLogbooksWidget && (
+              {/* {appSettings.dashboardSettings.showMyLogbooksWidget && (
                 <ImgButton
                   label="My Logbooks"
                   textColor={globalTheme.colors.black}
@@ -113,7 +113,21 @@ const DashboardScreen = ({ navigation }) => {
                     navigation.navigate(screenList.myLogbooksScreen)
                   }
                 />
-              )}
+              )} */}
+              {/* // TAG : My Loans widget */}
+              <ImgButton
+                label="My Loans"
+                textColor={globalTheme.colors.black}
+                iconName="cash"
+                iconColor="#48ADFF"
+                iconPack="IonIcons"
+                boxColor="#90CEFF"
+                boxHeight={150}
+                boxMarginRight={8}
+                boxWidth={screenWidth / 2 - 24}
+                onPress={() => navigation.navigate(screenList.myLoansScreen)}
+              />
+
               {/* // TAG : My Budgets Widget */}
               {appSettings.dashboardSettings.showMyBudgetsWidget && (
                 <MyBudgetsPreview
