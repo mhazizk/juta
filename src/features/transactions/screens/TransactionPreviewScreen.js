@@ -23,21 +23,26 @@ import {
   useGlobalAppSettings,
   useGlobalCategories,
   useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
   useGlobalTheme,
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
+import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import * as utils from "../../../utils";
 import ImageViewer from "../../image-viewer/components/ImageViewer";
 
 const TransactionPreviewScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
+  const { userAccount } = useGlobalUserAccount();
   const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
+  const { globalLoan } = useGlobalLoan();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
@@ -236,19 +241,6 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
           </View>
 
           <ListSection>
-            {/* // TAG : Type */}
-            <ListItem
-              leftLabel="Type"
-              iconLeftName="coins"
-              iconPack="FontAwesome5"
-              rightLabelColor={globalTheme.colors.foreground}
-              rightLabel={
-                !transaction?.details?.type
-                  ? "Pick type"
-                  : transaction?.details?.type[0].toUpperCase() +
-                    transaction?.details?.type?.substring(1)
-              }
-            />
             {/* // TAG : Date */}
             <ListItem
               leftLabel="Date"
@@ -305,6 +297,41 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               }}
             />
           </ListSection>
+          {(!!transaction.details?.loan_details?.from_uid ||
+            !!transaction.details?.loan_details?.to_uid) && (
+            <ListSection>
+              <ListItem
+                leftLabel={
+                  transaction.details.category_id.includes("loan")
+                    ? "Borrower name"
+                    : "Lender name"
+                }
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  globalLoan.contacts.find(
+                    (contact) =>
+                      contact.contact_uid ===
+                        transaction.details.loan_details.to_uid ||
+                      contact.contact_uid ===
+                        transaction.details.loan_details.from_uid
+                  ).contact_name
+                )}
+                iconPack="IonIcons"
+                iconLeftName="person"
+                useRightLabelContainer
+                iconInRightContainerName="person"
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
+                iconColorInContainer={globalTheme.colors.foreground}
+              />
+            </ListSection>
+          )}
           {/* // TAG : Notes */}
           <ListSection>
             <ListItem
@@ -385,6 +412,14 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     selectedLogbook: route?.params?.selectedLogbook,
                     selectedCategory: selectedCategory,
                     selectedRepeatSection: selectedRepeatSection,
+                    selectedLoanContact: globalLoan.contacts.find((contact) => {
+                      return (
+                        contact.contact_uid ===
+                          transaction.details.loan_details.to_uid ||
+                        contact.contact_uid ===
+                          transaction.details.loan_details.from_uid
+                      );
+                    }),
                   })
                 }
               />
@@ -423,11 +458,19 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             }
                           }, 5000);
                           navigation.navigate(screenList.loadingScreen, {
-                            label: "Deleting Transaction ...",
-                            loadingType: "deleteOneTransaction",
+                            label: "Deleting Transaction...",
+                            loadingType: LOADING_TYPES.TRANSACTIONS.DELETE_ONE,
                             deleteTransaction: transaction,
                             logbookToOpen: selectedLogbook,
                             reducerUpdatedAt: Date.now(),
+                            targetScreen: screenList.bottomTabNavigator,
+                            deleteTransactionFromLoanContact:
+                              transaction.transaction_id,
+                            newGlobalLoanTimestamps: {
+                              ...globalLoan._timestamps,
+                              updated_at: Date.now(),
+                              updated_by: userAccount.uid,
+                            },
                           });
                         },
                       },
