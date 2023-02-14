@@ -203,8 +203,8 @@ const categoriesFallback = ({
         },
       },
       {
-        name: "loan repayment",
-        id: "loan_repayment",
+        name: "loan collection",
+        id: "loan_collection",
         icon: {
           name: "add-circle-outline",
           color: "default",
