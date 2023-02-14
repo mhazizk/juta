@@ -126,8 +126,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         in_out: "expense",
         amount: 0,
         loan_details: {
-          lender_uid: null,
-          borrower_uid: null,
+          from_uid: null,
+          to_uid: null,
         },
         date: Date.now(),
         notes: null,
@@ -224,28 +224,22 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please enter transaction amount");
       case !transaction.details.in_out:
         return alert("Please select transaction expense / income");
-      case !transaction.details.type:
-        return alert("Please select transaction type");
       case !transaction.details.date:
         return alert("Please select transaction date");
       case !transaction.logbook_id:
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
-      case transaction.details.type === "loan" &&
-        !transaction.details.loan_details.lender_name:
+      case transaction.details.category_id.includes("debt") &&
+        (!transaction.details.loan_details.from_uid ||
+          !transaction.details.loan_details.to_uid):
         return alert("Please enter lender name");
-      case transaction.details.type === "loan" &&
-        !transaction.details.loan_details.borrower_name:
+      case transaction.details.category_id.includes("loan") &&
+        (!transaction.details.loan_details.from_uid ||
+          !transaction.details.loan_details.to_uid):
         return alert("Please enter borrower name");
-      case transaction.details.type === "loan" &&
-        !transaction.details.loan_details.payment_due_date:
-        return alert("Please select payment due date");
+        break;
 
-        // case transaction.details.attachment_URL.length > 0:
-        console.log("287");
-
-      // break;
       default:
         break;
     }
@@ -268,12 +262,29 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         }, 5000);
       }
     }, 1);
+
+    // const finalPatchLoanContact = {
+    //   ...selectedLoanContact,
+    //   transactions_id: [
+    //     ...selectedLoanContact.transactions_id,
+    //     transaction.transaction_id,
+    //   ],
+    // };
+
     return navigation.navigate(screenList.loadingScreen, {
-      label: "Saving ...",
+      label: "Saving...",
       loadingType: LOADING_TYPES.TRANSACTIONS.INSERT_ONE,
       transaction: transaction,
       logbookToOpen: selectedLogbook,
+      targetLoanContactUid: selectedLoanContact.contact_uid,
+      insertTransactionToLoanContact: transaction.transaction_id,
+      newGlobalLoanTimestamps: {
+        ...globalLoan._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
       reducerUpdatedAt: Date.now(),
+      targetScreen: screenList.bottomTabNavigator,
     });
   };
 
@@ -422,10 +433,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               ]}
             >
               <TextPrimary
-                label={`${
-                  transaction.details.in_out[0].toUpperCase() +
-                  transaction.details.in_out.substring(1)
-                } Details`}
+                label={`${utils.upperCaseThisFirstLetter(
+                  transaction.details.in_out
+                )} Details`}
                 style={{
                   fontSize: 24,
                 }}
@@ -437,10 +447,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 leftLabel="Transaction"
-                rightLabel={
-                  transaction.details.in_out[0].toUpperCase() +
-                  transaction.details.in_out.substring(1)
-                }
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  transaction.details.in_out
+                )}
                 iconPack="IonIcons"
                 iconLeftName="swap-horizontal"
                 iconRightName="chevron-forward"
@@ -475,9 +484,15 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         details: {
                           ...transaction.details,
                           in_out: item.name,
+                          category_id: null,
+                          loan_details: {
+                            from_uid: null,
+                            to_uid: null,
+                          },
                         },
                       });
-                      setSelectedCategory({});
+                      setSelectedCategory(null);
+                      setSelectedLoanContact(null);
                     },
                     defaultOption: { name: transaction.details.in_out },
                   })
@@ -671,8 +686,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 rightLabel={
                   !selectedLogbook?.name
                     ? "Pick Logbook"
-                    : selectedLogbook?.name[0].toUpperCase() +
-                      selectedLogbook?.name?.substring(1)
+                    : utils.upperCaseThisFirstLetter(selectedLogbook?.name)
                 }
                 iconPack="IonIcons"
                 iconLeftName="book"
@@ -727,8 +741,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 leftLabel="Category"
                 rightLabel={
                   selectedCategory?.name
-                    ? selectedCategory?.name[0].toUpperCase() +
-                      selectedCategory?.name.substring(1)
+                    ? utils.upperCaseThisFirstLetter(selectedCategory?.name)
                     : "Pick Category"
                 }
                 iconPack="IonIcons"
@@ -774,6 +787,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       setSelectedCategory(item);
                       const itemId = item.id;
                       switch (true) {
+                        case itemId === "debt" || itemId === "loan_collection":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              category_id: item.id,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                to_uid: userAccount.uid,
+                                from_uid: null,
+                              },
+                            },
+                          });
+
+                          break;
                         case itemId === "loan" || itemId === "debt_payment":
                           setTransaction({
                             ...transaction,
@@ -782,23 +810,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                               category_id: item.id,
                               loan_details: {
                                 ...transaction.details.loan_details,
-                                borrower_uid: userAccount.uid,
-                                lender_uid: null,
-                              },
-                            },
-                          });
-
-                          break;
-                        case itemId === "loan_repayment" || itemId === "debt":
-                          setTransaction({
-                            ...transaction,
-                            details: {
-                              ...transaction.details,
-                              category_id: item.id,
-                              loan_details: {
-                                ...transaction.details.loan_details,
-                                lender_uid: userAccount.uid,
-                                borrower_uid: null,
+                                from_uid: userAccount.uid,
+                                to_uid: null,
                               },
                             },
                           });
@@ -814,34 +827,34 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }
               />
             </ListSection>
-            {transaction.details.category_id === "loan" && (
+            {(transaction.details.category_id?.toLowerCase().includes("loan") ||
+              transaction.details.category_id
+                ?.toLowerCase()
+                .includes("debt")) && (
               <ListSection>
-                {/* // TAG : Lender name */}
+                {/* // TAG : Lender / Borrower name */}
                 <ListItem
                   pressable
-                  leftLabel="Lender name"
+                  leftLabel={
+                    transaction.details.category_id.includes("loan")
+                      ? "Borrower name"
+                      : "Lender name"
+                  }
                   rightLabel={
-                    transaction?.details?.loan_details?.lender_uid
-                      ? globalLoan.contacts
-                          .find(
-                            (contact) =>
-                              contact.contact_uid ===
-                              transaction.details.loan_details.lender_uid
-                          )
-                          .name[0].toUpperCase() +
-                        globalLoan.contacts
-                          .find(
-                            (contact) =>
-                              contact.contact_uid ===
-                              transaction.details.loan_details.lender_uid
-                          )
-                          .name.slice(1)
-                      : "Add lender name"
+                    selectedLoanContact?.contact_name
+                      ? utils.upperCaseThisFirstLetter(
+                          selectedLoanContact?.contact_name
+                        )
+                      : transaction.details.category_id.includes("loan")
+                      ? "Add Borrower name"
+                      : "Add Lender name"
                   }
                   iconPack="IonIcons"
                   iconLeftName="person"
                   iconRightName="chevron-forward"
-                  useRightLabelContainer
+                  useRightLabelContainer={
+                    selectedLoanContact?.contact_name ? true : false
+                  }
                   iconInRightContainerName="person"
                   rightLabelContainerStyle={{
                     flexDirection: "row",
@@ -873,9 +886,24 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     navigation.navigate(screenList.loanContactSelectorScreen, {
                       defaultOption: selectedLoanContact?.contact_uid,
                       selected: (contact) => {
+                        console.log(contact);
                         const categoryId = transaction.details.category_id;
                         setSelectedLoanContact(contact);
                         switch (true) {
+                          case categoryId === "debt" ||
+                            categoryId === "loan_collection":
+                            setTransaction({
+                              ...transaction,
+                              details: {
+                                ...transaction.details,
+                                loan_details: {
+                                  ...transaction.details.loan_details,
+                                  from_uid: contact.contact_uid,
+                                },
+                              },
+                            });
+
+                            break;
                           case categoryId === "loan" ||
                             categoryId === "debt_payment":
                             setTransaction({
@@ -884,21 +912,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                                 ...transaction.details,
                                 loan_details: {
                                   ...transaction.details.loan_details,
-                                  lender_uid: contact.contact_uid,
-                                },
-                              },
-                            });
-
-                            break;
-                          case categoryId === "loan_repayment" ||
-                            categoryId === "debt":
-                            setTransaction({
-                              ...transaction,
-                              details: {
-                                ...transaction.details,
-                                loan_details: {
-                                  ...transaction.details.loan_details,
-                                  borrower_uid: contact.contact_uid,
+                                  to_uid: contact.contact_uid,
                                 },
                               },
                             });
@@ -913,7 +927,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }
                 />
                 {/* // TAG : Payment due date section */}
-                <ListItem
+                {/* <ListItem
                   pressable
                   leftLabel="Payment due date"
                   rightLabel={
@@ -964,7 +978,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     })
                   }
-                />
+                /> */}
               </ListSection>
             )}
             <ListSection>
