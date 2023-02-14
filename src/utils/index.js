@@ -22,3 +22,4 @@ export { default as findRepeatedTransactionSectionById } from "./FindRepeatedTra
 export { default as createNewTransactionFromActiveRepeatedTransaction } from "./CreateNewTransactionFromActiveRepeatedTransaction";
 export { default as datePicker } from "./datePicker";
 export { default as findTransactionsByIds } from "./findTransactionsByIds";
+export { default as upperCaseThisFirstLetter } from "./upperCaseThisFirstLetter";
