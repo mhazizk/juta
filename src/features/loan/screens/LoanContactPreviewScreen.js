@@ -33,6 +33,8 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import * as utils from "../../../utils";
 import { TouchableOpacity } from "react-native";
+import LoanTransactionItem from "../components/LoanTransactionItem";
+import TransactionListSection from "../../../components/List/TransactionListSection";
 
 const LoanContactPreviewScreen = ({ route, navigation }) => {
   const { contact, transactionDetails } = route?.params;
@@ -108,37 +110,57 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                 fontSize: 36,
               }}
             />
-            <TextPrimary
-              label={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
-              } ${utils.getFormattedNumber({
-                value: getTotalAmount(transactionDetails),
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
-                negativeSymbol:
-                  appSettings.logbookSettings.negativeCurrencySymbol,
-              })}`}
+            <View
               style={{
-                fontWeight: "bold",
-                fontSize: 36,
-                color:
-                  getTotalAmount(transactionDetails) < 0
-                    ? globalTheme.colors.danger
-                    : globalTheme.text.textPrimary.color,
+                margin: 8,
+                height: 1,
+                width: Dimensions.get("window").width / 3,
+                backgroundColor: globalTheme.colors.secondary,
               }}
             />
-            <TextPrimary
-              label={
-                getTotalAmount(transactionDetails) < 0
-                  ? "Debt left to pay"
-                  : getTotalAmount(transactionDetails) === 0
-                  ? "No debt or loan to pay"
-                  : "Loan left to receive"
-              }
-              style={{
-                fontSize: 24,
-              }}
-            />
+            {getTotalAmount(transactionDetails) === 0 && (
+              <TextPrimary
+                label={`No active loan or debt between you and ${contact.contact_name}`}
+                style={{
+                  textAlign: "center",
+                }}
+              />
+            )}
+            {getTotalAmount(transactionDetails) !== 0 && (
+              <>
+                <TextPrimary
+                  label={`${
+                    appSettings.logbookSettings.defaultCurrency.symbol
+                  } ${utils.getFormattedNumber({
+                    value: getTotalAmount(transactionDetails),
+                    currencyIsoCode:
+                      appSettings.logbookSettings.defaultCurrency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
+                  })}`}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 36,
+                    color:
+                      getTotalAmount(transactionDetails) < 0
+                        ? globalTheme.colors.danger
+                        : globalTheme.text.textPrimary.color,
+                  }}
+                />
+                <TextPrimary
+                  label={
+                    getTotalAmount(transactionDetails) < 0
+                      ? "Debt left to pay"
+                      : getTotalAmount(transactionDetails) === 0
+                      ? "No debt or loan to pay"
+                      : "Loan left to receive"
+                  }
+                  style={{
+                    fontSize: 20,
+                  }}
+                />
+              </>
+            )}
           </View>
 
           {/* // TAG : Contact Details */}
@@ -259,23 +281,33 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                 <TextPrimary
                   label="Loan Transactions"
                   style={{
-                    fontSize: 24,
+                    // fontSize: 24,
                     alignSelf: "flex-start",
                     paddingHorizontal: 16,
                   }}
                 />
 
-                <ListSection marginTop={16}>
-                  {/* // TAG : Loan transactions */}
-                  <FlatList
-                    data={transactionDetails}
-                    keyExtractor={(item) => item.contact_uid}
-                    renderItem={({ item }) => (
-                      <>
-                        {transactionDetails.length > 0 && (
-                          <>
-                            <TransactionListItem
-                              // transactionId={item.transaction_id}
+                {/* // TAG : Loan transactions */}
+                <FlatList
+                  data={transactionDetails}
+                  keyExtractor={(item) => item.transaction_id}
+                  style={{
+                    width: "100%",
+                    marginTop: 16,
+                  }}
+                  contentContainerStyle={{
+                    alignItems: "center",
+                  }}
+                  renderItem={({ item, index }) => (
+                    <>
+                      {transactionDetails.length > 0 && (
+                        <>
+                          <TransactionListSection
+                            marginTop={0}
+                            isFirstItem={index === 0}
+                            isLastItem={index === transactionDetails.length - 1}
+                          >
+                            <LoanTransactionItem
                               categoryName={utils.FindById.findCategoryNameById(
                                 {
                                   id: item.details.category_id,
@@ -283,9 +315,6 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                                 }
                               )}
                               isRepeated={item.repeat_id ? true : false}
-                              // categoryType={findCategoryTypeById(
-                              //   item.details.category_id
-                              // )}
                               transactionHour={
                                 appSettings.logbookSettings
                                   .showTransactionTime && item.details.date
@@ -295,6 +324,8 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                                 appSettings.logbookSettings
                                   .showTransactionNotes && item.details.notes
                               }
+                              fromUid={item.details.loan_details.from_uid}
+                              toUid={item.details.loan_details.to_uid}
                               iconLeftName={utils.FindById.findCategoryIconNameById(
                                 {
                                   id: item.details.category_id,
@@ -341,27 +372,12 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                                 );
                               }}
                             />
-
-                            {/* <ListItem
-                            pressable
-                            leftLabel={item.details.amount}
-                            iconLeftName="person"
-                            iconPack="IonIcons"
-                            onPress={() => {
-                              navigation.navigate(
-                                screenList.transactionPreviewScreen,
-                                {
-                                  contact: item,
-                                }
-                              );
-                            }}
-                          /> */}
-                          </>
-                        )}
-                      </>
-                    )}
-                  />
-                </ListSection>
+                          </TransactionListSection>
+                        </>
+                      )}
+                    </>
+                  )}
+                />
               </>
             )}
           </View>
@@ -397,7 +413,7 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                 onPress={() => {
                   Alert.alert(
                     "Delete contact",
-                    `Are you sure you want to delete this contact?\nThis action cannot be undone.`,
+                    `Are you sure you want to delete this contact?\nDeleting this contact will also delete all transactions associated with this contact.\nThis action cannot be undone.`,
                     [
                       {
                         text: "Cancel",
@@ -405,8 +421,9 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                         style: "cancel",
                       },
                       {
-                        text: "OK",
+                        text: "Delete",
                         onPress: () => {
+                          // TODO : delete transactions associated with this contact
                           navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting contact...",
                             loadingType: LOADING_TYPES.LOAN.DELETE_ONE_CONTACT,
