@@ -16,8 +16,10 @@ const findTransactionsByIds = ({ transactionIds, groupSorted, callback }) => {
         });
       });
     });
-    
-    return callback(foundTransactions);
+
+    return callback(
+      foundTransactions.sort((a, b) => b.details.date - a.details.date)
+    );
   }
 };
 
