@@ -1,10 +1,18 @@
 import REDUCER_ACTIONS from "./reducer.action";
 
 const globalLoanReducer = (state, action) => {
-  // TODO : fix this action payload error
+  // Loan contact
   const insertLoanContact = action.payload?.insertLoanContact;
   const patchLoanContact = action.payload?.patchLoanContact;
   const deleteLoanContact = action.payload?.deleteLoanContact;
+
+  // Loan transaction
+  const targetLoanContactUid = action.payload?.targetLoanContactUid;
+  const insertLoanTransaction = action.payload?.insertTransactionToLoanContact;
+  const deleteLoanTransaction =
+    action.payload?.deleteTransactionFromLoanContact;
+
+  // timestamps
   const newLocalTimestamp = action.payload?.newGlobalLoanTimestamps;
   const newTimestampFromFirestore = action.payload?._timestamps;
   const newUpdatedAtTimestampFromLocal = newLocalTimestamp?.updated_at;
@@ -77,6 +85,75 @@ const globalLoanReducer = (state, action) => {
         return {
           ...state,
           contacts: [...filterOutExistingContact].sort((a, b) => {
+            return a.contact_name - b.contact_name;
+          }),
+          _timestamps: { ...newLocalTimestamp },
+        };
+      } else {
+        return state;
+      }
+
+    case REDUCER_ACTIONS.LOAN.INSERT_ONE_TRANSACTION_TO_LOAN_CONTACT:
+      //  check timestamp
+      if (newUpdatedAtTimestampFromLocal > existingUpdatedAtTimestamp) {
+        //   find the existing contact by transaction id
+        const foundExistingContact = state.contacts.find((contact) => {
+          return contact.contact_uid === targetLoanContactUid;
+        });
+
+        // put back to the state
+
+        return {
+          ...state,
+          contacts: [
+            ...state.contacts.filter((contact) => {
+              return contact.contact_uid !== foundExistingContact.contact_uid;
+            }),
+            {
+              ...foundExistingContact,
+              transactions_id: [
+                ...foundExistingContact.transactions_id,
+                insertLoanTransaction,
+              ],
+            },
+          ].sort((a, b) => {
+            return a.contact_name - b.contact_name;
+          }),
+          _timestamps: { ...newLocalTimestamp },
+        };
+      } else {
+        return state;
+      }
+
+    case REDUCER_ACTIONS.LOAN.DELETE_ONE_TRANSACTION_FROM_LOAN_CONTACT:
+      //  check timestamp
+      if (newUpdatedAtTimestampFromLocal > existingUpdatedAtTimestamp) {
+        //   find the existing contact by transaction id
+        const foundExistingContact = state.contacts.find((contact) => {
+          return contact.transactions_id.includes(deleteLoanTransaction)
+            ? contact
+            : null;
+        });
+
+        // remove the transaction from the found contact
+        const filterOutExistingTransaction =
+          foundExistingContact.transactions_id.filter((id) => {
+            return id !== deleteLoanTransaction;
+          });
+
+        // put back to the state
+
+        return {
+          ...state,
+          contacts: [
+            ...state.contacts.filter((contact) => {
+              return contact.contact_uid !== foundExistingContact.contact_uid;
+            }),
+            {
+              ...foundExistingContact,
+              transactions_id: [...filterOutExistingTransaction],
+            },
+          ].sort((a, b) => {
             return a.contact_name - b.contact_name;
           }),
           _timestamps: { ...newLocalTimestamp },
