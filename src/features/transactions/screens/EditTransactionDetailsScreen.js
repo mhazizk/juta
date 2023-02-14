@@ -76,6 +76,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  const [selectedLoanContact, setSelectedLoanContact] = useState(null);
+
   // Loaded User Logbooks
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
 
@@ -134,52 +136,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
   // TAG : Function Section //
 
-  // Set Date in Date Picker
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    event.type === "set" && showMode("time", currentDate);
-    event.type === "dismissed";
-  };
-  const onChangeTime = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    event.type === "dismissed";
-    event.type === "set" &&
-      setTransaction({
-        ...transaction,
-        details: {
-          ...transaction.details,
-          date: new Date(currentDate).getTime(),
-        },
-      });
-  };
-
-  // Date Picker
-  const showMode = (currentMode, selectedDate) => {
-    if (currentMode === "date") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeDate,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-    if (currentMode === "time") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeTime,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-  };
-
-  // Date Picker
-  const showDatePicker = () => {
-    showMode("date", new Date(transaction.details.date));
-  };
-
   // Insert 'name' variable into User Logbooks
   const insertNameInUserLogBook = () => {
     const inserted = logbooks.logbooks.map((logbook) => ({
@@ -196,6 +152,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       setTransaction(route?.params?.transaction);
       setSelectedCategory(route?.params?.selectedCategory);
       setSelectedLogbook(route?.params?.selectedLogbook);
+      setSelectedLoanContact(route?.params?.selectedLoanContact);
     };
   });
 
@@ -205,20 +162,25 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please enter transaction amount");
       case !transaction.details.in_out:
         return alert("Please select transaction expense / income");
-      case !transaction.details.type:
-        return alert("Please select transaction type");
       case !transaction.details.date:
         return alert("Please select transaction date");
       case !transaction.logbook_id:
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
+      case transaction.details.category_id.includes("debt") &&
+        !transaction.details.loan_details.from_uid:
+        return alert("Please enter lender name");
+      case transaction.details.category_id.includes("loan") &&
+        !transaction.details.loan_details.to_uid:
+        break;
+
       default:
         break;
     }
 
     return navigation.navigate(screenList.loadingScreen, {
-      label: "Saving Transaction ...",
+      label: "Saving Transaction...",
       loadingType: LOADING_TYPES.TRANSACTIONS.PATCH_ONE,
       logbookToOpen: logbookToOpen,
       patchTransaction: transaction,
@@ -353,10 +315,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             ]}
           >
             <TextPrimary
-              label={`${
-                transaction.details.in_out[0].toUpperCase() +
-                transaction.details.in_out.substring(1)
-              } Details`}
+              label={`${utils.upperCaseThisFirstLetter(
+                transaction.details.in_out
+              )} Details`}
               style={{
                 fontSize: 24,
               }}
@@ -368,10 +329,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             <ListItem
               pressable
               leftLabel="Transaction"
-              rightLabel={
-                transaction.details.in_out[0].toUpperCase() +
-                transaction.details.in_out.substring(1)
-              }
+              rightLabel={utils.upperCaseThisFirstLetter(
+                transaction.details.in_out
+              )}
               iconPack="IonIcons"
               iconLeftName="swap-horizontal"
               iconRightName="chevron-forward"
@@ -416,57 +376,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }
             />
 
-            {/* // TAG : Type */}
-            <ListItem
-              pressable
-              leftLabel="Type"
-              rightLabel={
-                !transaction?.details?.type
-                  ? "Pick type"
-                  : transaction?.details?.type[0].toUpperCase() +
-                    transaction?.details?.type?.substring(1)
-              }
-              iconPack="FontAwesome5"
-              iconLeftName="coins"
-              iconRightName="chevron-forward"
-              useRightLabelContainer
-              // iconInRightContainerName='book'
-              rightLabelContainerStyle={{
-                flexDirection: "row",
-                maxWidth: "50%",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor:
-                  transaction.details.in_out === "income"
-                    ? "#c3f4f4"
-                    : globalTheme.colors.secondary,
-              }}
-              rightLabelStyle={{
-                color:
-                  transaction.details.in_out === "income"
-                    ? "#00695c"
-                    : globalTheme.text.textPrimary.color,
-              }}
-              onPress={() =>
-                navigation.navigate(screenList.modalScreen, {
-                  title: "Type",
-                  modalType: "list",
-                  props:
-                    transaction?.details?.in_out === "expense"
-                      ? [{ name: "cash" }, { name: "loan" }]
-                      : [{ name: "cash" }],
-                  selected: (item) => {
-                    setTransaction({
-                      ...transaction,
-                      details: { ...transaction.details, type: item.name },
-                    });
-                  },
-                  defaultOption: { name: transaction.details.type },
-                })
-              }
-            />
             {/* // TAG : Date */}
             <ListItem
               pressable
@@ -511,7 +420,21 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     ? "#00695c"
                     : globalTheme.text.textPrimary.color,
               }}
-              onPress={showDatePicker}
+              onPress={() =>
+                utils.datePicker({
+                  initialDateInMillis: transaction?.details?.date,
+                  pickerStyle: "dateAndTime",
+                  callback: (dateInMillis) => {
+                    setTransaction({
+                      ...transaction,
+                      details: {
+                        ...transaction.details,
+                        date: dateInMillis,
+                      },
+                    });
+                  },
+                })
+              }
             />
             {/* // TAG : From Logbook */}
             <ListItem
@@ -520,8 +443,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               rightLabel={
                 !selectedLogbook?.name
                   ? "Pick Logbook"
-                  : selectedLogbook?.name[0].toUpperCase() +
-                    selectedLogbook?.name?.substring(1)
+                  : utils.upperCaseThisFirstLetter(selectedLogbook?.name)
               }
               iconPack="IonIcons"
               iconLeftName="book"
@@ -576,8 +498,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               leftLabel="Category"
               rightLabel={
                 selectedCategory?.name
-                  ? selectedCategory?.name[0].toUpperCase() +
-                    selectedCategory?.name.substring(1)
+                  ? utils.upperCaseThisFirstLetter(selectedCategory?.name)
                   : "Pick Category"
               }
               iconPack="IonIcons"
@@ -634,7 +555,105 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }
             />
           </ListSection>
+          {(transaction.details.category_id?.includes("loan") ||
+            transaction.details.category_id?.includes("debt")) && (
+            <ListSection>
+              {/* // TAG : Lender / Borrower name */}
+              <ListItem
+                pressable
+                leftLabel={
+                  transaction.details.category_id.includes("loan")
+                    ? "Borrower name"
+                    : "Lender name"
+                }
+                rightLabel={
+                  selectedLoanContact?.contact_name
+                    ? utils.upperCaseThisFirstLetter(
+                        selectedLoanContact?.contact_name
+                      )
+                    : transaction.details.category_id.includes("loan")
+                    ? "Add Borrower name"
+                    : "Add Lender name"
+                }
+                iconPack="IonIcons"
+                iconLeftName="person"
+                iconRightName="chevron-forward"
+                useRightLabelContainer={
+                  selectedLoanContact?.contact_name ? true : false
+                }
+                iconInRightContainerName="person"
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    transaction.details.in_out === "income"
+                      ? "#c3f4f4"
+                      : globalTheme.colors.secondary,
+                }}
+                iconColorInContainer={
+                  selectedCategory?.icon?.color === "default"
+                    ? globalTheme.colors.foreground
+                    : selectedCategory?.icon?.color
+                  // transaction.details.in_out === "income"
+                  //   ? "#00695c"
+                  //   : globalTheme.text.textPrimary.color
+                }
+                rightLabelStyle={{
+                  color:
+                    transaction.details.in_out === "income"
+                      ? "#00695c"
+                      : globalTheme.text.textPrimary.color,
+                }}
+                onPress={() =>
+                  navigation.navigate(screenList.loanContactSelectorScreen, {
+                    defaultOption: selectedLoanContact?.contact_uid,
+                    selected: (contact) => {
+                      console.log(contact);
+                      const categoryId = transaction.details.category_id;
+                      setSelectedLoanContact(contact);
+                      switch (true) {
+                        case categoryId === "debt" ||
+                          categoryId === "debt_payment":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                from_uid: contact.contact_uid,
+                              },
+                            },
+                          });
 
+                          break;
+                        case categoryId === "loan" ||
+                          categoryId === "loan_collection":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                to_uid: contact.contact_uid,
+                              },
+                            },
+                          });
+
+                          break;
+
+                        default:
+                          break;
+                      }
+                    },
+                  })
+                }
+              />
+            </ListSection>
+          )}
           <ListSection>
             {/* // TAG : Notes Section */}
             <TouchableNativeFeedback onPress={() => inputNotes.current.focus()}>
