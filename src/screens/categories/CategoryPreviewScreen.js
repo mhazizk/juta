@@ -11,6 +11,7 @@ import {
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import {
+  ButtonDisabled,
   ButtonSecondary,
   ButtonSecondaryDanger,
 } from "../../components/Button";
@@ -235,50 +236,53 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1, paddingLeft: 8 }}>
-              <ButtonSecondaryDanger
-                label="Delete"
-                type="danger"
-                onPress={() => {
-                  if (countTransactions() !== "No Transactions") {
-                    Alert.alert(
-                      "Delete Category",
-                      "You cannot delete a category with transactions. Please delete all transactions first.",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => {},
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                  if (countTransactions() === "No Transactions") {
-                    Alert.alert(
-                      "Delete Category",
-                      `Are you sure you want to delete this category? This will delete all transactions associated with this category.`,
-                      [
-                        {
-                          text: "No",
-                          onPress: () => {},
-                          style: "cancel",
-                        },
-                        {
-                          text: "Yes",
-                          onPress: () => {
-                            navigation.navigate(screenList.loadingScreen, {
-                              label: "Deleting Category ...",
-                              loadingType: "deleteCategory",
-                              deleteCategory: category,
-                              reducerUpdatedAt: Date.now(),
-                            });
+              {!category.is_deletable && <ButtonDisabled label="Delete" />}
+              {category.is_deletable && (
+                <ButtonSecondaryDanger
+                  label="Delete"
+                  type="danger"
+                  onPress={() => {
+                    if (countTransactions() !== "No Transactions") {
+                      Alert.alert(
+                        "Delete Category",
+                        "You cannot delete a category with transactions. Please delete all transactions first.",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => {},
                           },
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                }}
-              />
+                        ],
+                        { cancelable: false }
+                      );
+                    }
+                    if (countTransactions() === "No Transactions") {
+                      Alert.alert(
+                        "Delete Category",
+                        `Are you sure you want to delete this category? This will delete all transactions associated with this category.`,
+                        [
+                          {
+                            text: "No",
+                            onPress: () => {},
+                            style: "cancel",
+                          },
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              navigation.navigate(screenList.loadingScreen, {
+                                label: "Deleting Category ...",
+                                loadingType: "deleteCategory",
+                                deleteCategory: category,
+                                reducerUpdatedAt: Date.now(),
+                              });
+                            },
+                          },
+                        ],
+                        { cancelable: false }
+                      );
+                    }
+                  }}
+                />
+              )}
             </View>
           </View>
         </CustomScrollView>
