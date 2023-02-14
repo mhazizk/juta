@@ -127,18 +127,18 @@ const MyLoansScreen = ({ navigation }) => {
                             iconLeftName="person"
                             iconPack="IonIcons"
                             rightLabel={
-                              item.transactions_id?.length ||
-                              "No" + " transactions"
+                              (item.transactions_id?.length || "No") +
+                              " transaction(s)"
                             }
                             onPress={() => {
                               utils.findTransactionsByIds({
                                 transactionIds: item.transactions_id,
                                 groupSorted: sortedTransactions.groupSorted,
                                 callback: (transactions) => {
-                                  console.log(
-                                    JSON.stringify(item.transactions_id)
-                                  );
-                                  console.log(JSON.stringify(transactions));
+                                  // console.log(
+                                  //   JSON.stringify(item.transactions_id)
+                                  // );
+                                  // console.log(JSON.stringify(transactions));
                                   navigation.navigate(
                                     screenList.loanContactPreviewScreen,
                                     {
