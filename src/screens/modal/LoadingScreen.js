@@ -56,6 +56,7 @@ const LoadingScreen = ({ route, navigation }) => {
     patchCategory,
     deleteCategory,
     targetCategoryType,
+    categoryType,
 
     // budgets
     insertBudget,
@@ -67,6 +68,9 @@ const LoadingScreen = ({ route, navigation }) => {
     insertLoanContact,
     patchLoanContact,
     deleteLoanContact,
+    insertTransactionToLoanContact,
+    deleteTransactionFromLoanContact,
+    targetLoanContactUid,
     patchLoan,
     deleteLoan,
     newGlobalLoanTimestamps,
@@ -144,13 +148,14 @@ const LoadingScreen = ({ route, navigation }) => {
                     attachment_URL: attachmentURL,
                   },
                 };
-                setTimeout(async () => {
-                  await firestore.setData(
-                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                    finalTransaction.transaction_id,
-                    finalTransaction
-                  );
-                }, 5000);
+                // TODO : commented out for testing
+                // setTimeout(async () => {
+                //   await firestore.setData(
+                //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                //     finalTransaction.transaction_id,
+                //     finalTransaction
+                //   );
+                // }, 5000);
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                     .INSERT_TRANSACTION,
@@ -162,13 +167,14 @@ const LoadingScreen = ({ route, navigation }) => {
                 });
               });
             } else {
-              setTimeout(async () => {
-                await firestore.setData(
-                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                  transaction.transaction_id,
-                  transaction
-                );
-              }, 5000);
+              // TODO : commented out for testing
+              // setTimeout(async () => {
+              //   await firestore.setData(
+              //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+              //     transaction.transaction_id,
+              //     transaction
+              //   );
+              // }, 5000);
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                   .INSERT_TRANSACTION,
@@ -238,18 +244,19 @@ const LoadingScreen = ({ route, navigation }) => {
                     updated_by: userAccount.uid,
                   },
                 };
-                setTimeout(async () => {
-                  await firestore.setData(
-                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                    finalTransaction.transaction_id,
-                    finalTransaction
-                  );
-                  if (deleteWebAttachmentURL.length > 0) {
-                    deleteWebAttachmentURL.forEach(async (url) => {
-                      await deleteAttachmentImage(url);
-                    });
-                  }
-                }, 5000);
+                // TODO : commented out for testing
+                // setTimeout(async () => {
+                //   await firestore.setData(
+                //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                //     finalTransaction.transaction_id,
+                //     finalTransaction
+                //   );
+                //   if (deleteWebAttachmentURL.length > 0) {
+                //     deleteWebAttachmentURL.forEach(async (url) => {
+                //       await deleteAttachmentImage(url);
+                //     });
+                //   }
+                // }, 5000);
 
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -272,18 +279,20 @@ const LoadingScreen = ({ route, navigation }) => {
                 },
               };
 
-              setTimeout(async () => {
-                await firestore.setData(
-                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                  finalTransaction.transaction_id,
-                  finalTransaction
-                );
-                if (deleteWebAttachmentURL.length > 0) {
-                  deleteWebAttachmentURL.forEach(async (url) => {
-                    await deleteAttachmentImage(url);
-                  });
-                }
-              }, 5000);
+              // TODO : commented out for testing
+
+              // setTimeout(async () => {
+              //   await firestore.setData(
+              //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+              //     finalTransaction.transaction_id,
+              //     finalTransaction
+              //   );
+              //   if (deleteWebAttachmentURL.length > 0) {
+              //     deleteWebAttachmentURL.forEach(async (url) => {
+              //       await deleteAttachmentImage(url);
+              //     });
+              //   }
+              // }, 5000);
 
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -299,7 +308,8 @@ const LoadingScreen = ({ route, navigation }) => {
             break;
 
           // TAG : Delete One Transaction Method
-          case deleteTransaction && loadingType === "deleteOneTransaction":
+          case deleteTransaction &&
+            loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
             postLogSnagEvent(
               userAccount.displayName,
               LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
@@ -519,7 +529,18 @@ const LoadingScreen = ({ route, navigation }) => {
     switch (true) {
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
-        navigation.navigate(screenList.bottomTabNavigator);
+        if (insertTransactionToLoanContact) {
+          dispatchGlobalLoan({
+            type: REDUCER_ACTIONS.LOAN.INSERT_ONE_TRANSACTION_TO_LOAN_CONTACT,
+            payload: {
+              targetLoanContactUid,
+              insertTransactionToLoanContact,
+              newGlobalLoanTimestamps,
+            },
+          });
+        } else {
+          navigation.navigate(screenList.bottomTabNavigator);
+        }
         break;
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.TRANSACTIONS.PATCH_ONE:
@@ -532,8 +553,19 @@ const LoadingScreen = ({ route, navigation }) => {
           category: patchCategory,
         });
         break;
-      case isReducerTimestampSame && loadingType === "deleteOneTransaction":
-        navigation.navigate(screenList.bottomTabNavigator);
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
+        if (deleteTransactionFromLoanContact) {
+          dispatchGlobalLoan({
+            type: REDUCER_ACTIONS.LOAN.DELETE_ONE_TRANSACTION_FROM_LOAN_CONTACT,
+            payload: {
+              deleteTransactionFromLoanContact,
+              newGlobalLoanTimestamps,
+            },
+          });
+        } else {
+          navigation.navigate(screenList.bottomTabNavigator);
+        }
         break;
 
       // Delete One Logbook
@@ -823,8 +855,8 @@ const LoadingScreen = ({ route, navigation }) => {
   // TAG : Global Loan Listener
   useEffect(() => {
     const isTimestampSame =
-      newGlobalLoanTimestamps.updated_at === globalLoan._timestamps.updated_at;
-
+      newGlobalLoanTimestamps?.updated_at ===
+      globalLoan?._timestamps.updated_at;
     switch (true) {
       case isTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.INSERT_ONE_CONTACT:
@@ -833,9 +865,20 @@ const LoadingScreen = ({ route, navigation }) => {
       case isTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
         navigation.navigate(targetScreen);
+
         break;
       case isTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+        navigation.navigate(targetScreen);
+        break;
+
+      case isTimestampSame &&
+        loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
+        navigation.navigate(targetScreen);
+        break;
+
+      case isTimestampSame &&
+        loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
         navigation.navigate(targetScreen);
         break;
 
