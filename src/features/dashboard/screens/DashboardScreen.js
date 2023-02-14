@@ -24,6 +24,7 @@ import * as utils from "../../../utils";
 import * as Constants from "expo-constants";
 import DashboardHeader from "../components/DashboardHeader";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import MyLoansWidget from "../components/MyLoansWidget";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -115,17 +116,10 @@ const DashboardScreen = ({ navigation }) => {
                 />
               )} */}
               {/* // TAG : My Loans widget */}
-              <ImgButton
-                label="My Loans"
-                textColor={globalTheme.colors.black}
-                iconName="cash"
-                iconColor="#48ADFF"
-                iconPack="IonIcons"
-                boxColor="#90CEFF"
-                boxHeight={150}
-                boxMarginRight={8}
-                boxWidth={screenWidth / 2 - 24}
-                onPress={() => navigation.navigate(screenList.myLoansScreen)}
+              <MyLoansWidget
+                onPress={() => {
+                  navigation.navigate(screenList.myLoansScreen);
+                }}
               />
 
               {/* // TAG : My Budgets Widget */}
