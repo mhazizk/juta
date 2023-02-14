@@ -406,8 +406,17 @@ const SplashScreen = ({ route, navigation }) => {
 
         const categories = {
           ...initialCategories,
-          categories: categoriesData || fallbackCategories,
+          categories: categoriesData || { ...fallbackCategories },
         };
+        if (!categoriesData) {
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+              currUser.uid,
+              fallbackCategories
+            );
+          }, 1);
+        }
 
         dispatchCategories({
           type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
