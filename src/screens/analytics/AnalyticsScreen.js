@@ -257,7 +257,7 @@ const AnalyticsScreen = () => {
                     primaryColor={globalTheme.colors.foreground}
                     overBudgetBarColor={globalTheme.colors.danger}
                     warnBudgetBarColor={globalTheme.colors.warn}
-                    shadowBarColor={utils.HexToRgb({
+                    shadowBarColor={utils.hexToRgb({
                       hex: globalTheme.colors.secondary,
                       opacity: 0.5,
                     })}
