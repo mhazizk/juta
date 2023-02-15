@@ -30,7 +30,7 @@ Juta has many features to help you manage your daily spendings:
 
 - Dashboard
 
-  Never miss your daily spendings with Juta dashboard
+  Keep track of your spendings with Juta dashboard
 
 - Income and Expense category
 
@@ -42,16 +42,22 @@ Juta has many features to help you manage your daily spendings:
 
 - Multi logbooks support
 
-  Want to separate between private and work spendings ?
+  Want to separate between private and work spendings?
   Juta allows you to log it into different logbook to help you separate them
 
 - Secondary currencies support
 
-  Juta allows you to log your spendings in different currencies
+  No more need to convert your currencies. Just log your transaction in your main currency and Juta will automatically convert it to your chosen secondary currency
+
+- Track your debt / loan
+
+  Juta helps you to track your debt / loan. You can also add your debt / loan contact to help you remember who you owe
 
 - Multi devices support
 - Automatic sync
-- Multi device sync
+
+  Don't worry about losing your data. Juta will automatically sync your data between your devices
+
 - Account Group (Coming soon)
 - Recurring transactions (Coming soon)
 - Image attachment (Coming soon)
@@ -63,14 +69,28 @@ Coming soon at juta official web
 
 ## Release Notes
 
+### 0.7.3-alpha (on progress)
+
+- New features:
+- Bugfixes:
+  - Fix multi budgets support (on progress)
+  - Fix multi devices support (on progress)
+  - Fix paywall screen (on progress)
+
 ### 0.7.0-alpha (on progress)
 
 - New features:
-  <!-- - Add support for currency conversion from default logbook currency to main currency -->
+  - Add My Loans feature
+  - Add Loan contacts feature
+  - Add My Loans widget in dashboard screen
+  - Add new category for My Loans
+  - Add support for currency conversion from default logbook currency to main currency (on progress)
 - Bugfixes:
-  <!-- - Fix graph limit line on analytics screen
   - Fix budget screen
-  - Fix budget widget -->
+  - Fix budget widget
+  - Revamp My Budgets widget
+  - Fix theme style
+  <!-- - Fix graph limit line on analytics screen -->
 
 ### 0.6.7-alpha
 
