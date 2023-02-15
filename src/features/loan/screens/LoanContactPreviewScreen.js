@@ -408,7 +408,6 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                       {
                         text: "Delete",
                         onPress: () => {
-                          // TODO : delete transactions associated with this contact
                           navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting contact...",
                             loadingType: LOADING_TYPES.LOAN.DELETE_ONE_CONTACT,
