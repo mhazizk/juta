@@ -311,6 +311,8 @@ const LogbookScreen = ({ route, navigation }) => {
                       .toString()
                       .includes("-")
                       ? globalTheme.colors.danger
+                      : totalBalance(selectedLogbook) === 0
+                      ? globalTheme.colors.textHeader
                       : globalTheme.colors.incomeAmount,
                   }}
                   label={`${
