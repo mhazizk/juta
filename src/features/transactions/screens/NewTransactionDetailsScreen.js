@@ -629,48 +629,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     initialDateInMillis: transaction?.details?.date,
                     pickerStyle: "dateAndTime",
                     callback: (dateInMillis) => {
-                      const categoryId = transaction.details.category_id;
-                      const isPaymentDueDateExist = Boolean(
-                        loanDetails.payment_due_date
-                      );
-                      const dateMillisDifference =
-                        isPaymentDueDateExist &&
-                        Math.abs(
-                          loanDetails.payment_due_date -
-                            transaction.details.date
-                        );
-
-                      switch (true) {
-                        case categoryId === "loan" ||
-                          categoryId === "debt_payment":
-                          break;
-
-                        default:
-                          break;
-                      }
-                      if (transaction.details.type === "loan") {
-                        setTransaction({
-                          ...transaction,
-                          details: {
-                            ...transaction.details,
-                            date: dateInMillis,
-                            loan_details: {
-                              ...transaction.details.loan_details,
-                              payment_due_date: isPaymentDueDateExist
-                                ? dateInMillis + dateMillisDifference
-                                : dateInMillis + 7 * 24 * 60 * 60 * 1000,
-                            },
-                          },
-                        });
-                      } else {
-                        setTransaction({
-                          ...transaction,
-                          details: {
-                            ...transaction.details,
-                            date: dateInMillis,
-                          },
-                        });
-                      }
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          date: dateInMillis,
+                        },
+                      });
                       setLocalRepeatedTransactions({
                         ...localRepeatedTransactions,
                         repeat_start_date: dateInMillis,
