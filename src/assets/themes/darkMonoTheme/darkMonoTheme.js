@@ -153,6 +153,10 @@ export const darkMonoTheme = {
     },
   },
   list: {
+    incomeContainer: {
+      color: "#00695c",
+      backgroundColor: "#c3f4f4",
+    },
     listContainer: {
       display: "flex",
       flexDirection: "row",
