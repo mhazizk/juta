@@ -89,7 +89,7 @@ const MyLoansWidget = ({
     });
     //   get nearest payment due date in date
     const nearestPaymentDueInDate = new Date(
-      nearestPaymentDueInMillis[0].payment_due_date
+      nearestPaymentDueInMillis[0]?.payment_due_date
     ).getDate();
 
     // get transactions id from contacts that have the nearest payment due date
