@@ -17,7 +17,7 @@ import {
 
 const MyBudgetsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -103,6 +103,8 @@ const MyBudgetsScreen = ({ route, navigation }) => {
       <View
         style={{
           height: "100%",
+          alignItems: "center",
+          paddingHorizontal: 16,
           backgroundColor: globalTheme.colors.background,
         }}
       >
