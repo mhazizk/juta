@@ -276,13 +276,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       loadingType: LOADING_TYPES.TRANSACTIONS.INSERT_ONE,
       transaction: transaction,
       logbookToOpen: selectedLogbook,
-      targetLoanContactUid: selectedLoanContact.contact_uid,
-      insertTransactionToLoanContact: transaction.transaction_id,
-      newGlobalLoanTimestamps: {
-        ...globalLoan._timestamps,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
+      targetLoanContactUid: selectedLoanContact?.contact_uid || null,
+      insertTransactionToLoanContact: selectedLoanContact?.contact_uid
+        ? transaction.transaction_id
+        : null,
+      newGlobalLoanTimestamps: selectedLoanContact?.contact_uid
+        ? {
+            ...globalLoan._timestamps,
+            updated_at: Date.now(),
+            updated_by: userAccount.uid,
+          }
+        : null,
       reducerUpdatedAt: Date.now(),
       targetScreen: screenList.bottomTabNavigator,
     });
@@ -464,13 +468,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -522,13 +526,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -615,13 +619,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -667,13 +671,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -723,21 +727,24 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
-                  selectedCategory?.icon?.color === "default"
+                  selectedCategory?.icon?.color === "default" &&
+                  transaction.details.in_out === "income"
+                    ? globalTheme.list.incomeContainer.color
+                    : selectedCategory?.icon?.color === "default"
                     ? globalTheme.colors.foreground
                     : selectedCategory?.icon?.color
                   // transaction.details.in_out === "income"
-                  //   ? "#00695c"
+                  //   ? globalTheme.list.incomeContainer.color
                   //   : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -784,6 +791,18 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                           break;
 
                         default:
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              category_id: item.id,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                from_uid: null,
+                                to_uid: null,
+                              },
+                            },
+                          });
                           break;
                       }
                     },
@@ -830,21 +849,21 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     borderRadius: 8,
                     backgroundColor:
                       transaction.details.in_out === "income"
-                        ? "#c3f4f4"
+                        ? globalTheme.list.incomeContainer.backgroundColor
                         : globalTheme.colors.secondary,
                   }}
                   iconColorInContainer={
                     selectedCategory?.icon?.color === "default"
-                      ? globalTheme.colors.foreground
+                      ? globalTheme.list.incomeContainer.color
                       : selectedCategory?.icon?.color
                     // transaction.details.in_out === "income"
-                    //   ? "#00695c"
+                    //   ? globalTheme.list.incomeContainer.color
                     //   : globalTheme.text.textPrimary.color
                   }
                   rightLabelStyle={{
                     color:
                       transaction.details.in_out === "income"
-                        ? "#00695c"
+                        ? globalTheme.list.incomeContainer.color
                         : globalTheme.text.textPrimary.color,
                   }}
                   onPress={() =>
@@ -1053,18 +1072,18 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
                   transaction.details.in_out === "income"
-                    ? "#00695c"
+                    ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() => {
