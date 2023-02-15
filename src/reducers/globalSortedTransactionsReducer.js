@@ -407,6 +407,8 @@ export const globalSortedTransactionsReducer = (state, action) => {
     case REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.PATCH_TRANSACTION:
       const newPatchTransaction = action.payload.patchTransaction;
       reducerUpdatedAt = action.payload.reducerUpdatedAt;
+      let customPatchDate;
+      let customPrevDate;
 
       // Check if patched transaction id is the same as existing transaction id
       let prevTransaction = null;
