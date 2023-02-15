@@ -311,7 +311,7 @@ const LogbookScreen = ({ route, navigation }) => {
                       .toString()
                       .includes("-")
                       ? globalTheme.colors.danger
-                      : globalTheme.colors.textHeader,
+                      : globalTheme.colors.incomeAmount,
                   }}
                   label={`${
                     selectedLogbook.logbook_currency.symbol
@@ -330,7 +330,7 @@ const LogbookScreen = ({ route, navigation }) => {
                         .toString()
                         .includes("-")
                         ? globalTheme.colors.danger
-                        : globalTheme.colors.textHeader,
+                        : globalTheme.colors.incomeAmount,
                     }}
                     label={`${
                       appSettings.logbookSettings.secondaryCurrency.symbol
