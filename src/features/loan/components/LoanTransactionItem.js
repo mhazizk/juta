@@ -68,6 +68,7 @@ const LoanTransactionItem = ({
                 ...globalTheme.list.listItem,
                 width: "100%",
                 justifyContent: "space-between",
+                paddingVertical: 4,
                 // alignItems: "center",
               }}
             >
