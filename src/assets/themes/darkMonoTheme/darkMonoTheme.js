@@ -29,8 +29,6 @@ export const darkMonoTheme = {
     icon,
   },
   colors: {
-    cardBackground: palette.white[600],
-    cardText: palette.black[600],
     background: palette.black[600],
     foreground: palette.white[600],
     primary: palette.white[600],
@@ -42,6 +40,23 @@ export const darkMonoTheme = {
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  widgets: {
+    totalExpense: {
+      cardBackgroundColor: palette.white[600],
+      cardTextColor: palette.black[600],
+      cardIconColor: palette.black[600],
+    },
+    myLoans: {
+      cardBackgroundColor: "#0899ba",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#0f80aa",
+    },
+    myBudgets: {
+      cardBackgroundColor: "#c9a227",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#dbb42c",
+    },
   },
   text: {
     textPrimary: {
