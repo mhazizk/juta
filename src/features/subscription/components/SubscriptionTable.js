@@ -63,7 +63,9 @@ const SubscriptionTable = ({ subscription, showCurrent = false }) => {
                       ? globalTheme.colors.success
                       : globalTheme.colors.danger
                   }
-                  middleLabel={feature.premium}
+                  middleLabel={
+                    feature.premium > 99 ? "Unlimited" : feature.premium
+                  }
                   rightLabelColor={
                     feature.free < feature.premium
                       ? globalTheme.colors.danger
