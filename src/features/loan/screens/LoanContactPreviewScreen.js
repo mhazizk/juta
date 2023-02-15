@@ -74,94 +74,86 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
     return totalAmount.reduce((a, b) => a + b, 0);
   };
 
-  const getLatestTransactionDate = () => {
-    let latestTransactionDate = 0;
-    transactionDetails.forEach((transaction) => {
-      if (transaction.details.date > latestTransactionDate) {
-        latestTransactionDate = transaction.details.date;
-      }
-    });
-    return latestTransactionDate;
-  };
-
   return (
     <>
       {contact && (
         <CustomScrollView contentContainerStyle={{ flex: 1 }}>
-          {/* // TAG : Contact Section */}
-          <View
-            style={{
-              height: Dimensions.get("window").height / 3,
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              paddingHorizontal: 16,
-            }}
-          >
-            <IonIcons
-              name="person"
-              size={48}
-              style={{ padding: 16 }}
-              color={globalTheme.colors.foreground}
-            />
-            <TextPrimary
-              label={contact.contact_name}
-              style={{
-                fontSize: 36,
-              }}
-            />
+          <ListSection marginTop={16}>
+            {/* // TAG : Contact Section */}
             <View
               style={{
-                margin: 8,
-                height: 1,
-                width: Dimensions.get("window").width / 3,
-                backgroundColor: globalTheme.colors.secondary,
+                height: Dimensions.get("window").height / 3,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                paddingHorizontal: 16,
               }}
-            />
-            {getTotalAmount(transactionDetails) === 0 && (
+            >
+              <IonIcons
+                name="person"
+                size={48}
+                style={{ padding: 16 }}
+                color={globalTheme.colors.foreground}
+              />
               <TextPrimary
-                label={`No active loan or debt between you and ${contact.contact_name}`}
+                label={contact.contact_name}
                 style={{
-                  textAlign: "center",
+                  fontSize: 36,
                 }}
               />
-            )}
-            {getTotalAmount(transactionDetails) !== 0 && (
-              <>
+              <View
+                style={{
+                  margin: 8,
+                  height: 1,
+                  width: Dimensions.get("window").width / 3,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
+              />
+              {getTotalAmount(transactionDetails) === 0 && (
                 <TextPrimary
-                  label={`${
-                    appSettings.logbookSettings.defaultCurrency.symbol
-                  } ${utils.getFormattedNumber({
-                    value: getTotalAmount(transactionDetails),
-                    currencyIsoCode:
-                      appSettings.logbookSettings.defaultCurrency.isoCode,
-                    negativeSymbol:
-                      appSettings.logbookSettings.negativeCurrencySymbol,
-                  })}`}
+                  label={`No active debt or loan between you and ${contact.contact_name}`}
                   style={{
-                    fontWeight: "bold",
-                    fontSize: 36,
-                    color:
+                    textAlign: "center",
+                  }}
+                />
+              )}
+              {getTotalAmount(transactionDetails) !== 0 && (
+                <>
+                  <TextPrimary
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: getTotalAmount(transactionDetails),
+                      currencyIsoCode:
+                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 36,
+                      color:
+                        getTotalAmount(transactionDetails) < 0
+                          ? globalTheme.colors.danger
+                          : globalTheme.text.textPrimary.color,
+                    }}
+                  />
+                  <TextPrimary
+                    label={
                       getTotalAmount(transactionDetails) < 0
-                        ? globalTheme.colors.danger
-                        : globalTheme.text.textPrimary.color,
-                  }}
-                />
-                <TextPrimary
-                  label={
-                    getTotalAmount(transactionDetails) < 0
-                      ? "Debt left to pay"
-                      : getTotalAmount(transactionDetails) === 0
-                      ? "No debt or loan to pay"
-                      : "Loan left to receive"
-                  }
-                  style={{
-                    fontSize: 20,
-                  }}
-                />
-              </>
-            )}
-          </View>
+                        ? "Debt left to pay"
+                        : getTotalAmount(transactionDetails) === 0
+                        ? "No debt or loan to pay"
+                        : "Loan left to receive"
+                    }
+                    style={{
+                      fontSize: 20,
+                    }}
+                  />
+                </>
+              )}
+            </View>
+          </ListSection>
 
           {/* // TAG : Contact Details */}
           {/* <View
@@ -196,7 +188,6 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
               }}
             />
             <ListItem
-              pressable
               leftLabel="Payment due date"
               rightLabel={
                 contact.payment_due_date
@@ -205,7 +196,6 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
               }
               iconPack="IonIcons"
               iconLeftName="calendar"
-              iconRightName="chevron-forward"
               useRightLabelContainer
               // iconInRightContainerName='book'
               rightLabelContainerStyle={{
@@ -219,15 +209,6 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
               }}
               rightLabelStyle={{
                 color: globalTheme.text.textPrimary.color,
-              }}
-              onPress={() => {
-                utils.datePicker({
-                  minimumDateInMillis: getLatestTransactionDate(),
-                  initialDateInMillis:
-                    getLatestTransactionDate() + 7 * 24 * 60 * 60 * 1000,
-                  pickerStyle: "dateOnly",
-                  callback: (dateInMillis) => {},
-                });
               }}
             />
           </ListSection>
@@ -315,6 +296,8 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                                 }
                               )}
                               isRepeated={item.repeat_id ? true : false}
+                              showDate
+                              transactionDate={item.details.date}
                               transactionHour={
                                 appSettings.logbookSettings
                                   .showTransactionTime && item.details.date
@@ -401,6 +384,8 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.editLoanContactScreen, {
                     contact: contact,
+                    loanContactTransactionDetails: transactionDetails,
+                    targetScreen: screenList.loanContactPreviewScreen,
                   })
                 }
               />
@@ -428,6 +413,8 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                             label: "Deleting contact...",
                             loadingType: LOADING_TYPES.LOAN.DELETE_ONE_CONTACT,
                             deleteLoanContact: contact,
+                            deletedTransactions: transactionDetails,
+                            reducerUpdatedAt: Date.now(),
                             targetScreen: screenList.myLoansScreen,
                             newGlobalLoanTimestamps: {
                               ...globalLoan._timestamps,
