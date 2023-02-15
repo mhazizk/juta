@@ -18,14 +18,16 @@ import {
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import * as utils from "../../../utils";
 
 const EditLoanContactScreen = ({ route, navigation }) => {
-  const { fromScreen, targetScreen } = route.params;
+  const { fromScreen, targetScreen, loanContactTransactionDetails } =
+    route.params;
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const { globalLoan } = useGlobalLoan();
-  const [contact, setContact] = useState(route.params.contact);
+  const [contact, setContact] = useState(route.params?.contact);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -56,12 +58,23 @@ const EditLoanContactScreen = ({ route, navigation }) => {
       };
       navigation.navigate(screenList.loadingScreen, {
         label: "Saving new contact...",
-        loadingType: LOADING_TYPES.LOAN.INSERT_ONE_CONTACT,
-        insertLoanContact: contact,
+        loadingType: LOADING_TYPES.LOAN.PATCH_ONE_CONTACT,
+        patchLoanContact: contact,
+        loanContactTransactionDetails,
         targetScreen,
         newGlobalLoanTimestamps: newTimestamps,
       });
     }
+  };
+
+  const getLatestTransactionDate = (transactionDetails) => {
+    let latestTransactionDate = 0;
+    transactionDetails.forEach((transaction) => {
+      if (transaction.details.date > latestTransactionDate) {
+        latestTransactionDate = transaction.details.date;
+      }
+    });
+    return latestTransactionDate;
   };
 
   return (
@@ -86,7 +99,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
             />
             <TextInput
               ref={inputRef}
-              maxLength={30}
+              maxLength={20}
               textAlign="center"
               returnKeyType="done"
               placeholder="Type contact name..."
@@ -182,6 +195,50 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                     });
                   },
                   defaultOption: { name: contact.contact_type },
+                });
+              }}
+            />
+            {/* // TAG : Payment due date */}
+            <ListItem
+              pressable
+              leftLabel="Payment due date"
+              rightLabel={
+                contact.payment_due_date
+                  ? new Date(contact.payment_due_date).toDateString()
+                  : "Not set yet"
+              }
+              iconPack="IonIcons"
+              iconLeftName="calendar"
+              iconRightName="chevron-forward"
+              useRightLabelContainer
+              // iconInRightContainerName='book'
+              rightLabelContainerStyle={{
+                flexDirection: "row",
+                maxWidth: "50%",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: globalTheme.colors.secondary,
+              }}
+              rightLabelStyle={{
+                color: globalTheme.text.textPrimary.color,
+              }}
+              onPress={() => {
+                utils.datePicker({
+                  minimumDateInMillis:
+                    getLatestTransactionDate(loanContactTransactionDetails) ||
+                    Date.now() + 1 * 24 * 60 * 60 * 1000,
+                  initialDateInMillis:
+                    getLatestTransactionDate(loanContactTransactionDetails) ||
+                    Date.now() + 7 * 24 * 60 * 60 * 1000,
+                  pickerStyle: "dateOnly",
+                  callback: (dateInMillis) => {
+                    setContact({
+                      ...contact,
+                      payment_due_date: dateInMillis,
+                    });
+                  },
                 });
               }}
             />
