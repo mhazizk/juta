@@ -790,9 +790,7 @@ const RootStack = () => {
                     SUBSCRIPTION_LIMIT.LOAN
                   );
 
-                  // const currentLoanContacts = globalLoan.contacts.length;
-                  // TODO : commented out for testing
-                  const currentLoanContacts = 0;
+                  const currentLoanContacts = globalLoan.contacts.length;
 
                   // check if user has reached the limit
                   if (currentLoanContacts >= loanContactsLimit) {
@@ -801,7 +799,7 @@ const RootStack = () => {
                       "Upgrade Subscription",
                       `Upgrade your subscription to add new loan contacts.`,
                       [
-                        { text: "OK", onPress: () => {}, style: "cancel" },
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
                         {
                           text: "Upgrade",
                           onPress: () => {
