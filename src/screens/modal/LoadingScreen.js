@@ -71,6 +71,7 @@ const LoadingScreen = ({ route, navigation }) => {
     insertTransactionToLoanContact,
     deleteTransactionFromLoanContact,
     targetLoanContactUid,
+    loanContactTransactionDetails,
     patchLoan,
     deleteLoan,
     newGlobalLoanTimestamps,
@@ -631,6 +632,11 @@ const LoadingScreen = ({ route, navigation }) => {
 
         break;
 
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+        navigation.navigate(targetScreen);
+        break;
+
       default:
         break;
     }
@@ -864,12 +870,25 @@ const LoadingScreen = ({ route, navigation }) => {
         break;
       case isTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
-        navigation.navigate(targetScreen);
-
+        navigation.navigate(targetScreen, {
+          contact: patchLoanContact,
+          transactionDetails: loanContactTransactionDetails,
+        });
         break;
       case isTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
-        navigation.navigate(targetScreen);
+        if (deletedTransactions.length > 0) {
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .DELETE_MANY_TRANSACTIONS,
+            payload: {
+              deletedTransactions,
+              reducerUpdatedAt,
+            },
+          });
+        } else {
+          navigation.navigate(targetScreen);
+        }
         break;
 
       case isTimestampSame &&
