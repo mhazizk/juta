@@ -212,7 +212,9 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Main Currency",
                   modalType: "currencyList",
-                  props: CURRENCY_CONSTANTS.OPTIONS,
+                  props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                    return a.name.localeCompare(b.name);
+                  }),
                   selected: (item) => {
                     const currency = {
                       name: item.name,
