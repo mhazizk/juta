@@ -89,42 +89,6 @@ const LoanTransactionItem = ({
                   }}
                 >
                   {categoryName && <TextPrimary label={categoryName} />}
-                  <IonIcons
-                    name={isRepeated ? "repeat" : "ellipse"}
-                    color={
-                      isRepeated
-                        ? globalTheme.colors.foreground
-                        : globalTheme.colors.secondary
-                    }
-                    size={isRepeated ? 16 : 8}
-                    style={{
-                      display: transactionHour || isRepeated ? "flex" : "none",
-                      paddingHorizontal: 8,
-                    }}
-                  />
-                  {transactionHour && (
-                    <>
-                      <TextSecondary
-                        // label={new Date(transactionHour).toLocaleTimeString(
-                        //   appSettings.locale,
-                        //   { hour: "2-digit", minute: "2-digit" }
-                        // )}
-                        label={
-                          new Date(transactionHour)
-                            .getHours()
-                            .toString()
-                            .padStart(2, "0") +
-                          ":" +
-                          new Date(transactionHour)
-                            .getMinutes()
-                            .toString()
-                            .padStart(2, "0")
-                        }
-                        // label={getTime(transactionHour)}
-                        style={{ fontSize: 14 }}
-                      />
-                    </>
-                  )}
                 </View>
                 {/* // TAG : Borrower / Loan scheme */}
                 <View
@@ -164,13 +128,56 @@ const LoanTransactionItem = ({
                   />
                 </View>
                 {/* // TAG : Bottom Left Side */}
-                {showDate && (
-                  <TextSecondary
-                    label={new Date(transactionDate).toDateString()}
-                    numberOfLines={1}
-                    style={{ fontSize: 14 }}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {showDate && (
+                    <TextSecondary
+                      label={new Date(transactionDate).toDateString()}
+                      numberOfLines={1}
+                      style={{ fontSize: 14 }}
+                    />
+                  )}
+                  <IonIcons
+                    name={isRepeated ? "repeat" : "ellipse"}
+                    color={
+                      isRepeated
+                        ? globalTheme.colors.foreground
+                        : globalTheme.colors.secondary
+                    }
+                    size={isRepeated ? 16 : 8}
+                    style={{
+                      display: transactionHour || isRepeated ? "flex" : "none",
+                      paddingHorizontal: 8,
+                    }}
                   />
-                )}
+                  {transactionHour && (
+                    <>
+                      <TextSecondary
+                        // label={new Date(transactionHour).toLocaleTimeString(
+                        //   appSettings.locale,
+                        //   { hour: "2-digit", minute: "2-digit" }
+                        // )}
+                        label={
+                          new Date(transactionHour)
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0") +
+                          ":" +
+                          new Date(transactionHour)
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")
+                        }
+                        // label={getTime(transactionHour)}
+                        style={{ fontSize: 14 }}
+                      />
+                    </>
+                  )}
+                </View>
                 {transactionNotes && (
                   <TextSecondary
                     label={transactionNotes}
