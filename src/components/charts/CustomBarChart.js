@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import {
   VictoryBar,
@@ -26,7 +26,7 @@ export const CustomBarChart = ({
   width,
   height,
   //   Color
-  showAxisLabels,
+  showAxisLabels = false,
   primaryColor,
   successColor,
   overBudgetBarColor,
@@ -42,18 +42,18 @@ export const CustomBarChart = ({
   const { appSettings } = useGlobalAppSettings();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { globalTheme } = useGlobalTheme();
-  const maxAmount = () => {
+  const checkForAbbreviation = (number) => {
     const { rate } = globalCurrencyRates.data?.find(
       (rate) =>
         rate.isoCode === appSettings.logbookSettings.defaultCurrency.isoCode
     );
     const useAbbreviation = rate >= 1000;
-    let max = Math.floor(shadowGraph[0].y) / 1000;
+    let max = Math.floor(number) / 1000;
     switch (true) {
       case max >= 1000:
         return `${(max / 1000).toFixed(1)} M`;
       case !useAbbreviation && max < 1:
-        return `${Number(shadowGraph[0].y)}`;
+        return `${Number(number)}`;
       case useAbbreviation && max < 1:
         return `${max.toFixed(1)}`;
       case 1 <= max < 1000:
@@ -64,7 +64,7 @@ export const CustomBarChart = ({
   };
 
   const getLeftPadding = (showAxisLabels, rangeDay) => {
-    const maxAmountString = String(maxAmount());
+    const maxAmountString = String(checkForAbbreviation(shadowGraph[0].y));
     const length = maxAmountString?.length;
     const isUsingAbbreviation =
       maxAmountString?.includes("K") || maxAmountString?.includes("M");
@@ -95,6 +95,8 @@ export const CustomBarChart = ({
               break;
           }
       }
+    } else {
+      return 64;
     }
   };
 
@@ -132,13 +134,13 @@ export const CustomBarChart = ({
               top: 0,
               bottom: showAxisLabels ? 36 : 0,
               left: getLeftPadding(showAxisLabels, rangeDay),
-              right: showAxisLabels ? 0 : 40,
+              right: showAxisLabels ? 0 : 48,
             }}
             // 64
             height={height || 200}
             width={width || 200}
             domainPadding={{
-              x: [maxAmount().length * 2, 30],
+              x: [checkForAbbreviation(shadowGraph[0].y).length * 2, 30],
             }}
             // domainPadding={{ x: [56, 30] }}
             maxDomain={{ y: shadowGraph[0].y }}
@@ -340,7 +342,7 @@ export const CustomBarChart = ({
                     strokeLinejoin: "round",
                     strokeWidth: 3,
                     // stroke: utils.HexToRgb({ hex: textColor, opacity: 0.5 }),
-                    stroke: utils.HexToRgb({
+                    stroke: utils.hexToRgb({
                       hex: globalTheme.colors.foreground,
                       opacity: 1,
                     }),
@@ -380,7 +382,7 @@ export const CustomBarChart = ({
                   }}
                   verticalAnchor="start"
                   textAnchor="end"
-                  text={maxAmount()}
+                  text={checkForAbbreviation(shadowGraph[0].y)}
                   //   backgroundPadding={{ right: 0 }}
                   style={{ fill: textColor, fontSize: 14, textAlign: "right" }}
                 />
@@ -390,7 +392,8 @@ export const CustomBarChart = ({
                   <VictoryLabel
                     datum={{ x: 0.3, y: limitLine[0].y }}
                     textAnchor="end"
-                    text={`${(limitLine[0].y / 1000).toFixed(0)} K`}
+                    // text={`${(limitLine[0].y / 1000).toFixed(0)} K`}
+                    text={checkForAbbreviation(limitLine[0].y)}
                     // backgroundPadding={{ right: 0 }}
                     style={{
                       fill: primaryColor,
