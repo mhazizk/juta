@@ -29,7 +29,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
     contact_name: null,
     contact_uid: uuid.v4(),
     contact_type: "friend",
-    payment_due_date: null,
+    payment_due_date: Date.now() + 7 * 24 * 60 * 60 * 1000,
     is_paid: false,
     transactions_id: [],
     // transactions_id: ["98025113-d1d3-4bfd-98ff-ff8a41dfcd10"],
@@ -95,7 +95,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
             />
             <TextInput
               ref={inputRef}
-              maxLength={30}
+              maxLength={20}
               textAlign="center"
               returnKeyType="done"
               placeholder="Type contact name..."
