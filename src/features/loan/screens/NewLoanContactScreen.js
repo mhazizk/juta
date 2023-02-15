@@ -32,8 +32,6 @@ const NewLoanContactScreen = ({ route, navigation }) => {
     payment_due_date: Date.now() + 7 * 24 * 60 * 60 * 1000,
     is_paid: false,
     transactions_id: [],
-    // transactions_id: ["98025113-d1d3-4bfd-98ff-ff8a41dfcd10"],
-    // TODO : add dummy transaction id for testing
   });
   const inputRef = useRef(null);
 
