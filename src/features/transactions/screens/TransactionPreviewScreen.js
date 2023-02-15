@@ -464,13 +464,14 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                             logbookToOpen: selectedLogbook,
                             reducerUpdatedAt: Date.now(),
                             targetScreen: screenList.bottomTabNavigator,
-                            deleteTransactionFromLoanContact:
-                              transaction.transaction_id,
-                            newGlobalLoanTimestamps: {
-                              ...globalLoan._timestamps,
-                              updated_at: Date.now(),
-                              updated_by: userAccount.uid,
-                            },
+                            deleteTransactionFromLoanContact: null,
+                            // transaction.transaction_id,
+                            newGlobalLoanTimestamps: null,
+                            // {
+                            //   ...globalLoan._timestamps,
+                            //   updated_at: Date.now(),
+                            //   updated_by: userAccount.uid,
+                            // },
                           });
                         },
                       },
