@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, FlatList, TouchableOpacity } from "react-native";
+import { View, FlatList, TouchableOpacity, Dimensions } from "react-native";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import {
@@ -17,6 +17,8 @@ import screenList from "../../../navigations/ScreenList";
 import { useIsFocused } from "@react-navigation/native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import * as utils from "../../../utils";
+import MyLoansWidget from "../../dashboard/components/MyLoansWidget";
+import MyLoansHeader from "../components/MyLoansHeader";
 
 const MyLoansScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -105,14 +107,22 @@ const MyLoansScreen = ({ navigation }) => {
           )}
           {globalLoan.contacts.length > 0 && (
             <>
+              <MyLoansHeader
+                height={200}
+                marginVertical={16}
+                width={Dimensions.get("window").width - 32}
+                onPress={() => {
+                  navigation.navigate(screenList.myLoansScreen);
+                }}
+              />
               <TextPrimary
                 label="Loan contacts"
                 style={{
                   alignSelf: "flex-start",
-                  paddingHorizontal: 16,
+                  padding: 16,
                 }}
               />
-              <ListSection marginTop={16}>
+              <ListSection>
                 {/* // TAG : Loan contacts */}
                 <FlatList
                   data={globalLoan.contacts}
@@ -126,10 +136,49 @@ const MyLoansScreen = ({ navigation }) => {
                             leftLabel={item.contact_name}
                             iconLeftName="person"
                             iconPack="IonIcons"
-                            rightLabel={
-                              (item.transactions_id?.length || "No") +
-                              " transaction(s)"
-                            }
+                            rightLabelColor={globalTheme.colors.foreground}
+                            rightLabel={utils.findTransactionsByIds({
+                              transactionIds: item.transactions_id,
+                              groupSorted: sortedTransactions.groupSorted,
+                              callback: (transactions) => {
+                                let totalAmount = [];
+                                transactions.forEach((transaction) => {
+                                  //   const categoryId = transaction.details.category_id;
+                                  if (
+                                    transaction.details.in_out === "expense"
+                                  ) {
+                                    totalAmount.push(
+                                      +transaction.details.amount
+                                    );
+                                  } else {
+                                    totalAmount.push(
+                                      -transaction.details.amount
+                                    );
+                                  }
+                                });
+                                return (
+                                  `${
+                                    appSettings.logbookSettings.defaultCurrency
+                                      .symbol
+                                  } ${utils.getFormattedNumber({
+                                    value: totalAmount.reduce(
+                                      (a, b) => a + b,
+                                      0
+                                    ),
+                                    currencyIsoCode:
+                                      appSettings.logbookSettings
+                                        .defaultCurrency.isoCode,
+                                    negativeSymbol:
+                                      appSettings.logbookSettings
+                                        .negativeCurrencySymbol,
+                                  })}` || "No active loan"
+                                );
+                              },
+                            })}
+                            // rightLabel={
+                            //   (item.transactions_id?.length || "No") +
+                            //   " transaction(s)"
+                            // }
                             onPress={() => {
                               utils.findTransactionsByIds({
                                 transactionIds: item.transactions_id,
