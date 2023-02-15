@@ -220,7 +220,7 @@ const AnalyticsScreen = () => {
                         }
                         style={{
                           fontSize: 24,
-                          paddingRight: 8
+                          paddingRight: 8,
                         }}
                       />
                       <TextPrimary
@@ -288,6 +288,9 @@ const AnalyticsScreen = () => {
               >
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
                     if (graph?.rangeDay !== 7) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 7 });
@@ -298,6 +301,10 @@ const AnalyticsScreen = () => {
                 />
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
+
                     if (graph?.rangeDay !== 30) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 30 });
@@ -308,6 +315,10 @@ const AnalyticsScreen = () => {
                 />
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
+
                     if (graph?.rangeDay !== 365) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 365 });
