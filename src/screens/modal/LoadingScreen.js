@@ -150,13 +150,13 @@ const LoadingScreen = ({ route, navigation }) => {
                   },
                 };
                 // TODO : commented out for testing
-                // setTimeout(async () => {
-                //   await firestore.setData(
-                //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                //     finalTransaction.transaction_id,
-                //     finalTransaction
-                //   );
-                // }, 5000);
+                setTimeout(async () => {
+                  await firestore.setData(
+                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                    finalTransaction.transaction_id,
+                    finalTransaction
+                  );
+                }, 5000);
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                     .INSERT_TRANSACTION,
@@ -169,13 +169,13 @@ const LoadingScreen = ({ route, navigation }) => {
               });
             } else {
               // TODO : commented out for testing
-              // setTimeout(async () => {
-              //   await firestore.setData(
-              //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-              //     transaction.transaction_id,
-              //     transaction
-              //   );
-              // }, 5000);
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                  transaction.transaction_id,
+                  transaction
+                );
+              }, 5000);
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                   .INSERT_TRANSACTION,
@@ -246,18 +246,18 @@ const LoadingScreen = ({ route, navigation }) => {
                   },
                 };
                 // TODO : commented out for testing
-                // setTimeout(async () => {
-                //   await firestore.setData(
-                //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                //     finalTransaction.transaction_id,
-                //     finalTransaction
-                //   );
-                //   if (deleteWebAttachmentURL.length > 0) {
-                //     deleteWebAttachmentURL.forEach(async (url) => {
-                //       await deleteAttachmentImage(url);
-                //     });
-                //   }
-                // }, 5000);
+                setTimeout(async () => {
+                  await firestore.setData(
+                    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                    finalTransaction.transaction_id,
+                    finalTransaction
+                  );
+                  if (deleteWebAttachmentURL.length > 0) {
+                    deleteWebAttachmentURL.forEach(async (url) => {
+                      await deleteAttachmentImage(url);
+                    });
+                  }
+                }, 5000);
 
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -282,18 +282,18 @@ const LoadingScreen = ({ route, navigation }) => {
 
               // TODO : commented out for testing
 
-              // setTimeout(async () => {
-              //   await firestore.setData(
-              //     FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-              //     finalTransaction.transaction_id,
-              //     finalTransaction
-              //   );
-              //   if (deleteWebAttachmentURL.length > 0) {
-              //     deleteWebAttachmentURL.forEach(async (url) => {
-              //       await deleteAttachmentImage(url);
-              //     });
-              //   }
-              // }, 5000);
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                  finalTransaction.transaction_id,
+                  finalTransaction
+                );
+                if (deleteWebAttachmentURL.length > 0) {
+                  deleteWebAttachmentURL.forEach(async (url) => {
+                    await deleteAttachmentImage(url);
+                  });
+                }
+              }, 5000);
 
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -634,6 +634,19 @@ const LoadingScreen = ({ route, navigation }) => {
 
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+            globalLoan.uid,
+            globalLoan
+          );
+          deleteLoanContact.transactions_id.forEach(async (id) => {
+            await firestore.deleteData(
+              FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+              id
+            );
+          });
+        }, 5000);
         navigation.navigate(targetScreen);
         break;
 
@@ -905,13 +918,13 @@ const LoadingScreen = ({ route, navigation }) => {
         break;
     }
     // TODO : commented out for testing
-    // setTimeout(async () => {
-    //   await firestore.setData(
-    //     FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
-    //     globalLoan.uid,
-    //     globalLoan
-    //   );
-    // }, 3000);
+    setTimeout(async () => {
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+        globalLoan.uid,
+        globalLoan
+      );
+    }, 3000);
   }, [globalLoan._timestamps.updated_at]);
 
   // TAG : Save Async Storage && dispatch Sorted Transactions
