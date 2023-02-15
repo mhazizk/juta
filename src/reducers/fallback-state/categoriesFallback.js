@@ -210,7 +210,7 @@ const categoriesFallback = ({
           color: "default",
           pack: "IonIcons",
         },
-        is_deletable: true,
+        is_deletable: false,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
