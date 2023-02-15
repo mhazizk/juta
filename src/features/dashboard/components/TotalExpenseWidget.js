@@ -60,7 +60,6 @@ const TotalExpenseWidget = ({
         graph: graph,
         activeBudget: activeBudget,
         setGraph: (item) => {
-          // TODO : try run in device and see the logs
           // console.log(JSON.stringify(item, null, 2));
           setGraph(item);
         },
