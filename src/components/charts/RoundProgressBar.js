@@ -43,8 +43,8 @@ export const RoundProgressBar = ({
             decimalPlaces: 2, // optional, defaults to 2dp
             color: (opacity = 1) =>
               color
-                ? utils.HexToRgb({ hex: color, opacity: opacity })
-                : utils.HexToRgb({
+                ? utils.hexToRgb({ hex: color, opacity: opacity })
+                : utils.hexToRgb({
                     hex:
                       spent / limit >= 1
                         ? globalTheme.colors.danger
@@ -55,7 +55,7 @@ export const RoundProgressBar = ({
                   }),
             // color: (opacity = 1) =>globalTheme.colors.primary,
             labelColor: (opacity = 0.5) =>
-              utils.HexToRgb({
+              utils.hexToRgb({
                 hex: globalTheme.colors.primary,
                 opacity: opacity,
               }),
