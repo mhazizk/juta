@@ -180,7 +180,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       hex: globalTheme.colors.foreground,
                     }),
                   }}
@@ -235,7 +235,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       hex:
                         spent / limit >= 1
                           ? globalTheme.colors.danger
@@ -268,6 +268,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: spent,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                         currencyIsoCode:
                           appSettings.logbookSettings.defaultCurrency.isoCode,
                       })}
@@ -292,7 +294,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       opacity: 0.4,
                       hex:
                         spent / limit >= 1
@@ -328,6 +330,8 @@ export const ActiveBudget = ({
                         value: limit - spent,
                         currencyIsoCode:
                           appSettings.logbookSettings.defaultCurrency.isoCode,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
                     />
                   </TextTicker>
@@ -394,6 +398,8 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                       currencyIsoCode:
                         appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}
@@ -436,6 +442,8 @@ export const ActiveBudget = ({
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                       currencyIsoCode:
                         appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}
