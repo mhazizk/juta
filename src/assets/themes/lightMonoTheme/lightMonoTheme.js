@@ -151,6 +151,10 @@ export const lightMonoTheme = {
     },
   },
   list: {
+    incomeContainer: {
+      backgroundColor: "#00B19B",
+      color: "#c3f4f4",
+    },
     listContainer: {
       display: "flex",
       flexDirection: "row",
