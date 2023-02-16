@@ -57,8 +57,8 @@ const ModalScreen = ({ route, navigation }) => {
   } = route.params;
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [textInput, setTextInput] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(defaultOption);
+  const [textInput, setTextInput] = useState(defaultOption);
   const [showButton, setShowButton] = useState(false);
 
   const colors = [
@@ -72,17 +72,17 @@ const ModalScreen = ({ route, navigation }) => {
   ];
 
   useEffect(() => {
+    // setSelectedItem(defaultOption);
+    // setTextInput(defaultOption);
+  }, []);
+
+  useEffect(() => {
     if (!!selectedItem || !!textInput) {
       setShowButton(true);
     } else {
       setShowButton(false);
     }
   }, [selectedItem, textInput]);
-
-  useEffect(() => {
-    setSelectedItem(defaultOption);
-    setTextInput(defaultOption);
-  }, []);
 
   const onPressReturn = () => {
     switch (true) {
