@@ -24,6 +24,7 @@ import ListSection from "../../../components/List/ListSection";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLoan,
   useGlobalLogbooks,
   useGlobalTheme,
@@ -44,35 +45,36 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
   const { logbooks } = useGlobalLogbooks();
   const { globalTheme } = useGlobalTheme();
   const { globalLoan } = useGlobalLoan();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   // const [transactions, setTransactions] = useState(transactionDetails);
 
   useEffect(() => {
     // console.log(transactionDetails);
   }, []);
 
-  const getTotalAmount = (transactionDetails) => {
-    let totalAmount = [];
-    transactionDetails?.forEach((transaction) => {
-      const categoryId = transaction.details.category_id;
-      // switch (true) {
-      //   case categoryId === "loan":
-      //     totalAmount.push(transaction.details.amount);
-      //     break;
-      //   case categoryId === "debt_payment":
-      //     totalAmount.push(-transaction.details.amount);
-      //     break;
-
-      //   default:
-      //     break;
-      // }
-      if (transaction.details.in_out === "expense") {
-        totalAmount.push(+transaction.details.amount);
-      } else {
-        totalAmount.push(-transaction.details.amount);
-      }
-    });
-    return totalAmount.reduce((a, b) => a + b, 0);
-  };
+  // const getTotalAmount = ({ transactionDetails, logbooks }) => {
+  //   let totalAmount = [];
+  //   transactionDetails?.forEach((transaction) => {
+  //     const logbookCurrencyName = utils.FindById.findLogbookById({
+  //       id: transaction.logbook_id,
+  //       logbooks: logbooks,
+  //     }).logbook_currency.name;
+  //     let amount = 0;
+  //     if (transaction.details.in_out === "expense") {
+  //       amount = +transaction.details.amount;
+  //     } else {
+  //       amount = -transaction.details.amount;
+  //     }
+  //     const convertedAmount = utils.convertCurrency({
+  //       amount,
+  //       from: logbookCurrencyName,
+  //       target: appSettings.logbookSettings.defaultCurrency.name,
+  //       globalCurrencyRates,
+  //     });
+  //     totalAmount.push(convertedAmount);
+  //   });
+  //   return totalAmount.reduce((a, b) => a + b, 0);
+  // };
 
   return (
     <>
@@ -109,7 +111,13 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                   backgroundColor: globalTheme.colors.secondary,
                 }}
               />
-              {getTotalAmount(transactionDetails) === 0 && (
+              {utils.getTotalAmountAndConvertToDefaultCurrency({
+                globalCurrencyRates,
+                transactions: transactionDetails,
+                logbooks: logbooks.logbooks,
+                targetCurrencyName:
+                  appSettings.logbookSettings.defaultCurrency.name,
+              }) === 0 && (
                 <TextPrimary
                   label={`No active debt or loan between you and ${contact.contact_name}`}
                   style={{
@@ -117,13 +125,25 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                   }}
                 />
               )}
-              {getTotalAmount(transactionDetails) !== 0 && (
+              {utils.getTotalAmountAndConvertToDefaultCurrency({
+                globalCurrencyRates,
+                transactions: transactionDetails,
+                logbooks: logbooks.logbooks,
+                targetCurrencyName:
+                  appSettings.logbookSettings.defaultCurrency.name,
+              }) !== 0 && (
                 <>
                   <TextPrimary
                     label={`${
                       appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.getFormattedNumber({
-                      value: getTotalAmount(transactionDetails),
+                      value: utils.getTotalAmountAndConvertToDefaultCurrency({
+                        globalCurrencyRates,
+                        transactions: transactionDetails,
+                        logbooks: logbooks.logbooks,
+                        targetCurrencyName:
+                          appSettings.logbookSettings.defaultCurrency.name,
+                      }),
                       currencyIsoCode:
                         appSettings.logbookSettings.defaultCurrency.isoCode,
                       negativeSymbol:
@@ -133,16 +153,34 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                       fontWeight: "bold",
                       fontSize: 36,
                       color:
-                        getTotalAmount(transactionDetails) < 0
+                        utils.getTotalAmountAndConvertToDefaultCurrency({
+                          globalCurrencyRates,
+                          transactions: transactionDetails,
+                          logbooks: logbooks.logbooks,
+                          targetCurrencyName:
+                            appSettings.logbookSettings.defaultCurrency.name,
+                        }) < 0
                           ? globalTheme.colors.danger
                           : globalTheme.text.textPrimary.color,
                     }}
                   />
                   <TextPrimary
                     label={
-                      getTotalAmount(transactionDetails) < 0
+                      utils.getTotalAmountAndConvertToDefaultCurrency({
+                        globalCurrencyRates,
+                        transactions: transactionDetails,
+                        logbooks: logbooks.logbooks,
+                        targetCurrencyName:
+                          appSettings.logbookSettings.defaultCurrency.name,
+                      }) < 0
                         ? "Debt left to pay"
-                        : getTotalAmount(transactionDetails) === 0
+                        : utils.getTotalAmountAndConvertToDefaultCurrency({
+                            globalCurrencyRates,
+                            transactions: transactionDetails,
+                            logbooks: logbooks.logbooks,
+                            targetCurrencyName:
+                              appSettings.logbookSettings.defaultCurrency.name,
+                          }) === 0
                         ? "No debt or loan to pay"
                         : "Loan left to receive"
                     }
@@ -327,6 +365,12 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                                   id: item.logbook_id,
                                   logbooks: logbooks.logbooks,
                                 }).logbook_currency
+                              }
+                              logbookName={
+                                utils.FindById.findLogbookById({
+                                  id: item.logbook_id,
+                                  logbooks: logbooks.logbooks,
+                                }).logbook_name
                               }
                               secondaryCurrency={
                                 appSettings.logbookSettings.secondaryCurrency
