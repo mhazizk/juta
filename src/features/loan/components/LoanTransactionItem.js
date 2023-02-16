@@ -9,9 +9,11 @@ import {
 } from "../../../reducers/GlobalContext";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import * as utils from "../../../utils";
+import TextTicker from "react-native-text-ticker";
 
 const LoanTransactionItem = ({
   showDate = false,
+  logbookName,
   transactionType,
   transactionHour,
   transactionNotes,
@@ -89,6 +91,33 @@ const LoanTransactionItem = ({
                   }}
                 >
                   {categoryName && <TextPrimary label={categoryName} />}
+                  <IonIcons
+                    name="at"
+                    color={globalTheme.text.textSecondary.color}
+                    size={16}
+                    style={{ paddingHorizontal: 4 }}
+                  />
+                  <TextTicker
+                    style={{
+                      ...globalTheme.text.textPrimary,
+                    }}
+                    duration={3000}
+                    loop
+                    bounce
+                    repeatSpacer={50}
+                    marqueeDelay={1000}
+                    shouldAnimateTreshold={10}
+                  >
+                    {logbookName && (
+                      <TextPrimary
+                        label={
+                          logbookName.length > 15
+                            ? logbookName.substring(0, 15) + "..."
+                            : logbookName
+                        }
+                      />
+                    )}
+                  </TextTicker>
                 </View>
                 {/* // TAG : Borrower / Loan scheme */}
                 <View
@@ -146,7 +175,7 @@ const LoanTransactionItem = ({
                     color={
                       isRepeated
                         ? globalTheme.colors.foreground
-                        : globalTheme.colors.secondary
+                        : globalTheme.text.textSecondary.color
                     }
                     size={isRepeated ? 16 : 8}
                     style={{
