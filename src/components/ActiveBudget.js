@@ -4,6 +4,8 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalTheme,
 } from "../reducers/GlobalContext";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
@@ -30,8 +32,11 @@ export const ActiveBudget = ({
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const screenWidth = Dimensions.get("window").width;
   const spentWidth = `${(spent / limit) * 100}%`;
+
 
   return (
     <>
