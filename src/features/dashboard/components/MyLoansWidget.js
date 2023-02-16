@@ -7,6 +7,7 @@ import {
   useGlobalAppSettings,
   useGlobalCurrencyRates,
   useGlobalLoan,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
@@ -28,6 +29,7 @@ const MyLoansWidget = ({
   const { appSettings } = useGlobalAppSettings();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions } = useGlobalSortedTransactions();
+  const { logbooks } = useGlobalLogbooks();
   const [transactionsDetails, setTransactionsDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
@@ -59,18 +61,29 @@ const MyLoansWidget = ({
     // console.log({ transactionsDetails });
   }, [transactionsDetails]);
 
-  const getTotalAmount = (transactionDetails) => {
-    let totalAmount = [];
-    transactionDetails?.forEach((transaction) => {
-      //   const categoryId = transaction.details.category_id;
-      if (transaction.details.in_out === "expense") {
-        totalAmount.push(+transaction.details.amount);
-      } else {
-        totalAmount.push(-transaction.details.amount);
-      }
-    });
-    return totalAmount.reduce((a, b) => a + b, 0);
-  };
+  // const getTotalAmount = ({ transactionDetails, logbooks }) => {
+  //   let totalAmount = [];
+  //   transactionDetails?.forEach((transaction) => {
+  //     const logbookCurrencyName = utils.FindById.findLogbookById({
+  //       id: transaction.logbook_id,
+  //       logbooks: logbooks,
+  //     }).logbook_currency.name;
+  //     let amount = 0;
+  //     if (transaction.details.in_out === "expense") {
+  //       amount = +transaction.details.amount;
+  //     } else {
+  //       amount = -transaction.details.amount;
+  //     }
+  //     const convertedAmount = utils.convertCurrency({
+  //       amount,
+  //       from: logbookCurrencyName,
+  //       target: appSettings.logbookSettings.defaultCurrency.name,
+  //       globalCurrencyRates,
+  //     });
+  //     totalAmount.push(convertedAmount);
+  //   });
+  //   return totalAmount.reduce((a, b) => a + b, 0);
+  // };
 
   const getNextPayment = ({
     getNextAmount = false,
@@ -109,7 +122,13 @@ const MyLoansWidget = ({
           transactionIds: transactionIdsToFind,
           groupSorted: groupSorted,
           callback: (transactions) => {
-            return getTotalAmount(transactions);
+            return utils.getTotalAmountAndConvertToDefaultCurrency({
+              transactions,
+              logbooks: logbooks.logbooks,
+              globalCurrencyRates,
+              targetCurrencyName:
+                appSettings.logbookSettings.defaultCurrency.name,
+            });
           },
         });
       case getNextDate:
@@ -157,7 +176,13 @@ const MyLoansWidget = ({
                 overflow: "hidden",
               }}
             >
-              {getTotalAmount(transactionsDetails) === 0 && (
+              {utils.getTotalAmountAndConvertToDefaultCurrency({
+                transactions: transactionsDetails,
+                logbooks: logbooks.logbooks,
+                globalCurrencyRates,
+                targetCurrencyName:
+                  appSettings.logbookSettings.defaultCurrency.name,
+              }) === 0 && (
                 <TextPrimary
                   label="My Loans"
                   style={{
@@ -168,7 +193,13 @@ const MyLoansWidget = ({
                   }}
                 />
               )}
-              {getTotalAmount(transactionsDetails) !== 0 && (
+              {utils.getTotalAmountAndConvertToDefaultCurrency({
+                transactions: transactionsDetails,
+                logbooks: logbooks.logbooks,
+                globalCurrencyRates,
+                targetCurrencyName:
+                  appSettings.logbookSettings.defaultCurrency.name,
+              }) !== 0 && (
                 <>
                   <View
                     style={{
