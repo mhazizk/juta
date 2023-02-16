@@ -4,7 +4,9 @@ import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalLoan,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
   useGlobalUserAccount,
@@ -25,6 +27,8 @@ const MyLoansScreen = ({ navigation }) => {
   const { userAccount } = useGlobalUserAccount();
   const { globalTheme } = useGlobalTheme();
   const { globalLoan } = useGlobalLoan();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
+  const { logbooks } = useGlobalLogbooks();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
@@ -141,36 +145,28 @@ const MyLoansScreen = ({ navigation }) => {
                               transactionIds: item.transactions_id,
                               groupSorted: sortedTransactions.groupSorted,
                               callback: (transactions) => {
-                                let totalAmount = [];
-                                transactions.forEach((transaction) => {
-                                  //   const categoryId = transaction.details.category_id;
-                                  if (
-                                    transaction.details.in_out === "expense"
-                                  ) {
-                                    totalAmount.push(
-                                      +transaction.details.amount
-                                    );
-                                  } else {
-                                    totalAmount.push(
-                                      -transaction.details.amount
-                                    );
-                                  }
-                                });
                                 return (
                                   `${
                                     appSettings.logbookSettings.defaultCurrency
                                       .symbol
                                   } ${utils.getFormattedNumber({
-                                    value: totalAmount.reduce(
-                                      (a, b) => a + b,
-                                      0
-                                    ),
+                                    negativeSymbol:
+                                      appSettings.logbookSettings
+                                        .defaultCurrency.negativeSymbol,
                                     currencyIsoCode:
                                       appSettings.logbookSettings
                                         .defaultCurrency.isoCode,
-                                    negativeSymbol:
-                                      appSettings.logbookSettings
-                                        .negativeCurrencySymbol,
+                                    value:
+                                      utils.getTotalAmountAndConvertToDefaultCurrency(
+                                        {
+                                          transactions,
+                                          logbooks: logbooks.logbooks,
+                                          globalCurrencyRates,
+                                          targetCurrencyName:
+                                            appSettings.logbookSettings
+                                              .defaultCurrency.name,
+                                        }
+                                      ),
                                   })}` || "No active loan"
                                 );
                               },
