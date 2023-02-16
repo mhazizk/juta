@@ -85,6 +85,7 @@ export const RoundProgressBar = ({
           <TextPrimary
             label={`${parseFloat((spent / limit) * 100).toFixed(0)}%`}
             style={{
+              textAlign: "center",
               fontSize: fontSize || 34,
               color:
                 fontColor || globalTheme.text.textPrimary.color,
