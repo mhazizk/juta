@@ -426,6 +426,7 @@ const SettingsScreen = ({ navigation }) => {
                 pressable
                 iconLeftName="usd"
                 leftLabel="Set default currency"
+                thirdLabel="Currency used for all features in the app"
                 rightLabel={
                   logbookSettings.defaultCurrency.name +
                   " / " +
@@ -473,7 +474,7 @@ const SettingsScreen = ({ navigation }) => {
                   )
                 }
                 primaryLabel="Show secondary currency"
-                secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
+                secondaryLabel="This will show secondary currency in all features in app"
                 item={true}
                 selected={logbookSettings.showSecondaryCurrency}
                 onPress={() => {
