@@ -4,6 +4,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -25,7 +26,7 @@ const TotalExpenseWidget = ({
   const { appSettings } = useGlobalAppSettings();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { budgets } = useGlobalBudgets();
-  const { globalCurrencyRates } = useGlobalAppSettings();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { globalTheme } = useGlobalTheme();
   const { logbooks } = useGlobalLogbooks();
   const { categories } = useGlobalCategories();
@@ -49,11 +50,11 @@ const TotalExpenseWidget = ({
 
   const findTransactions = useMemo(() => {
     return () => {
-      // console.log("findTransactions");
       utils.FindTransactionsToPlot({
         expenseOnly: true,
         groupSorted: sortedTransactions.groupSorted,
         appSettings,
+        globalCurrencyRates,
         logbooks,
         categories,
         budgets,
@@ -75,7 +76,15 @@ const TotalExpenseWidget = ({
       setWidgetLoading(false);
     };
     // }, [sortedTransactions, budgets, graph, activeBudget]);
-  }, [sortedTransactions, budgets, graph, activeBudget]);
+  }, [
+    sortedTransactions,
+    budgets,
+    graph,
+    activeBudget,
+    globalCurrencyRates,
+    appSettings,
+  ]);
+
   useEffect(() => {
     findTransactions();
   }, []);
