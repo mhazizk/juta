@@ -12,6 +12,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -21,6 +22,7 @@ import * as utils from "../../utils";
 const AnalyticsScreen = () => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -70,13 +72,14 @@ const AnalyticsScreen = () => {
   const findTransactions = () => {
     utils.FindTransactionsToPlot({
       expenseOnly: true,
-      appSettings: appSettings,
       groupSorted: sortedTransactions?.groupSorted,
-      logbooks: logbooks,
-      categories: categories,
-      budgets: budgets,
-      graph: graph,
-      activeBudget: activeBudget,
+      appSettings,
+      logbooks,
+      categories,
+      globalCurrencyRates,
+      budgets,
+      graph,
+      activeBudget,
       setGraph: (item) => setGraph(item),
       setActiveBudget: (item) => setActiveBudget(item),
       setShowGraph: (item) => setShowGraph(item),
