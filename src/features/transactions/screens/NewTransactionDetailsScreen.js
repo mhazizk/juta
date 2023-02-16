@@ -737,9 +737,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     : selectedCategory?.icon?.color === "default"
                     ? globalTheme.colors.foreground
                     : selectedCategory?.icon?.color
-                  // transaction.details.in_out === "income"
-                  //   ? globalTheme.list.incomeContainer.color
-                  //   : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
@@ -853,12 +850,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         : globalTheme.colors.secondary,
                   }}
                   iconColorInContainer={
-                    selectedCategory?.icon?.color === "default"
+                    transaction.details.in_out === "income"
                       ? globalTheme.list.incomeContainer.color
-                      : selectedCategory?.icon?.color
-                    // transaction.details.in_out === "income"
-                    //   ? globalTheme.list.incomeContainer.color
-                    //   : globalTheme.text.textPrimary.color
+                      : globalTheme.colors.foreground
                   }
                   rightLabelStyle={{
                     color:
