@@ -1,5 +1,6 @@
 // import * as utils from "../utils";
 import FindById from "../utils/FindById";
+import convertCurrency from "./convertCurrency";
 
 const findTransactionsToPlot = ({
   groupSorted,
@@ -13,6 +14,7 @@ const findTransactionsToPlot = ({
   activeBudget,
   setActiveBudget,
   appSettings,
+  globalCurrencyRates,
 }) => {
   let transactionList = [];
   let spentList = [];
@@ -92,7 +94,15 @@ const findTransactionsToPlot = ({
       });
       if (transactionList.length) {
         transactionList.forEach((list) => {
-          totalSpent += list.transaction.details.amount;
+          totalSpent += convertCurrency({
+            globalCurrencyRates,
+            amount: list.transaction.details.amount,
+            from: FindById.findLogbookById({
+              id: list.transaction.logbook_id,
+              logbooks: logbooks.logbooks,
+            }).logbook_currency.name,
+            target: appSettings.logbookSettings.defaultCurrency.name,
+          });
         });
         if (graph.rangeDay === 365) {
           for (let i = 0; i < 12; i++) {
