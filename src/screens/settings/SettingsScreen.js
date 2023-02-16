@@ -426,7 +426,7 @@ const SettingsScreen = ({ navigation }) => {
                 pressable
                 iconLeftName="usd"
                 leftLabel="Set default currency"
-                thirdLabel="Currency used for all features in the app"
+                thirdLabel="This currency also be used for all features in the app"
                 rightLabel={
                   logbookSettings.defaultCurrency.name +
                   " / " +
@@ -514,7 +514,7 @@ const SettingsScreen = ({ navigation }) => {
                 rightLabel={
                   isLoading
                     ? "Updating... "
-                    : "Last updated at : " +
+                    : "Last update: " +
                       new Date(currencyRates._timestamps.updated_at).getDate() +
                       "/" +
                       (new Date(
