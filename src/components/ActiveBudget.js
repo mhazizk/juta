@@ -37,7 +37,6 @@ export const ActiveBudget = ({
   const screenWidth = Dimensions.get("window").width;
   const spentWidth = `${(spent / limit) * 100}%`;
 
-
   return (
     <>
       <TouchableOpacity onPress={onPress}>
@@ -82,6 +81,9 @@ export const ActiveBudget = ({
               />
               <View
                 style={{
+                  position: "absolute",
+                  width: "100%",
+                  flex: 1,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -101,7 +103,24 @@ export const ActiveBudget = ({
                   />
                 )}
               </View>
-              {rightLabel && <TextSecondary label={rightLabel} />}
+              {rightLabel && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <IonIcons
+                    name="create-outline"
+                    color={globalTheme.colors.foreground}
+                    size={20}
+                    style={{
+                      paddingRight: 4,
+                    }}
+                  />
+                  <TextPrimary label={rightLabel} />
+                </View>
+              )}
             </View>
             {/* Date Section */}
             <View
