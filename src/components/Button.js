@@ -225,6 +225,54 @@ export const ButtonSecondary = ({
   );
 };
 
+// TAG : Button Secondary
+export const ButtonSecondaryIcon = ({
+  label,
+  props,
+  onPress,
+  iconName,
+  iconPack,
+  width,
+  style,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...globalTheme.button.buttonSecondary.buttonStyle },
+            {
+              flexDirection: "row",
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {iconPack === "IonIcons" && (
+            <IonIcons
+              name={iconName}
+              size={20}
+              color={globalTheme.button.buttonSecondary.textStyle.color}
+              style={{
+                paddingRight: 8,
+              }}
+            />
+          )}
+          <TextButtonSecondary label={label} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
 // TAG : Button Secondary Danger
 export const ButtonSecondaryDanger = ({
   label,
