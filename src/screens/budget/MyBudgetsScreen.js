@@ -11,13 +11,18 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils";
 
 const MyBudgetsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -54,7 +59,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
   const findActiveBudget = () => {
     let spentList = [];
     let transactionList = [];
-    let spent = 0;
+    // let spent = 0;
 
     if (budgets.budgets.length) {
       const activeBudget = budgets.budgets.find(
@@ -81,8 +86,13 @@ const MyBudgetsScreen = ({ route, navigation }) => {
           )
         );
       }
-
-      spent = spentList.reduce((a, b) => a + b, 0);
+      const spent = utils.getTotalAmountAndConvertToDefaultCurrency({
+        invertResult: true,
+        transactions: transactionList,
+        logbooks: logbooks.logbooks,
+        globalCurrencyRates,
+        targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+      });
       transactionList.sort((a, b) => b.details.date - a.details.date);
       return setActiveBudget({ budget: activeBudget, spent, transactionList });
     }
