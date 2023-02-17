@@ -1,4 +1,3 @@
-
 // Find Logbook By Id
 const findLogbookById = ({ id, logbooks }) => {
   const findlogbook = logbooks.find((logbook) => logbook.logbook_id === id);
@@ -93,22 +92,19 @@ const findCategoryTypeById = ({ id, categories }) => {
   return filteredExpenseCategory ? "expense" : "income";
 };
 
-const findCategoryById = ({ id, categories, transaction, setState }) => {
-  if (!id || !categories || !transaction) {
+const findCategoryById = ({ id, categories }) => {
+  if (!id || !categories) {
     return;
   }
 
-  if (transaction) {
-    const foundExpenseCategory = categories.expense.find((category) => {
-      return category.id === id;
-    });
-    const foundIncomeCategory = categories.income.find((category) => {
-      return category.id === id;
-    });
+  const foundExpenseCategory = categories.expense.find((category) => {
+    return category.id === id;
+  });
+  const foundIncomeCategory = categories.income.find((category) => {
+    return category.id === id;
+  });
 
-    return foundExpenseCategory || foundIncomeCategory;
-    // setState(foundExpenseCategory[0] || foundIncomeCategory[0]);
-  }
+  return foundExpenseCategory || foundIncomeCategory;
 };
 
 export default {
