@@ -64,14 +64,18 @@ const LoadingScreen = ({ route, navigation }) => {
     deleteBudget,
 
     // loan
+    isPaid,
     insertLoan,
     insertLoanContact,
     patchLoanContact,
     deleteLoanContact,
     insertTransactionToLoanContact,
+    patchTransactionToLoanContact,
     deleteTransactionFromLoanContact,
     targetLoanContactUid,
     loanContactTransactionDetails,
+    willPrevLoanContactBePaid,
+    willTargetLoanContactBePaid,
     patchLoan,
     deleteLoan,
     newGlobalLoanTimestamps,
@@ -116,10 +120,10 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Insert One Transaction Method
           case transaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
-            postLogSnagEvent(
-              userAccount.displayName,
-              LOGSNAG_EVENT_TYPES.TRANSACTION_NEW
-            );
+            // postLogSnagEvent(
+            //   userAccount.displayName,
+            //   LOGSNAG_EVENT_TYPES.TRANSACTION_NEW
+            // );
             if (transaction.details.attachment_URL.length > 0) {
               const newAttachmentURL = transaction.details.attachment_URL.map(
                 (uri) => {
@@ -311,10 +315,10 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Delete One Transaction Method
           case deleteTransaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
-            postLogSnagEvent(
-              userAccount.displayName,
-              LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
-            );
+            // postLogSnagEvent(
+            //   userAccount.displayName,
+            //   LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
+            // );
 
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -330,7 +334,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Patch One Logbook Method
           case patchLogbook &&
             reducerUpdatedAt !== logbooksReducerUpdatedAt &&
-            loadingType === "patchLogbook":
+            loadingType === LOADING_TYPES.LOGBOOKS.PATCH_ONE:
             console.log("start patch logbook");
             dispatchLogbooks({
               type: REDUCER_ACTIONS.LOGBOOKS.PATCH,
@@ -534,6 +538,7 @@ const LoadingScreen = ({ route, navigation }) => {
           dispatchGlobalLoan({
             type: REDUCER_ACTIONS.LOAN.INSERT_ONE_TRANSACTION_TO_LOAN_CONTACT,
             payload: {
+              isPaid,
               targetLoanContactUid,
               insertTransactionToLoanContact,
               newGlobalLoanTimestamps,
@@ -545,7 +550,27 @@ const LoadingScreen = ({ route, navigation }) => {
         break;
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.TRANSACTIONS.PATCH_ONE:
-        navigation.navigate(screenList.bottomTabNavigator);
+        const wasFromLoanContact =
+          prevTransaction.details.loan_details.from_uid !== null ||
+          prevTransaction.details.loan_details.to_uid !== null;
+        const wasNotFromLoanContact =
+          patchTransaction.details.loan_details.from_uid !== null ||
+          patchTransaction.details.loan_details.to_uid !== null;
+        if (wasFromLoanContact || wasNotFromLoanContact) {
+          dispatchGlobalLoan({
+            type: REDUCER_ACTIONS.LOAN.PATCH_ONE_TRANSACTION_TO_LOAN_CONTACT,
+            payload: {
+              isPaid,
+              willPrevLoanContactBePaid,
+              willTargetLoanContactBePaid,
+              targetLoanContactUid,
+              patchTransaction,
+              newGlobalLoanTimestamps,
+            },
+          });
+        } else {
+          navigation.navigate(screenList.bottomTabNavigator);
+        }
         break;
       case isReducerTimestampSame && loadingType === "patchCategory":
         navigation.navigate(screenList.categoryPreviewScreen, {
@@ -554,12 +579,15 @@ const LoadingScreen = ({ route, navigation }) => {
           category: patchCategory,
         });
         break;
+      // Delete One Transaction
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
-        if (deleteTransactionFromLoanContact) {
+        if (!!deleteTransactionFromLoanContact) {
+          console.log("deleteTransactionFromLoanContact");
           dispatchGlobalLoan({
             type: REDUCER_ACTIONS.LOAN.DELETE_ONE_TRANSACTION_FROM_LOAN_CONTACT,
             payload: {
+              isPaid,
               deleteTransactionFromLoanContact,
               newGlobalLoanTimestamps,
             },
@@ -632,6 +660,25 @@ const LoadingScreen = ({ route, navigation }) => {
 
         break;
 
+      // Patch one logbook and all its transactions
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.LOGBOOKS.PATCH_ONE:
+        // TODO : commented out for testing
+        setTimeout(() => {
+          patchedTransactions.forEach(async (transaction) => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+              transaction.transaction_id,
+              transaction
+            );
+          });
+        }, 5000);
+        navigation.navigate(screenList.logbookPreviewScreen, {
+          logbook: patchLogbook,
+        });
+        break;
+
+      // Delete one contact
       case isReducerTimestampSame &&
         loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
         setTimeout(async () => {
@@ -721,11 +768,30 @@ const LoadingScreen = ({ route, navigation }) => {
 
     switch (true) {
       // Patch One Logbook
-      case isReducerTimestampSame && loadingType === "patchLogbook":
-        console.log("going back to logbook preview screen");
-        navigation.navigate(screenList.logbookPreviewScreen, {
-          logbook: patchLogbook,
-        });
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.LOGBOOKS.PATCH_ONE:
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+            patchLogbook.logbook_id,
+            patchLogbook
+          );
+        }, 5000);
+
+        if (patchedTransactions?.length > 0) {
+          dispatchSortedTransactions({
+            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              .PATCH_MANY_TRANSACTIONS,
+            payload: {
+              patchedTransactions,
+              reducerUpdatedAt,
+            },
+          });
+        } else {
+          navigation.navigate(screenList.logbookPreviewScreen, {
+            logbook: patchLogbook,
+          });
+        }
         break;
 
       // Delete One Logbook
@@ -876,55 +942,77 @@ const LoadingScreen = ({ route, navigation }) => {
     const isTimestampSame =
       newGlobalLoanTimestamps?.updated_at ===
       globalLoan?._timestamps.updated_at;
-    switch (true) {
-      case isTimestampSame &&
-        loadingType === LOADING_TYPES.LOAN.INSERT_ONE_CONTACT:
-        navigation.navigate(targetScreen);
-        break;
-      case isTimestampSame &&
-        loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
-        navigation.navigate(targetScreen, {
-          contact: patchLoanContact,
-          transactionDetails: loanContactTransactionDetails,
-        });
-        break;
-      case isTimestampSame &&
-        loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
-        if (deletedTransactions.length > 0) {
-          dispatchSortedTransactions({
-            type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-              .DELETE_MANY_TRANSACTIONS,
-            payload: {
-              deletedTransactions,
-              reducerUpdatedAt,
-            },
-          });
-        } else {
+    // console.log(JSON.stringify(globalLoan, null, 2));
+
+    if (isTimestampSame && globalLoan) {
+      setTimeout(async () => {
+        console.log("after 5s");
+        console.log(JSON.stringify(globalLoan, null, 2));
+
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+          globalLoan.uid,
+          globalLoan
+        );
+      }, 5000);
+
+      switch (true) {
+        case loadingType === LOADING_TYPES.LOAN.INSERT_ONE_CONTACT:
           navigation.navigate(targetScreen);
-        }
-        break;
 
-      case isTimestampSame &&
-        loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
-        navigation.navigate(targetScreen);
-        break;
+          break;
+        case loadingType === LOADING_TYPES.LOAN.PATCH_ONE_CONTACT:
+          // setTimeout(async () => {
+          //   await firestore.setData(
+          //     FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+          //     globalLoan.uid,
+          //     globalLoan
+          //   );
+          // }, 3000);
 
-      case isTimestampSame &&
-        loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
-        navigation.navigate(targetScreen);
-        break;
+          navigation.navigate(targetScreen, {
+            contact: patchLoanContact,
+            transactionDetails: loanContactTransactionDetails,
+          });
+          break;
+        case loadingType === LOADING_TYPES.LOAN.DELETE_ONE_CONTACT:
+          if (deletedTransactions.length > 0) {
+            dispatchSortedTransactions({
+              type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                .DELETE_MANY_TRANSACTIONS,
+              payload: {
+                deletedTransactions,
+                reducerUpdatedAt,
+              },
+            });
+          } else {
+            setTimeout(async () => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+                globalLoan.uid,
+                globalLoan
+              );
+            }, 3000);
 
-      default:
-        break;
+            navigation.navigate(targetScreen);
+          }
+          break;
+
+        case loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
+          navigation.navigate(targetScreen);
+          break;
+        case loadingType === LOADING_TYPES.TRANSACTIONS.PATCH_ONE:
+          navigation.navigate(targetScreen);
+          break;
+
+        case loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
+          navigation.navigate(targetScreen);
+          break;
+
+        default:
+          break;
+      }
     }
-    // TODO : commented out for testing
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
-        globalLoan.uid,
-        globalLoan
-      );
-    }, 3000);
   }, [globalLoan._timestamps.updated_at]);
 
   // TAG : Save Async Storage && dispatch Sorted Transactions
