@@ -3,7 +3,7 @@
  *
  * @param groupSorted - groupSorted object
  * @param logbookId - logbook id
- * @returns
+ * @returns array of transactions
  */
 const getTransactionsByLogbookId = ({ groupSorted, logbookId }) => {
   let array = [];
