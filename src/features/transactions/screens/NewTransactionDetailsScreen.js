@@ -22,6 +22,7 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
@@ -42,6 +43,7 @@ import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStora
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import transactionDetailsModel from "../models/transactionDetailsModel";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -51,23 +53,26 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
   const { userAccount } = useGlobalUserAccount();
   const { globalLoan } = useGlobalLoan();
-  const [selectedLoanContact, setSelectedLoanContact] = useState(null);
-
-  // TAG : useState Section //
-
-  // Image State
+  const [selectedLoanContact, setSelectedLoanContact] = useState(
+    route.params?.selectedLoanContact || null
+  );
   const [image, setImage] = useState([]);
-
-  // Loading State
   const [isLoading, setIsLoading] = useState(true);
-
   const [loanContacts, setLoanContacts] = useState(globalLoan?.contacts);
-
-  // Repated Transaction State
+  const [transaction, setTransaction] = useState(null);
+  const [selectedLogbook, setSelectedLogbook] = useState(
+    route.params?.selectedLogbook || null
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    route.params?.selectedCategory || null
+  );
+  const [loadedLogbooks, setLoadedLogbooks] = useState(null);
+  const [loanDetails, setLoanDetails] = useState(null);
   const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
     uid: null,
     repeat_id: null,
@@ -95,23 +100,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     },
   });
 
-  // Transaction State
-  const [transaction, setTransaction] = useState(null);
-
-  // Logbook State
-  const [selectedLogbook, setSelectedLogbook] = useState(null);
-
-  // Category State
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // Loaded User Logbooks
-  const [loadedLogbooks, setLoadedLogbooks] = useState(null);
-
-  const [loanDetails, setLoanDetails] = useState(null);
-
-  // Transactions Length State
-  // const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
-
   // TAG : useEffect Section //
 
   useEffect(() => {
@@ -119,36 +107,16 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     insertNameInUserLogBook();
 
-    const transaction_id = uuid.v4();
+    // const transaction_id = uuid.v4();
 
-    setTransaction({
-      details: {
-        in_out: "expense",
-        amount: 0,
-        loan_details: {
-          from_uid: null,
-          to_uid: null,
-        },
-        date: Date.now(),
-        notes: null,
-        category_id: null,
-        attachment_URL: [],
-      },
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: userAccount.uid,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-      repeat_id: null,
-      logbook_id: logbooks.logbooks[0].logbook_id,
-      transaction_id: transaction_id,
-      uid: userAccount.uid,
+    const newTransaction = transactionDetailsModel({
+      userAccountUid: userAccount.uid,
+      logbookId: selectedLogbook?.logbook_id || logbooks.logbooks[0].logbook_id,
     });
 
-    setIsLoading(false);
+    setTransaction(route.params?.newTransaction || newTransaction);
 
-    // setRawTransactionsLength(null)
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -238,7 +206,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         (!transaction.details.loan_details.from_uid ||
           !transaction.details.loan_details.to_uid):
         return alert("Please enter borrower name");
-        break;
 
       default:
         break;
@@ -271,7 +238,24 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     //   ],
     // };
 
+    // check if selected contact will be paid off by this transaction
+    const isPaid = utils.findTransactionsByIds({
+      transactionIds: selectedLoanContact?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          newTransaction: transaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+
     return navigation.navigate(screenList.loadingScreen, {
+      isPaid,
       label: "Saving...",
       loadingType: LOADING_TYPES.TRANSACTIONS.INSERT_ONE,
       transaction: transaction,
@@ -280,13 +264,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       insertTransactionToLoanContact: selectedLoanContact?.contact_uid
         ? transaction.transaction_id
         : null,
-      newGlobalLoanTimestamps: selectedLoanContact?.contact_uid
-        ? {
-            ...globalLoan._timestamps,
-            updated_at: Date.now(),
-            updated_by: userAccount.uid,
-          }
-        : null,
+      newGlobalLoanTimestamps: {
+        ...globalLoan._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
       reducerUpdatedAt: Date.now(),
       targetScreen: screenList.bottomTabNavigator,
     });
@@ -502,88 +484,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   })
                 }
               />
-              {/* // TAG : Type */}
-              {/* <ListItem
-                pressable
-                leftLabel="Type"
-                rightLabel={
-                  !transaction?.details?.type
-                    ? "Pick type"
-                    : transaction?.details?.type[0].toUpperCase() +
-                      transaction?.details?.type?.substring(1)
-                }
-                iconPack="FontAwesome5"
-                iconLeftName="coins"
-                iconRightName="chevron-forward"
-                useRightLabelContainer
-                // iconInRightContainerName='book'
-                rightLabelContainerStyle={{
-                  flexDirection: "row",
-                  maxWidth: "50%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 8,
-                  borderRadius: 8,
-                  backgroundColor:
-                    transaction.details.in_out === "income"
-                      ? globalTheme.list.incomeContainer.backgroundColor
-                      : globalTheme.colors.secondary,
-                }}
-                rightLabelStyle={{
-                  color:
-                    transaction.details.in_out === "income"
-                      ? globalTheme.list.incomeContainer.color
-                      : globalTheme.text.textPrimary.color,
-                }}
-                onPress={() =>
-                  navigation.navigate(screenList.modalScreen, {
-                    title: "Type",
-                    modalType: "list",
-                    props:
-                      transaction?.details?.in_out === "expense"
-                        ? [{ name: "cash" }, { name: "loan" }]
-                        : [{ name: "cash" }],
-                    selected: (item) => {
-                      switch (item.name) {
-                        case "cash":
-                          setTransaction({
-                            ...transaction,
-                            details: {
-                              ...transaction.details,
-                              type: item.name,
-                              loan_details: {
-                                lender_name: null,
-                                borrower_name: null,
-                                payment_due_date: null,
-                                is_paid: false,
-                              },
-                            },
-                          });
-                          break;
-                        case "loan":
-                          setTransaction({
-                            ...transaction,
-                            details: {
-                              ...transaction.details,
-                              type: item.name,
-                              loan_details: {
-                                lender_name: null,
-                                borrower_name: userAccount?.displayName,
-                                payment_due_date: null,
-                                is_paid: false,
-                              },
-                            },
-                          });
-                          break;
-
-                        default:
-                          break;
-                      }
-                    },
-                    defaultOption: { name: transaction.details.type },
-                  })
-                }
-              /> */}
               {/* // TAG : Date */}
               <ListItem
                 pressable
@@ -754,6 +654,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         : categories.categories.income,
                     selected: (item) => {
                       setSelectedCategory(item);
+                      setSelectedLoanContact(null);
                       const itemId = item.id;
                       switch (true) {
                         case itemId === "debt" || itemId === "loan_collection":
