@@ -67,30 +67,6 @@ const MyLoansHeader = ({
     // console.log({ transactionsDetails });
   }, [transactionsDetails]);
 
-  // const getTotalAmount = ({ transactionDetails, logbooks }) => {
-  //   let totalAmount = [];
-  //   transactionDetails?.forEach((transaction) => {
-  //     const logbookCurrencyName = utils.FindById.findLogbookById({
-  //       id: transaction.logbook_id,
-  //       logbooks: logbooks,
-  //     }).logbook_currency.name;
-  //     let amount = 0;
-  //     if (transaction.details.in_out === "expense") {
-  //       amount = +transaction.details.amount;
-  //     } else {
-  //       amount = -transaction.details.amount;
-  //     }
-  //     const convertedAmount = utils.convertCurrency({
-  //       amount,
-  //       from: logbookCurrencyName,
-  //       target: appSettings.logbookSettings.defaultCurrency.name,
-  //       globalCurrencyRates,
-  //     });
-  //     totalAmount.push(convertedAmount);
-  //   });
-  //   return totalAmount.reduce((a, b) => a + b, 0);
-  // };
-
   const getNextPayment = ({
     getNextAmount = false,
     getNextDate = false,
@@ -109,7 +85,7 @@ const MyLoansHeader = ({
     });
     //   get nearest payment due date in date
     const nearestPaymentDueInDate = new Date(
-      nearestPaymentDueInMillis[0].payment_due_date
+      nearestPaymentDueInMillis[0]?.payment_due_date
     ).getDate();
 
     // get transactions id from contacts that have the nearest payment due date
@@ -130,6 +106,7 @@ const MyLoansHeader = ({
           groupSorted: groupSorted,
           callback: (transactions) => {
             return utils.getTotalAmountAndConvertToDefaultCurrency({
+              invertResult: true,
               transactions,
               logbooks: logbooks.logbooks,
               globalCurrencyRates,
@@ -147,6 +124,7 @@ const MyLoansHeader = ({
             groupSorted: groupSorted,
             callback: (transactions) => {
               return utils.getTotalAmountAndConvertToDefaultCurrency({
+                invertResult: true,
                 transactions,
                 logbooks: logbooks.logbooks,
                 globalCurrencyRates,
@@ -211,6 +189,7 @@ const MyLoansHeader = ({
               }}
             >
               {utils.getTotalAmountAndConvertToDefaultCurrency({
+                invertResult: true,
                 transactions: transactionsDetails,
                 logbooks: logbooks.logbooks,
                 globalCurrencyRates,
@@ -239,6 +218,7 @@ const MyLoansHeader = ({
                 </>
               )}
               {utils.getTotalAmountAndConvertToDefaultCurrency({
+                invertResult: true,
                 transactions: transactionsDetails,
                 logbooks: logbooks.logbooks,
                 globalCurrencyRates,
