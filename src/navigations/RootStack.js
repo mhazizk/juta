@@ -92,6 +92,7 @@ import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
 import UserScreen from "../screens/user/UserScreen";
 import BottomTab from "./BottomTab";
+import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
 const Stack = createStackNavigator();
 
@@ -485,12 +486,9 @@ const RootStack = () => {
           title: "My Logbooks",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   // get logbook limit from subscription plan
                   const logbookLimit = getSubscriptionLimit(
@@ -572,17 +570,7 @@ const RootStack = () => {
                     });
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -618,27 +606,13 @@ const RootStack = () => {
           title: "My Categories",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
-                  // console.log(navigation);
                   navigation.navigate(screenList.newCategoryScreen);
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -777,12 +751,9 @@ const RootStack = () => {
           title: "My Loans",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add contact"
+                iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
                   const loanContactsLimit = getSubscriptionLimit(
@@ -815,17 +786,7 @@ const RootStack = () => {
                     });
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add contact"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -846,7 +807,26 @@ const RootStack = () => {
       />
       {/* // TAG : Loan Contact Preview Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Loan Contact Preview" }}
+        options={({ route }) => ({
+          ...showHeader,
+          title: "Loan Contact Preview",
+          headerRight: () => {
+            return (
+              <HeaderButtonRight
+                textLabel="Edit"
+                iconName="create-outline"
+                onPress={() => {
+                  navigation.navigate(screenList.editLoanContactScreen, {
+                    contact: route.params.contact,
+                    loanContactTransactionDetails:
+                      route.params.loanContactTransactionDetails,
+                    targetScreen: route.params.targetScreen,
+                  });
+                }}
+              />
+            );
+          },
+        })}
         name={screenList.loanContactPreviewScreen}
         component={LoanContactPreviewScreen}
       />
@@ -865,12 +845,9 @@ const RootStack = () => {
           title: "My Repeated Transactions",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
                   const repeatLimit = getSubscriptionLimit(
@@ -901,17 +878,7 @@ const RootStack = () => {
                     navigation.navigate(screenList.newTransactionDetailsScreen);
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -975,12 +942,9 @@ const RootStack = () => {
           title: "Feature Wishlist",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   if (
                     !getSubscriptionLimit(
@@ -1006,17 +970,7 @@ const RootStack = () => {
                     navigation.navigate(screenList.newFeatureWishlistScreen);
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
