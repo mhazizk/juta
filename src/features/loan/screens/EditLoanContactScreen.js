@@ -6,7 +6,11 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { TextPrimary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import ionIcons from "../../../assets/iconPacks/ionIcons";
-import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+  ButtonSecondaryDanger,
+} from "../../../components/Button";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import {
@@ -255,11 +259,42 @@ const EditLoanContactScreen = ({ route, navigation }) => {
               paddingHorizontal: 48,
             }}
           >
-            {/* // TAG : Cancel Button */}
-            <View style={{ flex: 1, paddingRight: 8 }}>
-              <ButtonSecondary
-                label="Cancel"
-                onPress={() => navigation.goBack()}
+            {/* // TAG : Delete Button */}
+            <View style={{ flex: 1, paddingHorizontal: 8 }}>
+              <ButtonSecondaryDanger
+                label="Delete"
+                onPress={() => {
+                  Alert.alert(
+                    "Delete contact",
+                    `Are you sure you want to delete this contact?\nDeleting this contact will also delete all transactions associated with this contact.\nThis action cannot be undone.`,
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => {},
+                        style: "cancel",
+                      },
+                      {
+                        text: "Delete",
+                        onPress: () => {
+                          navigation.navigate(screenList.loadingScreen, {
+                            label: "Deleting contact...",
+                            loadingType: LOADING_TYPES.LOAN.DELETE_ONE_CONTACT,
+                            deleteLoanContact: contact,
+                            deletedTransactions: loanContactTransactionDetails,
+                            reducerUpdatedAt: Date.now(),
+                            targetScreen: screenList.myLoansScreen,
+                            newGlobalLoanTimestamps: {
+                              ...globalLoan._timestamps,
+                              updated_at: Date.now(),
+                              updated_by: userAccount.uid,
+                            },
+                          });
+                        },
+                      },
+                    ],
+                    { cancelable: true }
+                  );
+                }}
               />
             </View>
 
