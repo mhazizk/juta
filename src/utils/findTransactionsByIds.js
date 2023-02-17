@@ -1,5 +1,5 @@
 const findTransactionsByIds = ({ transactionIds, groupSorted, callback }) => {
-  if (!transactionIds.length || !groupSorted) {
+  if (!transactionIds?.length || !groupSorted) {
     return callback([]);
   }
 
