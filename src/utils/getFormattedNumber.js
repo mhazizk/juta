@@ -3,30 +3,18 @@ import { useGlobalAppSettings } from "../reducers/GlobalContext";
 
 /**
  * Formats a number. Supports changing symbol, thousand and decimal separators and more (see props).
+ *
  * @param value The value to format
- * @param currency The currency to use
- * @param thousandSeparator The separator to use between thousands
- * @param decimalSeparator The separator to use before decimals
- * @param significantDigits The number of significant digits to show
- * @param showTrailingZeros Whether to show trailing zeros for significant digits (i.e. 1,00 if significant digits is 2)
- * @param symbol The  symbol to use
- * @param showSymbol Whether to show the symbol
- * @param symbolPosition Whether to show the symbol before or after the value
- * @param showSymbolSpace Whether to show a space between the  symbol and the value
+ * @param currencyIsoCode The currency isoCode to use
+ * @param negativeSymbol Negative symbol to use
+ * @param absolute If true, the number will be converted to absolute value
  * @returns
  */
 const getFormattedNumber = ({
   value,
   currencyIsoCode,
-  // thousandSeparator,
   negativeSymbol,
-  // decimalSeparator,
-  // significantDigits,
-  // showTrailingZeros,
-  // symbol,
-  showSymbol,
-  symbolPosition = "after",
-  showSymbolSpace = true,
+  absolute = false,
 }) => {
   const { thousandSeparator, decimalSeparator, significantDigits } =
     CURRENCY_CONSTANTS?.OPTIONS?.find((option) => {
@@ -76,7 +64,7 @@ const getFormattedNumber = ({
   //     : formattedValueWithSymbol.replace(" ", "");
   // }
 
-  if (isNegative) {
+  if (isNegative && !absolute) {
     const removedSymbol = formattedValue.replace("-", "");
     switch (negativeSymbol) {
       case "-":
@@ -87,7 +75,8 @@ const getFormattedNumber = ({
         break;
     }
   } else {
-    return formattedValue;
+    const removedSymbol = formattedValue.replace("-", "");
+    return removedSymbol;
   }
 };
 
