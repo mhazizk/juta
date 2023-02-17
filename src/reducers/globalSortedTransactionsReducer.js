@@ -363,21 +363,21 @@ export const globalSortedTransactionsReducer = (state, action) => {
       let deletedTransactions = action.payload.deletedTransactions;
       let finalState = null;
 
-      if (insertedTransactions.length > 0) {
+      if (insertedTransactions?.length > 0) {
         finalState = insertedManyTransactionsHandler(
           finalState || state,
           action
         );
       }
 
-      if (patchedTransactions.length > 0) {
+      if (patchedTransactions?.length > 0) {
         finalState = patchedManyTransactionsHandler(
           finalState || state,
           action
         );
       }
 
-      if (deletedTransactions.length > 0) {
+      if (deletedTransactions?.length > 0) {
         finalState = deletedManyTransactionsHandler(
           finalState || state,
           action
@@ -385,7 +385,7 @@ export const globalSortedTransactionsReducer = (state, action) => {
       }
 
       // console.log("line379 reducer");
-      console.log(JSON.stringify({ finalState }));
+      // console.log(JSON.stringify({ finalState }));
       return finalState || { ...state, reducerUpdatedAt };
 
     // SECTION : Delete many transactions method
