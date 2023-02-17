@@ -60,7 +60,6 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         utils.FindById.findCategoryById({
           id: route.params.repeatSection.repeat_category_id,
           categories: categories.categories,
-          transaction: route.params.repeatSection,
         })
       );
       const logbook = utils.FindById.findLogbookById({
