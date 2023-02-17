@@ -39,7 +39,7 @@ const MyLoansWidget = ({
       setIsLoading(true);
       setTimeout(() => {
         const allTransactionsDetails = [];
-        globalLoan.contacts.forEach((contact) => {
+        globalLoan?.contacts?.forEach((contact) => {
           utils.findTransactionsByIds({
             transactionIds: contact.transactions_id,
             groupSorted: sortedTransactions.groupSorted,
@@ -60,30 +60,6 @@ const MyLoansWidget = ({
   useEffect(() => {
     // console.log({ transactionsDetails });
   }, [transactionsDetails]);
-
-  // const getTotalAmount = ({ transactionDetails, logbooks }) => {
-  //   let totalAmount = [];
-  //   transactionDetails?.forEach((transaction) => {
-  //     const logbookCurrencyName = utils.FindById.findLogbookById({
-  //       id: transaction.logbook_id,
-  //       logbooks: logbooks,
-  //     }).logbook_currency.name;
-  //     let amount = 0;
-  //     if (transaction.details.in_out === "expense") {
-  //       amount = +transaction.details.amount;
-  //     } else {
-  //       amount = -transaction.details.amount;
-  //     }
-  //     const convertedAmount = utils.convertCurrency({
-  //       amount,
-  //       from: logbookCurrencyName,
-  //       target: appSettings.logbookSettings.defaultCurrency.name,
-  //       globalCurrencyRates,
-  //     });
-  //     totalAmount.push(convertedAmount);
-  //   });
-  //   return totalAmount.reduce((a, b) => a + b, 0);
-  // };
 
   const getNextPayment = ({
     getNextAmount = false,
@@ -123,6 +99,7 @@ const MyLoansWidget = ({
           groupSorted: groupSorted,
           callback: (transactions) => {
             return utils.getTotalAmountAndConvertToDefaultCurrency({
+              invertResult: true,
               transactions,
               logbooks: logbooks.logbooks,
               globalCurrencyRates,
@@ -177,6 +154,7 @@ const MyLoansWidget = ({
               }}
             >
               {utils.getTotalAmountAndConvertToDefaultCurrency({
+                invertResult: true,
                 transactions: transactionsDetails,
                 logbooks: logbooks.logbooks,
                 globalCurrencyRates,
@@ -194,6 +172,7 @@ const MyLoansWidget = ({
                 />
               )}
               {utils.getTotalAmountAndConvertToDefaultCurrency({
+                invertResult: true,
                 transactions: transactionsDetails,
                 logbooks: logbooks.logbooks,
                 globalCurrencyRates,
@@ -237,36 +216,47 @@ const MyLoansWidget = ({
                         justifyContent: "flex-end",
                       }}
                     >
-                      <TextSecondary
-                        label={
-                          appSettings.logbookSettings.defaultCurrency.symbol
-                        }
-                        style={{
-                          fontSize: 24,
-                          paddingRight: 4,
-                          color: globalTheme.widgets.myLoans.cardTextColor,
-                        }}
-                      />
-                      <TextPrimary
-                        style={{
-                          fontSize: 32,
-                          fontWeight: "bold",
-                          color: globalTheme.widgets.myLoans.cardTextColor,
-                        }}
-                        label={utils.getFormattedNumber({
-                          value: Math.abs(
-                            getNextPayment({
-                              getNextAmount: true,
-                              globalLoan,
-                              groupSorted: sortedTransactions.groupSorted,
-                            })
-                          ),
-                          currencyIsoCode:
-                            appSettings.logbookSettings.defaultCurrency.isoCode,
-                          negativeSymbol:
-                            appSettings.logbookSettings.negativeCurrencySymbol,
-                        })}
-                      />
+                      <TextTicker
+                        duration={3000}
+                        loop
+                        bounce
+                        repeatSpacer={50}
+                        marqueeDelay={1000}
+                        shouldAnimateTreshold={10}
+                      >
+                        <TextSecondary
+                          label={
+                            appSettings.logbookSettings.defaultCurrency.symbol
+                          }
+                          style={{
+                            fontSize: 24,
+                            paddingRight: 4,
+                            color: globalTheme.widgets.myLoans.cardTextColor,
+                          }}
+                        />
+                        <TextPrimary
+                          style={{
+                            fontSize: 32,
+                            fontWeight: "bold",
+                            color: globalTheme.widgets.myLoans.cardTextColor,
+                          }}
+                          label={utils.getFormattedNumber({
+                            value: Math.abs(
+                              getNextPayment({
+                                getNextAmount: true,
+                                globalLoan,
+                                groupSorted: sortedTransactions.groupSorted,
+                              })
+                            ),
+                            currencyIsoCode:
+                              appSettings.logbookSettings.defaultCurrency
+                                .isoCode,
+                            negativeSymbol:
+                              appSettings.logbookSettings
+                                .negativeCurrencySymbol,
+                          })}
+                        />
+                      </TextTicker>
                     </View>
                     {/* // TAG : Secondary currency */}
                     {appSettings.logbookSettings.showSecondaryCurrency && (
