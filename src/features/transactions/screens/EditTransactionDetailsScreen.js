@@ -25,6 +25,8 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -47,7 +49,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { globalLoan } = useGlobalLoan();
   const { userAccount } = useGlobalUserAccount();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispathCategories } = useGlobalCategories();
@@ -57,28 +61,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   const [logbookToOpen, setLogbookToOpen] = useState(null);
 
   // TAG : useState Section //
-
-  // Loading State
-
-  // Local repeated transaction
   const [localRepeatedTransaction, setLocalRepeatedTransaction] =
     useState(null);
-
-  // Transaction State
   const [transaction, setTransaction] = useState(null);
-
-  // Previous Transaction State
   const [prevTransaction, setPrevTransaction] = useState(null);
-
-  // Logbook State
   const [selectedLogbook, setSelectedLogbook] = useState(null);
-
-  // Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
-
+  const [prevLoanContact, setPrevLoanContact] = useState(null);
   const [selectedLoanContact, setSelectedLoanContact] = useState(null);
-
-  // Loaded User Logbooks
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
 
   // TAG : useEffect Section //
@@ -146,15 +136,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   };
 
   // Check Initial Transaction from Preview Screen
-  const checkInitialTransaction = useMemo(() => {
-    return () => {
-      setPrevTransaction(route?.params?.transaction);
-      setTransaction(route?.params?.transaction);
-      setSelectedCategory(route?.params?.selectedCategory);
-      setSelectedLogbook(route?.params?.selectedLogbook);
-      setSelectedLoanContact(route?.params?.selectedLoanContact);
-    };
-  });
+  const checkInitialTransaction = () => {
+    setPrevTransaction(route?.params?.transaction);
+    setTransaction(route?.params?.transaction);
+    setSelectedCategory(route?.params?.selectedCategory);
+    setSelectedLogbook(route?.params?.selectedLogbook);
+    setSelectedLoanContact(route?.params?.selectedLoanContact);
+    setPrevLoanContact(route?.params?.selectedLoanContact);
+  };
 
   const checkFinalTransaction = () => {
     switch (true) {
@@ -179,13 +168,70 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
         break;
     }
 
+    // if choosing other loan contact
+    const willPrevLoanContactBePaid = utils.findTransactionsByIds({
+      transactionIds: prevLoanContact?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          deleteTransaction: prevTransaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+    // if choosing other loan contact
+    const willTargetLoanContactBePaid = utils.findTransactionsByIds({
+      transactionIds: selectedLoanContact?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          newTransaction: transaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+    // if patching transaction amount only
+    const isPaid = utils.findTransactionsByIds({
+      transactionIds: selectedLoanContact?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          deleteTransaction: prevTransaction,
+          newTransaction: transaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+
     return navigation.navigate(screenList.loadingScreen, {
       label: "Saving Transaction...",
       loadingType: LOADING_TYPES.TRANSACTIONS.PATCH_ONE,
       logbookToOpen: logbookToOpen,
+      isPaid,
+      willPrevLoanContactBePaid,
+      willTargetLoanContactBePaid,
+      targetLoanContactUid: selectedLoanContact?.contact_uid || null,
       patchTransaction: transaction,
       prevTransaction: prevTransaction,
       reducerUpdatedAt: Date.now(),
+      targetScreen: screenList.bottomTabNavigator,
+      newGlobalLoanTimestamps: {
+        ...globalLoan._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
     });
   };
 
@@ -370,6 +416,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     });
                     setSelectedCategory({});
+                    setSelectedLoanContact(null);
                   },
                   defaultOption: { name: transaction.details.in_out },
                 })
@@ -534,7 +581,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }}
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Category",
+                  title: "Select category",
                   modalType: "list",
                   props:
                     transaction.details.in_out === "expense"
@@ -542,13 +589,55 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       : categories.categories.income,
                   selected: (item) => {
                     setSelectedCategory(item);
-                    setTransaction({
-                      ...transaction,
-                      details: {
-                        ...transaction.details,
-                        category_id: item.id,
-                      },
-                    });
+                    setSelectedLoanContact(null);
+                    const itemId = item.id;
+                    switch (true) {
+                      case itemId === "debt" || itemId === "loan_collection":
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            category_id: item.id,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              to_uid: userAccount.uid,
+                              from_uid: null,
+                            },
+                          },
+                        });
+
+                        break;
+                      case itemId === "loan" || itemId === "debt_payment":
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            category_id: item.id,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              from_uid: userAccount.uid,
+                              to_uid: null,
+                            },
+                          },
+                        });
+
+                        break;
+
+                      default:
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            category_id: item.id,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              from_uid: null,
+                              to_uid: null,
+                            },
+                          },
+                        });
+                        break;
+                    }
                   },
                   defaultOption: selectedCategory,
                 })
@@ -614,7 +703,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       setSelectedLoanContact(contact);
                       switch (true) {
                         case categoryId === "debt" ||
-                          categoryId === "debt_payment":
+                          categoryId === "loan_collection":
                           setTransaction({
                             ...transaction,
                             details: {
@@ -628,7 +717,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
                           break;
                         case categoryId === "loan" ||
-                          categoryId === "loan_collection":
+                          categoryId === "debt_payment":
                           setTransaction({
                             ...transaction,
                             details: {
