@@ -25,3 +25,5 @@ export { default as findTransactionsByIds } from "./findTransactionsByIds";
 export { default as upperCaseThisFirstLetter } from "./upperCaseThisFirstLetter";
 export { default as getTotalAmountAndConvertToDefaultCurrency } from "./getTotalAmountAndConvertToDefaultCurrency";
 export { default as getTransactionsByLogbookId } from "./getTransactionsByLogbookId";
+export { default as checkIfLoanContactWillBePaid } from "./checkIfLoanContactWillBePaid";
+export { default as findLoanContactByTransactionId } from "./findLoanContactByTransactionId";
