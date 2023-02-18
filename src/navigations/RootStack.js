@@ -810,22 +810,22 @@ const RootStack = () => {
         options={({ route }) => ({
           ...showHeader,
           title: "Loan Contact Preview",
-          headerRight: () => {
-            return (
-              <HeaderButtonRight
-                textLabel="Edit"
-                iconName="create-outline"
-                onPress={() => {
-                  navigation.navigate(screenList.editLoanContactScreen, {
-                    contact: route.params.contact,
-                    loanContactTransactionDetails:
-                      route.params.loanContactTransactionDetails,
-                    targetScreen: route.params.targetScreen,
-                  });
-                }}
-              />
-            );
-          },
+          // headerRight: () => {
+          //   return (
+          //     <HeaderButtonRight
+          //       textLabel="Edit"
+          //       iconName="create-outline"
+          //       onPress={() => {
+          //         navigation.navigate(screenList.editLoanContactScreen, {
+          //           contact: route.params.contact,
+          //           loanContactTransactionDetails:
+          //             route.params.loanContactTransactionDetails,
+          //           targetScreen: route.params.targetScreen,
+          //         });
+          //       }}
+          //     />
+          //   );
+          // },
         })}
         name={screenList.loanContactPreviewScreen}
         component={LoanContactPreviewScreen}
