@@ -1,7 +1,4 @@
-import {
-  Image,
-  Platform, View
-} from "react-native";
+import { Image, Platform, View } from "react-native";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import {
@@ -12,6 +9,8 @@ import JutaLogo from "../../assets/icons/juta-app-icon.png";
 import Constants from "expo-constants";
 import { TextPrimary } from "../../components/Text";
 import CustomScrollView from "../../shared-components/CustomScrollView";
+import * as Linking from "expo-linking";
+import * as utils from "../../utils";
 
 const AboutScreen = ({ item, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -51,6 +50,37 @@ const AboutScreen = ({ item, navigation }) => {
             }
           />
         </View>
+        <ListSection>
+          {/* // TAG : Rate */}
+          <ListItem
+            pressable
+            leftLabel="Rate this app"
+            iconLeftName="star"
+            iconPack="IonIcons"
+            onPress={() => {
+              const os = utils.getDeviceOSName().toLowerCase();
+
+              os === "android" &&
+                Linking.openURL("market://details?id=app.juta");
+              os === "ios" &&
+                alert("Sorry, this feature is not available yet :(");
+            }}
+          />
+          {/* // TAG : Feedback */}
+          <ListItem
+            pressable
+            leftLabel="Write feedback"
+            iconLeftName="chatbubble-ellipses"
+            iconPack="IonIcons"
+            onPress={() =>
+              Linking.openURL(
+                `mailto:mhazizk@gmail.com?subject=Feedback%20for%20Juta%20App%20%2D%20${utils.getDeviceOSName()}&body=Hi%20mhazizk%2C%0A%0A%0A%0A%0A%0A%0A%0A%0A%0A%0A%0A%0A%0ASent%20from%3A%20${utils.getDeviceName()}%0AOperating%20System%3A%20${utils.getDeviceOSName()}%0AApp%20Version%3A%20${
+                  Constants.expoConfig.version
+                }%0A`
+              )
+            }
+          />
+        </ListSection>
         <ListSection>
           {/* // TAG : Open Source */}
           <ListItem
