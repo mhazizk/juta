@@ -27,6 +27,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
@@ -53,6 +54,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
@@ -949,8 +951,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }
                 disabled={
                   !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                    {
+                      globalSubscriptionFeatures,
+                     subscriptionPlan:
+                      userAccount.subscription.plan,
+                      subscriptionLimit:
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
                   )
                 }
                 iconPack="IonIcons"
@@ -983,10 +989,14 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }}
                 onPress={() => {
                   if (
-                    getSubscriptionLimit(
+                  getSubscriptionLimit(
+                    {
+                      globalSubscriptionFeatures,
+                     subscriptionPlan:
                       userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
-                    )
+                      subscriptionLimit:
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
+                  )
                   ) {
                     navigation.navigate(screenList.modalScreen, {
                       title: "Repeat Transaction",
@@ -1106,9 +1116,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                  !getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                   subscriptionPlan: userAccount.subscription.plan,
+                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
                   )
                 }
                 leftLabel="Attachment Images"
@@ -1122,10 +1133,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                    getSubscriptionLimit(
-                      userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
-                    )
+                  getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                   subscriptionPlan: userAccount.subscription.plan,
+                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
+                  )
                   ) {
                     // No permissions request is necessary for launching the image library
                     let result = await ImagePicker.launchImageLibraryAsync({
