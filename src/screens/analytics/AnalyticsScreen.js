@@ -70,7 +70,7 @@ const AnalyticsScreen = () => {
   //   };
   // }, [graph, budgets, activeBudget]);
   const findTransactions = () => {
-    utils.FindTransactionsToPlot({
+    utils.findTransactionsToPlot({
       expenseOnly: true,
       groupSorted: sortedTransactions?.groupSorted,
       appSettings,
@@ -88,7 +88,7 @@ const AnalyticsScreen = () => {
     // setComponentLoading(false);
   };
   const categorizeSpentList = () => {
-    utils.GetSpentList({
+    utils.getSpentList({
       expenseOnly: true,
       groupSorted: sortedTransactions.groupSorted,
       categories: categories.categories,
