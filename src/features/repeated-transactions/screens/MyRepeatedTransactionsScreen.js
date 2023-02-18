@@ -8,6 +8,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
@@ -25,6 +26,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
   const { userAccount } = useGlobalUserAccount();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
 
   useEffect(() => {}, []);
@@ -106,10 +108,11 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => {
             if (
-              !getSubscriptionLimit(
-                userAccount.subscription.plan,
-                SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
-              )
+              !getSubscriptionLimit({
+                globalSubscriptionFeatures,
+                subscriptionPlan: userAccount.subscription.plan,
+                subscriptionLimit: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+              })
             ) {
               Alert.alert(
                 "Upgrade to Premium",
