@@ -53,7 +53,7 @@ const RevenueCatPaywallOfferings = ({ onSuccess }) => {
       {(!offerings || !monthToYearPrice) && <Loading />}
       {offerings && monthToYearPrice && (
         <ListSection>
-          <PackageItem
+          {/* <PackageItem
             onPress={() => {}}
             purchasePackage={{
               identifier: "free",
@@ -64,7 +64,7 @@ const RevenueCatPaywallOfferings = ({ onSuccess }) => {
                 priceString: "0",
               },
             }}
-          />
+          /> */}
           <FlatList
             data={offerings}
             keyExtractor={(item) => item?.identifier}
