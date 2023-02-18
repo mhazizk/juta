@@ -76,21 +76,23 @@ Coming soon at juta official web
   - Fix multi budgets support (on progress)
   - Fix multi devices support (on progress)
   - Fix paywall screen (on progress)
+  - Fix graph limit line on analytics screen (on progress)
 
-### 0.7.0-alpha (on progress)
+### 0.7.0-alpha
 
 - New features:
   - Add My Loans feature
   - Add Loan contacts feature
   - Add My Loans widget in dashboard screen
   - Add new category for My Loans
-  - Add support for currency conversion from default logbook currency to main currency (on progress)
+  - Add logbook currency converter
+  - Add feedback channel
 - Bugfixes:
   - Fix budget screen
   - Fix budget widget
-  - Revamp My Budgets widget
   - Fix theme style
-  <!-- - Fix graph limit line on analytics screen -->
+  - Fix out of sync subscription
+  - Fix My Budgets widget
 
 ### 0.6.7-alpha
 
