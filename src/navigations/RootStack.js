@@ -11,7 +11,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
-import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
+import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
 import { TextPrimary } from "../components/Text";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
@@ -66,6 +66,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
@@ -110,6 +111,8 @@ const RootStack = () => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
+  const { globalSubscriptionFeatures, dispatchGlobalSubscriptionFeatures } =
+    useGlobalSubscriptionFeatures();
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
@@ -128,6 +131,7 @@ const RootStack = () => {
   const globalThemeRef = useRef(globalTheme);
   const globalCurrencyRatesRef = useRef(globalCurrencyRates);
   const globalLoanRef = useRef(globalLoan);
+  const globalSubscriptionFeaturesRef = useRef(globalSubscriptionFeatures);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -163,6 +167,9 @@ const RootStack = () => {
 
       globalLoan: globalLoanRef,
       dispatchGlobalLoan,
+
+      globalSubscriptionFeatures: globalSubscriptionFeaturesRef,
+      dispatchGlobalSubscriptionFeatures,
     });
   }, [
     userAccountRef,
@@ -175,6 +182,7 @@ const RootStack = () => {
     globalThemeRef,
     globalCurrencyRatesRef,
     globalLoanRef,
+    globalSubscriptionFeaturesRef,
   ]);
 
   // TAG : useEffect for state
@@ -185,14 +193,36 @@ const RootStack = () => {
         nextAppState === "active"
       ) {
         auth.currentUser?.reload().then(async () => {
-          updateSubscriptionStatus({
+          listenSubscriptionStatus({
+            globalSubscriptionFeatures,
             appSettings,
-            dispatchAppSettings,
             userAccount,
-            dispatchUserAccount,
+            callback: ({ newUserAccount, newAppSettings }) => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+                payload: newAppSettings,
+              });
+
+              dispatchUserAccount({
+                type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+                payload: newUserAccount,
+              });
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.USERS,
+                  newUserAccount.uid,
+                  newUserAccount
+                );
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                  newUserAccount.uid,
+                  newAppSettings
+                );
+              }, 5000);
+            },
           });
         });
-        console.log("App has come to the foreground!");
+        // console.log("App has come to the foreground!");
         // console.log(appState.current);
       }
       appState.current = nextAppState;
@@ -204,7 +234,9 @@ const RootStack = () => {
     };
   }, []);
   // Save Sorted Transactions to storage
-  useEffect(() => {}, [userAccount]);
+  useEffect(() => {
+    console.log(JSON.stringify({ globalSubscriptionFeatures }, null, 2));
+  }, [globalSubscriptionFeatures]);
 
   useEffect(() => {
     if (logbooks.logbooks) {
@@ -491,10 +523,11 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get logbook limit from subscription plan
-                  const logbookLimit = getSubscriptionLimit(
-                    userAccount.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.LOGBOOKS
-                  );
+                  const logbookLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                  });
 
                   // check if user has reached the limit
                   if (logbookLimit === logbooks.logbooks?.length) {
@@ -756,10 +789,11 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
-                  const loanContactsLimit = getSubscriptionLimit(
-                    userAccount.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.LOAN
-                  );
+                  const loanContactsLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOAN,
+                  });
 
                   const currentLoanContacts = globalLoan.contacts.length;
 
@@ -850,10 +884,11 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
-                  const repeatLimit = getSubscriptionLimit(
-                    userAccount.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
-                  );
+                  const repeatLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+                  });
 
                   // check if user has reached the limit
                   if (!repeatLimit) {
@@ -934,9 +969,10 @@ const RootStack = () => {
         component={PaywallScreen}
       />
 
+      {/* // TODO : Hold all this feature */}
       {/* // SECTION : FEATURE WISHLIST */}
       {/* // TAG : Feature Wishlist Screen */}
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           ...showHeader,
           title: "Feature Wishlist",
@@ -948,8 +984,11 @@ const RootStack = () => {
                 onPress={() => {
                   if (
                     !getSubscriptionLimit(
-                      userAccount.subscription?.plan,
-                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                      {globalSubscriptionFeatures,
+                        subscriptionPlan:
+                        userAccount.subscription?.plan,
+                        subscriptionLimit:
+                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
                     )
                   ) {
                     // show alert
@@ -976,13 +1015,13 @@ const RootStack = () => {
         }}
         name={screenList.featureWishlistScreen}
         component={FeatureWishlistScreen}
-      />
+      /> */}
       {/* // TAG : New Wishlist Screen */}
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{ ...showHeader, title: "New Feature Wishlist" }}
         name={screenList.newFeatureWishlistScreen}
         component={NewFeatureWishlistScreen}
-      />
+      /> */}
 
       {/* // SECTION : TERMS OF SERVICE */}
       {/* // TAG : Terms of Service Screen */}
