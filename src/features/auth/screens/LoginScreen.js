@@ -7,7 +7,7 @@ import {
 import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
 import CustomTextInput from "../../../components/CustomTextInput";
 import { useEffect, useRef, useState } from "react";
-import handleUserLogin from "../../../utils/HandleUserLogin";
+import handleUserLogin from "../../../utils/handleUserLogin";
 import CheckList from "../../../components/CheckList";
 import Loading from "../../../components/Loading";
 import LottieView from "lottie-react-native";
@@ -122,8 +122,8 @@ const LoginScreen = ({ route, navigation }) => {
     <>
       <CustomScrollView
         contentContainerStyle={{
-        justifyContent: "center",
-      }}
+          justifyContent: "center",
+        }}
       >
         {!screenLoading && (
           <>
