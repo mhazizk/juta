@@ -23,13 +23,15 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const UserScreen = ({ navigation }) => {
-  const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
+  const { appSettings } = useGlobalAppSettings();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { userAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -140,13 +142,15 @@ const UserScreen = ({ navigation }) => {
                 iconPack="IonIcons"
                 onPress={() => navigation.navigate(screenList.settingsScreen)}
               />
+              {/* // TODO : Hold this feature */}
               {/* // TAG: Feature Wishlist */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 disabled={
                   !getSubscriptionLimit(
-                    userAccount?.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                    { globalSubscriptionFeatures,
+                      subscriptionPlan: userAccount?.subscription?.plan,
+                   subscriptionLimit: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
                   )
                 }
                 leftLabel="Feature Wishlist"
@@ -155,8 +159,9 @@ const UserScreen = ({ navigation }) => {
                 onPress={() => {
                   if (
                     !getSubscriptionLimit(
-                      userAccount?.subscription?.plan,
-                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                      { globalSubscriptionFeatures,
+                        subscriptionPlan: userAccount?.subscription?.plan,
+                     subscriptionLimit: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
                     )
                   ) {
                     Alert.alert(
@@ -180,7 +185,7 @@ const UserScreen = ({ navigation }) => {
                     navigation.navigate(screenList.featureWishlistScreen);
                   }
                 }}
-              />
+              /> */}
               {/* // TAG : About */}
               <ListItem
                 pressable
