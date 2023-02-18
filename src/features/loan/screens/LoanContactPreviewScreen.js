@@ -14,10 +14,15 @@ import { TextPrimary, TextSecondary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import ionIcons from "../../../assets/iconPacks/ionIcons";
 import {
+  ButtonDisabled,
   ButtonPrimary,
   ButtonPrimaryIcon,
+  ButtonPrimaryIconDisabled,
   ButtonSecondary,
   ButtonSecondaryDanger,
+  ButtonSecondaryDisabled,
+  ButtonSecondaryIcon,
+  ButtonSecondaryIconDisabled,
 } from "../../../components/Button";
 import { ListItem, TransactionListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
@@ -36,6 +41,7 @@ import * as utils from "../../../utils";
 import { TouchableOpacity } from "react-native";
 import LoanTransactionItem from "../components/LoanTransactionItem";
 import TransactionListSection from "../../../components/List/TransactionListSection";
+import transactionDetailsModel from "../../transactions/models/transactionDetailsModel";
 
 const LoanContactPreviewScreen = ({ route, navigation }) => {
   const { contact, transactionDetails } = route?.params;
@@ -50,148 +56,143 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log(transactionDetails);
+    navigation.setParams({
+      contact: contact,
+      loanContactTransactionDetails: transactionDetails,
+      targetScreen: screenList.loanContactPreviewScreen,
+    });
   }, []);
 
-  // const getTotalAmount = ({ transactionDetails, logbooks }) => {
-  //   let totalAmount = [];
-  //   transactionDetails?.forEach((transaction) => {
-  //     const logbookCurrencyName = utils.FindById.findLogbookById({
-  //       id: transaction.logbook_id,
-  //       logbooks: logbooks,
-  //     }).logbook_currency.name;
-  //     let amount = 0;
-  //     if (transaction.details.in_out === "expense") {
-  //       amount = +transaction.details.amount;
-  //     } else {
-  //       amount = -transaction.details.amount;
-  //     }
-  //     const convertedAmount = utils.convertCurrency({
-  //       amount,
-  //       from: logbookCurrencyName,
-  //       target: appSettings.logbookSettings.defaultCurrency.name,
-  //       globalCurrencyRates,
-  //     });
-  //     totalAmount.push(convertedAmount);
-  //   });
-  //   return totalAmount.reduce((a, b) => a + b, 0);
-  // };
+  const canBeMarkedAsPaid =
+    utils.getTotalAmountAndConvertToDefaultCurrency({
+      invertResult: true,
+      globalCurrencyRates,
+      transactions: transactionDetails,
+      logbooks: logbooks.logbooks,
+      targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+    }) !== 0 && transactionDetails.length > 0;
 
   return (
     <>
       {contact && (
         <CustomScrollView contentContainerStyle={{ flex: 1 }}>
-          <ListSection marginTop={16}>
-            {/* // TAG : Contact Section */}
+          {/* // TAG : Contact Section */}
+          <View
+            style={{
+              height: Dimensions.get("window").height / 3,
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              paddingHorizontal: 16,
+            }}
+          >
+            <IonIcons
+              name="person"
+              size={48}
+              style={{ padding: 16 }}
+              color={globalTheme.colors.foreground}
+            />
+            <TextPrimary
+              label={contact.contact_name}
+              style={{
+                fontSize: 36,
+              }}
+            />
             <View
               style={{
-                height: Dimensions.get("window").height / 3,
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                paddingHorizontal: 16,
+                margin: 8,
+                height: 1,
+                width: Dimensions.get("window").width / 3,
+                backgroundColor: globalTheme.colors.secondary,
               }}
-            >
-              <IonIcons
-                name="person"
-                size={48}
-                style={{ padding: 16 }}
-                color={globalTheme.colors.foreground}
-              />
+            />
+            {utils.getTotalAmountAndConvertToDefaultCurrency({
+              invertResult: true,
+              globalCurrencyRates,
+              transactions: transactionDetails,
+              logbooks: logbooks.logbooks,
+              targetCurrencyName:
+                appSettings.logbookSettings.defaultCurrency.name,
+            }) === 0 && (
               <TextPrimary
-                label={contact.contact_name}
+                label={`No active debt or loan between you and ${contact.contact_name}`}
                 style={{
-                  fontSize: 36,
+                  textAlign: "center",
                 }}
               />
-              <View
-                style={{
-                  margin: 8,
-                  height: 1,
-                  width: Dimensions.get("window").width / 3,
-                  backgroundColor: globalTheme.colors.secondary,
-                }}
-              />
-              {utils.getTotalAmountAndConvertToDefaultCurrency({
-                globalCurrencyRates,
-                transactions: transactionDetails,
-                logbooks: logbooks.logbooks,
-                targetCurrencyName:
-                  appSettings.logbookSettings.defaultCurrency.name,
-              }) === 0 && (
+            )}
+            {utils.getTotalAmountAndConvertToDefaultCurrency({
+              invertResult: true,
+              globalCurrencyRates,
+              transactions: transactionDetails,
+              logbooks: logbooks.logbooks,
+              targetCurrencyName:
+                appSettings.logbookSettings.defaultCurrency.name,
+            }) !== 0 && (
+              <>
                 <TextPrimary
-                  label={`No active debt or loan between you and ${contact.contact_name}`}
+                  label={`${
+                    appSettings.logbookSettings.defaultCurrency.symbol
+                  } ${utils.getFormattedNumber({
+                    absolute: true,
+                    value: utils.getTotalAmountAndConvertToDefaultCurrency({
+                      invertResult: true,
+                      globalCurrencyRates,
+                      transactions: transactionDetails,
+                      logbooks: logbooks.logbooks,
+                      targetCurrencyName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                    }),
+                    currencyIsoCode:
+                      appSettings.logbookSettings.defaultCurrency.isoCode,
+                    negativeSymbol:
+                      appSettings.logbookSettings.negativeCurrencySymbol,
+                  })}`}
                   style={{
-                    textAlign: "center",
-                  }}
-                />
-              )}
-              {utils.getTotalAmountAndConvertToDefaultCurrency({
-                globalCurrencyRates,
-                transactions: transactionDetails,
-                logbooks: logbooks.logbooks,
-                targetCurrencyName:
-                  appSettings.logbookSettings.defaultCurrency.name,
-              }) !== 0 && (
-                <>
-                  <TextPrimary
-                    label={`${
-                      appSettings.logbookSettings.defaultCurrency.symbol
-                    } ${utils.getFormattedNumber({
-                      value: utils.getTotalAmountAndConvertToDefaultCurrency({
-                        globalCurrencyRates,
-                        transactions: transactionDetails,
-                        logbooks: logbooks.logbooks,
-                        targetCurrencyName:
-                          appSettings.logbookSettings.defaultCurrency.name,
-                      }),
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
-                      negativeSymbol:
-                        appSettings.logbookSettings.negativeCurrencySymbol,
-                    })}`}
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 36,
-                      color:
-                        utils.getTotalAmountAndConvertToDefaultCurrency({
-                          globalCurrencyRates,
-                          transactions: transactionDetails,
-                          logbooks: logbooks.logbooks,
-                          targetCurrencyName:
-                            appSettings.logbookSettings.defaultCurrency.name,
-                        }) < 0
-                          ? globalTheme.colors.danger
-                          : globalTheme.text.textPrimary.color,
-                    }}
-                  />
-                  <TextPrimary
-                    label={
+                    fontWeight: "bold",
+                    fontSize: 36,
+                    color:
                       utils.getTotalAmountAndConvertToDefaultCurrency({
+                        invertResult: true,
                         globalCurrencyRates,
                         transactions: transactionDetails,
                         logbooks: logbooks.logbooks,
                         targetCurrencyName:
                           appSettings.logbookSettings.defaultCurrency.name,
                       }) < 0
-                        ? "Debt left to pay"
-                        : utils.getTotalAmountAndConvertToDefaultCurrency({
-                            globalCurrencyRates,
-                            transactions: transactionDetails,
-                            logbooks: logbooks.logbooks,
-                            targetCurrencyName:
-                              appSettings.logbookSettings.defaultCurrency.name,
-                          }) === 0
-                        ? "No debt or loan to pay"
-                        : "Loan left to receive"
-                    }
-                    style={{
-                      fontSize: 20,
-                    }}
-                  />
-                </>
-              )}
-            </View>
-          </ListSection>
+                        ? globalTheme.colors.danger
+                        : globalTheme.text.textPrimary.color,
+                  }}
+                />
+                <TextPrimary
+                  label={
+                    utils.getTotalAmountAndConvertToDefaultCurrency({
+                      invertResult: true,
+                      globalCurrencyRates,
+                      transactions: transactionDetails,
+                      logbooks: logbooks.logbooks,
+                      targetCurrencyName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                    }) < 0
+                      ? `Debt left to pay to ${contact.contact_name}`
+                      : utils.getTotalAmountAndConvertToDefaultCurrency({
+                          invertResult: true,
+                          globalCurrencyRates,
+                          transactions: transactionDetails,
+                          logbooks: logbooks.logbooks,
+                          targetCurrencyName:
+                            appSettings.logbookSettings.defaultCurrency.name,
+                        }) === 0
+                      ? "No debt or loan to pay"
+                      : `Loan left to receive from ${contact.contact_name}`
+                  }
+                  style={{
+                    fontSize: 20,
+                  }}
+                />
+              </>
+            )}
+          </View>
 
           {/* // TAG : Contact Details */}
           {/* <View
@@ -418,73 +419,154 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
               justifyContent: "space-between",
               paddingTop: 8,
               paddingBottom: 24,
-              // paddingHorizontal: 48,
+              paddingHorizontal: 48,
             }}
           >
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
                 label="Edit"
-                onPress={() =>
+                onPress={() => {
                   navigation.navigate(screenList.editLoanContactScreen, {
                     contact: contact,
                     loanContactTransactionDetails: transactionDetails,
                     targetScreen: screenList.loanContactPreviewScreen,
-                  })
-                }
-              />
-            </View>
-
-            {/* // TAG : Delete Button */}
-            <View style={{ flex: 1, paddingHorizontal: 8 }}>
-              <ButtonSecondaryDanger
-                label="Delete"
-                onPress={() => {
-                  Alert.alert(
-                    "Delete contact",
-                    `Are you sure you want to delete this contact?\nDeleting this contact will also delete all transactions associated with this contact.\nThis action cannot be undone.`,
-                    [
-                      {
-                        text: "Cancel",
-                        onPress: () => {},
-                        style: "cancel",
-                      },
-                      {
-                        text: "Delete",
-                        onPress: () => {
-                          navigation.navigate(screenList.loadingScreen, {
-                            label: "Deleting contact...",
-                            loadingType: LOADING_TYPES.LOAN.DELETE_ONE_CONTACT,
-                            deleteLoanContact: contact,
-                            deletedTransactions: transactionDetails,
-                            reducerUpdatedAt: Date.now(),
-                            targetScreen: screenList.myLoansScreen,
-                            newGlobalLoanTimestamps: {
-                              ...globalLoan._timestamps,
-                              updated_at: Date.now(),
-                              updated_by: userAccount.uid,
-                            },
-                          });
-                        },
-                      },
-                    ],
-                    { cancelable: true }
-                  );
+                  });
                 }}
               />
             </View>
             {/* // TAG : Share Button */}
-            <View style={{ flex: 1, paddingLeft: 8 }}>
-              <ButtonPrimaryIcon
-                label="Share"
-                iconName="share-social-outline"
-                iconPack="IonIcons"
-                onPress={() =>
-                  navigation.navigate(screenList.editLoanContactScreen, {
-                    contact: contact,
-                  })
-                }
-              />
+            {/* <View style={{ flex: 1, paddingRight: 8 }}>
+              {!canBeMarkedAsPaid && (
+                <ButtonSecondaryIconDisabled
+                  label="Share"
+                  iconName="share-social-outline"
+                  iconPack="IonIcons"
+                />
+              )}
+              {canBeMarkedAsPaid && (
+                <ButtonSecondaryIcon
+                  label="Share"
+                  iconName="share-social-outline"
+                  iconPack="IonIcons"
+                  onPress={() =>
+                    navigation.navigate(screenList.editLoanContactScreen, {
+                      contact: contact,
+                    })
+                  }
+                />
+              )}
+            </View> */}
+
+            {/* // TAG : Mark as complete button */}
+            <View style={{ flex: 2, paddingLeft: 8 }}>
+              {!canBeMarkedAsPaid && (
+                <ButtonPrimaryIconDisabled
+                  iconName="checkmark-circle"
+                  iconPack="IonIcons"
+                  label="Mark as paid"
+                />
+              )}
+              {canBeMarkedAsPaid && (
+                <ButtonPrimaryIcon
+                  iconName="checkmark-circle"
+                  iconPack="IonIcons"
+                  label="Mark as paid"
+                  // style={{
+                  //   backgroundColor: globalTheme.colors.success,
+                  // }}
+                  onPress={
+                    () => {
+                      const selectedLogbook = utils.FindById.findLogbookById({
+                        id: transactionDetails[0].logbook_id,
+                        logbooks: logbooks.logbooks,
+                      });
+
+                      const totalAmount =
+                        utils.getTotalAmountAndConvertToDefaultCurrency({
+                          invertResult: true,
+                          transactions: transactionDetails,
+                          logbooks: logbooks.logbooks,
+                          targetCurrencyName:
+                            appSettings.logbookSettings.defaultCurrency.name,
+                          globalCurrencyRates,
+                        });
+
+                      const amount = Math.abs(0 - totalAmount);
+                      let category_id;
+                      let in_out = "expense";
+                      const loan_details = {
+                        from_uid: null,
+                        to_uid: null,
+                      };
+                      switch (true) {
+                        case totalAmount > 0:
+                          category_id = "loan_collection";
+                          in_out = "income";
+                          loan_details.from_uid = contact.contact_uid;
+                          loan_details.to_uid = userAccount.uid;
+                          break;
+                        case totalAmount < 0:
+                          category_id = "debt_payment";
+                          in_out = "expense";
+                          loan_details.from_uid = userAccount.uid;
+                          loan_details.to_uid = contact.contact_uid;
+                          break;
+
+                        default:
+                          break;
+                      }
+
+                      const transactionModel = transactionDetailsModel({
+                        userAccountUid: userAccount.uid,
+                        logbookId: selectedLogbook.logbook_id,
+                      });
+
+                      const newTransaction = {
+                        ...transactionModel,
+                        details: {
+                          ...transactionModel.details,
+                          in_out,
+                          amount,
+                          loan_details,
+                          category_id,
+                        },
+                      };
+
+                      navigation.navigate(
+                        screenList.newTransactionDetailsScreen,
+                        {
+                          selectedLogbook: {
+                            ...selectedLogbook,
+                            name: selectedLogbook.logbook_name,
+                          },
+                          selectedCategory: utils.FindById.findCategoryById({
+                            id: category_id,
+                            categories: categories.categories,
+                          }),
+                          selectedLoanContact: contact,
+                          newTransaction,
+                        }
+                      );
+                    }
+                    // navigation.navigate(screenList.loadingScreen, {
+                    //   label: "Marking as paid...",
+                    //   loadingType: LOADING_TYPES.LOAN.PATCH_ONE_CONTACT,
+                    //   loanContactTransactionDetails: transactionDetails,
+                    //   targetScreen: screenList.loanContactPreviewScreen,
+                    //   patchLoanContact: {
+                    //     ...contact,
+                    //     is_paid: true,
+                    //   },
+                    //   newGlobalLoanTimestamps: {
+                    //     ...globalLoan._timestamps,
+                    //     updated_at: Date.now(),
+                    //     updated_by: userAccount.uid,
+                    //   },
+                    // })
+                  }
+                />
+              )}
             </View>
           </View>
         </CustomScrollView>
