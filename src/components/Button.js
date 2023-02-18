@@ -188,6 +188,50 @@ export const ButtonDisabled = ({
   );
 };
 
+export const ButtonPrimaryIconDisabled = ({
+  label,
+  onPress,
+  iconName = null,
+  iconPack = null,
+  width,
+  style = null,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonDisabled.buttonStyle },
+          {
+            flexDirection: "row",
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...style },
+        ]}
+      >
+        {iconPack === "IonIcons" && (
+          <IonIcons
+            name={iconName}
+            size={20}
+            color={globalTheme.button.buttonDisabled.textStyle.color}
+            style={{
+              paddingRight: 8,
+            }}
+          />
+        )}
+        <TextButtonDisabled label={label} />
+      </View>
+    </>
+  );
+};
+
 // TAG : Button Secondary
 export const ButtonSecondary = ({
   label,
@@ -221,6 +265,95 @@ export const ButtonSecondary = ({
           <TextButtonSecondary label={label} />
         </View>
       </TouchableOpacity>
+    </>
+  );
+};
+
+// TAG : Button Secondary Disabled
+export const ButtonSecondaryDisabled = ({
+  label,
+  props,
+  onPress,
+  condition,
+  width,
+  style,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonSecondaryDisabled.buttonStyle },
+          {
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...(style || null) },
+        ]}
+      >
+        <TextPrimary
+          label={label}
+          style={{
+            ...globalTheme.button.buttonSecondaryDisabled.textStyle,
+          }}
+        />
+      </View>
+    </>
+  );
+};
+
+// TAG : Button Secondary Icon Disabled
+export const ButtonSecondaryIconDisabled = ({
+  label,
+  iconName,
+  iconPack,
+  width,
+  style,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonSecondaryDisabled.buttonStyle },
+          {
+            flexDirection: "row",
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...(style || null) },
+        ]}
+      >
+        {iconPack === "IonIcons" && (
+          <IonIcons
+            name={iconName}
+            size={20}
+            color={globalTheme.button.buttonSecondaryDisabled.textStyle.color}
+            style={{
+              paddingRight: 8,
+            }}
+          />
+        )}
+        <TextPrimary
+          label={label}
+          style={{
+            ...globalTheme.button.buttonSecondaryDisabled.textStyle,
+          }}
+        />
+      </View>
     </>
   );
 };
