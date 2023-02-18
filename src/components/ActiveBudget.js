@@ -416,7 +416,7 @@ export const ActiveBudget = ({
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.getFormattedNumber({
-                      value: utils.DailyLimit({
+                      value: utils.dailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
@@ -460,7 +460,7 @@ export const ActiveBudget = ({
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.getFormattedNumber({
-                      value: utils.DailyLimit({
+                      value: utils.dailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
