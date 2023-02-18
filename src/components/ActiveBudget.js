@@ -4,6 +4,8 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalTheme,
 } from "../reducers/GlobalContext";
 import { RoundProgressBar } from "./charts/RoundProgressBar";
@@ -30,6 +32,8 @@ export const ActiveBudget = ({
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const screenWidth = Dimensions.get("window").width;
   const spentWidth = `${(spent / limit) * 100}%`;
 
@@ -77,6 +81,9 @@ export const ActiveBudget = ({
               />
               <View
                 style={{
+                  position: "absolute",
+                  width: "100%",
+                  flex: 1,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
@@ -96,7 +103,24 @@ export const ActiveBudget = ({
                   />
                 )}
               </View>
-              {rightLabel && <TextSecondary label={rightLabel} />}
+              {rightLabel && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <IonIcons
+                    name="create-outline"
+                    color={globalTheme.colors.foreground}
+                    size={20}
+                    style={{
+                      paddingRight: 4,
+                    }}
+                  />
+                  <TextPrimary label={rightLabel} />
+                </View>
+              )}
             </View>
             {/* Date Section */}
             <View
@@ -180,7 +204,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       hex: globalTheme.colors.foreground,
                     }),
                   }}
@@ -235,7 +259,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       hex:
                         spent / limit >= 1
                           ? globalTheme.colors.danger
@@ -268,6 +292,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: spent,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                         currencyIsoCode:
                           appSettings.logbookSettings.defaultCurrency.isoCode,
                       })}
@@ -292,7 +318,7 @@ export const ActiveBudget = ({
                     height: 16,
                     width: 16,
                     borderRadius: 50,
-                    backgroundColor: utils.HexToRgb({
+                    backgroundColor: utils.hexToRgb({
                       opacity: 0.4,
                       hex:
                         spent / limit >= 1
@@ -328,6 +354,8 @@ export const ActiveBudget = ({
                         value: limit - spent,
                         currencyIsoCode:
                           appSettings.logbookSettings.defaultCurrency.isoCode,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
                     />
                   </TextTicker>
@@ -388,12 +416,14 @@ export const ActiveBudget = ({
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.getFormattedNumber({
-                      value: utils.DailyLimit({
+                      value: utils.dailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                       currencyIsoCode:
                         appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}
@@ -430,12 +460,14 @@ export const ActiveBudget = ({
                     label={`Daily Expense Limit: ${
                       appSettings.logbookSettings.defaultCurrency.symbol
                     } ${utils.getFormattedNumber({
-                      value: utils.DailyLimit({
+                      value: utils.dailyLimit({
                         limit: limit,
                         spent: spent,
                         startDate: startDate,
                         finishDate: finishDate,
                       }),
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
                       currencyIsoCode:
                         appSettings.logbookSettings.defaultCurrency.isoCode,
                     })}/day`}

@@ -18,6 +18,7 @@ const appSettingsFallback = {
     showTotalIncomeWidget: true,
     showMyBudgetsWidget: true,
     showMyLogbooksWidget: true,
+    showMyLoansWidget: true,
   },
   searchSettings: { showTransactionsResult: true, showSettingsResult: true },
   logbookSettings: {

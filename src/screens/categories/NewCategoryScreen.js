@@ -31,6 +31,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
       category: {
         name: "",
         id: uuid.v4(),
+        is_deletable: true,
         icon: {
           name: "fast-food",
           color: "default",

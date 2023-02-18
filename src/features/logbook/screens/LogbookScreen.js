@@ -129,7 +129,8 @@ const LogbookScreen = ({ route, navigation }) => {
             setSelectedLogbook(sortedTransactions.logbookToOpen);
             break;
 
-            defaultOption: setSelectedLogbook({
+          default:
+            setSelectedLogbook({
               name: logbooks.logbooks[0].logbook_name,
               logbook_id: logbooks.logbooks[0].logbook_id,
               logbook_currency: logbooks.logbooks[0].logbook_currency,
@@ -257,7 +258,10 @@ const LogbookScreen = ({ route, navigation }) => {
                     selected: (item) => {
                       setTargetLogbook(item);
                     },
-                    defaultOption: { name: selectedLogbook?.name },
+                    defaultOption: {
+                      ...selectedLogbook,
+                      name: selectedLogbook?.name,
+                    },
                   })
                 }
               >
@@ -311,10 +315,12 @@ const LogbookScreen = ({ route, navigation }) => {
                       .toString()
                       .includes("-")
                       ? globalTheme.colors.danger
-                      : globalTheme.colors.textHeader,
+                      : totalBalance(selectedLogbook) === 0
+                      ? globalTheme.colors.textHeader
+                      : globalTheme.colors.incomeAmount,
                   }}
                   label={`${
-                    selectedLogbook.logbook_currency.symbol
+                    selectedLogbook?.logbook_currency?.symbol
                   } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
                     currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
@@ -330,7 +336,9 @@ const LogbookScreen = ({ route, navigation }) => {
                         .toString()
                         .includes("-")
                         ? globalTheme.colors.danger
-                        : globalTheme.colors.textHeader,
+                        : totalBalance(selectedLogbook) === 0
+                        ? globalTheme.colors.textHeader
+                        : globalTheme.colors.incomeAmount,
                     }}
                     label={`${
                       appSettings.logbookSettings.secondaryCurrency.symbol

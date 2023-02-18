@@ -9,14 +9,13 @@ const configureRevenueCat = async (uid) => {
       : env.revenueCat.appleApiKey;
   return Promise.all([
     Purchases.configure({ apiKey: apiKey, appUserID: uid }),
-    // Purchases.configure({ apiKey: apiKey }),
     Purchases.setDebugLogsEnabled(true),
   ])
     .then(() => {
       return;
     })
     .catch((error) => {
-      console.log(JSON.stringify(error));
+      console.log(JSON.stringify({ error }, null, 2));
     });
 };
 

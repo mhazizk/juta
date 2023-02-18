@@ -29,8 +29,6 @@ export const lightMonoTheme = {
     icon,
   },
   colors: {
-    cardBackground: palette.black[600],
-    cardText: palette.white[600],
     background: palette.white[600],
     foreground: palette.black[600],
     primary: palette.black[600],
@@ -42,6 +40,23 @@ export const lightMonoTheme = {
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  widgets: {
+    totalExpense: {
+      cardBackgroundColor: palette.black[600],
+      cardTextColor: palette.white[600],
+      cardIconColor: palette.black[600],
+    },
+    myLoans: {
+      cardBackgroundColor: "#0899ba",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#0f80aa",
+    },
+    myBudgets: {
+      cardBackgroundColor: "#dbb42c",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#edc531",
+    },
   },
   text: {
     textPrimary: {
@@ -92,6 +107,18 @@ export const lightMonoTheme = {
         fontSize: 16,
       },
     },
+    buttonSecondaryDisabled: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.white[200],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[200],
+        fontSize: 16,
+      },
+    },
     buttonDisabled: {
       buttonStyle: {
         backgroundColor: palette.white[200],
@@ -136,6 +163,10 @@ export const lightMonoTheme = {
     },
   },
   list: {
+    incomeContainer: {
+      backgroundColor: "#00B19B",
+      color: "#c3f4f4",
+    },
     listContainer: {
       display: "flex",
       flexDirection: "row",

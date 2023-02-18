@@ -22,9 +22,12 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
@@ -41,6 +44,7 @@ import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStora
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import transactionDetailsModel from "../models/transactionDetailsModel";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -50,19 +54,27 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
   const { userAccount } = useGlobalUserAccount();
-
-  // TAG : useState Section //
-
-  // Image State
+  const { globalLoan } = useGlobalLoan();
+  const [selectedLoanContact, setSelectedLoanContact] = useState(
+    route.params?.selectedLoanContact || null
+  );
   const [image, setImage] = useState([]);
-
-  // Loading State
   const [isLoading, setIsLoading] = useState(true);
-
-  // Repated Transaction State
+  const [loanContacts, setLoanContacts] = useState(globalLoan?.contacts);
+  const [transaction, setTransaction] = useState(null);
+  const [selectedLogbook, setSelectedLogbook] = useState(
+    route.params?.selectedLogbook || null
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    route.params?.selectedCategory || null
+  );
+  const [loadedLogbooks, setLoadedLogbooks] = useState(null);
+  const [loanDetails, setLoanDetails] = useState(null);
   const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
     uid: null,
     repeat_id: null,
@@ -90,21 +102,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
     },
   });
 
-  // Transaction State
-  const [transaction, setTransaction] = useState(null);
-
-  // Logbook State
-  const [selectedLogbook, setSelectedLogbook] = useState(null);
-
-  // Category State
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // Loaded User Logbooks
-  const [loadedLogbooks, setLoadedLogbooks] = useState(null);
-
-  // Transactions Length State
-  // const [rawTransactionsLength, setRawTransactionsLength] = useState(null)
-
   // TAG : useEffect Section //
 
   useEffect(() => {
@@ -112,31 +109,16 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     insertNameInUserLogBook();
 
-    setTransaction({
-      details: {
-        in_out: "expense",
-        amount: 0,
-        type: "cash",
-        date: Date.now(),
-        notes: null,
-        category_id: null,
-        attachment_URL: [],
-      },
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: userAccount.uid,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-      repeat_id: null,
-      logbook_id: logbooks.logbooks[0].logbook_id,
-      transaction_id: uuid.v4(),
-      uid: userAccount.uid,
+    // const transaction_id = uuid.v4();
+
+    const newTransaction = transactionDetailsModel({
+      userAccountUid: userAccount.uid,
+      logbookId: selectedLogbook?.logbook_id || logbooks.logbooks[0].logbook_id,
     });
 
-    setIsLoading(false);
+    setTransaction(route.params?.newTransaction || newTransaction);
 
-    // setRawTransactionsLength(null)
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -192,66 +174,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   // TAG : useRef State //
   const inputNotes = useRef(null);
+  const inputLenderName = useRef(null);
   const inputAmount = useRef(null);
 
   // TAG : Function Section //
-
-  // Set Date in Date Picker
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    event.type === "set" && showMode("time", currentDate);
-    event.type === "dismissed";
-  };
-  const onChangeTime = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    switch (event.type) {
-      case "dismissed":
-        break;
-
-      case "set":
-        setTransaction({
-          ...transaction,
-          details: {
-            ...transaction.details,
-            date: new Date(currentDate).getTime(),
-          },
-        });
-        setLocalRepeatedTransactions({
-          ...localRepeatedTransactions,
-          repeat_start_date: new Date(currentDate).getTime(),
-        });
-        break;
-
-        defaultOption: break;
-    }
-  };
-
-  // Date Picker
-  const showMode = (currentMode, selectedDate) => {
-    if (currentMode === "date") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeDate,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-    if (currentMode === "time") {
-      DateTimePickerAndroid.open({
-        positiveButtonLabel: "Set",
-        value: selectedDate,
-        onChange: onChangeTime,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    }
-  };
-
-  // Date Picker
-  const showDatePicker = () => {
-    showMode("date", new Date(transaction.details.date));
-  };
 
   // Insert 'name' variable into User Logbooks
   const insertNameInUserLogBook = () => {
@@ -268,19 +194,23 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         return alert("Please enter transaction amount");
       case !transaction.details.in_out:
         return alert("Please select transaction expense / income");
-      case !transaction.details.type:
-        return alert("Please select transaction type");
       case !transaction.details.date:
         return alert("Please select transaction date");
       case !transaction.logbook_id:
         return alert("Please select logbook");
       case !transaction.details.category_id:
         return alert("Please select transaction category");
-        // case transaction.details.attachment_URL.length > 0:
-        console.log("287");
+      case transaction.details.category_id.includes("debt") &&
+        (!transaction.details.loan_details.from_uid ||
+          !transaction.details.loan_details.to_uid):
+        return alert("Please enter lender name");
+      case transaction.details.category_id.includes("loan") &&
+        (!transaction.details.loan_details.from_uid ||
+          !transaction.details.loan_details.to_uid):
+        return alert("Please enter borrower name");
 
-        // break;
-        defaultOption: break;
+      default:
+        break;
     }
 
     setTimeout(() => {
@@ -301,12 +231,48 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         }, 5000);
       }
     }, 1);
+
+    // const finalPatchLoanContact = {
+    //   ...selectedLoanContact,
+    //   transactions_id: [
+    //     ...selectedLoanContact.transactions_id,
+    //     transaction.transaction_id,
+    //   ],
+    // };
+
+    // check if selected contact will be paid off by this transaction
+    const isPaid = utils.findTransactionsByIds({
+      transactionIds: selectedLoanContact?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          newTransaction: transaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+
     return navigation.navigate(screenList.loadingScreen, {
-      label: "Saving ...",
+      isPaid,
+      label: "Saving...",
       loadingType: LOADING_TYPES.TRANSACTIONS.INSERT_ONE,
       transaction: transaction,
       logbookToOpen: selectedLogbook,
+      targetLoanContactUid: selectedLoanContact?.contact_uid || null,
+      insertTransactionToLoanContact: selectedLoanContact?.contact_uid
+        ? transaction.transaction_id
+        : null,
+      newGlobalLoanTimestamps: {
+        ...globalLoan._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
       reducerUpdatedAt: Date.now(),
+      targetScreen: screenList.bottomTabNavigator,
     });
   };
 
@@ -455,10 +421,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               ]}
             >
               <TextPrimary
-                label={`${
-                  transaction.details.in_out[0].toUpperCase() +
-                  transaction.details.in_out.substring(1)
-                } Details`}
+                label={`${utils.upperCaseThisFirstLetter(
+                  transaction.details.in_out
+                )} Details`}
                 style={{
                   fontSize: 24,
                 }}
@@ -470,10 +435,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 leftLabel="Transaction"
-                rightLabel={
-                  transaction.details.in_out[0].toUpperCase() +
-                  transaction.details.in_out.substring(1)
-                }
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  transaction.details.in_out
+                )}
                 iconPack="IonIcons"
                 iconLeftName="swap-horizontal"
                 iconRightName="chevron-forward"
@@ -488,13 +452,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -508,63 +472,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         details: {
                           ...transaction.details,
                           in_out: item.name,
-                          type: null,
+                          category_id: null,
+                          loan_details: {
+                            from_uid: null,
+                            to_uid: null,
+                          },
                         },
                       });
-                      setSelectedCategory({});
+                      setSelectedCategory(null);
+                      setSelectedLoanContact(null);
                     },
                     defaultOption: { name: transaction.details.in_out },
-                  })
-                }
-              />
-              {/* // TAG : Type */}
-              <ListItem
-                pressable
-                leftLabel="Type"
-                rightLabel={
-                  !transaction?.details?.type
-                    ? "Pick type"
-                    : transaction?.details?.type[0].toUpperCase() +
-                      transaction?.details?.type?.substring(1)
-                }
-                iconPack="FontAwesome5"
-                iconLeftName="coins"
-                iconRightName="chevron-forward"
-                useRightLabelContainer
-                // iconInRightContainerName='book'
-                rightLabelContainerStyle={{
-                  flexDirection: "row",
-                  maxWidth: "50%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 8,
-                  borderRadius: 8,
-                  backgroundColor:
-                    transaction.details.in_out === "income"
-                      ? "#c3f4f4"
-                      : globalTheme.colors.secondary,
-                }}
-                rightLabelStyle={{
-                  color:
-                    transaction.details.in_out === "income"
-                      ? "#00695c"
-                      : globalTheme.text.textPrimary.color,
-                }}
-                onPress={() =>
-                  navigation.navigate(screenList.modalScreen, {
-                    title: "Type",
-                    modalType: "list",
-                    props:
-                      transaction?.details?.in_out === "expense"
-                        ? [{ name: "cash" }, { name: "loan" }]
-                        : [{ name: "cash" }],
-                    selected: (item) => {
-                      setTransaction({
-                        ...transaction,
-                        details: { ...transaction.details, type: item.name },
-                      });
-                    },
-                    defaultOption: { name: transaction.details.type },
                   })
                 }
               />
@@ -603,16 +521,34 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
-                onPress={showDatePicker}
+                onPress={() =>
+                  utils.datePicker({
+                    initialDateInMillis: transaction?.details?.date,
+                    pickerStyle: "dateAndTime",
+                    callback: (dateInMillis) => {
+                      setTransaction({
+                        ...transaction,
+                        details: {
+                          ...transaction.details,
+                          date: dateInMillis,
+                        },
+                      });
+                      setLocalRepeatedTransactions({
+                        ...localRepeatedTransactions,
+                        repeat_start_date: dateInMillis,
+                      });
+                    },
+                  })
+                }
               />
               {/* // TAG : From Logbook */}
               <ListItem
@@ -621,8 +557,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 rightLabel={
                   !selectedLogbook?.name
                     ? "Pick Logbook"
-                    : selectedLogbook?.name[0].toUpperCase() +
-                      selectedLogbook?.name?.substring(1)
+                    : utils.upperCaseThisFirstLetter(selectedLogbook?.name)
                 }
                 iconPack="IonIcons"
                 iconLeftName="book"
@@ -638,13 +573,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
@@ -677,8 +612,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 leftLabel="Category"
                 rightLabel={
                   selectedCategory?.name
-                    ? selectedCategory?.name[0].toUpperCase() +
-                      selectedCategory?.name.substring(1)
+                    ? utils.upperCaseThisFirstLetter(selectedCategory?.name)
                     : "Pick Category"
                 }
                 iconPack="IonIcons"
@@ -695,26 +629,26 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
-                  selectedCategory?.icon?.color === "default"
+                  selectedCategory?.icon?.color === "default" &&
+                  transaction.details.in_out === "income"
+                    ? globalTheme.list.incomeContainer.color
+                    : selectedCategory?.icon?.color === "default"
                     ? globalTheme.colors.foreground
                     : selectedCategory?.icon?.color
-                  // transaction.details.in_out === "income"
-                  //   ? "#00695c"
-                  //   : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
-                    title: "Category",
+                    title: "Select category",
                     modalType: "list",
                     props:
                       transaction.details.in_out === "expense"
@@ -722,19 +656,212 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         : categories.categories.income,
                     selected: (item) => {
                       setSelectedCategory(item);
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          category_id: item.id,
-                        },
-                      });
+                      setSelectedLoanContact(null);
+                      const itemId = item.id;
+                      switch (true) {
+                        case itemId === "debt" || itemId === "loan_collection":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              category_id: item.id,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                to_uid: userAccount.uid,
+                                from_uid: null,
+                              },
+                            },
+                          });
+
+                          break;
+                        case itemId === "loan" || itemId === "debt_payment":
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              category_id: item.id,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                from_uid: userAccount.uid,
+                                to_uid: null,
+                              },
+                            },
+                          });
+
+                          break;
+
+                        default:
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              category_id: item.id,
+                              loan_details: {
+                                ...transaction.details.loan_details,
+                                from_uid: null,
+                                to_uid: null,
+                              },
+                            },
+                          });
+                          break;
+                      }
                     },
                     defaultOption: selectedCategory,
                   })
                 }
               />
             </ListSection>
+            {(transaction.details.category_id?.toLowerCase().includes("loan") ||
+              transaction.details.category_id
+                ?.toLowerCase()
+                .includes("debt")) && (
+              <ListSection>
+                {/* // TAG : Lender / Borrower name */}
+                <ListItem
+                  pressable
+                  leftLabel={
+                    transaction.details.category_id.includes("loan")
+                      ? "Borrower name"
+                      : "Lender name"
+                  }
+                  rightLabel={
+                    selectedLoanContact?.contact_name
+                      ? utils.upperCaseThisFirstLetter(
+                          selectedLoanContact?.contact_name
+                        )
+                      : transaction.details.category_id.includes("loan")
+                      ? "Add Borrower name"
+                      : "Add Lender name"
+                  }
+                  iconPack="IonIcons"
+                  iconLeftName="person"
+                  iconRightName="chevron-forward"
+                  useRightLabelContainer={
+                    selectedLoanContact?.contact_name ? true : false
+                  }
+                  iconInRightContainerName="person"
+                  rightLabelContainerStyle={{
+                    flexDirection: "row",
+                    maxWidth: "50%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 8,
+                    borderRadius: 8,
+                    backgroundColor:
+                      transaction.details.in_out === "income"
+                        ? globalTheme.list.incomeContainer.backgroundColor
+                        : globalTheme.colors.secondary,
+                  }}
+                  iconColorInContainer={
+                    transaction.details.in_out === "income"
+                      ? globalTheme.list.incomeContainer.color
+                      : globalTheme.colors.foreground
+                  }
+                  rightLabelStyle={{
+                    color:
+                      transaction.details.in_out === "income"
+                        ? globalTheme.list.incomeContainer.color
+                        : globalTheme.text.textPrimary.color,
+                  }}
+                  onPress={() =>
+                    navigation.navigate(screenList.loanContactSelectorScreen, {
+                      defaultOption: selectedLoanContact?.contact_uid,
+                      selected: (contact) => {
+                        console.log(contact);
+                        const categoryId = transaction.details.category_id;
+                        setSelectedLoanContact(contact);
+                        switch (true) {
+                          case categoryId === "debt" ||
+                            categoryId === "loan_collection":
+                            setTransaction({
+                              ...transaction,
+                              details: {
+                                ...transaction.details,
+                                loan_details: {
+                                  ...transaction.details.loan_details,
+                                  from_uid: contact.contact_uid,
+                                },
+                              },
+                            });
+
+                            break;
+                          case categoryId === "loan" ||
+                            categoryId === "debt_payment":
+                            setTransaction({
+                              ...transaction,
+                              details: {
+                                ...transaction.details,
+                                loan_details: {
+                                  ...transaction.details.loan_details,
+                                  to_uid: contact.contact_uid,
+                                },
+                              },
+                            });
+
+                            break;
+
+                          default:
+                            break;
+                        }
+                      },
+                    })
+                  }
+                />
+                {/* // TAG : Payment due date section */}
+                {/* <ListItem
+                  pressable
+                  leftLabel="Payment due date"
+                  rightLabel={
+                    !selectedLoanContact
+                      ? "Add lender name first"
+                      : !selectedLoanContact.payment_due_date
+                      ? "Pick date"
+                      : new Date(
+                          selectedLoanContact.payment_due_date
+                        ).toDateString()
+                  }
+                  iconPack="IonIcons"
+                  iconLeftName="calendar"
+                  iconRightName="chevron-forward"
+                  useRightLabelContainer
+                  // iconInRightContainerName='book'
+                  rightLabelContainerStyle={{
+                    flexDirection: "row",
+                    maxWidth: "50%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 8,
+                    borderRadius: 8,
+                    backgroundColor: globalTheme.colors.secondary,
+                  }}
+                  rightLabelStyle={{
+                    color: globalTheme.text.textPrimary.color,
+                  }}
+                  onPress={() =>
+                    utils.datePicker({
+                      minimumDateInMillis:
+                        transaction?.details?.date + 1 * 24 * 60 * 60 * 1000,
+                      initialDateInMillis:
+                        transaction.details.loan_details.payment_due_date ||
+                        transaction?.details?.date + 7 * 24 * 60 * 60 * 1000,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            loan_details: {
+                              ...transaction.details.loan_details,
+                              payment_due_date: dateInMillis,
+                            },
+                          },
+                        });
+                      },
+                    })
+                  }
+                /> */}
+              </ListSection>
+            )}
             <ListSection>
               {/* // TAG : Notes Section */}
               <TouchableNativeFeedback
@@ -824,8 +951,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }
                 disabled={
                   !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
+                    {
+                      globalSubscriptionFeatures,
+                     subscriptionPlan:
+                      userAccount.subscription.plan,
+                      subscriptionLimit:
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
                   )
                 }
                 iconPack="IonIcons"
@@ -842,26 +973,30 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   borderRadius: 8,
                   backgroundColor:
                     transaction.details.in_out === "income"
-                      ? "#c3f4f4"
+                      ? globalTheme.list.incomeContainer.backgroundColor
                       : globalTheme.colors.secondary,
                 }}
                 iconColorInContainer={
                   transaction.details.in_out === "income"
-                    ? "#00695c"
+                    ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color
                 }
                 rightLabelStyle={{
                   color:
                     transaction.details.in_out === "income"
-                      ? "#00695c"
+                      ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
                 onPress={() => {
                   if (
-                    getSubscriptionLimit(
+                  getSubscriptionLimit(
+                    {
+                      globalSubscriptionFeatures,
+                     subscriptionPlan:
                       userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
-                    )
+                      subscriptionLimit:
+                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
+                  )
                   ) {
                     navigation.navigate(screenList.modalScreen, {
                       title: "Repeat Transaction",
@@ -981,9 +1116,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
+                  !getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                   subscriptionPlan: userAccount.subscription.plan,
+                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
                   )
                 }
                 leftLabel="Attachment Images"
@@ -997,10 +1133,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                    getSubscriptionLimit(
-                      userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
-                    )
+                  getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                   subscriptionPlan: userAccount.subscription.plan,
+                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
+                  )
                   ) {
                     // No permissions request is necessary for launching the image library
                     let result = await ImagePicker.launchImageLibraryAsync({

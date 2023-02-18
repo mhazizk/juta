@@ -9,9 +9,42 @@ const categoriesFallback = ({
     uid: uid,
     expense: [
       {
+        name: "debt payment",
+        id: "debt_payment",
+        icon: {
+          name: "cash",
+          color: "default",
+          pack: "IonIcons",
+        },
+        is_deletable: false,
+        _timestamps: {
+          created_at: Date.now() || created_at,
+          created_by: null || created_by,
+          updated_at: Date.now() || updated_at,
+          updated_by: null || updated_by,
+        },
+      },
+      {
+        name: "loan",
+        id: "loan",
+        icon: {
+          name: "cash",
+          color: "default",
+          pack: "IonIcons",
+        },
+        is_deletable: false,
+        _timestamps: {
+          created_at: Date.now() || created_at,
+          created_by: null || created_by,
+          updated_at: Date.now() || updated_at,
+          updated_by: null || updated_by,
+        },
+      },
+      {
         name: "food and drink",
         id: "1",
         icon: { name: "fast-food", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -23,6 +56,7 @@ const categoriesFallback = ({
         name: "bills and utilities",
         id: "2",
         icon: { name: "flash", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -34,6 +68,7 @@ const categoriesFallback = ({
         name: "transportation",
         id: "3",
         icon: { name: "bus", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -45,6 +80,7 @@ const categoriesFallback = ({
         name: "shopping",
         id: "4",
         icon: { name: "cart", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -56,6 +92,7 @@ const categoriesFallback = ({
         name: "entertainment",
         id: "5",
         icon: { name: "game-controller", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -67,6 +104,7 @@ const categoriesFallback = ({
         name: "travel",
         id: "6",
         icon: { name: "airplane", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -78,6 +116,7 @@ const categoriesFallback = ({
         name: "health",
         id: "7",
         icon: { name: "medical", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -89,6 +128,7 @@ const categoriesFallback = ({
         name: "sport",
         id: "8",
         icon: { name: "football", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -100,6 +140,7 @@ const categoriesFallback = ({
         name: "donations",
         id: "9",
         icon: { name: "heart", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -111,6 +152,7 @@ const categoriesFallback = ({
         name: "education",
         id: "10",
         icon: { name: "school", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -122,6 +164,7 @@ const categoriesFallback = ({
         name: "subscription",
         id: "11",
         icon: { name: "receipt", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -133,6 +176,7 @@ const categoriesFallback = ({
         name: "gadget",
         id: "12",
         icon: { name: "phone-portrait", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -143,9 +187,42 @@ const categoriesFallback = ({
     ],
     income: [
       {
+        name: "debt",
+        id: "debt",
+        icon: {
+          name: "add-circle-outline",
+          color: "default",
+          pack: "IonIcons",
+        },
+        is_deletable: false,
+        _timestamps: {
+          created_at: Date.now() || created_at,
+          created_by: null || created_by,
+          updated_at: Date.now() || updated_at,
+          updated_by: null || updated_by,
+        },
+      },
+      {
+        name: "loan collection",
+        id: "loan_collection",
+        icon: {
+          name: "add-circle-outline",
+          color: "default",
+          pack: "IonIcons",
+        },
+        is_deletable: false,
+        _timestamps: {
+          created_at: Date.now() || created_at,
+          created_by: null || created_by,
+          updated_at: Date.now() || updated_at,
+          updated_by: null || updated_by,
+        },
+      },
+      {
         name: "salary",
         id: "13",
         icon: { name: "cash", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -157,6 +234,7 @@ const categoriesFallback = ({
         name: "bonus",
         id: "14",
         icon: { name: "gift", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -168,6 +246,7 @@ const categoriesFallback = ({
         name: "interest",
         id: "15",
         icon: { name: "trending-up", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,
@@ -179,6 +258,7 @@ const categoriesFallback = ({
         name: "selling",
         id: "16",
         icon: { name: "basket", color: "default", pack: "IonIcons" },
+        is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || created_by,

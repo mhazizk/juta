@@ -89,7 +89,11 @@ export const ListItem = ({
               // maxWidth: "100%",
             }}
           >
-            <View>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
               {leftLabel && !disabled && (
                 <TextPrimary
                   label={leftLabel}
@@ -103,7 +107,14 @@ export const ListItem = ({
               {secondaryLabel && !disabled && (
                 <TextSecondary label={secondaryLabel} />
               )}
-              {thirdLabel && !disabled && <TextSecondary label={thirdLabel} />}
+              {thirdLabel && !disabled && (
+                <TextSecondary
+                  label={thirdLabel}
+                  style={{
+                    fontSize: 14,
+                  }}
+                />
+              )}
               {leftLabel && disabled && <TextSecondary label={leftLabel} />}
             </View>
             {rightLabel && !useRightLabelContainer && (
@@ -299,7 +310,7 @@ export const ListTable = ({
               }}
             >
               {(typeof middleLabel === "string" ||
-                typeof rightLabel === "number" ||
+                typeof middleLabel === "number" ||
                 titleMode) && (
                 <TextPrimary
                   label={middleLabel}
@@ -451,7 +462,7 @@ export const TransactionListItem = ({
                     color={
                       isRepeated
                         ? globalTheme.colors.foreground
-                        : globalTheme.colors.secondary
+                        : globalTheme.text.textSecondary.color
                     }
                     size={isRepeated ? 16 : 8}
                     style={{
@@ -720,7 +731,7 @@ export const SearchResultListItem = ({
                         style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <TextSecondary
-                          label={utils.RelativeDate({
+                          label={utils.relativeDate({
                             dateToCheck: transactionDate,
                             locale: appSettings.locale,
                             currentDate: Date.now(),
@@ -729,7 +740,7 @@ export const SearchResultListItem = ({
                         />
                         <IonIcons
                           name="ellipse"
-                          color={globalTheme.colors.secondary}
+                          color={globalTheme.text.textSecondary.color}
                           size={8}
                           style={{ paddingHorizontal: 8 }}
                         />

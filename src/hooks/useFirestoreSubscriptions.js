@@ -1,6 +1,7 @@
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import firestore from "../api/firebase/firestore";
+import env from "../config/env";
 
 const useFirestoreSubscriptions = ({
   uid,
@@ -33,8 +34,27 @@ const useFirestoreSubscriptions = ({
 
   globalCurrencyRates,
   dispatchGlobalCurrencyRates,
+
+  globalLoan,
+  dispatchGlobalLoan,
+
+  globalSubscriptionFeatures,
+  dispatchGlobalSubscriptionFeatures,
 }) => {
   console.log("useFirestoreSubscriptions");
+  // TAG : Subscription Features //
+  const unsubscribeFeatures = firestore.getAndListenOneDoc(
+    env.subscription.collectionName,
+    env.subscription.documentId,
+    (data) => {
+      dispatchAppSettings({
+        type: REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET,
+        payload: data,
+      });
+    },
+    (error) => alert(error)
+  );
+
   // TAG : App Settings Subscription //
   const unsubscribeAppSettings = firestore.getAndListenOneDoc(
     FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
@@ -64,6 +84,19 @@ const useFirestoreSubscriptions = ({
       });
       dispatchUserAccount({
         type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+        payload: data,
+      });
+    },
+    (error) => alert(error)
+  );
+
+  // TAG : Loan Contacts Subscription //
+  const unsubscribeLoan = firestore.getAndListenOneDoc(
+    FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+    uid,
+    (data) => {
+      dispatchGlobalLoan({
+        type: REDUCER_ACTIONS.LOAN.SET_MULTI_ACTIONS,
         payload: data,
       });
     },
@@ -294,6 +327,8 @@ const useFirestoreSubscriptions = ({
     unsubscribeBudgets;
     unsubscribeRepeatedTransactions;
     unsubscribeCurrencyRates;
+    unsubscribeLoan;
+    unsubscribeFeatures;
   }
   if (unsubscribeAll) {
     console.log("unsubscribeAll");
@@ -305,6 +340,8 @@ const useFirestoreSubscriptions = ({
     unsubscribeBudgets();
     unsubscribeRepeatedTransactions();
     unsubscribeCurrencyRates();
+    unsubscribeLoan();
+    unsubscribeFeatures();
   }
 };
 

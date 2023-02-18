@@ -2,6 +2,7 @@ const FIRESTORE_COLLECTION_NAMES = {
   USERS: "users",
   TRANSACTIONS: "transactions",
   REPEATED_TRANSACTIONS: "repeatedTransactions",
+  LOAN_CONTACTS: "loanContacts",
   LOGBOOKS: "logbooks",
   CATEGORIES: "categories",
   BUDGETS: "budgets",

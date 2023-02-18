@@ -8,6 +8,7 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCurrencyRates,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -30,6 +31,7 @@ import FONT_SIZE_CONSTANTS from "../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../constants/logbookSettingsConstants";
 
 const SettingsScreen = ({ navigation }) => {
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
@@ -426,6 +428,7 @@ const SettingsScreen = ({ navigation }) => {
                 pressable
                 iconLeftName="usd"
                 leftLabel="Set default currency"
+                thirdLabel="This currency also be used for all features in the app"
                 rightLabel={
                   logbookSettings.defaultCurrency.name +
                   " / " +
@@ -462,26 +465,29 @@ const SettingsScreen = ({ navigation }) => {
               />
               {/* // TAG : Show secondary currency */}
               <CheckList
-                pressable={getSubscriptionLimit(
-                  userAccount.subscription.plan,
-                  SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
-                )}
+                pressable={getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                  subscriptionPlan: userAccount.subscription.plan,
+                  subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                })}
                 disabled={
-                  !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
-                  )
+                  !getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                  })
                 }
                 primaryLabel="Show secondary currency"
-                secondaryLabel="This will show the default currency as secondary currency in the Logbook screen."
+                secondaryLabel="This will show secondary currency in all features in app"
                 item={true}
                 selected={logbookSettings.showSecondaryCurrency}
                 onPress={() => {
                   if (
-                    getSubscriptionLimit(
-                      userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY
-                    )
+                    getSubscriptionLimit({
+                      globalSubscriptionFeatures,
+                      subscriptionPlan: userAccount.subscription.plan,
+                      subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                    })
                   ) {
                     setLogbookSettings({
                       ...logbookSettings,
@@ -513,7 +519,7 @@ const SettingsScreen = ({ navigation }) => {
                 rightLabel={
                   isLoading
                     ? "Updating... "
-                    : "Last updated at : " +
+                    : "Last update: " +
                       new Date(currencyRates._timestamps.updated_at).getDate() +
                       "/" +
                       (new Date(
@@ -594,7 +600,7 @@ const SettingsScreen = ({ navigation }) => {
                 items={LOGBOOK_SETTINGS_CONSTANTS.DAILY_SUMMARY.OPTIONS.map(
                   (option) => {
                     return {
-                      name: utils.FormatHyphenInStrings(option),
+                      name: utils.formatHyphenInStrings(option),
                       value: option,
                     };
                   }

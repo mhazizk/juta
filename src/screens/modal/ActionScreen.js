@@ -8,6 +8,7 @@ import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -22,6 +23,7 @@ const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { userAccount } = useGlobalUserAccount();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -130,10 +132,11 @@ const ActionScreen = ({ route, navigation }) => {
               onPress={() => {
                 navigation.goBack();
                 // get logbook limit from subscription plan
-                const logbookLimit = getSubscriptionLimit(
-                  userAccount.subscription.plan,
-                  SUBSCRIPTION_LIMIT.LOGBOOKS
-                );
+                const logbookLimit = getSubscriptionLimit({
+                  globalSubscriptionFeatures,
+                  subscriptionLimit: userAccount.subscription.plan,
+                  subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                });
 
                 // check if user has reached the limit
                 if (logbookLimit === logbooks.logbooks?.length) {

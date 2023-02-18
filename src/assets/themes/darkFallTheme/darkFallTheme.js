@@ -30,8 +30,6 @@ export const darkFallTheme = {
     icon,
   },
   colors: {
-    cardBackground: "#FFEFD6",
-    cardText: palette.black[600],
     background: palette.black[600],
     foreground: palette.white[600],
     primary: palette.primary,
@@ -43,6 +41,23 @@ export const darkFallTheme = {
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  widgets: {
+    totalExpense: {
+      cardBackgroundColor: "#FFEFD6",
+      cardTextColor: palette.black[600],
+      cardIconColor: palette.black[600],
+    },
+    myLoans: {
+      cardBackgroundColor: "#0899ba",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#0f80aa",
+    },
+    myBudgets: {
+      cardBackgroundColor: "#c9a227",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#dbb42c",
+    },
   },
   text: {
     textPrimary: {
@@ -93,6 +108,18 @@ export const darkFallTheme = {
         fontSize: 16,
       },
     },
+    buttonSecondaryDisabled: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.black[300],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.black[300],
+        fontSize: 16,
+      },
+    },
     buttonDisabled: {
       buttonStyle: {
         backgroundColor: palette.black[300],
@@ -139,6 +166,10 @@ export const darkFallTheme = {
     },
   },
   list: {
+    incomeContainer: {
+      color: "#00695c",
+      backgroundColor: "#c3f4f4",
+    },
     listContainer: {
       display: "flex",
       flexDirection: "row",

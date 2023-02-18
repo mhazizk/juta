@@ -6,7 +6,7 @@ import {
   useGlobalLogbooks,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
-import subscriptionFeaturesModel from "../model/subscriptionFeaturesModel";
+import subscriptionFeatureList from "../model/subscriptionFeatureList";
 
 const SubscriptionTable = ({ subscription, showCurrent = false }) => {
   const { globalTheme } = useGlobalTheme();
@@ -32,17 +32,9 @@ const SubscriptionTable = ({ subscription, showCurrent = false }) => {
           >
             <ListTable
               titleMode={true}
-              // iconLeftName="ribbon"
-              // iconLeftColor="transparent"
               leftLabel="Features"
-              middleLabel={showCurrent ? "Current" : "Premium"}
-              rightLabel={
-                !showCurrent || subscription.plan === "free"
-                  ? "Free"
-                  : showCurrent && subscription.plan === "premium"
-                  ? "premium"
-                  : "free"
-              }
+              middleLabel="Free"
+              rightLabel="Premium"
             />
           </View>
           <ListSection noMargin={true}>
@@ -51,25 +43,23 @@ const SubscriptionTable = ({ subscription, showCurrent = false }) => {
                 paddingTop: 8,
               }}
             />
-            {subscriptionFeaturesModel.map((feature) => {
+            {subscriptionFeatureList.map((feature) => {
               return (
                 <ListTable
                   pressable={false}
                   key={feature.name}
                   iconLeftName={feature.iconName}
                   leftLabel={feature.name}
+                  middleLabel={feature.free}
                   middleLabelColor={
-                    feature.premium > feature.free
-                      ? globalTheme.colors.success
-                      : globalTheme.colors.danger
-                  }
-                  middleLabel={feature.premium}
-                  rightLabelColor={
                     feature.free < feature.premium
-                      ? globalTheme.colors.danger
+                      ? globalTheme.colors.foreground
                       : globalTheme.colors.success
                   }
-                  rightLabel={feature.free}
+                  rightLabel={
+                    feature.premium > 99 ? "Unlimited" : feature.premium
+                  }
+                  rightLabelColor={globalTheme.colors.success}
                 />
               );
             })}

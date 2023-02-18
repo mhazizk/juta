@@ -44,6 +44,23 @@ export const colorOfTheYear2023 = {
     warn: palette.orange,
     danger: palette.red,
   },
+  widgets: {
+    totalExpense: {
+      cardBackgroundColor: "#eabdc8",
+      cardTextColor: palette.white[600],
+      cardIconColor: palette.black[600],
+    },
+    myLoans: {
+      cardBackgroundColor: "#00CCFF",
+      cardTextColor: palette.white[600],
+      cardIconColor: palette.black[600],
+    },
+    myBudgets: {
+      cardBackgroundColor: "#FFE088",
+      cardTextColor: palette.white[600],
+      cardIconColor: "#FFC727",
+    },
+  },
   text: {
     textPrimary: {
       fontSize: 16,
@@ -90,6 +107,18 @@ export const colorOfTheYear2023 = {
       },
       textStyle: {
         color: palette.black[600],
+        fontSize: 16,
+      },
+    },
+    buttonSecondaryDisabled: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.white[200],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[200],
         fontSize: 16,
       },
     },

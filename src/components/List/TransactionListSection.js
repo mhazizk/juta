@@ -33,7 +33,7 @@ const TransactionListSection = ({
             marginHorizontal: 16,
             backgroundColor:
               backgroundColor ||
-              utils.HexToRgb({
+              utils.hexToRgb({
                 hex: globalTheme.colors.foreground,
                 opacity: 0.07,
               }),
@@ -56,7 +56,7 @@ const TransactionListSection = ({
             marginHorizontal: 16,
             backgroundColor:
               backgroundColor ||
-              utils.HexToRgb({
+              utils.hexToRgb({
                 hex: globalTheme.colors.foreground,
                 opacity: 0.07,
               }),
@@ -79,7 +79,7 @@ const TransactionListSection = ({
             marginHorizontal: 16,
             backgroundColor:
               backgroundColor ||
-              utils.HexToRgb({
+              utils.hexToRgb({
                 hex: globalTheme.colors.foreground,
                 opacity: 0.07,
               }),
@@ -97,7 +97,7 @@ const TransactionListSection = ({
             marginHorizontal: 16,
             backgroundColor:
               backgroundColor ||
-              utils.HexToRgb({
+              utils.hexToRgb({
                 hex: globalTheme.colors.foreground,
                 opacity: 0.07,
               }),

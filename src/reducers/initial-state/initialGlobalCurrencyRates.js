@@ -9,7 +9,7 @@ const initialGlobalCurrencyRates = {
     {
       name: "IDR",
       isoCode: "id",
-      rate: 15_000,
+      rate: 15000,
     },
     {
       name: "EUR",

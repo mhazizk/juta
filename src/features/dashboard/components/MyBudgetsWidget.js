@@ -6,13 +6,16 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
-} from "../reducers/GlobalContext";
-import { RoundProgressBar } from "./charts/RoundProgressBar";
-import { TextButtonPrimary, TextPrimary } from "./Text";
+} from "../../../reducers/GlobalContext";
+import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
+import { RoundProgressBar } from "../../../components/charts/RoundProgressBar";
+import * as utils from "../../../utils";
 
-export const MyBudgetsPreview = ({
+export const MyBudgetsWidget = ({
   label,
   props,
   onPress,
@@ -32,7 +35,9 @@ export const MyBudgetsPreview = ({
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { budgets } = useGlobalBudgets();
+  const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const [activeBudget, setActiveBudget] = useState({
     budget: null,
     spent: null,
@@ -59,7 +64,6 @@ export const MyBudgetsPreview = ({
   const findActiveBudget = () => {
     let spentList = [];
     let transactionList = [];
-    let spent = 0;
 
     if (budgets.budgets?.length) {
       const activeBudget = budgets.budgets.find(
@@ -86,7 +90,13 @@ export const MyBudgetsPreview = ({
         );
       }
 
-      spent = spentList.reduce((a, b) => a + b, 0);
+      const spent = utils.getTotalAmountAndConvertToDefaultCurrency({
+        invertResult: true,
+        transactions: transactionList,
+        logbooks: logbooks.logbooks,
+        globalCurrencyRates,
+        targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+      });
       transactionList.sort((a, b) => b.details.date - a.details.date);
       return setActiveBudget({ budget: activeBudget, spent, transactionList });
     }
@@ -106,7 +116,7 @@ export const MyBudgetsPreview = ({
                 : activeBudget.spent / activeBudget.budget.limit >= 0.8
                 ? globalTheme.colors.warn
                 : globalTheme.colors.success
-              : "#FFE088",
+              : globalTheme.widgets.myBudgets.cardBackgroundColor,
             marginTop: boxMarginTop || 0,
             marginBottom: boxMarginBottom || 0,
             marginLeft: boxMarginLeft || 0,
@@ -127,19 +137,17 @@ export const MyBudgetsPreview = ({
               <IonIcons
                 name="warning"
                 size={18}
-                color={
-                  globalTheme.button.buttonPrimary.textStyle.color
-                }
+                color={globalTheme.widgets.myBudgets.cardTextColor}
                 style={{ paddingRight: 8 }}
               />
             )}
 
             <TextPrimary
-              label="My Budget"
+              label="My Budgets"
               style={{
                 fontSize: 18,
                 fontWeight: "bold",
-                color: globalTheme.colors.black,
+                color: globalTheme.widgets.myBudgets.cardTextColor,
               }}
             />
           </View>
@@ -156,12 +164,12 @@ export const MyBudgetsPreview = ({
                 <RoundProgressBar
                   // Styling
                   fontSize={24}
-                  fontColor={globalTheme.colors.background}
+                  fontColor={globalTheme.widgets.myBudgets.cardTextColor}
                   radius={32}
                   strokeWidth={10}
                   width={74}
                   height={74}
-                  color={globalTheme.colors.background}
+                  color={globalTheme.widgets.myBudgets.cardTextColor}
                   // Data
                   spent={activeBudget.spent}
                   limit={activeBudget.budget.limit}
@@ -176,22 +184,34 @@ export const MyBudgetsPreview = ({
                 />
                 <View style={{ flex: 1, paddingLeft: 8 }}>
                   {activeBudget.spent / activeBudget.budget.limit <= 0.8 && (
-                    <TextButtonPrimary
+                    <TextPrimary
                       label="On Track"
-                      style={{ fontSize: 14, fontWeight: "bold" }}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "bold",
+                        color: globalTheme.widgets.myBudgets.cardTextColor,
+                      }}
                     />
                   )}
                   {activeBudget.spent / activeBudget.budget.limit > 0.8 &&
                     activeBudget.spent / activeBudget.budget.limit < 1 && (
-                      <TextButtonPrimary
+                      <TextPrimary
                         label="Almost There"
-                        style={{ fontSize: 14, fontWeight: "bold" }}
+                        style={{
+                          fontSize: 14,
+                          fontWeight: "bold",
+                          color: globalTheme.widgets.myBudgets.cardTextColor,
+                        }}
                       />
                     )}
-                  {activeBudget.spent / activeBudget.budget.limit > 1 && (
-                    <TextButtonPrimary
+                  {activeBudget.spent / activeBudget.budget.limit >= 1 && (
+                    <TextPrimary
                       label="Over budget"
-                      style={{ fontSize: 14, fontWeight: "bold" }}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "bold",
+                        color: globalTheme.widgets.myBudgets.cardTextColor,
+                      }}
                     />
                   )}
 
@@ -201,25 +221,30 @@ export const MyBudgetsPreview = ({
                       height: 1,
                       width: "100%",
                       backgroundColor:
-                        globalTheme.button.buttonPrimary.textStyle
-                          .color,
+                        globalTheme.widgets.myBudgets.cardTextColor,
                     }}
                   />
-                  <TextButtonPrimary
+                  <TextPrimary
                     label={`${(
                       (activeBudget.spent / activeBudget.budget.limit) *
                       100
                     ).toFixed(0)}% spent`}
-                    style={{ fontSize: 14 }}
+                    style={{
+                      fontSize: 14,
+                      color: globalTheme.widgets.myBudgets.cardTextColor,
+                    }}
                   />
                   {activeBudget.spent / activeBudget.budget.limit < 1 && (
-                    <TextButtonPrimary
+                    <TextPrimary
                       label={`${(
                         ((activeBudget.budget.limit - activeBudget.spent) /
                           activeBudget.budget.limit) *
                         100
                       ).toFixed(0)}% left`}
-                      style={{ fontSize: 14 }}
+                      style={{
+                        fontSize: 14,
+                        color: globalTheme.widgets.myBudgets.cardTextColor,
+                      }}
                     />
                   )}
                 </View>
@@ -229,7 +254,7 @@ export const MyBudgetsPreview = ({
           {!activeBudget.budget && (
             <FontAwesome5Icon
               name="piggy-bank"
-              color="#FFC727"
+              color={globalTheme.widgets.myBudgets.cardIconColor}
               size={100}
               style={{
                 transform: [{ rotate: "-0deg" }, { scaleX: -1 }],

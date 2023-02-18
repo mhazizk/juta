@@ -22,6 +22,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -32,11 +33,8 @@ import { getDeviceId } from "../../utils";
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { globalTheme } = useGlobalTheme();
-  const { dispatchSortedTransactions } = useGlobalSortedTransactions();
-  const { dispatchCategories } = useGlobalCategories();
-  const { dispatchLogbooks } = useGlobalLogbooks();
-  const { dispatchBudgets } = useGlobalBudgets();
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
@@ -62,8 +60,9 @@ const MyAccountScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
+              {/* // TODO : Hold this feature */}
               {/* // TAG : Change Profile */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Change profile picture"
                 iconLeftName="person"
@@ -71,7 +70,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.myProfilePictureScreen)
                 }
-              />
+              /> */}
 
               {/* // TAG : Change Display Name */}
               <ListItem
@@ -154,26 +153,41 @@ const MyAccountScreen = ({ item, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.EXPORT_DATA
-                  )
+                  !getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    subscriptionLimit: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+                  })
                 }
                 iconPack="IonIcons"
                 iconLeftName="share-outline"
                 leftLabel="Export Data"
                 onPress={() => {
                   if (
-                    getSubscriptionLimit(
-                      userAccount.subscription.plan,
-                      SUBSCRIPTION_LIMIT.EXPORT_DATA
-                    )
+                    getSubscriptionLimit({
+                      globalSubscriptionFeatures,
+                      subscriptionPlan: userAccount.subscription.plan,
+                      subscriptionLimit: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+                    })
                   ) {
                     navigation.navigate(screenList.exportScreen);
                   } else {
                     Alert.alert(
-                      "Export Data",
-                      "Upgrade to premium to export your data"
+                      "Upgrade to premium",
+                      "Upgrade to premium to export your data",
+                      [
+                        {
+                          text: "Cancel",
+                          onPress: () => {},
+                          style: "cancel",
+                        },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
                     );
                   }
                 }}

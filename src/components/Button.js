@@ -35,25 +35,6 @@ export const ButtonPrimary = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonPrimary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -76,6 +57,61 @@ export const ButtonPrimary = ({
     </>
   );
 };
+/**
+ * Button Primary Icon
+ *
+ * @param label, props, onPress, condition, theme, width, style
+ * @returns
+ */
+export const ButtonPrimaryIcon = ({
+  label,
+  props,
+  onPress,
+  condition,
+  iconName = null,
+  iconPack = null,
+  theme,
+  width,
+  style = null,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...globalTheme.button.buttonPrimary.buttonStyle },
+            {
+              flexDirection: "row",
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...style },
+          ]}
+        >
+          {iconPack === "IonIcons" && (
+            <IonIcons
+              name={iconName}
+              size={20}
+              color={globalTheme.button.buttonPrimary.textStyle.color}
+              style={{
+                paddingRight: 8,
+              }}
+            />
+          )}
+          <TextButtonPrimary label={label} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
 
 // TAG : Button Primary Danger
 export const ButtonPrimaryDanger = ({
@@ -92,26 +128,6 @@ export const ButtonPrimaryDanger = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-            {
-              backgroundColor: appSettings.theme.style.colors.danger,
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonPrimary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -151,24 +167,6 @@ export const ButtonDisabled = ({
 
   return (
     <>
-      {/* <View
-        style={[
-          { ...appSettings.theme.style.button.buttonPrimary.buttonStyle },
-          {
-            backgroundColor: appSettings.theme.style.colors.secondary,
-            minWidth: 80,
-            minHeight: 48,
-            width: width || null,
-            paddingHorizontal: 16,
-            justifyContent: "center",
-            alignItems: "center",
-            // margin: 4
-          },
-          { ...(style || null) },
-        ]}
-      >
-        <TextButtonPrimary label={label} />
-      </View> */}
       <View
         style={[
           { ...globalTheme.button.buttonDisabled.buttonStyle },
@@ -190,6 +188,50 @@ export const ButtonDisabled = ({
   );
 };
 
+export const ButtonPrimaryIconDisabled = ({
+  label,
+  onPress,
+  iconName = null,
+  iconPack = null,
+  width,
+  style = null,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonDisabled.buttonStyle },
+          {
+            flexDirection: "row",
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...style },
+        ]}
+      >
+        {iconPack === "IonIcons" && (
+          <IonIcons
+            name={iconName}
+            size={20}
+            color={globalTheme.button.buttonDisabled.textStyle.color}
+            style={{
+              paddingRight: 8,
+            }}
+          />
+        )}
+        <TextButtonDisabled label={label} />
+      </View>
+    </>
+  );
+};
+
 // TAG : Button Secondary
 export const ButtonSecondary = ({
   label,
@@ -204,25 +246,6 @@ export const ButtonSecondary = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonSecondary.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextButtonSecondary label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[
@@ -246,6 +269,143 @@ export const ButtonSecondary = ({
   );
 };
 
+// TAG : Button Secondary Disabled
+export const ButtonSecondaryDisabled = ({
+  label,
+  props,
+  onPress,
+  condition,
+  width,
+  style,
+}) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonSecondaryDisabled.buttonStyle },
+          {
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...(style || null) },
+        ]}
+      >
+        <TextPrimary
+          label={label}
+          style={{
+            ...globalTheme.button.buttonSecondaryDisabled.textStyle,
+          }}
+        />
+      </View>
+    </>
+  );
+};
+
+// TAG : Button Secondary Icon Disabled
+export const ButtonSecondaryIconDisabled = ({
+  label,
+  iconName,
+  iconPack,
+  width,
+  style,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <View
+        style={[
+          { ...globalTheme.button.buttonSecondaryDisabled.buttonStyle },
+          {
+            flexDirection: "row",
+            minWidth: 80,
+            minHeight: 48,
+            width: width || null,
+            paddingHorizontal: 16,
+            justifyContent: "center",
+            alignItems: "center",
+            // margin: 4
+          },
+          { ...(style || null) },
+        ]}
+      >
+        {iconPack === "IonIcons" && (
+          <IonIcons
+            name={iconName}
+            size={20}
+            color={globalTheme.button.buttonSecondaryDisabled.textStyle.color}
+            style={{
+              paddingRight: 8,
+            }}
+          />
+        )}
+        <TextPrimary
+          label={label}
+          style={{
+            ...globalTheme.button.buttonSecondaryDisabled.textStyle,
+          }}
+        />
+      </View>
+    </>
+  );
+};
+
+// TAG : Button Secondary
+export const ButtonSecondaryIcon = ({
+  label,
+  props,
+  onPress,
+  iconName,
+  iconPack,
+  width,
+  style,
+}) => {
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...globalTheme.button.buttonSecondary.buttonStyle },
+            {
+              flexDirection: "row",
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: 16,
+              justifyContent: "center",
+              alignItems: "center",
+              // margin: 4
+            },
+            { ...(style || null) },
+          ]}
+        >
+          {iconPack === "IonIcons" && (
+            <IonIcons
+              name={iconName}
+              size={20}
+              color={globalTheme.button.buttonSecondary.textStyle.color}
+              style={{
+                paddingRight: 8,
+              }}
+            />
+          )}
+          <TextButtonSecondary label={label} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
 // TAG : Button Secondary Danger
 export const ButtonSecondaryDanger = ({
   label,
@@ -261,25 +421,6 @@ export const ButtonSecondaryDanger = ({
 
   return (
     <>
-      {/* <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            { ...appSettings.theme.style.button.buttonDanger.buttonStyle },
-            {
-              minWidth: 80,
-              minHeight: 48,
-              width: width || null,
-              paddingHorizontal: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              // margin: 4
-            },
-            { ...(style || null) },
-          ]}
-        >
-          <TextDanger label={label} />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={onPress}>
         <View
           style={[

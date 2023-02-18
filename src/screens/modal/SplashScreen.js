@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Text, View } from "react-native";
+import { Image } from "react-native";
 // import { setSortedTransactions } from "../../utils/FetchData";
 import {
   useGlobalAppSettings,
@@ -7,9 +7,11 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -32,7 +34,7 @@ import {
   getDeviceId,
   getDeviceOSName,
 } from "../../utils";
-import getDeviceName from "../../utils/GetDeviceName";
+import getDeviceName from "../../utils/getDeviceName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import initialRepeatedTransactions from "../../reducers/initial-state/initialRepeatedTransactions";
 import JutaLogo from "../../assets/icons/juta-app-icon.png";
@@ -41,8 +43,12 @@ import PERSIST_ACTIONS from "../../reducers/persist/persist.actions";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import Loading from "../../components/Loading";
 import Footer from "../../components/Footer";
-import initialGlobalCurrencyRates from "../../reducers/initial-state/initialGlobalCurrencyRate";
+import initialGlobalCurrencyRates from "../../reducers/initial-state/initialGlobalCurrencyRates";
 import userAccountModel from "../../model/userAccountModel";
+import initialGlobalLoan from "../../reducers/initial-state/initialGlobalLoan";
+import env from "../../config/env";
+import updateSubscriptionStatus from "../../api/revenue-cat/updateSubscriptionStatus";
+import getCustomerInfo from "../../api/revenue-cat/getCustomerInfo";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -53,6 +59,9 @@ const SplashScreen = ({ route, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
+  const { globalLoan, dispatchGlobalLoan } = useGlobalLoan();
+  const { globalSubscriptionFeatures, dispatchGlobalSubscriptionFeatures } =
+    useGlobalSubscriptionFeatures();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -236,6 +245,12 @@ const SplashScreen = ({ route, navigation }) => {
 
             globalCurrencyRates,
             dispatchGlobalCurrencyRates,
+
+            globalLoan,
+            dispatchGlobalLoan,
+
+            globalSubscriptionFeatures,
+            dispatchGlobalSubscriptionFeatures,
           });
 
           navigation.replace(targetScreen || screenList.bottomTabNavigator);
@@ -294,6 +309,18 @@ const SplashScreen = ({ route, navigation }) => {
       currUser.uid
     );
 
+    const loadLoanContactsFromFirestore = firestore.getOneDoc(
+      FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+      currUser.uid
+    );
+
+    const loadSubs = firestore.getOneDoc(
+      env.subscription.collectionName,
+      env.subscription.documentId
+    );
+
+    const loadRCCustomerInfo = getCustomerInfo(currUser.uid);
+
     Promise.all([
       deviceId,
       deviceName,
@@ -306,6 +333,9 @@ const SplashScreen = ({ route, navigation }) => {
       loadBudgetsFromFirestore,
       loadRepeatedTransactionsFromFirestore,
       loadCurrencyRatesFromFirestore,
+      loadLoanContactsFromFirestore,
+      loadSubs,
+      loadRCCustomerInfo,
     ])
       .then((data) => {
         const deviceIdData = data[0];
@@ -319,6 +349,9 @@ const SplashScreen = ({ route, navigation }) => {
         const budgetsData = data[8];
         const repeatedTransactionsData = data[9];
         const currencyRatesData = data[10];
+        const loanContactsData = data[11];
+        const subsData = data[12];
+        const rcCustomerInfoData = data[13];
         const otherDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
           (device) => device.device_id !== deviceIdData
         );
@@ -354,15 +387,34 @@ const SplashScreen = ({ route, navigation }) => {
           ],
         };
 
+        let updatedUserAccount;
+        let updatedAppSettings;
+
+        updateSubscriptionStatus({
+          globalSubscriptionFeatures: subsData,
+          rcCustomerInfo: rcCustomerInfoData,
+          appSettings: appSettingsData,
+          userAccount: loggedInUserAccount,
+          callback: ({ newUserAccount, newAppSettings }) => {
+            updatedUserAccount = newUserAccount;
+            updatedAppSettings = newAppSettings;
+          },
+        });
+
+        dispatchGlobalSubscriptionFeatures({
+          type: REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET,
+          payload: subsData,
+        });
+
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-          payload: userAccountData ? loggedInUserAccount : newAccount,
+          payload: userAccountData ? updatedUserAccount : newAccount,
         });
         setTimeout(async () => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.USERS,
             currUser.uid,
-            userAccountData ? loggedInUserAccount : newAccount
+            userAccountData ? updatedUserAccount : newAccount
           );
         }, 1);
 
@@ -370,7 +422,7 @@ const SplashScreen = ({ route, navigation }) => {
 
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-          payload: appSettingsData || {
+          payload: updatedAppSettings || {
             ...appSettingsFallback,
             uid: currUser.uid,
           },
@@ -393,8 +445,17 @@ const SplashScreen = ({ route, navigation }) => {
 
         const categories = {
           ...initialCategories,
-          categories: categoriesData || fallbackCategories,
+          categories: categoriesData || { ...fallbackCategories },
         };
+        if (!categoriesData) {
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+              currUser.uid,
+              fallbackCategories
+            );
+          }, 1);
+        }
 
         dispatchCategories({
           type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
@@ -505,6 +566,18 @@ const SplashScreen = ({ route, navigation }) => {
             );
           }
         );
+        dispatchGlobalLoan({
+          type: REDUCER_ACTIONS.LOAN.FORCE_SET,
+          payload: loanContactsData || {
+            ...initialGlobalLoan,
+            uid: currUser.uid,
+            _timestamps: {
+              ...initialGlobalLoan._timestamps,
+              created_by: currUser.uid,
+              updated_by: currUser.uid,
+            },
+          },
+        });
 
         setTimeout(() => {
           useFirestoreSubscriptions({
@@ -537,6 +610,12 @@ const SplashScreen = ({ route, navigation }) => {
 
             globalCurrencyRates,
             dispatchGlobalCurrencyRates,
+
+            globalLoan,
+            dispatchGlobalLoan,
+
+            globalSubscriptionFeatures,
+            dispatchGlobalSubscriptionFeatures,
           });
         }, 1000);
 

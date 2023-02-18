@@ -12,6 +12,7 @@ import { TextPrimary } from "../../../components/Text";
 import * as utils from "../../../utils";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -22,6 +23,7 @@ import firestore from "../../../api/firebase/firestore";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ListSection from "../../../components/List/ListSection";
 import { ListItem } from "../../../components/List";
+import { useIsFocused } from "@react-navigation/native";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -29,7 +31,11 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const [transactions, setTransactions] = useState([]);
+
+  const isFocused = useIsFocused();
 
   // TAG : useState Section //
 
@@ -50,8 +56,16 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : UseEffect Section //
 
   useEffect(() => {
-    setLogbook(route?.params?.logbook);
-  }, []);
+    if (isFocused) {
+      setLogbook(route?.params?.logbook);
+      setTransactions(
+        utils.getTransactionsByLogbookId({
+          groupSorted: sortedTransactions.groupSorted,
+          logbookId: route?.params?.logbook.logbook_id,
+        })
+      );
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     setLogbook(route?.params?.logbook);
@@ -92,27 +106,6 @@ const LogbookPreviewScren = ({ route, navigation }) => {
       );
     }
     return array.length;
-  };
-
-  const sumBalance = () => {
-    let sum = [];
-    const filtered = sortedTransactions.groupSorted.filter(
-      (logbook) => logbook.logbook_id === route?.params?.logbook.logbook_id
-    );
-    // console.log(filtered)
-    if (filtered.length) {
-      filtered[0].transactions.forEach((section) =>
-        section.data.forEach((transaction) => {
-          if (transaction.details.in_out === "expense") {
-            sum.push(-transaction.details.amount);
-          }
-          if (transaction.details.in_out === "income") {
-            sum.push(transaction.details.amount);
-          }
-        })
-      );
-    }
-    return sum.reduce((prev, curr) => prev + curr, 0);
   };
 
   const deleteLogbook = () => {
@@ -253,17 +246,23 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               }}
             />
 
-            {/* // TAG : Total balace */}
+            {/* // TODO : FIX THIS ASAP */}
+            {/* // TAG : Total balance */}
             <ListItem
               iconLeftName="cash"
               iconPack="IonIcons"
               leftLabel="Total balance"
               rightLabelColor={globalTheme.colors.foreground}
               rightLabel={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
+                logbook.logbook_currency.symbol
               } ${utils.getFormattedNumber({
-                value: sumBalance(),
-                currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
+                value: utils.getTotalAmountAndConvertToDefaultCurrency({
+                  transactions,
+                  logbooks: logbooks.logbooks,
+                  globalCurrencyRates,
+                  targetCurrencyName: logbook.logbook_currency.name,
+                }),
+                currencyIsoCode: logbook.logbook_currency.isoCode,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}

@@ -11,7 +11,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
-import updateSubscriptionStatus from "../api/revenue-cat/updateSubscriptionStatus";
+import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
 import { TextPrimary } from "../components/Text";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
@@ -30,6 +30,11 @@ import GroupPreviewScreen from "../features/groups/screens/GroupPreviewScreen";
 import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
 import NewGroupScreen from "../features/groups/screens/NewGroupScreen";
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
+import EditLoanContactScreen from "../features/loan/screens/EditLoanContactScreen";
+import LoanContactPreviewScreen from "../features/loan/screens/LoanContactPreviewScreen";
+import LoanContactSelectorScreen from "../features/loan/screens/LoanContactSelectorScreen";
+import MyLoansScreen from "../features/loan/screens/MyLoansScreen";
+import NewLoanContactScreen from "../features/loan/screens/NewLoanContactScreen";
 import EditLogbookScreen from "../features/logbook/screens/EditLogbookScreen";
 import LogbookPreviewScren from "../features/logbook/screens/LogbookPreviewScreen";
 import LogbookScreen from "../features/logbook/screens/LogbookScreen";
@@ -57,9 +62,11 @@ import {
   useGlobalBudgets,
   useGlobalCategories,
   useGlobalCurrencyRates,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
@@ -86,6 +93,7 @@ import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
 import DeveloperScreen from "../screens/user/DeveloperScreen";
 import UserScreen from "../screens/user/UserScreen";
 import BottomTab from "./BottomTab";
+import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
 const Stack = createStackNavigator();
 
@@ -97,11 +105,14 @@ const RootStack = () => {
     useGlobalSortedTransactions();
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
     useGlobalCurrencyRates();
+  const { globalLoan, dispatchGlobalLoan } = useGlobalLoan();
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
+  const { globalSubscriptionFeatures, dispatchGlobalSubscriptionFeatures } =
+    useGlobalSubscriptionFeatures();
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
@@ -119,6 +130,8 @@ const RootStack = () => {
   const badgeCounterRef = useRef(badgeCounter);
   const globalThemeRef = useRef(globalTheme);
   const globalCurrencyRatesRef = useRef(globalCurrencyRates);
+  const globalLoanRef = useRef(globalLoan);
+  const globalSubscriptionFeaturesRef = useRef(globalSubscriptionFeatures);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -126,31 +139,37 @@ const RootStack = () => {
       subscribeAll: true,
 
       appSettings: appSettingsRef,
-      dispatchAppSettings: dispatchAppSettings,
+      dispatchAppSettings,
 
       userAccount: userAccountRef,
-      dispatchUserAccount: dispatchUserAccount,
+      dispatchUserAccount,
 
       logbooks: logbooksRef,
-      dispatchLogbooks: dispatchLogbooks,
+      dispatchLogbooks,
 
       sortedTransactions: sortedTransactionsRef,
-      dispatchSortedTransactions: dispatchSortedTransactions,
+      dispatchSortedTransactions,
 
       categories: categoriesRef,
-      dispatchCategories: dispatchCategories,
+      dispatchCategories,
 
       repeatedTransactions: repeatedTransactionsRef,
-      dispatchRepeatedTransactions: dispatchRepeatedTransactions,
+      dispatchRepeatedTransactions,
 
       budgets: budgetsRef,
-      dispatchBudgets: dispatchBudgets,
+      dispatchBudgets,
 
       badgeCounter: badgeCounterRef,
-      dispatchBadgeCounter: dispatchBadgeCounter,
+      dispatchBadgeCounter,
 
       globalCurrencyRates: globalCurrencyRatesRef,
-      dispatchGlobalCurrencyRates: dispatchGlobalCurrencyRates,
+      dispatchGlobalCurrencyRates,
+
+      globalLoan: globalLoanRef,
+      dispatchGlobalLoan,
+
+      globalSubscriptionFeatures: globalSubscriptionFeaturesRef,
+      dispatchGlobalSubscriptionFeatures,
     });
   }, [
     userAccountRef,
@@ -162,6 +181,8 @@ const RootStack = () => {
     badgeCounterRef,
     globalThemeRef,
     globalCurrencyRatesRef,
+    globalLoanRef,
+    globalSubscriptionFeaturesRef,
   ]);
 
   // TAG : useEffect for state
@@ -172,14 +193,36 @@ const RootStack = () => {
         nextAppState === "active"
       ) {
         auth.currentUser?.reload().then(async () => {
-          updateSubscriptionStatus({
+          listenSubscriptionStatus({
+            globalSubscriptionFeatures,
             appSettings,
-            dispatchAppSettings,
             userAccount,
-            dispatchUserAccount,
+            callback: ({ newUserAccount, newAppSettings }) => {
+              dispatchAppSettings({
+                type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+                payload: newAppSettings,
+              });
+
+              dispatchUserAccount({
+                type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+                payload: newUserAccount,
+              });
+              setTimeout(async () => {
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.USERS,
+                  newUserAccount.uid,
+                  newUserAccount
+                );
+                await firestore.setData(
+                  FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                  newUserAccount.uid,
+                  newAppSettings
+                );
+              }, 5000);
+            },
           });
         });
-        console.log("App has come to the foreground!");
+        // console.log("App has come to the foreground!");
         // console.log(appState.current);
       }
       appState.current = nextAppState;
@@ -191,7 +234,9 @@ const RootStack = () => {
     };
   }, []);
   // Save Sorted Transactions to storage
-  useEffect(() => {}, [userAccount]);
+  useEffect(() => {
+    console.log(JSON.stringify({ globalSubscriptionFeatures }, null, 2));
+  }, [globalSubscriptionFeatures]);
 
   useEffect(() => {
     if (logbooks.logbooks) {
@@ -473,18 +518,16 @@ const RootStack = () => {
           title: "My Logbooks",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   // get logbook limit from subscription plan
-                  const logbookLimit = getSubscriptionLimit(
-                    userAccount.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.LOGBOOKS
-                  );
+                  const logbookLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                  });
 
                   // check if user has reached the limit
                   if (logbookLimit === logbooks.logbooks?.length) {
@@ -560,17 +603,7 @@ const RootStack = () => {
                     });
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -606,27 +639,13 @@ const RootStack = () => {
           title: "My Categories",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
-                  // console.log(navigation);
                   navigation.navigate(screenList.newCategoryScreen);
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -757,6 +776,100 @@ const RootStack = () => {
         name={screenList.userScreen}
         component={UserScreen}
       />
+      {/* // SECTION : Loans */}
+      {/* // TAG : My Loans Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Loans",
+          headerRight: () => {
+            return (
+              <HeaderButtonRight
+                textLabel="Add contact"
+                iconName="add"
+                onPress={() => {
+                  // get repeat limit from subscription plan
+                  const loanContactsLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOAN,
+                  });
+
+                  const currentLoanContacts = globalLoan.contacts.length;
+
+                  // check if user has reached the limit
+                  if (currentLoanContacts >= loanContactsLimit) {
+                    // show alert
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      `Upgrade your subscription to add new loan contacts.`,
+                      [
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
+                    );
+                  } else {
+                    navigation.navigate(screenList.newLoanContactScreen, {
+                      fromScreen: screenList.myLoansScreen,
+                      targetScreen: screenList.myLoansScreen,
+                    });
+                  }
+                }}
+              />
+            );
+          },
+        }}
+        name={screenList.myLoansScreen}
+        component={MyLoansScreen}
+      />
+      {/* // TAG : New Loan Contact Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "New Loan Contact" }}
+        name={screenList.newLoanContactScreen}
+        component={NewLoanContactScreen}
+      />
+      {/* // TAG : Edit Loan Contact Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "New Loan Contact" }}
+        name={screenList.editLoanContactScreen}
+        component={EditLoanContactScreen}
+      />
+      {/* // TAG : Loan Contact Preview Screen */}
+      <Stack.Screen
+        options={({ route }) => ({
+          ...showHeader,
+          title: "Loan Contact Preview",
+          // headerRight: () => {
+          //   return (
+          //     <HeaderButtonRight
+          //       textLabel="Edit"
+          //       iconName="create-outline"
+          //       onPress={() => {
+          //         navigation.navigate(screenList.editLoanContactScreen, {
+          //           contact: route.params.contact,
+          //           loanContactTransactionDetails:
+          //             route.params.loanContactTransactionDetails,
+          //           targetScreen: route.params.targetScreen,
+          //         });
+          //       }}
+          //     />
+          //   );
+          // },
+        })}
+        name={screenList.loanContactPreviewScreen}
+        component={LoanContactPreviewScreen}
+      />
+      {/* // TAG : Loan Contact Selector Screen */}
+      <Stack.Screen
+        options={{ ...showHeader, title: "Select Loan Contact" }}
+        name={screenList.loanContactSelectorScreen}
+        component={LoanContactSelectorScreen}
+      />
 
       {/* // SECTION : REPEATED TRANSACTIONS */}
       {/* // TAG : My Repeated Transactions Screen */}
@@ -766,18 +879,16 @@ const RootStack = () => {
           title: "My Repeated Transactions",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
-                  const repeatLimit = getSubscriptionLimit(
-                    userAccount.subscription?.plan,
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS
-                  );
+                  const repeatLimit = getSubscriptionLimit({
+                    globalSubscriptionFeatures,
+                    subscriptionLimit: userAccount.subscription?.plan,
+                    subscriptionPlan: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+                  });
 
                   // check if user has reached the limit
                   if (!repeatLimit) {
@@ -802,17 +913,7 @@ const RootStack = () => {
                     navigation.navigate(screenList.newTransactionDetailsScreen);
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
@@ -868,25 +969,26 @@ const RootStack = () => {
         component={PaywallScreen}
       />
 
+      {/* // TODO : Hold all this feature */}
       {/* // SECTION : FEATURE WISHLIST */}
       {/* // TAG : Feature Wishlist Screen */}
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           ...showHeader,
           title: "Feature Wishlist",
           headerRight: () => {
             return (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
                 onPress={() => {
                   if (
                     !getSubscriptionLimit(
-                      userAccount.subscription?.plan,
-                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST
+                      {globalSubscriptionFeatures,
+                        subscriptionPlan:
+                        userAccount.subscription?.plan,
+                        subscriptionLimit:
+                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
                     )
                   ) {
                     // show alert
@@ -907,29 +1009,19 @@ const RootStack = () => {
                     navigation.navigate(screenList.newFeatureWishlistScreen);
                   }
                 }}
-              >
-                <IonIcons
-                  name="add"
-                  size={20}
-                  color={globalTheme.colors.textHeader}
-                />
-                <TextPrimary
-                  label="Add"
-                  style={{ color: globalTheme.colors.textHeader }}
-                />
-              </TouchableOpacity>
+              />
             );
           },
         }}
         name={screenList.featureWishlistScreen}
         component={FeatureWishlistScreen}
-      />
+      /> */}
       {/* // TAG : New Wishlist Screen */}
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{ ...showHeader, title: "New Feature Wishlist" }}
         name={screenList.newFeatureWishlistScreen}
         component={NewFeatureWishlistScreen}
-      />
+      /> */}
 
       {/* // SECTION : TERMS OF SERVICE */}
       {/* // TAG : Terms of Service Screen */}

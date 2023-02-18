@@ -4,6 +4,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -25,7 +26,7 @@ const TotalExpenseWidget = ({
   const { appSettings } = useGlobalAppSettings();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { budgets } = useGlobalBudgets();
-  const { globalCurrencyRates } = useGlobalAppSettings();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { globalTheme } = useGlobalTheme();
   const { logbooks } = useGlobalLogbooks();
   const { categories } = useGlobalCategories();
@@ -47,38 +48,52 @@ const TotalExpenseWidget = ({
   });
   const isFocused = useIsFocused();
 
+  const findTransactionsToPlot = () => {
+    utils.findTransactionsToPlot({
+      expenseOnly: true,
+      groupSorted: sortedTransactions.groupSorted,
+      appSettings,
+      globalCurrencyRates,
+      logbooks,
+      categories,
+      budgets,
+      graph: graph,
+      activeBudget: activeBudget,
+      setGraph: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setGraph(item);
+      },
+      setActiveBudget: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setActiveBudget(item);
+      },
+      setShowGraph: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setShowGraph(item);
+      },
+    });
+
+    setWidgetLoading(false);
+  };
+
   const findTransactions = useMemo(() => {
     return () => {
-      // console.log("findTransactions");
-      utils.FindTransactionsToPlot({
-        expenseOnly: true,
-        groupSorted: sortedTransactions.groupSorted,
-        appSettings,
-        logbooks,
-        categories,
-        budgets,
-        graph: graph,
-        activeBudget: activeBudget,
-        setGraph: (item) => {
-          // TODO : try run in device and see the logs
-          // console.log(JSON.stringify(item, null, 2));
-          setGraph(item);
-        },
-        setActiveBudget: (item) => {
-          // console.log(JSON.stringify(item, null, 2));
-          setActiveBudget(item);
-        },
-        setShowGraph: (item) => {
-          // console.log(JSON.stringify(item, null, 2));
-          setShowGraph(item);
-        },
-      });
+      findTransactionsToPlot();
       setWidgetLoading(false);
     };
-    // }, [sortedTransactions, budgets, graph, activeBudget]);
-  }, [sortedTransactions, budgets, graph, activeBudget]);
+  }, [
+    sortedTransactions,
+    budgets,
+    graph.rangeDay,
+    activeBudget.spent,
+    globalCurrencyRates,
+    appSettings,
+  ]);
+
   useEffect(() => {
-    findTransactions();
+    setTimeout(() => {
+      findTransactionsToPlot();
+    }, 1);
   }, []);
 
   useEffect(() => {
@@ -86,7 +101,7 @@ const TotalExpenseWidget = ({
       setShowGraph(false);
       setWidgetLoading(true);
       setTimeout(() => {
-        findTransactions();
+        findTransactionsToPlot();
       }, 1);
     }
   }, [isFocused]);
@@ -121,7 +136,7 @@ const TotalExpenseWidget = ({
         <TouchableOpacity
           onPress={() => onPress()}
           style={{
-            shadowColor: globalTheme.colors.foreground,
+            shadowColor: globalTheme.widgets.totalExpense.cardBackgroundColor,
             shadowOffset: {
               width: 0,
               height: 2,
@@ -135,7 +150,8 @@ const TotalExpenseWidget = ({
         >
           <View
             style={{
-              backgroundColor: globalTheme.colors.cardBackground,
+              backgroundColor:
+                globalTheme.widgets.totalExpense.cardBackgroundColor,
               borderRadius: 16,
               height: cardHeight,
               // width: "100%",
@@ -159,7 +175,7 @@ const TotalExpenseWidget = ({
                   <TextPrimary
                     style={{
                       zIndex: 1,
-                      color: globalTheme.colors.cardText,
+                      color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
                       justifyContent: "flex-end",
                       paddingLeft: 16,
@@ -171,7 +187,7 @@ const TotalExpenseWidget = ({
                   <TextPrimary
                     style={{
                       zIndex: 1,
-                      color: globalTheme.colors.cardText,
+                      color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
                       paddingLeft: 16,
                       fontSize: 20,
@@ -213,7 +229,7 @@ const TotalExpenseWidget = ({
                     style={{
                       fontSize: 20,
                       fontStyle: "bold",
-                      color: globalTheme.colors.cardText,
+                      color: globalTheme.widgets.totalExpense.cardTextColor,
                       paddingBottom: 4,
                     }}
                     label="Total expense this week"
@@ -234,14 +250,14 @@ const TotalExpenseWidget = ({
                         style={{
                           fontSize: 24,
                           paddingRight: 4,
-                          color: globalTheme.colors.cardText,
+                          color: globalTheme.widgets.totalExpense.cardTextColor,
                         }}
                       />
                       <TextPrimary
                         style={{
                           fontSize: 32,
                           fontWeight: "bold",
-                          color: globalTheme.colors.cardText,
+                          color: globalTheme.widgets.totalExpense.cardTextColor,
                         }}
                         label={utils.getFormattedNumber({
                           value: activeBudget.spent,
@@ -271,14 +287,16 @@ const TotalExpenseWidget = ({
                           }
                           style={{
                             paddingRight: 4,
-                            color: globalTheme.colors.cardText,
+                            color:
+                              globalTheme.widgets.totalExpense.cardTextColor,
                           }}
                         />
                         <TextPrimary
                           style={{
                             fontSize: 24,
                             fontWeight: "bold",
-                            color: globalTheme.colors.cardText,
+                            color:
+                              globalTheme.widgets.totalExpense.cardTextColor,
                           }}
                           label={utils.getFormattedNumber({
                             value: utils.convertCurrency({
@@ -325,15 +343,15 @@ const TotalExpenseWidget = ({
                     symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                     rangeDay={graph?.rangeDay}
                     //  Graph Style
-                    successColor={globalTheme.colors.success}
-                    primaryColor={utils.HexToRgb({
-                      hex: globalTheme.colors.cardText,
+                    successColor={globalTheme.widgets.totalExpense.success}
+                    primaryColor={utils.hexToRgb({
+                      hex: globalTheme.widgets.totalExpense.cardTextColor,
                       opacity: 0.1,
                     })}
-                    overBudgetBarColor={globalTheme.colors.danger}
-                    warnBudgetBarColor={globalTheme.colors.warn}
-                    shadowBarColor={utils.HexToRgb({
-                      hex: globalTheme.colors.success,
+                    overBudgetBarColor={globalTheme.widgets.totalExpense.danger}
+                    warnBudgetBarColor={globalTheme.widgets.totalExpense.warn}
+                    shadowBarColor={utils.hexToRgb({
+                      hex: globalTheme.widgets.totalExpense.success,
                       opacity: 0,
                     })}
                     width={Dimensions.get("window").width - 32}

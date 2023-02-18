@@ -60,7 +60,6 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         utils.FindById.findCategoryById({
           id: route.params.repeatSection.repeat_category_id,
           categories: categories.categories,
-          transaction: route.params.repeatSection,
         })
       );
       const logbook = utils.FindById.findLogbookById({
@@ -101,7 +100,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-        defaultOption: break;
+      default:
+        break;
     }
   };
 
@@ -126,7 +126,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
         });
         break;
 
-        defaultOption: break;
+      default:
+        break;
     }
   };
 
@@ -312,13 +313,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 borderRadius: 8,
                 backgroundColor:
                   localRepeatedTransaction.repeat_in_out === "income"
-                    ? "#c3f4f4"
+                    ? globalTheme.list.incomeContainer.backgroundColor
                     : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction.repeat_in_out === "income"
-                    ? "#00695c"
+                    ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
@@ -389,13 +390,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 borderRadius: 8,
                 backgroundColor:
                   localRepeatedTransaction.repeat_in_out === "income"
-                    ? "#c3f4f4"
+                    ? globalTheme.list.incomeContainer.backgroundColor
                     : globalTheme.colors.secondary,
               }}
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction.repeat_in_out === "income"
-                    ? "#00695c"
+                    ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
@@ -455,7 +456,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 borderRadius: 8,
                 backgroundColor:
                   localRepeatedTransaction?.repeat_in_out === "income"
-                    ? "#c3f4f4"
+                    ? globalTheme.list.incomeContainer.backgroundColor
                     : globalTheme.colors.secondary,
               }}
               iconColorInContainer={
@@ -463,13 +464,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                   ? globalTheme.colors.foreground
                   : selectedCategory?.icon?.color
                 // transaction.details.in_out === "income"
-                //   ? "#00695c"
+                //   ? globalTheme.list.incomeContainer.color
                 //   : globalTheme.text.textPrimary.color
               }
               rightLabelStyle={{
                 color:
                   localRepeatedTransaction?.repeat_in_out === "income"
-                    ? "#00695c"
+                    ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color,
               }}
               onPress={() =>
@@ -862,7 +863,8 @@ const handleDelete = ({
         reducerUpdatedAt: Date.now(),
       };
       break;
-      defaultOption: break;
+    default:
+      break;
   }
   navigation.navigate(screenList.loadingScreen, opt);
 };
@@ -1021,7 +1023,8 @@ const handleSave = ({
 
           break;
 
-          defaultOption: break;
+        default:
+          break;
       }
 
       // //   TODO : continue this to loading screen and reducer
@@ -1067,9 +1070,9 @@ const handleSave = ({
         reducerUpdatedAt: Date.now(),
       });
 
-      // TODO : continue 'next' case
+    // TODO : continue 'next' case
 
-      defaultOption: console.log("masuk default");
+    default:
       break;
   }
 };

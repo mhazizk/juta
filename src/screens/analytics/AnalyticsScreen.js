@@ -12,6 +12,7 @@ import {
   useGlobalAppSettings,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -21,6 +22,7 @@ import * as utils from "../../utils";
 const AnalyticsScreen = () => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -68,15 +70,16 @@ const AnalyticsScreen = () => {
   //   };
   // }, [graph, budgets, activeBudget]);
   const findTransactions = () => {
-    utils.FindTransactionsToPlot({
+    utils.findTransactionsToPlot({
       expenseOnly: true,
-      appSettings: appSettings,
       groupSorted: sortedTransactions?.groupSorted,
-      logbooks: logbooks,
-      categories: categories,
-      budgets: budgets,
-      graph: graph,
-      activeBudget: activeBudget,
+      appSettings,
+      logbooks,
+      categories,
+      globalCurrencyRates,
+      budgets,
+      graph,
+      activeBudget,
       setGraph: (item) => setGraph(item),
       setActiveBudget: (item) => setActiveBudget(item),
       setShowGraph: (item) => setShowGraph(item),
@@ -85,7 +88,7 @@ const AnalyticsScreen = () => {
     // setComponentLoading(false);
   };
   const categorizeSpentList = () => {
-    utils.GetSpentList({
+    utils.getSpentList({
       expenseOnly: true,
       groupSorted: sortedTransactions.groupSorted,
       categories: categories.categories,
@@ -220,7 +223,7 @@ const AnalyticsScreen = () => {
                         }
                         style={{
                           fontSize: 24,
-                          paddingRight: 8
+                          paddingRight: 8,
                         }}
                       />
                       <TextPrimary
@@ -257,7 +260,7 @@ const AnalyticsScreen = () => {
                     primaryColor={globalTheme.colors.foreground}
                     overBudgetBarColor={globalTheme.colors.danger}
                     warnBudgetBarColor={globalTheme.colors.warn}
-                    shadowBarColor={utils.HexToRgb({
+                    shadowBarColor={utils.hexToRgb({
                       hex: globalTheme.colors.secondary,
                       opacity: 0.5,
                     })}
@@ -288,6 +291,9 @@ const AnalyticsScreen = () => {
               >
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
                     if (graph?.rangeDay !== 7) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 7 });
@@ -298,6 +304,10 @@ const AnalyticsScreen = () => {
                 />
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
+
                     if (graph?.rangeDay !== 30) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 30 });
@@ -308,6 +318,10 @@ const AnalyticsScreen = () => {
                 />
                 <ButtonSwitch
                   onPress={() => {
+                    if (componentLoading) {
+                      return;
+                    }
+
                     if (graph?.rangeDay !== 365) {
                       setShowGraph(false);
                       setGraph({ ...graph, rangeDay: 365 });

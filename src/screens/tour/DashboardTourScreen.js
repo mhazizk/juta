@@ -20,7 +20,7 @@ const DashboardTourScreen = ({ navigation }) => {
         style={{
           // zIndex: 1,
           height: "100%",
-          backgroundColor: utils.HexToRgb({
+          backgroundColor: utils.hexToRgb({
             hex: globalTheme.colors.background,
             opacity: 0.5,
           }),

@@ -6,7 +6,7 @@ import CoinsImg from "../../../../src/assets/img/coins.png";
 import { ButtonPrimary, ImgButton } from "../../../components/Button";
 import { CustomBarChart } from "../../../components/charts/CustomBarChart";
 import Loading from "../../../components/Loading";
-import { MyBudgetsPreview } from "../../../components/MyBudgetsPreview";
+import { MyBudgetsWidget } from "../components/MyBudgetsWidget";
 import RecentTransactions from "../../../components/RecentTransactions";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 import TotalExpenseWidget from "../components/TotalExpenseWidget";
@@ -24,6 +24,7 @@ import * as utils from "../../../utils";
 import * as Constants from "expo-constants";
 import DashboardHeader from "../components/DashboardHeader";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import MyLoansWidget from "../components/MyLoansWidget";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -98,7 +99,7 @@ const DashboardScreen = ({ navigation }) => {
               }}
             >
               {/* // TAG : My Logbooks Widget */}
-              {appSettings.dashboardSettings.showMyLogbooksWidget && (
+              {/* {appSettings.dashboardSettings.showMyLogbooksWidget && (
                 <ImgButton
                   label="My Logbooks"
                   textColor={globalTheme.colors.black}
@@ -113,10 +114,18 @@ const DashboardScreen = ({ navigation }) => {
                     navigation.navigate(screenList.myLogbooksScreen)
                   }
                 />
-              )}
+              )} */}
+              {/* // TAG : My Loans widget */}
+              <MyLoansWidget
+                marginRight={8}
+                onPress={() => {
+                  navigation.navigate(screenList.myLoansScreen);
+                }}
+              />
+
               {/* // TAG : My Budgets Widget */}
               {appSettings.dashboardSettings.showMyBudgetsWidget && (
-                <MyBudgetsPreview
+                <MyBudgetsWidget
                   isFocused={isFocus}
                   boxMarginLeft={8}
                   boxWidth={screenWidth / 2 - 24}
