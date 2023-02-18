@@ -110,6 +110,18 @@ export const colorOfTheYear2023 = {
         fontSize: 16,
       },
     },
+    buttonSecondaryDisabled: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.white[200],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.white[200],
+        fontSize: 16,
+      },
+    },
     buttonDisabled: {
       buttonStyle: {
         backgroundColor: palette.white[200],

@@ -107,6 +107,18 @@ export const darkMonoTheme = {
         fontSize: 16,
       },
     },
+    buttonSecondaryDisabled: {
+      buttonStyle: {
+        backgroundColor: "transparent",
+        borderColor: palette.black[300],
+        borderRadius: 16,
+        borderWidth: 1,
+      },
+      textStyle: {
+        color: palette.black[300],
+        fontSize: 16,
+      },
+    },
     buttonDisabled: {
       buttonStyle: {
         backgroundColor: palette.black[300],
