@@ -85,7 +85,7 @@ Coming soon at juta official web
   - Add Loan contacts feature
   - Add My Loans widget in dashboard screen
   - Add new category for My Loans
-  - Add logbook currency converter
+  - Add support for logbook currency converter
   - Add feedback channel
 - Bugfixes:
   - Fix budget screen
