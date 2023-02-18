@@ -3,33 +3,36 @@ const patchedManyTransactionsHandler = (state, action) => {
   const reducerUpdatedAt = action.payload.reducerUpdatedAt;
   let customPatchDate = null;
   let customPrevDate = null;
-  let groupSortedHasBeenReplaced = null || state.groupSorted;
-
-  // STEP : 1. compare previous logbook id with new logbook id
-  // find the previous logbook id
+  let groupSortedHasBeenReplaced = null;
   let foundPrevLogbook = null;
-  groupSortedHasBeenReplaced.forEach((logbook) => {
-    logbook.transactions.forEach((section) => {
-      section.data.forEach((transaction) => {
-        if (
-          transaction.transaction_id ===
-          newPatchedTransactions[0].transaction_id
-        ) {
-          foundPrevLogbook = logbook;
-        }
-      });
-    });
-  });
-
-  // compare the previous logbook id with the new logbook id
-  let prevLogbookId = foundPrevLogbook?.logbook_id;
-  let isLogbookIdSame = false;
-  if (prevLogbookId) {
-    isLogbookIdSame = prevLogbookId === newPatchedTransactions[0].logbook_id;
-  }
 
   // STEP : 2. loop patch the new transactions
   newPatchedTransactions.forEach((newPatchedTransaction) => {
+    if (!groupSortedHasBeenReplaced) {
+      groupSortedHasBeenReplaced = state.groupSorted;
+    }
+    // STEP : 1. compare previous logbook id with new logbook id
+    // find the previous logbook id
+    groupSortedHasBeenReplaced.forEach((logbook) => {
+      logbook.transactions.forEach((section) => {
+        section.data.forEach((transaction) => {
+          if (
+            transaction.transaction_id ===
+            newPatchedTransactions[0].transaction_id
+          ) {
+            foundPrevLogbook = logbook;
+          }
+        });
+      });
+    });
+
+    // compare the previous logbook id with the new logbook id
+    let prevLogbookId = foundPrevLogbook?.logbook_id;
+    let isLogbookIdSame = false;
+    if (prevLogbookId) {
+      isLogbookIdSame = prevLogbookId === newPatchedTransactions[0].logbook_id;
+    }
+
     console.log("line 33");
     // STEP : 3. create new custom date
     customPatchDate = `${new Date(
@@ -339,6 +342,7 @@ const patchedManyTransactionsHandler = (state, action) => {
         ];
       }
     }
+    console.log(JSON.stringify({ groupSortedHasBeenReplaced }, null, 2));
   });
 
   return {
