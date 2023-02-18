@@ -91,8 +91,8 @@ export const ListItem = ({
           >
             <View
               style={{
-              flex:1,
-            }}
+                flex: 1,
+              }}
             >
               {leftLabel && !disabled && (
                 <TextPrimary
@@ -111,7 +111,7 @@ export const ListItem = ({
                 <TextSecondary
                   label={thirdLabel}
                   style={{
-                    fontSize: 14
+                    fontSize: 14,
                   }}
                 />
               )}
@@ -310,7 +310,7 @@ export const ListTable = ({
               }}
             >
               {(typeof middleLabel === "string" ||
-                typeof rightLabel === "number" ||
+                typeof middleLabel === "number" ||
                 titleMode) && (
                 <TextPrimary
                   label={middleLabel}
@@ -731,7 +731,7 @@ export const SearchResultListItem = ({
                         style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <TextSecondary
-                          label={utils.RelativeDate({
+                          label={utils.relativeDate({
                             dateToCheck: transactionDate,
                             locale: appSettings.locale,
                             currentDate: Date.now(),
