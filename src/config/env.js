@@ -24,6 +24,8 @@ import {
   RAPID_API_KEY,
   RAPID_API_HOST,
   RAPID_API_URL,
+  COLLECTION_NAME,
+  DOCUMENT_ID,
 } from "@env";
 
 const devEnv = {
@@ -51,6 +53,10 @@ const devEnv = {
     host: RAPID_API_HOST,
     url: RAPID_API_URL,
   },
+  subscription: {
+    collectionName: COLLECTION_NAME,
+    documentId: DOCUMENT_ID,
+  },
 };
 
 const prodEnv = {
@@ -77,6 +83,10 @@ const prodEnv = {
     apiKey: RAPID_API_KEY,
     host: RAPID_API_HOST,
     url: RAPID_API_URL,
+  },
+  subscription: {
+    collectionName: COLLECTION_NAME,
+    documentId: DOCUMENT_ID,
   },
 };
 
