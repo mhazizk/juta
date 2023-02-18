@@ -30,6 +30,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
+  useGlobalSubscriptionFeatures,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
@@ -51,6 +52,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   const { globalTheme } = useGlobalTheme();
   const { globalLoan } = useGlobalLoan();
   const { userAccount } = useGlobalUserAccount();
+  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -818,10 +820,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             <ListItem
               pressable
               disabled={
-                !getSubscriptionLimit(
-                  userAccount.subscription.plan,
-                  SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
-                )
+                !getSubscriptionLimit({
+                globalSubscriptionFeatures,
+                subscriptionPlan: userAccount.subscription.plan,
+                subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+                })
               }
               leftLabel="Attachment Images"
               iconLeftName="image"
@@ -834,10 +837,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               iconRightName="add"
               onPress={async () => {
                 if (
-                  getSubscriptionLimit(
-                    userAccount.subscription.plan,
-                    SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES
-                  )
+                getSubscriptionLimit({
+                globalSubscriptionFeatures,
+                subscriptionPlan: userAccount.subscription.plan,
+                subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+                })
                 ) {
                   // No permissions request is necessary for launching the image library
                   let result = await ImagePicker.launchImageLibraryAsync({
