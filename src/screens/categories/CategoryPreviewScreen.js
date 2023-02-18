@@ -14,6 +14,7 @@ import {
   ButtonDisabled,
   ButtonSecondary,
   ButtonSecondaryDanger,
+  ButtonSecondaryDisabled,
 } from "../../components/Button";
 import { TextPrimary } from "../../components/Text";
 import * as utils from "../../utils";
@@ -223,15 +224,20 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
           >
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
-              <ButtonSecondary
-                label="Edit"
-                onPress={() =>
-                  navigation.navigate(screenList.editCategoryScreen, {
-                    category: category,
-                    categoryType: categoryType,
-                  })
-                }
-              />
+              {!category.is_deletable && (
+                <ButtonSecondaryDisabled label="Edit" />
+              )}
+              {category.is_deletable && (
+                <ButtonSecondary
+                  label="Edit"
+                  onPress={() =>
+                    navigation.navigate(screenList.editCategoryScreen, {
+                      category: category,
+                      categoryType: categoryType,
+                    })
+                  }
+                />
+              )}
             </View>
 
             {/* // TAG : Delete Button */}
