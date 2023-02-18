@@ -87,7 +87,6 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
       utils.FindById.findCategoryById({
         id: transaction?.details.category_id,
         categories: categories.categories,
-        transaction: transaction,
       })
     );
     // findLogbookNamebyId();
@@ -107,7 +106,60 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
 
   useEffect(() => {}, [categories]);
 
-  // TAG : Function Section //
+  const handleDeleteTransaction = () => {
+    setTimeout(async () => {
+      await firestore.deleteData(
+        FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+        transaction.transaction_id
+      );
+      if (transaction.details.attachment_URL.length > 0) {
+        transaction.details.attachment_URL.forEach(async (url) => {
+          await deleteAttachmentImage(url);
+        });
+      }
+    }, 5000);
+
+    // check if selected contact will be paid off by this transaction
+    const isPaid = utils.findTransactionsByIds({
+      transactionIds: utils.findLoanContactByTransactionId({
+        transactionId: transaction.transaction_id,
+        globalLoan,
+      })?.transactions_id,
+      groupSorted: sortedTransactions.groupSorted,
+      callback: (transactionDetailsList) => {
+        return utils.checkIfLoanContactWillBePaid({
+          deleteTransaction: transaction,
+          transactionDetailsList,
+          globalCurrencyRates,
+          groupSorted: sortedTransactions.groupSorted,
+          logbooks: logbooks.logbooks,
+          targetCurrencyName: selectedLogbook?.logbook_currency.name,
+        });
+      },
+    });
+
+    const isFromLoanContact =
+      transaction.details.category_id.toLowerCase().includes("debt") ||
+      transaction.details.category_id.toLowerCase().includes("loan");
+
+    navigation.navigate(screenList.loadingScreen, {
+      isPaid,
+      label: "Deleting Transaction...",
+      loadingType: LOADING_TYPES.TRANSACTIONS.DELETE_ONE,
+      deleteTransaction: transaction,
+      logbookToOpen: selectedLogbook,
+      reducerUpdatedAt: Date.now(),
+      targetScreen: screenList.bottomTabNavigator,
+      deleteTransactionFromLoanContact: isFromLoanContact
+        ? transaction.transaction_id
+        : null,
+      newGlobalLoanTimestamps: {
+        ...globalLoan._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    });
+  };
 
   return (
     <>
@@ -307,7 +359,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     : "Lender name"
                 }
                 rightLabel={utils.upperCaseThisFirstLetter(
-                  globalLoan.contacts.find(
+                  globalLoan?.contacts?.find(
                     (contact) =>
                       contact.contact_uid ===
                         transaction.details.loan_details.to_uid ||
@@ -412,14 +464,16 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                     selectedLogbook: route?.params?.selectedLogbook,
                     selectedCategory: selectedCategory,
                     selectedRepeatSection: selectedRepeatSection,
-                    selectedLoanContact: globalLoan.contacts.find((contact) => {
-                      return (
-                        contact.contact_uid ===
-                          transaction.details.loan_details.to_uid ||
-                        contact.contact_uid ===
-                          transaction.details.loan_details.from_uid
-                      );
-                    }),
+                    selectedLoanContact: globalLoan?.contacts.find(
+                      (contact) => {
+                        return (
+                          contact.contact_uid ===
+                            transaction.details.loan_details.to_uid ||
+                          contact.contact_uid ===
+                            transaction.details.loan_details.from_uid
+                        );
+                      }
+                    ),
                   })
                 }
               />
@@ -444,35 +498,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                       {
                         text: "Yes",
                         onPress: () => {
-                          setTimeout(async () => {
-                            await firestore.deleteData(
-                              FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                              transaction.transaction_id
-                            );
-                            if (transaction.details.attachment_URL.length > 0) {
-                              transaction.details.attachment_URL.forEach(
-                                async (url) => {
-                                  await deleteAttachmentImage(url);
-                                }
-                              );
-                            }
-                          }, 5000);
-                          navigation.navigate(screenList.loadingScreen, {
-                            label: "Deleting Transaction...",
-                            loadingType: LOADING_TYPES.TRANSACTIONS.DELETE_ONE,
-                            deleteTransaction: transaction,
-                            logbookToOpen: selectedLogbook,
-                            reducerUpdatedAt: Date.now(),
-                            targetScreen: screenList.bottomTabNavigator,
-                            deleteTransactionFromLoanContact: null,
-                            // transaction.transaction_id,
-                            newGlobalLoanTimestamps: null,
-                            // {
-                            //   ...globalLoan._timestamps,
-                            //   updated_at: Date.now(),
-                            //   updated_by: userAccount.uid,
-                            // },
-                          });
+                          handleDeleteTransaction();
                         },
                       },
                     ],
