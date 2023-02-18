@@ -1,50 +1,66 @@
 import Purchases from "react-native-purchases";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
-import firestore from "../firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../firebase/firestoreCollectionNames";
 import configureRevenueCat from "./configureRevenueCat";
+import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
 
+/**
+ * Update subscription status from RevenueCat
+ *
+ * @param globalSubscriptionFeatures - Global subscription features state
+ * @param appSettings - App settings state
+ * @param userAccount - User account state
+ * @param callback - Callback function
+ * @returns
+ */
 const updateSubscriptionStatus = ({
+  globalSubscriptionFeatures,
+  rcCustomerInfo,
   appSettings,
-  dispatchAppSettings,
   userAccount,
-  dispatchUserAccount,
+  callback,
 }) => {
   configureRevenueCat(userAccount?.uid);
-  return Purchases.addCustomerInfoUpdateListener(async (customerInfo) => {
-    const existingActiveSubscriptionPlan = userAccount?.subscription.plan;
-    const newActiveSubscriptionPlan =
-      customerInfo?.activeSubscriptions.length > 0 ? "premium" : "free";
+  const existingActiveSubscriptionPlan = userAccount?.subscription.plan;
+  const newActiveSubscriptionPlan =
+    rcCustomerInfo?.activeSubscriptions.length > 0 ? "premium" : "free";
 
-    const isBothActiveSubscriptionPlanSame =
-      existingActiveSubscriptionPlan === newActiveSubscriptionPlan;
+  const isBothActiveSubscriptionPlanSame =
+    existingActiveSubscriptionPlan === newActiveSubscriptionPlan;
 
-    if (!isBothActiveSubscriptionPlanSame) {
-      const modifiedUserAccount = {
-        ...userAccount,
-        subscription: {
-          ...userAccount.subscription,
-          plan: newActiveSubscriptionPlan,
-        },
-        _timestamps: {
-          ...userAccount._timestamps,
-          updated_at: Date.now(),
-          updated_by: userAccount.uid,
-        },
-      };
-      dispatchUserAccount({
-        type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-        payload: modifiedUserAccount,
-      });
-      setTimeout(async () => {
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.USERS,
-          userAccount.uid,
-          modifiedUserAccount
-        );
-      }, 5000);
-    }
-  });
+  if (!isBothActiveSubscriptionPlanSame) {
+    const modifiedUserAccount = {
+      ...userAccount,
+      subscription: {
+        ...userAccount?.subscription,
+        plan: newActiveSubscriptionPlan,
+      },
+      _timestamps: {
+        ...userAccount?._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount?.uid,
+      },
+    };
+    const modifiedAppSettings = {
+      ...appSettings,
+      logbookSettings: {
+        ...appSettings?.logbookSettings,
+        showSecondaryCurrency: getSubscriptionLimit({
+          globalSubscriptionFeatures,
+          subscriptionPlan: userAccount?.subscription.plan,
+          subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+        }),
+      },
+    };
+    callback({
+      newUserAccount: modifiedUserAccount,
+      newAppSettings: modifiedAppSettings,
+    });
+  } else {
+    callback({
+      newUserAccount: userAccount,
+      newAppSettingsgs: appSettings,
+    });
+  }
 };
 
 export default updateSubscriptionStatus;
