@@ -9,6 +9,7 @@ import globalLoanReducer from "./globalLoanReducer";
 import globalLogbooksReducer from "./globalLogbooksReducer";
 import globalRepeatedTransactionsReducer from "./globalRepeatedTransactionsReducer";
 import globalSortedTransactionsReducer from "./globalSortedTransactionsReducer";
+import globalSubscriptionFeaturesReducer from "./globalSubscriptionFeaturesReducer";
 import globalThemeReducer from "./globalThemeReducer";
 import globalUserAccountReducer from "./globalUserAccountReducer";
 import initialAppSettings from "./initial-state/initialAppSettings";
@@ -18,6 +19,7 @@ import initialCategories from "./initial-state/initialCategories";
 import initialFeatureWishlist from "./initial-state/initialFeatureWishlist";
 import initialGlobalCurrencyRates from "./initial-state/initialGlobalCurrencyRates";
 import initialGlobalLoan from "./initial-state/initialGlobalLoan";
+import initialGlobalSubscriptionFeatures from "./initial-state/initialGlobalSubscriptionFeatures";
 import initialGlobalTheme from "./initial-state/initialGlobalTheme";
 import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
@@ -40,6 +42,7 @@ const globalThemeContext = createContext();
 const globalFeatureWishlistContext = createContext();
 const globalCurrencyRatesContext = createContext();
 const globalLoanContext = createContext();
+const globalSubscriptionFeaturesContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -102,6 +105,10 @@ export const useGlobalLoan = () => {
   return useContext(globalLoanContext);
 };
 
+export const useGlobalSubscriptionFeatures = () => {
+  return useContext(globalSubscriptionFeaturesContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [userAccount, dispatchUserAccount] = useReducer(
@@ -157,6 +164,12 @@ export const GlobalStateProvider = ({ children }) => {
     globalLoanReducer,
     initialGlobalLoan
   );
+
+  const [globalSubscriptionFeatures, dispatchGlobalSubscriptionFeatures] =
+    useReducer(
+      globalSubscriptionFeaturesReducer,
+      initialGlobalSubscriptionFeatures
+    );
 
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
 
@@ -234,7 +247,14 @@ export const GlobalStateProvider = ({ children }) => {
                                 dispatchGlobalLoan,
                               }}
                             >
-                              {children}
+                              <globalSubscriptionFeaturesContext.Provider
+                                value={{
+                                  globalSubscriptionFeatures,
+                                  dispatchGlobalSubscriptionFeatures,
+                                }}
+                              >
+                                {children}
+                              </globalSubscriptionFeaturesContext.Provider>
                             </globalLoanContext.Provider>
                           </globalCurrencyRatesContext.Provider>
                         </globalFeatureWishlistContext.Provider>
