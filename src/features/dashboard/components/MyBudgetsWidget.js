@@ -6,11 +6,14 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalBudgets,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
 import { RoundProgressBar } from "../../../components/charts/RoundProgressBar";
+import * as utils from "../../../utils";
 
 export const MyBudgetsWidget = ({
   label,
@@ -32,7 +35,9 @@ export const MyBudgetsWidget = ({
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  const { budgets, dispatchBudgets } = useGlobalBudgets();
+  const { budgets } = useGlobalBudgets();
+  const { logbooks } = useGlobalLogbooks();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const [activeBudget, setActiveBudget] = useState({
     budget: null,
     spent: null,
@@ -59,7 +64,6 @@ export const MyBudgetsWidget = ({
   const findActiveBudget = () => {
     let spentList = [];
     let transactionList = [];
-    let spent = 0;
 
     if (budgets.budgets?.length) {
       const activeBudget = budgets.budgets.find(
@@ -86,7 +90,13 @@ export const MyBudgetsWidget = ({
         );
       }
 
-      spent = spentList.reduce((a, b) => a + b, 0);
+      const spent = utils.getTotalAmountAndConvertToDefaultCurrency({
+        invertResult: true,
+        transactions: transactionList,
+        logbooks: logbooks.logbooks,
+        globalCurrencyRates,
+        targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+      });
       transactionList.sort((a, b) => b.details.date - a.details.date);
       return setActiveBudget({ budget: activeBudget, spent, transactionList });
     }
