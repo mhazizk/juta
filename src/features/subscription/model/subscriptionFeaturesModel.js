@@ -30,7 +30,7 @@ const subscriptionFeaturesModel = [
     identifier: SUBSCRIPTION_LIMIT.LOAN,
     name: "Loan contacts",
     iconName: "cash",
-    free: 1,
+    free: 5,
     premium: 100,
   },
   {
