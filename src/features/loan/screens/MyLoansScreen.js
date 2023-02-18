@@ -152,13 +152,14 @@ const MyLoansScreen = ({ navigation }) => {
                                   } ${utils.getFormattedNumber({
                                     negativeSymbol:
                                       appSettings.logbookSettings
-                                        .defaultCurrency.negativeSymbol,
+                                        .negativeCurrencySymbol,
                                     currencyIsoCode:
                                       appSettings.logbookSettings
                                         .defaultCurrency.isoCode,
                                     value:
                                       utils.getTotalAmountAndConvertToDefaultCurrency(
                                         {
+                                          invertResult: true,
                                           transactions,
                                           logbooks: logbooks.logbooks,
                                           globalCurrencyRates,
