@@ -30,7 +30,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
     contact_uid: uuid.v4(),
     contact_type: "friend",
     payment_due_date: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    is_paid: false,
+    is_paid: true,
     transactions_id: [],
   });
   const inputRef = useRef(null);
