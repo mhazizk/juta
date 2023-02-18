@@ -5,6 +5,7 @@ import { TextInput, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
@@ -20,6 +21,8 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
+import CheckList from "../../../components/CheckList";
+import LOADING_TYPES from "../../../screens/modal/loading.type";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -29,28 +32,25 @@ const EditLogbookScreen = ({ route, navigation }) => {
     useGlobalSortedTransactions();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
 
   // TAG : useState Section //
 
-  // Transaction State
+  const [originalLogbook, setOriginalLogbook] = useState(null);
   const [logbook, setLogbook] = useState(null);
-
-  // Selected Logbook State
   const [selectedCurrency, setSelectedCurrency] = useState(null);
-
   const [logbookToOpen, setLogbookToOpen] = useState(null);
-
-  // logbook_id : null
-  // logbook_name: null
-
-  // Selected Category State
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [isConvertCurrency, setIsConvertCurrency] = useState(false);
 
   // TAG : UseEffect Section //
 
   useEffect(() => {
     setLogbook(route?.params?.logbook);
+    setOriginalLogbook(route?.params?.logbook);
+    getTransactions();
   }, []);
 
   useEffect(() => {
@@ -80,6 +80,20 @@ const EditLogbookScreen = ({ route, navigation }) => {
 
   // TAG : Function Section //
 
+  const getTransactions = () => {
+    let array = [];
+    sortedTransactions.groupSorted.forEach((logbook) => {
+      logbook.transactions.forEach((section) => {
+        section.data.forEach((transaction) => {
+          if (transaction.logbook_id === route?.params?.logbook.logbook_id) {
+            array.push(transaction);
+          }
+        });
+      });
+    });
+    setTransactions(array);
+  };
+
   const countTransactions = () => {
     let array = [];
     const filtered = sortedTransactions.groupSorted.filter(
@@ -95,25 +109,66 @@ const EditLogbookScreen = ({ route, navigation }) => {
     return array.length;
   };
 
-  const sumBalance = () => {
-    let sum = [];
-    const filtered = sortedTransactions.groupSorted.filter(
-      (logbook) => logbook.logbook_id === route?.params?.logbook.logbook_id
-    );
-    // console.log(filtered)
-    if (filtered.length) {
-      filtered[0].transactions.forEach((section) =>
-        section.data.forEach((transaction) => {
-          if (transaction.details.in_out === "expense") {
-            sum.push(-transaction.details.amount);
-          }
-          if (transaction.details.in_out === "income") {
-            sum.push(transaction.details.amount);
-          }
-        })
-      );
+  const handleSave = () => {
+    const finalLogbook = {
+      ...logbook,
+      _timestamps: {
+        ...logbook._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount.uid,
+      },
+    };
+
+    if (isConvertCurrency) {
+      // Convert all currency in this logbook
+      const allTransactions = [];
+      sortedTransactions.groupSorted.forEach((logbook) => {
+        if (logbook.logbook_id === finalLogbook.logbook_id) {
+          logbook.transactions.forEach((section) => {
+            section.data.forEach((transaction) => {
+              allTransactions.push(transaction);
+            });
+          });
+        }
+      });
+
+      const convertedTransactions = allTransactions.map((transaction) => {
+        return {
+          ...transaction,
+          details: {
+            ...transaction.details,
+            amount: utils.convertCurrency({
+              amount: transaction.details.amount,
+              from: originalLogbook.logbook_currency.name,
+              target: finalLogbook.logbook_currency.name,
+              globalCurrencyRates,
+            }),
+          },
+          _timestamps: {
+            ...transaction._timestamps,
+            updated_at: Date.now(),
+            updated_by: userAccount.uid,
+          },
+        };
+      });
+
+      navigation.navigate(screenList.loadingScreen, {
+        label: "Saving Logbook...",
+        loadingType: LOADING_TYPES.LOGBOOKS.PATCH_ONE,
+        logbookToOpen: logbookToOpen,
+        patchLogbook: finalLogbook,
+        patchedTransactions: convertedTransactions,
+        reducerUpdatedAt: Date.now(),
+      });
+    } else {
+      navigation.navigate(screenList.loadingScreen, {
+        label: "Saving Logbook...",
+        loadingType: LOADING_TYPES.LOGBOOKS.PATCH_ONE,
+        logbookToOpen: logbookToOpen,
+        patchLogbook: finalLogbook,
+        reducerUpdatedAt: Date.now(),
+      });
     }
-    return sum.reduce((prev, curr) => prev + curr, 0);
   };
 
   return (
@@ -232,7 +287,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               }}
             />
 
-            {/* // TAG : Total balace */}
+            {/* // TAG : Total balance */}
             <ListItem
               iconLeftName="cash"
               iconPack="IonIcons"
@@ -240,7 +295,12 @@ const EditLogbookScreen = ({ route, navigation }) => {
               rightLabel={`${
                 logbook.logbook_currency.symbol
               } ${utils.getFormattedNumber({
-                value: sumBalance(),
+                value: utils.getTotalAmountAndConvertToDefaultCurrency({
+                  transactions,
+                  logbooks: logbooks.logbooks,
+                  globalCurrencyRates,
+                  targetCurrencyName: logbook.logbook_currency.name,
+                }),
                 currencyIsoCode: logbook.logbook_currency.isoCode,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
@@ -252,6 +312,20 @@ const EditLogbookScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               leftLabel="Total transactions"
               rightLabel={(countTransactions() || "No") + " Transactions"}
+            />
+          </ListSection>
+
+          <ListSection>
+            {/* // TAG : Show Transaction Time */}
+            <CheckList
+              pressable
+              primaryLabel="Convert all existing transactions"
+              secondaryLabel="Convert all existing transactions in this logbook to the new currency"
+              item={true}
+              selected={isConvertCurrency}
+              onPress={() => {
+                setIsConvertCurrency(!isConvertCurrency);
+              }}
             />
           </ListSection>
 
@@ -279,32 +353,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               <ButtonPrimary
                 label="Save"
                 onPress={() => {
-                  const finalLogbook = {
-                    ...logbook,
-                    _timestamps: {
-                      ...logbook._timestamps,
-                      updated_at: Date.now(),
-                      updated_by: userAccount.uid,
-                    },
-                  };
-
-                  setTimeout(async () => {
-                    await firestore.setData(
-                      FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                      finalLogbook.logbook_id,
-                      finalLogbook
-                    );
-                  }, 5000);
-
-                  navigation.navigate(screenList.loadingScreen, {
-                    label: "Saving Logbook ...",
-                    loadingType: "patchLogbook",
-                    logbookToOpen: logbookToOpen,
-                    patchLogbook: finalLogbook,
-                    reducerUpdatedAt: Date.now(),
-                    // initialLogbookPatchCounter: logbooks.logbookPatchCounter,
-                    // initialSortedLogbookPatchCounter: sortedTransactions.sortedLogbookPatchCounter
-                  });
+                  handleSave();
                 }}
               />
             </View>
