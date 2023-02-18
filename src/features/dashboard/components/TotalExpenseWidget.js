@@ -48,45 +48,52 @@ const TotalExpenseWidget = ({
   });
   const isFocused = useIsFocused();
 
+  const findTransactionsToPlot = () => {
+    utils.findTransactionsToPlot({
+      expenseOnly: true,
+      groupSorted: sortedTransactions.groupSorted,
+      appSettings,
+      globalCurrencyRates,
+      logbooks,
+      categories,
+      budgets,
+      graph: graph,
+      activeBudget: activeBudget,
+      setGraph: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setGraph(item);
+      },
+      setActiveBudget: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setActiveBudget(item);
+      },
+      setShowGraph: (item) => {
+        // console.log(JSON.stringify(item, null, 2));
+        setShowGraph(item);
+      },
+    });
+
+    setWidgetLoading(false);
+  };
+
   const findTransactions = useMemo(() => {
     return () => {
-      utils.FindTransactionsToPlot({
-        expenseOnly: true,
-        groupSorted: sortedTransactions.groupSorted,
-        appSettings,
-        globalCurrencyRates,
-        logbooks,
-        categories,
-        budgets,
-        graph: graph,
-        activeBudget: activeBudget,
-        setGraph: (item) => {
-          // console.log(JSON.stringify(item, null, 2));
-          setGraph(item);
-        },
-        setActiveBudget: (item) => {
-          // console.log(JSON.stringify(item, null, 2));
-          setActiveBudget(item);
-        },
-        setShowGraph: (item) => {
-          // console.log(JSON.stringify(item, null, 2));
-          setShowGraph(item);
-        },
-      });
+      findTransactionsToPlot();
       setWidgetLoading(false);
     };
-    // }, [sortedTransactions, budgets, graph, activeBudget]);
   }, [
     sortedTransactions,
     budgets,
-    graph,
-    activeBudget,
+    graph.rangeDay,
+    activeBudget.spent,
     globalCurrencyRates,
     appSettings,
   ]);
 
   useEffect(() => {
-    findTransactions();
+    setTimeout(() => {
+      findTransactionsToPlot();
+    }, 1);
   }, []);
 
   useEffect(() => {
@@ -94,7 +101,7 @@ const TotalExpenseWidget = ({
       setShowGraph(false);
       setWidgetLoading(true);
       setTimeout(() => {
-        findTransactions();
+        findTransactionsToPlot();
       }, 1);
     }
   }, [isFocused]);
@@ -117,8 +124,7 @@ const TotalExpenseWidget = ({
             width: "100%",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor:
-              globalTheme.widgets.totalExpense.cardBackgroundColor,
+            backgroundColor: globalTheme.colors.secondary,
             marginBottom: 16,
             borderRadius: 16,
           }}
