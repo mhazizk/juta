@@ -129,8 +129,6 @@ const SearchScreen = ({ navigation }) => {
             />
           </>
         )}
-        {/* // TODO : Create settings search result */}
-        {/* {console.log(searchQuery)} */}
 
         {!searchQuery && (
           <CustomScrollView
