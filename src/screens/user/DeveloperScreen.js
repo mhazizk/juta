@@ -32,6 +32,9 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
 import testing from "../../dev/testing";
 import CustomScrollView from "../../shared-components/CustomScrollView";
+import ListSection from "../../components/List/ListSection";
+import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
+import uuid from "react-native-uuid";
 
 const DeveloperScreen = ({ item, navigation }) => {
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -172,7 +175,17 @@ const DeveloperScreen = ({ item, navigation }) => {
     <>
       {appSettings && (
         <CustomScrollView>
-          {/* <UserHeaderComponent /> */}
+          <ListSection>
+            <ListItem
+              pressable
+              leftLabel="Set subscription to firebase"
+              onPress={async () => {
+                await firestore.setData("subscriptionFeatureList", uuid.v4(), {
+                  subscriptionFeatureList,
+                });
+              }}
+            />
+          </ListSection>
 
           {/* // TAG : Save Large Transactions to Storage */}
           <TouchableNativeFeedback onPress={() => saveLargeJSONTransactions()}>
