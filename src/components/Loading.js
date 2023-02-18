@@ -6,8 +6,7 @@ import {
 import { TextPrimary } from "./Text";
 import LottieView from "lottie-react-native";
 
-const Loading = ({ size, lottie, loadingText = null }) => {
-  const { appSettings } = useGlobalAppSettings();
+const Loading = ({ size, lottie = false, loadingText = null }) => {
   const { globalTheme } = useGlobalTheme();
 
   return (
