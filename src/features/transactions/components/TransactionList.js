@@ -269,7 +269,7 @@ const TransactionList = ({
                   {/* // TAG : Date Title */}
                   <TextSecondary
                     // label={checkDate(section.title)}
-                    label={utils.RelativeDate({
+                    label={utils.relativeDate({
                       dateToCheck: section.title,
                       currentDate: date,
                       locale: appSettings.locale,
