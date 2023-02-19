@@ -35,6 +35,7 @@ import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
 import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
 import uuid from "react-native-uuid";
+import getSecretFromCloud from "../../api/firebase/getSecretFromCloud";
 
 const DeveloperScreen = ({ item, navigation }) => {
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -176,6 +177,15 @@ const DeveloperScreen = ({ item, navigation }) => {
       {appSettings && (
         <CustomScrollView>
           <ListSection>
+            <ListItem
+              pressable
+              leftLabel="Try get secret from cloud"
+              onPress={async () => {
+                const data = await getSecretFromCloud("TEST_KEY");
+                alert({ data });
+                console.log(JSON.stringify({ data }, null, 2));
+              }}
+            />
             <ListItem
               pressable
               leftLabel="Set subscription to firebase"
