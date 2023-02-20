@@ -93,6 +93,10 @@ const InitialSetupScreen = ({ route, navigation }) => {
     });
   }, [selectedAppSettings.logbookSettings.defaultCurrency]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(userAccount, null, 2));
+  }, [userAccount]);
+
   const findThemeIcon = (themeId) => {
     return THEME_CONSTANTS.OPTIONS.find((theme) => {
       return theme.id === themeId;
