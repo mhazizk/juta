@@ -1,3 +1,3 @@
-const initialAppSettings = null
+const initialAppSettings = null;
 
 export default initialAppSettings;
