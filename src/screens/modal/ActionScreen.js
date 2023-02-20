@@ -134,8 +134,8 @@ const ActionScreen = ({ route, navigation }) => {
                 // get logbook limit from subscription plan
                 const logbookLimit = getSubscriptionLimit({
                   globalSubscriptionFeatures,
-                  subscriptionLimit: userAccount.subscription.plan,
-                  subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                  subscriptionLimit: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                  subscriptionPlan: userAccount.subscription.plan,
                 });
 
                 // check if user has reached the limit
