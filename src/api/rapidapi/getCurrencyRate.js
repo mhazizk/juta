@@ -1,15 +1,17 @@
 import axios from "axios";
 import env from "../../config/env";
+import SECRET_KEYS from "../../constants/secretManager";
+import getSecretFromCloudFunctions from "../firebase/getSecretFromCloudFunctions";
 
 const fetchNewRate = async (currency) => {
   const { name, isoCode } = currency;
   const options = {
     method: "GET",
-    url: env.rapidApi.url,
+    url: env.RAPID_API.URL,
     params: { have: "USD", want: name, amount: "1" },
     headers: {
-      "X-RapidAPI-Key": env.rapidApi.apiKey,
-      "X-RapidAPI-Host": env.rapidApi.host,
+      "X-RapidAPI-Key": await getSecretFromCloudFunctions(SECRET_KEYS.RAPID_API_KEY),
+      "X-RapidAPI-Host": env.RAPID_API.HOST,
     },
   };
 
