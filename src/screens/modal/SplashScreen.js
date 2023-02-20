@@ -49,6 +49,12 @@ import initialGlobalLoan from "../../reducers/initial-state/initialGlobalLoan";
 import env from "../../config/env";
 import updateSubscriptionStatus from "../../api/revenue-cat/updateSubscriptionStatus";
 import getCustomerInfo from "../../api/revenue-cat/getCustomerInfo";
+import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
+import getSecretFromCloudFunctions from "../../api/firebase/getSecretFromCloudFunctions";
+import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import { signOut } from "firebase/auth/react-native";
+import SECRET_KEYS from "../../constants/secretManager";
 // import useAuth from "../../hooks/useAuth";
 
 const SplashScreen = ({ route, navigation }) => {
@@ -84,6 +90,10 @@ const SplashScreen = ({ route, navigation }) => {
         setIsFirstRun(isFirstRun);
       })
       .catch((error) => {});
+    dispatchAppSettings({
+      type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+      payload: appSettingsFallback,
+    });
   }, []);
 
   useEffect(() => {
@@ -96,6 +106,7 @@ const SplashScreen = ({ route, navigation }) => {
         user?.emailVerified &&
         fromScreen === screenList.emailVerificationScreen:
         navigation.replace(targetScreen);
+        // startAppWithNewUser(user);
         break;
       case !isFirstRun &&
         user?.emailVerified &&
@@ -113,10 +124,16 @@ const SplashScreen = ({ route, navigation }) => {
         break;
       case !isFirstRun && !!user && !user?.emailVerified:
         console.log("user not verified");
-        dispatchAppSettings({
-          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-          payload: appSettingsFallback,
-        });
+        if (!appSettings) {
+          const appSettingsData = firestore.getOneDoc(
+            FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+            userAccount?.uid
+          );
+          dispatchAppSettings({
+            type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+            payload: appSettingsData,
+          });
+        }
         navigation.replace(screenList.emailVerificationScreen, {
           fromScreen: screenList.splashScreen,
         });
@@ -125,7 +142,7 @@ const SplashScreen = ({ route, navigation }) => {
       case !isFirstRun && !user && !loading:
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-          payload: appSettingsFallback,
+          payload: { ...appSettingsFallback },
         });
         navigation.replace(screenList.loginScreen);
         break;
@@ -169,16 +186,20 @@ const SplashScreen = ({ route, navigation }) => {
       getDeviceId(),
       getDeviceName(),
       getDeviceOSName(),
+      getCustomerInfo(currUser.uid),
     ])
       .then((data) => {
-        const userAccount = data[0];
+        const userAccountData = data[0];
         const deviceId = data[1];
         const deviceName = data[2];
         const deviceOSName = data[3];
+        const rcCustomerInfo = data[4];
         const loggedInUserAccount = {
-          ...userAccount,
+          ...userAccountData,
           devicesLoggedIn: [
-            ...userAccount.devicesLoggedIn,
+            ...userAccountData.devicesLoggedIn.filter((device) => {
+              return device.device_id !== deviceId;
+            }),
             {
               device_id: deviceId,
               device_name: deviceName,
@@ -200,6 +221,11 @@ const SplashScreen = ({ route, navigation }) => {
           },
         });
 
+        // dispatchGlobalSubscriptionFeatures({
+        //   type: REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET,
+        //   payload: { subscriptionFeatureList },
+        // });
+
         // dispatchCategories({
         //   type: REDUCER_ACTIONS.CATEGORIES.SET_MULTI_ACTIONS,
         //   payload: {
@@ -216,13 +242,12 @@ const SplashScreen = ({ route, navigation }) => {
 
         setTimeout(async () => {
           useFirestoreSubscriptions({
-            uid: userAccount.uid,
-            subscribeAll: true,
+            uid: userAccountData.uid,
 
             appSettings: appSettings,
             dispatchAppSettings: dispatchAppSettings,
 
-            userAccount: userAccount,
+            userAccount: userAccountData,
             dispatchUserAccount: dispatchUserAccount,
 
             logbooks: logbooks,
@@ -313,12 +338,11 @@ const SplashScreen = ({ route, navigation }) => {
       FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
       currUser.uid
     );
-
-    const loadSubs = firestore.getOneDoc(
-      env.subscription.collectionName,
-      env.subscription.documentId
+    const collectionName = await getSecretFromCloudFunctions(
+      SECRET_KEYS.FEATURE_COLLECTION_NAME
     );
-
+    const docId = await getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_DOCUMENT_ID);
+    const loadSubs = firestore.getOneDoc(collectionName, docId);
     const loadRCCustomerInfo = getCustomerInfo(currUser.uid);
 
     Promise.all([
@@ -352,9 +376,30 @@ const SplashScreen = ({ route, navigation }) => {
         const loanContactsData = data[11];
         const subsData = data[12];
         const rcCustomerInfoData = data[13];
-        const otherDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
+
+        const filteredDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
           (device) => device.device_id !== deviceIdData
         );
+
+        const maxDevicesLoggedIn = getSubscriptionLimit({
+          subsData,
+          subscriptionPlan: userAccountData?.subscription.plan,
+          subscriptionLimit: SUBSCRIPTION_LIMIT.DEVICES,
+        });
+
+        if (filteredDevicesLoggedIn.length >= maxDevicesLoggedIn) {
+          alert(
+            `You have reached the maximum number of devices allowed for your subscription plan.\nPlease upgrade your subscription plan to add more devices.`
+          );
+          signOut(auth)
+            .then(() => {
+              navigation.replace(screenList.loginScreen);
+            })
+            .catch((error) => {
+              alert(error);
+            });
+          return;
+        }
 
         // TAG : User account
 
@@ -364,20 +409,12 @@ const SplashScreen = ({ route, navigation }) => {
           email: user.email,
           emailVerified: user.emailVerified,
           photoURL: user.photoURL,
-          devicesLoggedIn: [
-            {
-              device_id: deviceIdData,
-              device_name: deviceNameData,
-              device_os_name: deviceOSNameData,
-              last_login: Date.now(),
-            },
-          ],
         });
 
         const loggedInUserAccount = {
           ...userAccountData,
           devicesLoggedIn: [
-            ...otherDevicesLoggedIn,
+            ...filteredDevicesLoggedIn,
             {
               device_id: deviceIdData,
               device_name: deviceNameData,
@@ -405,6 +442,10 @@ const SplashScreen = ({ route, navigation }) => {
           type: REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET,
           payload: subsData,
         });
+
+        setTimeout(async () => {
+          await firestore.setData(collectionName, docId, subsData);
+        }, 1);
 
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
@@ -582,7 +623,6 @@ const SplashScreen = ({ route, navigation }) => {
         setTimeout(() => {
           useFirestoreSubscriptions({
             uid: userAccountData?.uid,
-            subscribeAll: true,
 
             appSettings: appSettings,
             dispatchAppSettings: dispatchAppSettings,
