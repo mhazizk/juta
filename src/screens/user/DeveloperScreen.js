@@ -35,7 +35,9 @@ import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
 import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
 import uuid from "react-native-uuid";
-import getSecretFromCloud from "../../api/firebase/getSecretFromCloud";
+import getSecretFromCloudFunctions from "../../api/firebase/getSecretFromCloudFunctions";
+import env from "../../config/env";
+import SECRET_KEYS from "../../constants/secretManager";
 
 const DeveloperScreen = ({ item, navigation }) => {
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -181,8 +183,9 @@ const DeveloperScreen = ({ item, navigation }) => {
               pressable
               leftLabel="Try get secret from cloud"
               onPress={async () => {
-                const data = await getSecretFromCloud("TEST_KEY");
-                alert({ data });
+                const data = await getSecretFromCloudFunctions(
+                  "FEATURE_COLLECTION_NAME"
+                );
                 console.log(JSON.stringify({ data }, null, 2));
               }}
             />
@@ -190,7 +193,13 @@ const DeveloperScreen = ({ item, navigation }) => {
               pressable
               leftLabel="Set subscription to firebase"
               onPress={async () => {
-                await firestore.setData("subscriptionFeatureList", uuid.v4(), {
+                const collection = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_COLLECTION_NAME
+                );
+                const docId = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_DOCUMENT_ID
+                );
+                await firestore.setData(collection, docId, {
                   subscriptionFeatureList,
                 });
               }}
