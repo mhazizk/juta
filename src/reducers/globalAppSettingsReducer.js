@@ -40,7 +40,7 @@ const globalAppSettingsReducer = (state, action) => {
     case REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS:
       // check timestamp for duplicate
       if (
-        action.payload._timestamps.updated_at > state._timestamps.updated_at
+        action.payload?._timestamps?.updated_at > state?._timestamps.updated_at
       ) {
         return { ...state, ...action.payload };
       }
