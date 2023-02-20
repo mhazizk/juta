@@ -136,8 +136,6 @@ const RootStack = () => {
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
       uid: userAccount.uid,
-      subscribeAll: true,
-
       appSettings: appSettingsRef,
       dispatchAppSettings,
 
@@ -525,8 +523,8 @@ const RootStack = () => {
                   // get logbook limit from subscription plan
                   const logbookLimit = getSubscriptionLimit({
                     globalSubscriptionFeatures,
-                    subscriptionLimit: userAccount.subscription?.plan,
-                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                    subscriptionPlan: userAccount.subscription?.plan,
+                    subscriptionLimit: SUBSCRIPTION_LIMIT.LOGBOOKS,
                   });
 
                   // check if user has reached the limit
@@ -791,8 +789,8 @@ const RootStack = () => {
                   // get repeat limit from subscription plan
                   const loanContactsLimit = getSubscriptionLimit({
                     globalSubscriptionFeatures,
-                    subscriptionLimit: userAccount.subscription?.plan,
-                    subscriptionPlan: SUBSCRIPTION_LIMIT.LOAN,
+                    subscriptionPlan: userAccount.subscription?.plan,
+                    subscriptionLimit: SUBSCRIPTION_LIMIT.LOAN,
                   });
 
                   const currentLoanContacts = globalLoan.contacts.length;
@@ -886,8 +884,8 @@ const RootStack = () => {
                   // get repeat limit from subscription plan
                   const repeatLimit = getSubscriptionLimit({
                     globalSubscriptionFeatures,
-                    subscriptionLimit: userAccount.subscription?.plan,
-                    subscriptionPlan: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+                    subscriptionPlan: userAccount.subscription?.plan,
+                    subscriptionLimit: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
                   });
 
                   // check if user has reached the limit
