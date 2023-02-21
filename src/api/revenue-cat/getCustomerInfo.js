@@ -7,8 +7,9 @@ import configureRevenueCat from "./configureRevenueCat";
  * @returns
  */
 const getCustomerInfo = async (uid) => {
-  configureRevenueCat(uid);
-  return Purchases.getCustomerInfo();
+  return configureRevenueCat(uid).then(() => {
+    return Purchases.getCustomerInfo();
+  });
 };
 
 export default getCustomerInfo;
