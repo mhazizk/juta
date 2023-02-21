@@ -22,54 +22,64 @@ const LogoutScreen = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
 
   useEffect(() => {
-    useFirestoreSubscriptions({
+    const {
+      unsubscribeAppSettings,
+      unsubscribeUserAccount,
+      unsubscribeLogbooks,
+      unsubscribeTransactions,
+      unsubscribeCategories,
+      unsubscribeBudgets,
+      unsubscribeRepeatedTransactions,
+      unsubscribeCurrencyRates,
+      unsubscribeLoan,
+      // unsubscribeFeatures,
+    } = useFirestoreSubscriptions({
       uid: userAccount.uid,
-    })
-      .then((data) => {
-        data.unsubscribeAppSettings;
-        data.unsubscribeUserAccount;
-        data.unsubscribeBudgets;
-        data.unsubscribeCategories;
-        data.unsubscribeCurrencyRates;
-        data.unsubscribeFeatures;
-        data.unsubscribeLoan;
-        data.unsubscribeLogbooks;
-        data.unsubscribeRepeatedTransactions;
-        data.unsubscribeTransactions;
-      })
-      .then(() => {
-        setTimeout(() => {
-          signOut(auth).then(async () => {
-            dispatchAppSettings({
-              type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-              payload: appSettingsFallback,
-            });
-            dispatchGlobalTheme({
-              type: REDUCER_ACTIONS.THEME.SET,
-              payload: appSettingsFallback.theme_id,
-            });
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-              payload: null,
-            });
-            setTimeout(async () => {
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: screenList.loginScreen,
-                    params: {
-                      fromScreen: screenList.logoutScreen,
-                      // targetScreen: screenList.loginScreen,
-                    },
-                  },
-                ],
-              });
-              await logOutRevenueCat();
-            }, 500);
+    });
+
+    // unsubscribe from firestore subscriptions
+    unsubscribeAppSettings;
+    unsubscribeUserAccount;
+    unsubscribeLogbooks;
+    unsubscribeTransactions;
+    unsubscribeCategories;
+    unsubscribeBudgets;
+    unsubscribeRepeatedTransactions;
+    unsubscribeCurrencyRates;
+    unsubscribeLoan;
+    // unsubscribeFeatures;
+
+    setTimeout(() => {
+      signOut(auth).then(async () => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+          payload: appSettingsFallback,
+        });
+        dispatchGlobalTheme({
+          type: REDUCER_ACTIONS.THEME.SET,
+          payload: appSettingsFallback.theme_id,
+        });
+        dispatchUserAccount({
+          type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+          payload: null,
+        });
+        setTimeout(async () => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: screenList.loginScreen,
+                params: {
+                  fromScreen: screenList.logoutScreen,
+                  // targetScreen: screenList.loginScreen,
+                },
+              },
+            ],
           });
-        }, 3000);
+          await logOutRevenueCat();
+        }, 500);
       });
+    }, 3000);
   }, []);
 
   return (
