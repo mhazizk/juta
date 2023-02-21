@@ -59,7 +59,7 @@ const MySubscriptionScreen = ({ item, navigation }) => {
                 leftLabel="Subscription history"
                 iconRightName={"chevron-forward-outline"}
                 onPress={() => {
-                  onPress(screenList.subscriptionHistoryScreen);
+                  navigation.navigate(screenList.subscriptionHistoryScreen);
                 }}
               />
 
