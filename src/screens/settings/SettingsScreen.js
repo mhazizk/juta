@@ -8,7 +8,7 @@ import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalCurrencyRates,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -18,8 +18,8 @@ import SettingsHeaderList from "../../components/List/SettingsHeaderList";
 import ListSection from "../../components/List/ListSection";
 import Animated from "react-native-reanimated";
 import getCurrencyRate from "../../api/rapidapi/getCurrencyRate";
-import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
-import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import FEATURE_NAME from "../../features/subscription/model/featureName";
+import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import THEME_CONSTANTS from "../../constants/themeConstants";
@@ -31,7 +31,7 @@ import FONT_SIZE_CONSTANTS from "../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../constants/logbookSettingsConstants";
 
 const SettingsScreen = ({ navigation }) => {
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
@@ -66,6 +66,12 @@ const SettingsScreen = ({ navigation }) => {
     // }, 1000);
   }, [currencyRates]);
 
+  const _timestamps = {
+    ...appSettings._timestamps,
+    updated_at: Date.now(),
+    updated_by: userAccount.uid,
+  };
+
   useEffect(() => {
     const payload = {
       logbookSettings: logbookSettings,
@@ -81,13 +87,6 @@ const SettingsScreen = ({ navigation }) => {
         payload: payload,
       });
     }, 1);
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        { ...appSettings, ...payload }
-      );
-    }, 1000);
   }, [logbookSettings]);
 
   useEffect(() => {
@@ -105,13 +104,6 @@ const SettingsScreen = ({ navigation }) => {
         payload: payload,
       });
     }, 1);
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        { ...appSettings, ...payload }
-      );
-    }, 1000);
   }, [dashboardSettings]);
 
   useEffect(() => {
@@ -129,21 +121,11 @@ const SettingsScreen = ({ navigation }) => {
         payload: payload,
       });
     }, 1);
-    setTimeout(async () => {
-      await firestore.setData(
-        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-        appSettings.uid,
-        { ...appSettings, ...payload }
-      );
-    }, 1000);
   }, [searchSettings]);
 
   // useEffect(() => {
   // }, [appSettings?.theme_id]);
 
-  useEffect(() => {
-    console.log(currencyRates);
-  }, [currencyRates]);
   return (
     <>
       <CustomScrollView>
@@ -417,10 +399,27 @@ const SettingsScreen = ({ navigation }) => {
                       return a.name > b.name ? 1 : -1;
                     }),
                     selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        logbookSettings: {
+                          ...appSettings.logbookSettings,
+                          defaultCurrency: item,
+                        },
+                        _timestamps,
+                      };
+
                       setLogbookSettings({
                         ...logbookSettings,
                         defaultCurrency: item,
                       });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
                     },
                     defaultOption: logbookSettings.defaultCurrency,
                   });
@@ -446,10 +445,27 @@ const SettingsScreen = ({ navigation }) => {
                       return a.name > b.name ? 1 : -1;
                     }),
                     selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        logbookSettings: {
+                          ...appSettings.logbookSettings,
+                          secondaryCurrency: item,
+                        },
+                        _timestamps,
+                      };
+
                       setLogbookSettings({
                         ...logbookSettings,
                         secondaryCurrency: item,
                       });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
                     },
                     defaultOption: logbookSettings.secondaryCurrency,
                   });
@@ -465,16 +481,16 @@ const SettingsScreen = ({ navigation }) => {
               />
               {/* // TAG : Show secondary currency */}
               <CheckList
-                pressable={getSubscriptionLimit({
-                  globalSubscriptionFeatures,
+                pressable={getFeatureLimit({
+                  globalFeatureSwitch,
                   subscriptionPlan: userAccount.subscription.plan,
-                  subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                  featureName: FEATURE_NAME.SECONDARY_CURRENCY,
                 })}
                 disabled={
-                  !getSubscriptionLimit({
-                    globalSubscriptionFeatures,
+                  !getFeatureLimit({
+                    globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription.plan,
-                    subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                    featureName: FEATURE_NAME.SECONDARY_CURRENCY,
                   })
                 }
                 primaryLabel="Show secondary currency"
@@ -483,17 +499,35 @@ const SettingsScreen = ({ navigation }) => {
                 selected={logbookSettings.showSecondaryCurrency}
                 onPress={() => {
                   if (
-                    getSubscriptionLimit({
-                      globalSubscriptionFeatures,
+                    getFeatureLimit({
+                      globalFeatureSwitch,
                       subscriptionPlan: userAccount.subscription.plan,
-                      subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+                      featureName: FEATURE_NAME.SECONDARY_CURRENCY,
                     })
                   ) {
+                    const payload = {
+                      ...appSettings,
+                      logbookSettings: {
+                        ...appSettings.logbookSettings,
+                        showSecondaryCurrency:
+                          !logbookSettings.showSecondaryCurrency,
+                      },
+                      _timestamps,
+                    };
+
                     setLogbookSettings({
                       ...logbookSettings,
                       showSecondaryCurrency:
                         !logbookSettings.showSecondaryCurrency,
                     });
+
+                    setTimeout(async () => {
+                      await firestore.setData(
+                        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                        appSettings.uid,
+                        { ...appSettings, ...payload }
+                      );
+                    }, 1000);
                   } else {
                     Alert.alert(
                       "Upgrade your subscription",
@@ -576,10 +610,26 @@ const SettingsScreen = ({ navigation }) => {
                         }
                       ),
                     selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        logbookSettings: {
+                          ...appSettings.logbookSettings,
+                          negativeCurrencySymbol: item.id,
+                        },
+                        _timestamps,
+                      };
                       setLogbookSettings({
                         ...logbookSettings,
                         negativeCurrencySymbol: item.id,
                       });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
                     },
                   });
                 }}
@@ -607,10 +657,27 @@ const SettingsScreen = ({ navigation }) => {
                 )}
                 selected={logbookSettings.dailySummary}
                 onChange={(item) => {
+                  const payload = {
+                    ...appSettings,
+                    logbookSettings: {
+                      ...appSettings.logbookSettings,
+                      dailySummary: item.value,
+                    },
+                    _timestamps,
+                  };
+
                   setLogbookSettings({
                     ...logbookSettings,
                     dailySummary: item.value,
                   });
+
+                  setTimeout(async () => {
+                    await firestore.setData(
+                      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                      appSettings.uid,
+                      { ...appSettings, ...payload }
+                    );
+                  }, 1000);
                 }}
               />
             </ListSection>
@@ -623,10 +690,27 @@ const SettingsScreen = ({ navigation }) => {
                 item={true}
                 selected={logbookSettings.showTransactionTime}
                 onPress={() => {
+                  const payload = {
+                    ...appSettings,
+                    logbookSettings: {
+                      ...appSettings.logbookSettings,
+                      showTransactionTime: !logbookSettings.showTransactionTime,
+                    },
+                    _timestamps,
+                  };
+
                   setLogbookSettings({
                     ...logbookSettings,
                     showTransactionTime: !logbookSettings.showTransactionTime,
                   });
+
+                  setTimeout(async () => {
+                    await firestore.setData(
+                      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                      appSettings.uid,
+                      { ...appSettings, ...payload }
+                    );
+                  }, 1000);
                 }}
               />
               {/* // TAG : Show Transaction Notes */}
@@ -636,10 +720,28 @@ const SettingsScreen = ({ navigation }) => {
                 primaryLabel="Show transaction notes"
                 selected={logbookSettings.showTransactionNotes}
                 onPress={() => {
+                  const payload = {
+                    ...appSettings,
+                    logbookSettings: {
+                      ...appSettings.logbookSettings,
+                      showTransactionNotes:
+                        !logbookSettings.showTransactionNotes,
+                    },
+                    _timestamps,
+                  };
+
                   setLogbookSettings({
                     ...logbookSettings,
                     showTransactionNotes: !logbookSettings.showTransactionNotes,
                   });
+
+                  setTimeout(async () => {
+                    await firestore.setData(
+                      FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                      appSettings.uid,
+                      { ...appSettings, ...payload }
+                    );
+                  }, 1000);
                 }}
               />
             </ListSection>
