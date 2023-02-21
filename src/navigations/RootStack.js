@@ -121,10 +121,6 @@ const RootStack = () => {
   const [lastSettingsUpdate, setLastSettingsUpdate] = useState(
     appSettings?._timestamps?.updated_at
   );
-  const [featureSwitchSecret, setFeatureSwitchSecret] = useState({
-    featureSwitchCollectionName: null,
-    featureSwitchDocumentId: null,
-  });
   const appState = useRef(AppState.currentState);
   const userAccountRef = useRef(userAccount);
   const appSettingsRef = useRef(appSettings);
@@ -137,8 +133,6 @@ const RootStack = () => {
   const globalThemeRef = useRef(globalTheme);
   const globalCurrencyRatesRef = useRef(globalCurrencyRates);
   const globalLoanRef = useRef(globalLoan);
-  const globalFeatureSwitchRef = useRef(globalFeatureSwitch);
-  const featureSwitchSecretRef = useRef(featureSwitchSecret);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -172,9 +166,6 @@ const RootStack = () => {
 
       globalLoan: globalLoanRef,
       dispatchGlobalLoan,
-
-      globalFeatureSwitch: globalFeatureSwitchRef,
-      dispatchGlobalFeatureSwitch,
     });
   }, [
     userAccountRef,
@@ -187,21 +178,10 @@ const RootStack = () => {
     globalThemeRef,
     globalCurrencyRatesRef,
     globalLoanRef,
-    globalFeatureSwitchRef,
   ]);
 
   // TAG : useEffect for state
   useEffect(() => {
-    Promise.all([
-      getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME),
-      getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID),
-    ]).then((data) => {
-      setFeatureSwitchSecret({
-        featureSwitchCollectionName: data[0],
-        featureSwitchDocumentId: data[1],
-      });
-    });
-
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -271,6 +251,9 @@ const RootStack = () => {
       }, 1);
     }
   }, [appSettings?.theme_id]);
+
+  // useEffect(() => {
+  // }, [appSettings]);
 
   useEffect(() => {
     console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
