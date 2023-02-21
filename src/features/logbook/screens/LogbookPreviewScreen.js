@@ -7,6 +7,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   ButtonSecondary,
   ButtonSecondaryDanger,
+  ButtonSecondaryDisabled,
 } from "../../../components/Button";
 import { TextPrimary } from "../../../components/Text";
 import * as utils from "../../../utils";
@@ -303,13 +304,18 @@ const LogbookPreviewScren = ({ route, navigation }) => {
 
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1, paddingLeft: 8 }}>
-              <ButtonSecondaryDanger
-                label="Delete"
-                type="danger"
-                onPress={() => {
-                  deleteLogbook();
-                }}
-              />
+              {logbooks.logbooks.length <= 1 && (
+                <ButtonSecondaryDisabled label="Delete" type="danger" />
+              )}
+              {logbooks.logbooks.length > 1 && (
+                <ButtonSecondaryDanger
+                  label="Delete"
+                  type="danger"
+                  onPress={() => {
+                    deleteLogbook();
+                  }}
+                />
+              )}
             </View>
           </View>
         </CustomScrollView>
