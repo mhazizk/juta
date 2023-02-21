@@ -27,7 +27,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
@@ -38,8 +38,8 @@ import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectio
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import SUBSCRIPTION_LIMIT from "../../../features/subscription/model/subscriptionLimit";
-import getSubscriptionLimit from "../../../features/subscription/logic/getSubscriptionLimit";
+import FEATURE_NAME from "../../../features/subscription/model/featureName";
+import getFeatureLimit from "../../../features/subscription/logic/getFeatureLimit";
 import { uploadAndGetAttachmentImageURL } from "../../../api/firebase/cloudStorage";
 import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
@@ -54,7 +54,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
@@ -950,13 +950,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       localRepeatedTransactions.repeat_type.name.substring(1)
                 }
                 disabled={
-                  !getSubscriptionLimit(
+                  !getFeatureLimit(
                     {
-                      globalSubscriptionFeatures,
+                      globalFeatureSwitch,
                      subscriptionPlan:
                       userAccount.subscription.plan,
-                      subscriptionLimit:
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
+                      featureName:
+                    FEATURE_NAME.RECURRING_TRANSACTIONS}
                   )
                 }
                 iconPack="IonIcons"
@@ -989,13 +989,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }}
                 onPress={() => {
                   if (
-                  getSubscriptionLimit(
+                  getFeatureLimit(
                     {
-                      globalSubscriptionFeatures,
+                      globalFeatureSwitch,
                      subscriptionPlan:
                       userAccount.subscription.plan,
-                      subscriptionLimit:
-                    SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS}
+                      featureName:
+                    FEATURE_NAME.RECURRING_TRANSACTIONS}
                   )
                   ) {
                     navigation.navigate(screenList.modalScreen, {
@@ -1116,10 +1116,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit({
-                  globalSubscriptionFeatures,
+                  !getFeatureLimit({
+                  globalFeatureSwitch,
                    subscriptionPlan: userAccount.subscription.plan,
-                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
+                   featureName: FEATURE_NAME.ATTACHMENT_IMAGES}
                   )
                 }
                 leftLabel="Attachment Images"
@@ -1133,10 +1133,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                  getSubscriptionLimit({
-                  globalSubscriptionFeatures,
+                  getFeatureLimit({
+                  globalFeatureSwitch,
                    subscriptionPlan: userAccount.subscription.plan,
-                   subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES}
+                   featureName: FEATURE_NAME.ATTACHMENT_IMAGES}
                   )
                   ) {
                     // No permissions request is necessary for launching the image library
