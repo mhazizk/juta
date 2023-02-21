@@ -49,6 +49,8 @@ const SettingsScreen = ({ navigation }) => {
   const [currencyRates, setCurrencyRates] = useState(globalCurrencyRates);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     console.log({ currencyRates });
     // setTimeout(() => {
@@ -73,54 +75,60 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const payload = {
-      logbookSettings: logbookSettings,
-      _timestamps: {
-        ...appSettings._timestamps,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-    };
-    setTimeout(() => {
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: payload,
-      });
-    }, 1);
+    if (!!logbookSettings) {
+      const payload = {
+        logbookSettings: logbookSettings,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      setTimeout(() => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+          payload: payload,
+        });
+      }, 1);
+    }
   }, [logbookSettings]);
 
   useEffect(() => {
-    const payload = {
-      dashboardSettings: dashboardSettings,
-      _timestamps: {
-        ...appSettings._timestamps,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-    };
-    setTimeout(() => {
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: payload,
-      });
-    }, 1);
+    if (!!dashboardSettings) {
+      const payload = {
+        dashboardSettings: dashboardSettings,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      setTimeout(() => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+          payload: payload,
+        });
+      }, 1);
+    }
   }, [dashboardSettings]);
 
   useEffect(() => {
-    const payload = {
-      searchSettings: searchSettings,
-      _timestamps: {
-        ...appSettings._timestamps,
-        updated_at: Date.now(),
-        updated_by: userAccount.uid,
-      },
-    };
-    setTimeout(() => {
-      dispatchAppSettings({
-        type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-        payload: payload,
-      });
-    }, 1);
+    if (!!searchSettings) {
+      const payload = {
+        searchSettings: searchSettings,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      setTimeout(() => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+          payload: payload,
+        });
+      }, 1);
+    }
   }, [searchSettings]);
 
   // useEffect(() => {
