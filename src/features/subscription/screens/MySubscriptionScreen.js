@@ -22,7 +22,7 @@ import SubscriptionStatus from "../components/SubscriptionStatus";
 const MySubscriptionScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const { logbooks } = useGlobalLogbooks();
   const { budgets } = useGlobalBudgets();
   const { dispatchSortedTransactions } = useGlobalSortedTransactions();
@@ -40,7 +40,6 @@ const MySubscriptionScreen = ({ item, navigation }) => {
           <>
             <UserHeaderComponent />
             <SubscriptionStatus
-              subscription={userAccount?.subscription}
               onPress={(screen) => {
                 navigation.navigate(screen);
               }}
@@ -53,6 +52,17 @@ const MySubscriptionScreen = ({ item, navigation }) => {
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
+              <ListItem
+                pressable
+                iconLeftName="receipt"
+                iconPack="IonIcons"
+                leftLabel="Subscription history"
+                iconRightName={"chevron-forward-outline"}
+                onPress={() => {
+                  onPress(screenList.subscriptionHistoryScreen);
+                }}
+              />
+
               {/* // TAG : Subscription Plan */}
               <ListItem
                 pressable
