@@ -3,6 +3,7 @@ import { ListTable } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import {
   useGlobalBudgets,
+  useGlobalFeatureSwitch,
   useGlobalLogbooks,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
@@ -10,6 +11,7 @@ import featureSwitch from "../model/subscriptionFeatureList";
 
 const SubscriptionTable = ({ subscription, showCurrent = false }) => {
   const { globalTheme } = useGlobalTheme();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { logbooks } = useGlobalLogbooks();
   const { budgets } = useGlobalBudgets();
 
@@ -43,25 +45,27 @@ const SubscriptionTable = ({ subscription, showCurrent = false }) => {
                 paddingTop: 8,
               }}
             />
-            {featureSwitch.map((feature) => {
-              return (
-                <ListTable
-                  pressable={false}
-                  key={feature.name}
-                  iconLeftName={feature.iconName}
-                  leftLabel={feature.name}
-                  middleLabel={feature.free}
-                  middleLabelColor={
-                    feature.free < feature.premium
-                      ? globalTheme.colors.foreground
-                      : globalTheme.colors.success
-                  }
-                  rightLabel={
-                    feature.premium > 99 ? "Unlimited" : feature.premium
-                  }
-                  rightLabelColor={globalTheme.colors.success}
-                />
-              );
+            {globalFeatureSwitch.featureSwitch.map((feature) => {
+              if (!feature.isHidden) {
+                return (
+                  <ListTable
+                    pressable={false}
+                    key={feature.name}
+                    iconLeftName={feature.iconName}
+                    leftLabel={feature.name}
+                    middleLabel={feature.free}
+                    middleLabelColor={
+                      feature.free < feature.premium
+                        ? globalTheme.colors.foreground
+                        : globalTheme.colors.success
+                    }
+                    rightLabel={
+                      feature.premium > 99 ? "Unlimited" : feature.premium
+                    }
+                    rightLabelColor={globalTheme.colors.success}
+                  />
+                );
+              }
             })}
             <View
               style={{
