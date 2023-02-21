@@ -6,7 +6,7 @@ import {
   useGlobalLogbooks,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
-import subscriptionFeatureList from "../model/subscriptionFeatureList";
+import featureSwitch from "../model/subscriptionFeatureList";
 
 const SubscriptionTable = ({ subscription, showCurrent = false }) => {
   const { globalTheme } = useGlobalTheme();
@@ -43,7 +43,7 @@ const SubscriptionTable = ({ subscription, showCurrent = false }) => {
                 paddingTop: 8,
               }}
             />
-            {subscriptionFeatureList.map((feature) => {
+            {featureSwitch.map((feature) => {
               return (
                 <ListTable
                   pressable={false}
