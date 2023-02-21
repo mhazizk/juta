@@ -246,7 +246,6 @@ const LogbookPreviewScren = ({ route, navigation }) => {
               }}
             />
 
-            {/* // TODO : FIX THIS ASAP */}
             {/* // TAG : Total balance */}
             <ListItem
               iconLeftName="cash"
