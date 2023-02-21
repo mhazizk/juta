@@ -11,8 +11,10 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
+import getSecretFromCloudFunctions from "../api/firebase/getSecretFromCloudFunctions";
 import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
 import { TextPrimary } from "../components/Text";
+import SECRET_KEYS from "../constants/secretManager";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import LoginScreen from "../features/auth/screens/LoginScreen";
@@ -45,8 +47,9 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
-import getSubscriptionLimit from "../features/subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../features/subscription/model/subscriptionLimit";
+import SplashScreen from "../features/splash-screen/screens/SplashScreen";
+import getFeatureLimit from "../features/subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../features/subscription/model/featureName";
 import MySubscriptionScreen from "../features/subscription/screens/MySubscriptionScreen";
 import PaywallScreen from "../features/subscription/screens/PaywallScreen";
 import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
@@ -66,7 +69,7 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
@@ -83,7 +86,6 @@ import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import ActionScreen from "../screens/modal/ActionScreen";
 import LoadingScreen from "../screens/modal/LoadingScreen";
 import ModalScreen from "../screens/modal/ModalScreen";
-import SplashScreen from "../screens/modal/SplashScreen";
 import SearchScreen from "../screens/search/SearchScreen";
 import AboutScreen from "../screens/settings/AboutScreen";
 import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
@@ -111,14 +113,18 @@ const RootStack = () => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
-  const { globalSubscriptionFeatures, dispatchGlobalSubscriptionFeatures } =
-    useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch, dispatchGlobalFeatureSwitch } =
+    useGlobalFeatureSwitch();
   const navigation = useNavigation();
   const [user, loading, error] = useAuthState(auth);
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [lastSettingsUpdate, setLastSettingsUpdate] = useState(
     appSettings?._timestamps?.updated_at
   );
+  const [featureSwitchSecret, setFeatureSwitchSecret] = useState({
+    featureSwitchCollectionName: null,
+    featureSwitchDocumentId: null,
+  });
   const appState = useRef(AppState.currentState);
   const userAccountRef = useRef(userAccount);
   const appSettingsRef = useRef(appSettings);
@@ -131,7 +137,8 @@ const RootStack = () => {
   const globalThemeRef = useRef(globalTheme);
   const globalCurrencyRatesRef = useRef(globalCurrencyRates);
   const globalLoanRef = useRef(globalLoan);
-  const globalSubscriptionFeaturesRef = useRef(globalSubscriptionFeatures);
+  const globalFeatureSwitchRef = useRef(globalFeatureSwitch);
+  const featureSwitchSecretRef = useRef(featureSwitchSecret);
 
   const callback = useCallback(() => {
     useFirestoreSubscriptions({
@@ -166,8 +173,8 @@ const RootStack = () => {
       globalLoan: globalLoanRef,
       dispatchGlobalLoan,
 
-      globalSubscriptionFeatures: globalSubscriptionFeaturesRef,
-      dispatchGlobalSubscriptionFeatures,
+      globalFeatureSwitch: globalFeatureSwitchRef,
+      dispatchGlobalFeatureSwitch,
     });
   }, [
     userAccountRef,
@@ -180,11 +187,21 @@ const RootStack = () => {
     globalThemeRef,
     globalCurrencyRatesRef,
     globalLoanRef,
-    globalSubscriptionFeaturesRef,
+    globalFeatureSwitchRef,
   ]);
 
   // TAG : useEffect for state
   useEffect(() => {
+    Promise.all([
+      getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME),
+      getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID),
+    ]).then((data) => {
+      setFeatureSwitchSecret({
+        featureSwitchCollectionName: data[0],
+        featureSwitchDocumentId: data[1],
+      });
+    });
+
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -192,7 +209,7 @@ const RootStack = () => {
       ) {
         auth.currentUser?.reload().then(async () => {
           listenSubscriptionStatus({
-            globalSubscriptionFeatures,
+            globalFeatureSwitch,
             appSettings,
             userAccount,
             callback: ({ newUserAccount, newAppSettings }) => {
@@ -233,8 +250,8 @@ const RootStack = () => {
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {
-    console.log(JSON.stringify({ globalSubscriptionFeatures }, null, 2));
-  }, [globalSubscriptionFeatures]);
+    console.log(JSON.stringify({ globalFeatureSwitch }, null, 2));
+  }, [globalFeatureSwitch]);
 
   useEffect(() => {
     if (logbooks.logbooks) {
@@ -521,10 +538,10 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get logbook limit from subscription plan
-                  const logbookLimit = getSubscriptionLimit({
-                    globalSubscriptionFeatures,
+                  const logbookLimit = getFeatureLimit({
+                    globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription?.plan,
-                    subscriptionLimit: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                    featureName: FEATURE_NAME.LOGBOOKS,
                   });
 
                   // check if user has reached the limit
@@ -787,10 +804,10 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
-                  const loanContactsLimit = getSubscriptionLimit({
-                    globalSubscriptionFeatures,
+                  const loanContactsLimit = getFeatureLimit({
+                    globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription?.plan,
-                    subscriptionLimit: SUBSCRIPTION_LIMIT.LOAN,
+                    featureName: FEATURE_NAME.LOAN,
                   });
 
                   const currentLoanContacts = globalLoan.contacts.length;
@@ -882,10 +899,10 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   // get repeat limit from subscription plan
-                  const repeatLimit = getSubscriptionLimit({
-                    globalSubscriptionFeatures,
+                  const repeatLimit = getFeatureLimit({
+                    globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription?.plan,
-                    subscriptionLimit: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+                    featureName: FEATURE_NAME.RECURRING_TRANSACTIONS,
                   });
 
                   // check if user has reached the limit
@@ -981,12 +998,12 @@ const RootStack = () => {
                 iconName="add"
                 onPress={() => {
                   if (
-                    !getSubscriptionLimit(
-                      {globalSubscriptionFeatures,
+                    !getFeatureLimit(
+                      {globalFeatureSwitch,
                         subscriptionPlan:
                         userAccount.subscription?.plan,
-                        subscriptionLimit:
-                      SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
+                        featureName:
+                      FEATURE_NAME.FEATURE_WISHLIST}
                     )
                   ) {
                     // show alert
