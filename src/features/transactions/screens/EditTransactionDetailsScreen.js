@@ -587,8 +587,12 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   modalType: "list",
                   props:
                     transaction.details.in_out === "expense"
-                      ? categories.categories.expense
-                      : categories.categories.income,
+                      ? categories.categories.expense.sort((a, b) => {
+                          return a.name.localeCompare(b.name);
+                        })
+                      : categories.categories.income.sort((a, b) => {
+                          return a.name.localeCompare(b.name);
+                        }),
                   selected: (item) => {
                     setSelectedCategory(item);
                     setSelectedLoanContact(null);
