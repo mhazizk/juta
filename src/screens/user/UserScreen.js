@@ -13,8 +13,8 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import UserHeaderComponent from "../../components/UserHeader";
-import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../../features/subscription/model/featureName";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -23,7 +23,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
@@ -31,7 +31,7 @@ import CustomScrollView from "../../shared-components/CustomScrollView";
 
 const UserScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { userAccount } = useGlobalUserAccount();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
   const { categories, dispatchCategories } = useGlobalCategories();
@@ -147,10 +147,10 @@ const UserScreen = ({ navigation }) => {
               {/* <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit(
-                    { globalSubscriptionFeatures,
+                  !getFeatureLimit(
+                    { globalFeatureSwitch,
                       subscriptionPlan: userAccount?.subscription?.plan,
-                   subscriptionLimit: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
+                   featureName: FEATURE_NAME.FEATURE_WISHLIST}
                   )
                 }
                 leftLabel="Feature Wishlist"
@@ -158,10 +158,10 @@ const UserScreen = ({ navigation }) => {
                 iconPack="IonIcons"
                 onPress={() => {
                   if (
-                    !getSubscriptionLimit(
-                      { globalSubscriptionFeatures,
+                    !getFeatureLimit(
+                      { globalFeatureSwitch,
                         subscriptionPlan: userAccount?.subscription?.plan,
-                     subscriptionLimit: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST}
+                     featureName: FEATURE_NAME.FEATURE_WISHLIST}
                     )
                   ) {
                     Alert.alert(
