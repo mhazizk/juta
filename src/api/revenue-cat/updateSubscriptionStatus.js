@@ -50,6 +50,11 @@ const updateSubscriptionStatus = ({
           featureName: FEATURE_NAME.SECONDARY_CURRENCY,
         }),
       },
+      _timestamps: {
+        ...appSettings?._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount?.uid,
+      },
     };
     callback({
       newUserAccount: modifiedUserAccount,
@@ -58,7 +63,7 @@ const updateSubscriptionStatus = ({
   } else {
     callback({
       newUserAccount: userAccount,
-      newAppSettingsgs: appSettings,
+      newAppSettings: appSettings,
     });
   }
 };
