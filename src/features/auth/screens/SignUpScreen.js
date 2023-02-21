@@ -1,6 +1,6 @@
 // TODO : Create a login screen
 
-import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
+import { View, Dimensions, TouchableOpacity } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
@@ -21,7 +21,6 @@ import handleUserUpdateProfile from "../../../utils/handleUserUpdateProfile";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import userAccountModel from "../../../model/userAccountModel";
-import LOGSNAG_EVENT_TYPES from "../../../api/logsnag/logSnagEventTypes";
 import passwordConditionsList from "../model/passwordConditionsList";
 import PasswordConditionsChecklist from "../components/PasswordConditionsChecklist";
 import passwordCheck from "../model/passwordCheck";
@@ -29,7 +28,6 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../../api/firebase/auth";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import featureSwitch from "../../subscription/model/subscriptionFeatureList";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
 import SECRET_KEYS from "../../../constants/secretManager";
