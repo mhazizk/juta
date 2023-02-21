@@ -7,7 +7,6 @@ import {
   useGlobalLogbooks,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
-import featureSwitch from "../model/subscriptionFeatureList";
 
 const SubscriptionTable = ({ subscription, showCurrent = false }) => {
   const { globalTheme } = useGlobalTheme();
