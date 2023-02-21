@@ -30,7 +30,7 @@ const RevenueCatPaywallOfferings = ({ onSuccess }) => {
     if (offerings) {
       getYearlySaving();
     }
-    console.log(offerings);
+    console.log(JSON.stringify({ offerings }, null, 2));
   }, [offerings]);
   const getYearlySaving = () => {
     // const yearlyPrice = subscriptionTypes.find((subscriptionType) => {

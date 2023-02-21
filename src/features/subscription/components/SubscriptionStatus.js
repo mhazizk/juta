@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { TouchableNativeFeedback, View } from "react-native";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
@@ -6,11 +7,19 @@ import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 
-const SubscriptionStatus = ({ subscription, onPress }) => {
+const SubscriptionStatus = ({ onPress }) => {
+  const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+
+  const { subscription } = userAccount;
+
+  useEffect(() => {
+    console.log(JSON.stringify({ userAccount }, null, 2));
+  }, [userAccount]);
 
   return (
     <>
@@ -36,9 +45,9 @@ const SubscriptionStatus = ({ subscription, onPress }) => {
             style={{ fontWeight: "bold" }}
           />
           <TextButtonPrimary
-            label={
-              "Joined since : " + new Date(subscription.joinDate).toDateString()
-            }
+            label={`Joined since :  ${new Date(
+              subscription.joinDate
+            ).toDateString()}`}
           />
         </View>
       </ListSection>
@@ -63,22 +72,6 @@ const SubscriptionStatus = ({ subscription, onPress }) => {
           </TouchableNativeFeedback>
         </ListSection>
       )}
-      <ListSection>
-        <ListItem
-          pressable
-          leftLabel="Manage subscription"
-          iconRightName={"chevron-forward-outline"}
-          onPress={() => {}}
-        />
-        <ListItem
-          pressable
-          leftLabel="Subscription history"
-          iconRightName={"chevron-forward-outline"}
-          onPress={() => {
-            onPress(screenList.subscriptionHistoryScreen);
-          }}
-        />
-      </ListSection>
     </>
   );
 };

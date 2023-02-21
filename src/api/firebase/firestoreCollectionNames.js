@@ -6,7 +6,6 @@ const FIRESTORE_COLLECTION_NAMES = {
   LOGBOOKS: "logbooks",
   CATEGORIES: "categories",
   BUDGETS: "budgets",
-  SETTINGS: "settings",
   APP_SETTINGS: "appSettings",
   CURRENCY_RATES: "currencyRates",
   FEATURE_WISHLIST: "featureWishlist",

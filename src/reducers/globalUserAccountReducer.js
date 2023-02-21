@@ -32,7 +32,7 @@ const globalUserAccountReducer = (state, action) => {
     case REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS:
       // check timestamp for duplicate
       if (
-        action.payload._timestamps.updated_at > state._timestamps.updated_at
+        action.payload?._timestamps?.updated_at > state?._timestamps.updated_at
       ) {
         return { ...state, ...action.payload };
       }

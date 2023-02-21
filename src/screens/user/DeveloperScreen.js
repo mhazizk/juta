@@ -33,8 +33,11 @@ import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactio
 import testing from "../../dev/testing";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
-import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
+import featureSwitch from "../../features/subscription/model/subscriptionFeatureList";
 import uuid from "react-native-uuid";
+import getSecretFromCloudFunctions from "../../api/firebase/getSecretFromCloudFunctions";
+import env from "../../config/env";
+import SECRET_KEYS from "../../constants/secretManager";
 
 const DeveloperScreen = ({ item, navigation }) => {
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
@@ -178,10 +181,41 @@ const DeveloperScreen = ({ item, navigation }) => {
           <ListSection>
             <ListItem
               pressable
+              leftLabel="Try get secret from cloud"
+              onPress={async () => {
+                const data = await getSecretFromCloudFunctions(
+                  "FEATURE_COLLECTION_NAME"
+                );
+                console.log(JSON.stringify({ data }, null, 2));
+              }}
+            />
+            <ListItem
+              pressable
               leftLabel="Set subscription to firebase"
               onPress={async () => {
-                await firestore.setData("subscriptionFeatureList", uuid.v4(), {
-                  subscriptionFeatureList,
+                const collection = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
+                );
+                const docId = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
+                );
+                await firestore.setData(collection, docId, {
+                  subscriptionFeatureList: featureSwitch,
+                });
+              }}
+            />
+            <ListItem
+              pressable
+              leftLabel="Set feature switch to firebase"
+              onPress={async () => {
+                const collection = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
+                );
+                const docId = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
+                );
+                await firestore.setData(collection, docId, {
+                  featureSwitch,
                 });
               }}
             />

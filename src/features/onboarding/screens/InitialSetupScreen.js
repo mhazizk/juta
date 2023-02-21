@@ -93,6 +93,10 @@ const InitialSetupScreen = ({ route, navigation }) => {
     });
   }, [selectedAppSettings.logbookSettings.defaultCurrency]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(userAccount, null, 2));
+  }, [userAccount]);
+
   const findThemeIcon = (themeId) => {
     return THEME_CONSTANTS.OPTIONS.find((theme) => {
       return theme.id === themeId;
@@ -465,7 +469,9 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{ flexDirection: "row", alignItems: "center", width: 200 }}
           >
             <FlatList
-              data={CURRENCY_CONSTANTS.OPTIONS}
+              data={CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+              })}
               keyExtractor={(item) => item.isoCode}
               renderItem={({ item }) => {
                 return (

@@ -8,15 +8,15 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import screenList from "../../../navigations/ScreenList";
-import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../../subscription/model/subscriptionLimit";
+import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../../subscription/model/featureName";
 import { useEffect } from "react";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 
@@ -26,7 +26,7 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
   const { userAccount } = useGlobalUserAccount();
   const { categories } = useGlobalCategories();
   const { logbooks } = useGlobalLogbooks();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
 
   useEffect(() => {}, []);
@@ -108,10 +108,10 @@ const MyRepeatedTransactionsScreen = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => {
             if (
-              !getSubscriptionLimit({
-                globalSubscriptionFeatures,
+              !getFeatureLimit({
+                globalFeatureSwitch,
                 subscriptionPlan: userAccount.subscription.plan,
-                subscriptionLimit: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+                featureName: FEATURE_NAME.RECURRING_TRANSACTIONS,
               })
             ) {
               Alert.alert(

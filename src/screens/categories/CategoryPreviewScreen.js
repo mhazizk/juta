@@ -242,7 +242,9 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
 
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1, paddingLeft: 8 }}>
-              {!category.is_deletable && <ButtonDisabled label="Delete" />}
+              {!category.is_deletable && (
+                <ButtonSecondaryDisabled label="Delete" />
+              )}
               {category.is_deletable && (
                 <ButtonSecondaryDanger
                   label="Delete"

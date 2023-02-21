@@ -11,8 +11,8 @@ import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
 import { TextPrimary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
-import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../../features/subscription/model/featureName";
 import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import screenList from "../../navigations/ScreenList";
 import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
@@ -22,7 +22,7 @@ import {
   useGlobalCategories,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
@@ -33,7 +33,7 @@ import { getDeviceId } from "../../utils";
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { globalTheme } = useGlobalTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
@@ -153,10 +153,10 @@ const MyAccountScreen = ({ item, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !getSubscriptionLimit({
-                    globalSubscriptionFeatures,
+                  !getFeatureLimit({
+                    globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription.plan,
-                    subscriptionLimit: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+                    featureName: FEATURE_NAME.EXPORT_DATA,
                   })
                 }
                 iconPack="IonIcons"
@@ -164,10 +164,10 @@ const MyAccountScreen = ({ item, navigation }) => {
                 leftLabel="Export Data"
                 onPress={() => {
                   if (
-                    getSubscriptionLimit({
-                      globalSubscriptionFeatures,
+                    getFeatureLimit({
+                      globalFeatureSwitch,
                       subscriptionPlan: userAccount.subscription.plan,
-                      subscriptionLimit: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+                      featureName: FEATURE_NAME.EXPORT_DATA,
                     })
                   ) {
                     navigation.navigate(screenList.exportScreen);

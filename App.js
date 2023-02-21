@@ -26,7 +26,6 @@ import { useEffect, useRef } from "react";
 import sentryInit from "./src/sentry/sentryInit";
 import * as Sentry from "sentry-expo";
 export default Sentry.Native.wrap(App);
-
 function App() {
   useEffect(() => {
     sentryInit();

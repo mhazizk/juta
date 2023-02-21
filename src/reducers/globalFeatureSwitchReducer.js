@@ -1,8 +1,8 @@
 import REDUCER_ACTIONS from "./reducer.action";
 
-const globalSubscriptionFeaturesReducer = (state, action) => {
+const globalFeatureSwitchReducer = (state, action) => {
   switch (action.type) {
-    case REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET:
+    case REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET:
       return {
         ...state,
         ...action.payload,
@@ -12,4 +12,4 @@ const globalSubscriptionFeaturesReducer = (state, action) => {
   }
 };
 
-export default globalSubscriptionFeaturesReducer;
+export default globalFeatureSwitchReducer;

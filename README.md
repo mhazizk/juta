@@ -20,6 +20,8 @@ Your Mobile Expense Tracker
 </a>
 </h1>
 
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37) ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white) ![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white) [![General badge](https://img.shields.io/badge/Status-Active-<COLOR>.svg)](https://shields.io/)
+
 ## About Juta
 
 Juta is a mobile app expense tracker to help you track your daily spendings
@@ -28,40 +30,51 @@ Juta is a mobile app expense tracker to help you track your daily spendings
 
 Juta has many features to help you manage your daily spendings:
 
-- Dashboard
+- 📈 **Dashboard**
 
   Keep track of your spendings with Juta dashboard
 
-- Income and Expense category
+- 💸 **Income and Expense category**
 
   Categorize your spendings to help you understand your income and expense
 
-- Budget planning
+- 💰 **Budget planning**
 
   Plan your budget to help you manage your spendings
 
-- Multi logbooks support
+- 📖 **Multi logbooks support**
 
   Want to separate between private and work spendings?
   Juta allows you to log it into different logbook to help you separate them
 
-- Secondary currencies support
+- 💸 **Track your debt / loan**
 
-  No more need to convert your currencies. Just log your transaction in your main currency and Juta will automatically convert it to your chosen secondary currency
+  Juta helps you to track your debt / loan.
+  You can also add your debt / loan contact to help you remember who you owe
 
-- Track your debt / loan
+- 💲 **Secondary currencies support**
 
-  Juta helps you to track your debt / loan. You can also add your debt / loan contact to help you remember who you owe
+  No more need to convert your currencies.
+  Just log your transaction in your main currency and Juta will automatically convert it to your chosen secondary currency
 
-- Multi devices support
-- Automatic sync
+- 💱 **Easy currency converter**
+
+  Want to convert all your currencies?
+
+  Juta has a built-in currency converter to help you convert your currencies easily
+
+- 📱 **Multi devices support**
+
+  Track your spendings on many devices. Juta currently supports Android devices with iOS support coming soon
+
+- 🔄 **Automatic sync**
 
   Don't worry about losing your data. Juta will automatically sync your data between your devices
 
-- Account Group (Coming soon)
-- Recurring transactions (Coming soon)
-- Image attachment (Coming soon)
-- and many more
+- 🔁 **Recurring transactions** (Coming soon)
+- 🖼️ **Image attachment** (Coming soon)
+- 👥 **Account Group** (Coming soon)
+- **and many more...**
 
 ## Documentations
 
@@ -74,8 +87,9 @@ Coming soon at juta official web
 - New features:
 - Bugfixes:
   - Fix multi budgets support (on progress)
-  - Fix multi devices support (on progress)
-  - Fix paywall screen (on progress)
+  - Fix settings sync
+  - Fix multi devices support
+  - Fix paywall
   - Fix graph limit line on analytics screen (on progress)
 
 ### 0.7.0-alpha

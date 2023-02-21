@@ -8,22 +8,22 @@ import {
   useGlobalAppSettings,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
 import uuid from "react-native-uuid";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
-import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
+import FEATURE_NAME from "../../features/subscription/model/featureName";
+import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { userAccount } = useGlobalUserAccount();
   // const { rawTransactions, dispatchRawTransactions } = useGlobalTransactions();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
@@ -132,14 +132,14 @@ const ActionScreen = ({ route, navigation }) => {
               onPress={() => {
                 navigation.goBack();
                 // get logbook limit from subscription plan
-                const logbookLimit = getSubscriptionLimit({
-                  globalSubscriptionFeatures,
-                  subscriptionLimit: userAccount.subscription.plan,
-                  subscriptionPlan: SUBSCRIPTION_LIMIT.LOGBOOKS,
+                const logbookLimit = getFeatureLimit({
+                  globalFeatureSwitch,
+                  featureName: FEATURE_NAME.LOGBOOKS,
+                  subscriptionPlan: userAccount.subscription.plan,
                 });
 
                 // check if user has reached the limit
-                if (logbookLimit === logbooks.logbooks?.length) {
+                if (logbooks.logbooks?.length >= logbookLimit) {
                   // show alert
                   Alert.alert(
                     "Logbook Limit Reached",
@@ -157,9 +157,7 @@ const ActionScreen = ({ route, navigation }) => {
                       },
                     ]
                   );
-                }
-                // if not, proceed
-                if (logbookLimit > logbooks.logbooks?.length) {
+                } else {
                   navigation.navigate(screenList.modalScreen, {
                     modalType: "textInput",
                     title: "Create new Logbook",

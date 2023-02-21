@@ -22,10 +22,33 @@ const LogoutScreen = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
 
   useEffect(() => {
-    useFirestoreSubscriptions({
+    const {
+      unsubscribeAppSettings,
+      unsubscribeUserAccount,
+      unsubscribeLogbooks,
+      unsubscribeTransactions,
+      unsubscribeCategories,
+      unsubscribeBudgets,
+      unsubscribeRepeatedTransactions,
+      unsubscribeCurrencyRates,
+      unsubscribeLoan,
+      // unsubscribeFeatures,
+    } = useFirestoreSubscriptions({
       uid: userAccount.uid,
-      unsubscribeAll: true,
     });
+
+    // unsubscribe from firestore subscriptions
+    unsubscribeAppSettings;
+    unsubscribeUserAccount;
+    unsubscribeLogbooks;
+    unsubscribeTransactions;
+    unsubscribeCategories;
+    unsubscribeBudgets;
+    unsubscribeRepeatedTransactions;
+    unsubscribeCurrencyRates;
+    unsubscribeLoan;
+    // unsubscribeFeatures;
+
     setTimeout(() => {
       signOut(auth).then(async () => {
         dispatchAppSettings({

@@ -1,19 +1,19 @@
 import Purchases from "react-native-purchases";
 import configureRevenueCat from "./configureRevenueCat";
-import getSubscriptionLimit from "../../features/subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../../features/subscription/model/subscriptionLimit";
+import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../../features/subscription/model/featureName";
 
 /**
  * Update subscription status from RevenueCat
  *
- * @param globalSubscriptionFeatures - Global subscription features state
+ * @param globalFeatureSwitch - Global subscription features state
  * @param appSettings - App settings state
  * @param userAccount - User account state
  * @param callback - Callback function
  * @returns
  */
 const updateSubscriptionStatus = ({
-  globalSubscriptionFeatures,
+  globalFeatureSwitch,
   rcCustomerInfo,
   appSettings,
   userAccount,
@@ -44,11 +44,16 @@ const updateSubscriptionStatus = ({
       ...appSettings,
       logbookSettings: {
         ...appSettings?.logbookSettings,
-        showSecondaryCurrency: getSubscriptionLimit({
-          globalSubscriptionFeatures,
+        showSecondaryCurrency: getFeatureLimit({
+          globalFeatureSwitch,
           subscriptionPlan: userAccount?.subscription.plan,
-          subscriptionLimit: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+          featureName: FEATURE_NAME.SECONDARY_CURRENCY,
         }),
+      },
+      _timestamps: {
+        ...appSettings?._timestamps,
+        updated_at: Date.now(),
+        updated_by: userAccount?.uid,
       },
     };
     callback({
@@ -58,7 +63,7 @@ const updateSubscriptionStatus = ({
   } else {
     callback({
       newUserAccount: userAccount,
-      newAppSettingsgs: appSettings,
+      newAppSettings: appSettings,
     });
   }
 };
