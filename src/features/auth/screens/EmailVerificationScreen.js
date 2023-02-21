@@ -95,9 +95,8 @@ const EmailVerificationScreen = ({ route, navigation }) => {
           });
           break;
         case screenList.signUpScreen:
-          navigation.replace(screenList.splashScreen, {
+          navigation.replace(screenList.initialSetupScreen, {
             fromScreen: screenList.emailVerificationScreen,
-            targetScreen: screenList.initialSetupScreen,
           });
           break;
 
