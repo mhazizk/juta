@@ -33,7 +33,7 @@ import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactio
 import testing from "../../dev/testing";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
-import subscriptionFeatureList from "../../features/subscription/model/subscriptionFeatureList";
+import featureSwitch from "../../features/subscription/model/subscriptionFeatureList";
 import uuid from "react-native-uuid";
 import getSecretFromCloudFunctions from "../../api/firebase/getSecretFromCloudFunctions";
 import env from "../../config/env";
@@ -194,13 +194,28 @@ const DeveloperScreen = ({ item, navigation }) => {
               leftLabel="Set subscription to firebase"
               onPress={async () => {
                 const collection = await getSecretFromCloudFunctions(
-                  SECRET_KEYS.FEATURE_COLLECTION_NAME
+                  SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
                 );
                 const docId = await getSecretFromCloudFunctions(
-                  SECRET_KEYS.FEATURE_DOCUMENT_ID
+                  SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
                 );
                 await firestore.setData(collection, docId, {
-                  subscriptionFeatureList,
+                  subscriptionFeatureList: featureSwitch,
+                });
+              }}
+            />
+            <ListItem
+              pressable
+              leftLabel="Set feature switch to firebase"
+              onPress={async () => {
+                const collection = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
+                );
+                const docId = await getSecretFromCloudFunctions(
+                  SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
+                );
+                await firestore.setData(collection, docId, {
+                  featureSwitch,
                 });
               }}
             />
