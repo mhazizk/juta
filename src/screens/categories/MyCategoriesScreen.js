@@ -60,30 +60,34 @@ const MyCategoriesScreen = ({ navigation }) => {
           }}
         />
         <ListSection>
-          {categories.categories?.expense?.map((item) => {
-            return (
-              <ListItem
-                pressable
-                key={item.id}
-                leftLabel={
-                  item?.name[0].toUpperCase() + item?.name.substring(1)
-                }
-                iconLeftName={item.icon.name}
-                iconLeftColor={
-                  item.icon.color === "default"
-                    ? globalTheme.colors.foreground
-                    : item.icon.color
-                }
-                iconPack={item.icon.pack}
-                iconRightName="chevron-forward"
-                onPress={() =>
-                  navigation.navigate(screenList.categoryPreviewScreen, {
-                    category: item,
-                  })
-                }
-              />
-            );
-          })}
+          {categories.categories?.expense
+            ?.sort((a, b) => {
+              return a.name.localeCompare(b.name);
+            })
+            .map((item) => {
+              return (
+                <ListItem
+                  pressable
+                  key={item.id}
+                  leftLabel={
+                    item?.name[0].toUpperCase() + item?.name.substring(1)
+                  }
+                  iconLeftName={item.icon.name}
+                  iconLeftColor={
+                    item.icon.color === "default"
+                      ? globalTheme.colors.foreground
+                      : item.icon.color
+                  }
+                  iconPack={item.icon.pack}
+                  iconRightName="chevron-forward"
+                  onPress={() =>
+                    navigation.navigate(screenList.categoryPreviewScreen, {
+                      category: item,
+                    })
+                  }
+                />
+              );
+            })}
         </ListSection>
 
         {/* // TAG : Income */}
@@ -96,30 +100,34 @@ const MyCategoriesScreen = ({ navigation }) => {
           }}
         />
         <ListSection>
-          {categories.categories?.income?.map((item) => {
-            return (
-              <ListItem
-                pressable
-                key={item.id}
-                leftLabel={
-                  item?.name[0].toUpperCase() + item?.name.substring(1)
-                }
-                iconLeftName={item.icon.name}
-                iconLeftColor={
-                  item.icon.color === "default"
-                    ? globalTheme.colors.foreground
-                    : item.icon.color
-                }
-                iconPack={item.icon.pack}
-                iconRightName="chevron-forward"
-                onPress={() =>
-                  navigation.navigate(screenList.categoryPreviewScreen, {
-                    category: item,
-                  })
-                }
-              />
-            );
-          })}
+          {categories.categories?.income
+            ?.sort((a, b) => {
+              return a.name.localeCompare(b.name);
+            })
+            .map((item) => {
+              return (
+                <ListItem
+                  pressable
+                  key={item.id}
+                  leftLabel={
+                    item?.name[0].toUpperCase() + item?.name.substring(1)
+                  }
+                  iconLeftName={item.icon.name}
+                  iconLeftColor={
+                    item.icon.color === "default"
+                      ? globalTheme.colors.foreground
+                      : item.icon.color
+                  }
+                  iconPack={item.icon.pack}
+                  iconRightName="chevron-forward"
+                  onPress={() =>
+                    navigation.navigate(screenList.categoryPreviewScreen, {
+                      category: item,
+                    })
+                  }
+                />
+              );
+            })}
         </ListSection>
       </CustomScrollView>
       {/* <FlatList
