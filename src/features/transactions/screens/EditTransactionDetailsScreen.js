@@ -30,13 +30,13 @@ import {
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
-  useGlobalSubscriptionFeatures,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
-import getSubscriptionLimit from "../../subscription/logic/getSubscriptionLimit";
-import SUBSCRIPTION_LIMIT from "../../subscription/model/subscriptionLimit";
+import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
+import FEATURE_NAME from "../../subscription/model/featureName";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import {
@@ -52,7 +52,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   const { globalTheme } = useGlobalTheme();
   const { globalLoan } = useGlobalLoan();
   const { userAccount } = useGlobalUserAccount();
-  const { globalSubscriptionFeatures } = useGlobalSubscriptionFeatures();
+  const { globalFeatureSwitch } = useGlobalFeatureSwitch();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions, dispatchSortedTransactions } =
     useGlobalSortedTransactions();
@@ -820,10 +820,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             <ListItem
               pressable
               disabled={
-                !getSubscriptionLimit({
-                globalSubscriptionFeatures,
+                !getFeatureLimit({
+                globalFeatureSwitch,
                 subscriptionPlan: userAccount.subscription.plan,
-                subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
                 })
               }
               leftLabel="Attachment Images"
@@ -837,10 +837,10 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               iconRightName="add"
               onPress={async () => {
                 if (
-                getSubscriptionLimit({
-                globalSubscriptionFeatures,
+                getFeatureLimit({
+                globalFeatureSwitch,
                 subscriptionPlan: userAccount.subscription.plan,
-                subscriptionLimit: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
                 })
                 ) {
                   // No permissions request is necessary for launching the image library
