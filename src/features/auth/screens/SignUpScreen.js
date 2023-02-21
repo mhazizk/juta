@@ -4,7 +4,8 @@ import { View, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
-  useGlobalSubscriptionFeatures,
+  useGlobalCurrencyRates,
+  useGlobalFeatureSwitch,
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
@@ -28,15 +29,16 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../../api/firebase/auth";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
-import subscriptionFeatureList from "../../subscription/model/subscriptionFeatureList";
+import featureSwitch from "../../subscription/model/subscriptionFeatureList";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
 import SECRET_KEYS from "../../../constants/secretManager";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
-  const { dispatchGlobalSubscriptionFeatures } =
-    useGlobalSubscriptionFeatures();
+  const { dispatchGlobalFeatureSwitch } = useGlobalFeatureSwitch();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { dispatchUserAccount } = useGlobalUserAccount();
   // const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [displayName, setDisplayName] = useState("");
@@ -124,6 +126,16 @@ const SignUpScreen = ({ route, navigation }) => {
       },
     };
 
+    const newGlobalCurrencyRates = {
+      ...globalCurrencyRates,
+      _timestamps: {
+        ...globalCurrencyRates._timestamps,
+        created_by: account.uid,
+        updated_by: account.uid,
+        updated_at: Date.now(),
+      },
+    };
+
     dispatchAppSettings({
       type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
       payload: newAppSettings,
@@ -132,6 +144,10 @@ const SignUpScreen = ({ route, navigation }) => {
     dispatchUserAccount({
       type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
       payload: account,
+    });
+    dispatchGlobalCurrencyRates({
+      type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+      payload: newGlobalCurrencyRates,
     });
 
     setTimeout(async () => {
@@ -144,6 +160,11 @@ const SignUpScreen = ({ route, navigation }) => {
         FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
         account.uid,
         newAppSettings
+      );
+      await firestore.setData(
+        FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+        account.uid,
+        newGlobalCurrencyRates
       );
       // await postLogSnagEvent(
       //   account.displayName,
@@ -177,17 +198,19 @@ const SignUpScreen = ({ route, navigation }) => {
         handleUserSignUp({ email, password, displayName })
           .then((user) => {
             const collection = getSecretFromCloudFunctions(
-              SECRET_KEYS.FEATURE_COLLECTION_NAME
+              SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
             );
-            const doc = getSecretFromCloudFunctions(SECRET_KEYS.FEATURE_DOCUMENT_ID);
+            const doc = getSecretFromCloudFunctions(
+              SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
+            );
             Promise.all([collection, doc]).then((values) => {
               const collectionName = values[0];
               const documentId = values[1];
               firestore
                 .getOneDoc(collectionName, documentId)
                 .then((data) => {
-                  dispatchGlobalSubscriptionFeatures({
-                    type: REDUCER_ACTIONS.SUBSCRIPTION_FEATURES.FORCE_SET,
+                  dispatchGlobalFeatureSwitch({
+                    type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
                     payload: data,
                   });
                 })
