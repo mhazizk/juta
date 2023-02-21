@@ -35,7 +35,7 @@ const listenSubscriptionStatus = ({
           plan: newActiveSubscriptionPlan,
         },
         _timestamps: {
-          ...userAccount?._timestamps,
+          ...userAccount._timestamps,
           updated_at: Date.now(),
           updated_by: userAccount?.uid,
         },
@@ -49,6 +49,11 @@ const listenSubscriptionStatus = ({
             subscriptionPlan: userAccount?.subscription.plan,
             featureName: FEATURE_NAME.SECONDARY_CURRENCY,
           }),
+        },
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount?.uid,
         },
       };
       callback({
