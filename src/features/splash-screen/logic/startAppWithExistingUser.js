@@ -195,7 +195,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       };
 
       let updatedUserAccount;
-      let updatedAppSettings;
+      let updatedAppSettings = appSettingsData;
 
       updateSubscriptionStatus({
         globalFeatureSwitch: subsData,
@@ -233,22 +233,26 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-        payload: updatedAppSettings || {
-          ...appSettingsFallback,
-          uid: currentUser.uid,
-          _timestamps: {
-            ...appSettingsFallback._timestamps,
-            created_by: currentUser.uid,
-            updated_by: currentUser.uid,
-          },
-        },
+        payload: appSettingsData
+          ? updatedAppSettings
+          : {
+              ...appSettingsFallback,
+              uid: currentUser.uid,
+              _timestamps: {
+                ...appSettingsFallback._timestamps,
+                created_by: currentUser.uid,
+                updated_by: currentUser.uid,
+              },
+            },
       });
 
       // TAG : Global theme
 
       dispatchGlobalTheme({
         type: REDUCER_ACTIONS.THEME.SET,
-        payload: appSettingsData.theme_id || appSettingsFallback.theme_id,
+        payload: appSettingsData.theme_id
+          ? appSettingsData.theme_id
+          : appSettingsFallback.theme_id,
       });
 
       // TAG : Categories
