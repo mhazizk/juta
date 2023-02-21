@@ -1,9 +1,9 @@
-import SUBSCRIPTION_LIMIT from "./subscriptionLimit";
+import FEATURE_NAME from "./featureName";
 
-const subscriptionFeatureList = [
+const featureSwitch = [
   {
     id: 1,
-    identifier: SUBSCRIPTION_LIMIT.LOGBOOKS,
+    identifier: FEATURE_NAME.LOGBOOKS,
     name: "Number of logbooks",
     iconName: "book",
     free: 2,
@@ -11,7 +11,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 2,
-    identifier: SUBSCRIPTION_LIMIT.DEVICES,
+    identifier: FEATURE_NAME.DEVICES,
     name: "Maximum devices per account",
     iconName: "person",
     free: 1,
@@ -19,7 +19,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 3,
-    identifier: SUBSCRIPTION_LIMIT.BUDGETS,
+    identifier: FEATURE_NAME.BUDGETS,
     name: "Budgets",
     iconName: "pie-chart",
     free: 1,
@@ -27,7 +27,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 4,
-    identifier: SUBSCRIPTION_LIMIT.LOAN,
+    identifier: FEATURE_NAME.LOAN,
     name: "Loan contacts",
     iconName: "cash",
     free: 5,
@@ -35,7 +35,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 5,
-    identifier: SUBSCRIPTION_LIMIT.SECONDARY_CURRENCY,
+    identifier: FEATURE_NAME.SECONDARY_CURRENCY,
     name: "Secondary currency",
     iconName: "logo-usd",
     free: true,
@@ -43,7 +43,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 6,
-    identifier: SUBSCRIPTION_LIMIT.EXPORT_DATA,
+    identifier: FEATURE_NAME.EXPORT_DATA,
     name: "Export data",
     iconName: "share-outline",
     free: false,
@@ -51,7 +51,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 7,
-    identifier: SUBSCRIPTION_LIMIT.ATTACHMENT_IMAGES,
+    identifier: FEATURE_NAME.ATTACHMENT_IMAGES,
     name: `Attachment images\n(coming soon)`,
     iconName: "image",
     free: false,
@@ -59,7 +59,7 @@ const subscriptionFeatureList = [
   },
   {
     id: 8,
-    identifier: SUBSCRIPTION_LIMIT.RECURRING_TRANSACTIONS,
+    identifier: FEATURE_NAME.RECURRING_TRANSACTIONS,
     name: `Recurring transactions\n(coming soon)`,
     iconName: "repeat",
     free: false,
@@ -67,7 +67,7 @@ const subscriptionFeatureList = [
   },
   // {
   //   id: 9,
-  //   identifier: SUBSCRIPTION_LIMIT.FEATURE_WISHLIST,
+  //   identifier: FEATURE_NAME.FEATURE_WISHLIST,
   //   name: "Feature wishlist",
   //   iconName: "bulb",
   //   free: false,
@@ -75,7 +75,7 @@ const subscriptionFeatureList = [
   // },
   // {
   //   id: 10,
-  //   identifier: SUBSCRIPTION_LIMIT.GROUPS,
+  //   identifier: FEATURE_NAME.GROUPS,
   //   name: "Groups and sharing logbooks",
   //   iconName: "people",
   //   free: false,
@@ -83,4 +83,4 @@ const subscriptionFeatureList = [
   // },
 ];
 
-export default subscriptionFeatureList;
+export default featureSwitch;
