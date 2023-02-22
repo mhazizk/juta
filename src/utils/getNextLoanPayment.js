@@ -1,4 +1,5 @@
 import findTransactionsByIds from "./findTransactionsByIds";
+import getCustomDate from "./getCustomDate";
 import getTotalAmountAndConvertToDefaultCurrency from "./getTotalAmountAndConvertToDefaultCurrency";
 
 /**
@@ -33,19 +34,22 @@ const getNextLoanPayment = ({
   });
 
   // get neareast payment due date
-  const nearestPaymentDueInMillis = contactsNotYetPaid.sort((a, b) => {
+  const contactsNotYetPaidSorted = contactsNotYetPaid.sort((a, b) => {
     return a.payment_due_date - b.payment_due_date;
   });
+
+  const nearestPaymentDateinMillis =
+    contactsNotYetPaidSorted[0]?.payment_due_date;
   //   get nearest payment due date in date
-  const nearestPaymentDueInDate = new Date(
-    nearestPaymentDueInMillis[0]?.payment_due_date
-  ).getDate();
+  const nearestPaymentDueInCustomDate = getCustomDate(
+    nearestPaymentDateinMillis
+  );
 
   // get transactions id from contacts that have the nearest payment due date
   const transactionIdsToFind = [];
   contactsNotYetPaid.forEach((contact) => {
     if (
-      new Date(contact.payment_due_date).getDate() === nearestPaymentDueInDate
+      getCustomDate(contact.payment_due_date) === nearestPaymentDueInCustomDate
     ) {
       transactionIdsToFind.push(...contact.transactions_id);
     }
@@ -70,7 +74,10 @@ const getNextLoanPayment = ({
       return getSum;
 
     case getNextDate:
-      return nearestPaymentDueInDate - new Date().getDate();
+      return (
+        (nearestPaymentDateinMillis - Date.now()) /
+        (24 * 60 * 60 * 1000)
+      ).toFixed(0);
 
     case checkIfAllPaid:
       return contactsNotYetPaid?.length === 0;
@@ -94,8 +101,8 @@ const getNextLoanPayment = ({
           },
         });
         if (
-          new Date(contact.payment_due_date).getDate() ===
-            nearestPaymentDueInDate &&
+          getCustomDate(contact.payment_due_date) ===
+            nearestPaymentDueInCustomDate &&
           totalAmount !== 0
         ) {
           return {

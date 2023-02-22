@@ -19,49 +19,51 @@ const listenSubscriptionStatus = ({
   callback,
 }) => {
   configureRevenueCat(userAccount?.uid);
-  return Purchases.addCustomerInfoUpdateListener(async (customerInfo) => {
-    const existingActiveSubscriptionPlan = userAccount?.subscription.plan;
-    const newActiveSubscriptionPlan =
-      customerInfo?.activeSubscriptions.length > 0 ? "premium" : "free";
+  if (!!userAccount && !!appSettings) {
+    return Purchases.addCustomerInfoUpdateListener(async (customerInfo) => {
+      const existingActiveSubscriptionPlan = userAccount?.subscription.plan;
+      const newActiveSubscriptionPlan =
+        customerInfo?.activeSubscriptions.length > 0 ? "premium" : "free";
 
-    const isBothActiveSubscriptionPlanSame =
-      existingActiveSubscriptionPlan === newActiveSubscriptionPlan;
+      const isBothActiveSubscriptionPlanSame =
+        existingActiveSubscriptionPlan === newActiveSubscriptionPlan;
 
-    if (!isBothActiveSubscriptionPlanSame) {
-      const modifiedUserAccount = {
-        ...userAccount,
-        subscription: {
-          ...userAccount?.subscription,
-          plan: newActiveSubscriptionPlan,
-        },
-        _timestamps: {
-          ...userAccount._timestamps,
-          updated_at: Date.now(),
-          updated_by: userAccount?.uid,
-        },
-      };
-      const modifiedAppSettings = {
-        ...appSettings,
-        logbookSettings: {
-          ...appSettings?.logbookSettings,
-          showSecondaryCurrency: getFeatureLimit({
-            globalFeatureSwitch,
-            subscriptionPlan: userAccount?.subscription.plan,
-            featureName: FEATURE_NAME.SECONDARY_CURRENCY,
-          }),
-        },
-        _timestamps: {
-          ...appSettings._timestamps,
-          updated_at: Date.now(),
-          updated_by: userAccount?.uid,
-        },
-      };
-      callback({
-        newUserAccount: modifiedUserAccount,
-        newAppSettings: modifiedAppSettings,
-      });
-    }
-  });
+      if (!isBothActiveSubscriptionPlanSame) {
+        const modifiedUserAccount = {
+          ...userAccount,
+          subscription: {
+            ...userAccount?.subscription,
+            plan: newActiveSubscriptionPlan,
+          },
+          _timestamps: {
+            ...userAccount?._timestamps,
+            updated_at: Date.now(),
+            updated_by: userAccount?.uid,
+          },
+        };
+        const modifiedAppSettings = {
+          ...appSettings,
+          logbookSettings: {
+            ...appSettings?.logbookSettings,
+            showSecondaryCurrency: getFeatureLimit({
+              globalFeatureSwitch,
+              subscriptionPlan: userAccount?.subscription.plan,
+              featureName: FEATURE_NAME.SECONDARY_CURRENCY,
+            }),
+          },
+          _timestamps: {
+            ...appSettings?._timestamps,
+            updated_at: Date.now(),
+            updated_by: userAccount?.uid,
+          },
+        };
+        callback({
+          newUserAccount: modifiedUserAccount,
+          newAppSettings: modifiedAppSettings,
+        });
+      }
+    });
+  }
 };
 
 export default listenSubscriptionStatus;

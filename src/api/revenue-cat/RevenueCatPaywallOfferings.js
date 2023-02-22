@@ -27,7 +27,7 @@ const RevenueCatPaywallOfferings = ({ onSuccess }) => {
   }, []);
 
   useEffect(() => {
-    if (offerings) {
+    if (offerings?.length > 0) {
       getYearlySaving();
     }
     console.log(JSON.stringify({ offerings }, null, 2));
@@ -36,13 +36,13 @@ const RevenueCatPaywallOfferings = ({ onSuccess }) => {
     // const yearlyPrice = subscriptionTypes.find((subscriptionType) => {
     //   return subscriptionType.id === "yearly";
     // }).price;
-    const yearlyPrice = offerings.find((pkg) => {
-      return pkg.product.identifier.includes("y");
-    }).product.price;
+    const yearlyPrice = offerings?.find((pkg) => {
+      return pkg?.product.identifier.includes("y");
+    })?.product.price;
 
-    const monthlyPrice = offerings.find((pkg) => {
-      return pkg.product.identifier.includes("m");
-    }).product.price;
+    const monthlyPrice = offerings?.find((pkg) => {
+      return pkg?.product.identifier.includes("m");
+    })?.product.price;
 
     const monthToYearPrice = monthlyPrice * 12;
     setMonthToYearPrice(monthToYearPrice);

@@ -26,7 +26,7 @@ import {
   getDeviceName,
   getDeviceOSName,
 } from "../../../utils";
-import mergeTransactionsIntoSortedTransactions from "../../../utils/MergeTransactionsIntoSortedTransactions";
+import mergeTransactionsIntoSortedTransactions from "../../../utils/mergeTransactionsIntoSortedTransactions";
 import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 

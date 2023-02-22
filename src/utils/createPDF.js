@@ -80,6 +80,7 @@ const html = ({
   openingBalance,
   transactionData,
   negativeCurrencySymbol,
+  finalBalance,
 }) => {
   return `
         <!DOCTYPE html>
@@ -103,6 +104,7 @@ const html = ({
                   finishDate,
                   logbook,
                   openingBalance,
+                  finalBalance,
                 })}
                 ${table({
                   openingBalance,
@@ -126,6 +128,7 @@ const pdfHeader = ({
   finishDate,
   logbook,
   openingBalance,
+  finalBalance,
 }) => {
   return `
         <div
@@ -148,6 +151,7 @@ const pdfHeader = ({
                 ${displayName}
             </td>
         </tr>
+        <!-- // TODO : commented out for now
         <tr>
             <td
                 style="font-weight:bold"
@@ -160,7 +164,7 @@ const pdfHeader = ({
             <td>
                 ${uid}
             </td>
-        </tr>
+        </tr> -->
         <tr>
             <td
             style="font-weight:bold"
@@ -199,7 +203,7 @@ const pdfHeader = ({
                 :
             </td>
             <td>
-                ${logbook.logbook_currency.isoCode}
+                ${logbook.logbook_currency.name}
             </td>
         </tr>
         <tr>
@@ -213,6 +217,19 @@ const pdfHeader = ({
             </td>
             <td>
                 ${openingBalance}
+            </td>
+        </tr>
+        <tr>
+            <td
+            style="font-weight:bold"
+            >
+                Final Balance
+            </td>
+            <td>
+                :
+            </td>
+            <td>
+                ${finalBalance}
             </td>
         </tr>
         </table>
@@ -232,7 +249,7 @@ const table = ({
         <table
         style="width:100vw;
         border:2px solid;
-        border-collapse:collapse
+        border-collapse:collapse;
         "
         >
 
@@ -283,7 +300,31 @@ const tableHeader = `
         </td>
         </tr>`;
 
+const trColor = (index) => {
+  const backgroundColor = index % 2 ? "white" : "#E5E5E5";
+  return `
+                  <tr
+                  style="
+                  background-color:${backgroundColor};
+                  ">
+                    `;
+};
+
 // TAG : Map table data
+/**
+ * Function to map transaction data into table
+ *
+ * Each row consists of 3 smaller rows
+ *
+ * 1. First row mainly consist of transaction date, name, and balance
+ * 2. Second row consist of transaction category
+ * 3. Third row consist of transaction notes
+ *
+ *    | No | Date | Details | Cash In | Cash Out | Balance |
+ *
+ * @param
+ * @returns
+ */
 const mapData = ({
   openingBalance,
   displayName,
@@ -292,26 +333,15 @@ const mapData = ({
   transactionData,
   negativeCurrencySymbol,
 }) => {
-  const trColor = (index) => {
-    const backgroundColor = index % 2 ? "white" : "#E5E5E5";
-    return `
-            <tr
-            style="
-            background-color:${backgroundColor};
-            ">
-              `;
-  };
   const transactionNotes = (index, notes) => {
-    return (
-      notes &&
-      `
-        ${trColor(index)}
+    return `
+          <tr>
             ${tdNoBorder}
             </td>
             ${tdNoBorder}
             </td>
             ${td}
-                ${notes}
+               Notes : ${!!notes ? notes : "-"}
             </td>
             ${tdNoBorder}
             </td>
@@ -320,8 +350,7 @@ const mapData = ({
             ${tdNoBorder}
             </td>
         </tr>
-            `
-    );
+            `;
   };
   let balance = openingBalance;
   return transactionData.map((transaction) => {
@@ -333,7 +362,7 @@ const mapData = ({
     }
     return `
             <!-- First Row -->
-            ${trColor(index)}
+            <tr>
                 ${tdBorderTopNumber}
                     ${index}
                 </td>
@@ -353,7 +382,7 @@ const mapData = ({
                     `}
                 </td>
                 ${td}
-                    ${displayName}
+                   Name : ${displayName}
                 </td>
                 ${tdAlignRight}
                     ${
@@ -388,16 +417,16 @@ const mapData = ({
         
         
             <!-- Second Row -->
-            ${trColor(index)}
+            <tr>
                 ${tdNoBorder}
                 </td>
                 ${tdNoBorder}
                 </td>
                 ${tdCategory}
-                    ${FindById.findCategoryNameById({
-                      id: transaction.details.category_id,
-                      categories: categories,
-                    })}
+                   Category : ${FindById.findCategoryNameById({
+                     id: transaction.details.category_id,
+                     categories: categories,
+                   })}
                 </td>
                 ${tdNoBorder}
                 </td>
@@ -472,8 +501,17 @@ const pdfFooter = `
         padding:16px;
         text-align:center"
         >
-        Copyright Juta 2023
-        </div>`;
+        --- End of Report ---
+        <br />
+        <br />
+        Generated by
+        <a href="https://www.juta-web.vercel.app">Juta Expense Tracker</a>
+        <br />
+        &copy Juta ${new Date().getFullYear()}
+        </div>
+        
+        
+        `;
 
 const createPDF = async ({
   displayName,
@@ -483,6 +521,7 @@ const createPDF = async ({
   logbook,
   categories,
   openingBalance,
+  finalBalance,
   transactionData,
   fileName,
   appSettings,
@@ -498,6 +537,7 @@ const createPDF = async ({
       logbook,
       categories,
       openingBalance,
+      finalBalance,
       transactionData,
       negativeCurrencySymbol,
     }),

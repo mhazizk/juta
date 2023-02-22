@@ -4,6 +4,7 @@ import { ButtonDisabled, ButtonPrimary } from "../../../components/Button";
 import {
   useGlobalAppSettings,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalUserAccount,
@@ -23,6 +24,7 @@ const ExportScreen = ({ navigation }) => {
   const { logbooks } = useGlobalLogbooks();
   const { categories } = useGlobalCategories();
   const { sortedTransactions } = useGlobalSortedTransactions();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
 
   const [selectedLogbook, setSelectedLogbook] = useState(logbooks.logbooks[0]);
   //   const [transactionData, setTransactionData] = useState([]);
@@ -121,19 +123,16 @@ const ExportScreen = ({ navigation }) => {
 
   return (
     <>
-      <CustomScrollView
-        contentContainerStyle={{
-          justifyContent: "flex-start",
-        }}
-      >
+      <CustomScrollView>
         {!screenLoading && (
           <>
             {/* // TAG : Logbook Selection */}
             <TextPrimary
               label="Select Logbook"
               style={{
+                alignSelf: "flex-start",
                 paddingVertical: 16,
-                paddingHorizontal: 32,
+                paddingHorizontal: 16,
               }}
             />
             <ListSection>
@@ -174,8 +173,9 @@ const ExportScreen = ({ navigation }) => {
             <TextPrimary
               label="Select Date Range"
               style={{
+                alignSelf: "flex-start",
                 paddingVertical: 16,
-                paddingHorizontal: 32,
+                paddingHorizontal: 16,
               }}
             />
             <ListSection>
@@ -231,8 +231,51 @@ const ExportScreen = ({ navigation }) => {
                   label="Export as PDF"
                   onPress={async () => {
                     setScreenLoading(true);
-                    const fileName = "test.pdf";
+                    const fileName = `${
+                      selectedLogbook.logbook_name
+                    } - ${new Date(startDate).toDateString()} - ${new Date(
+                      finishDate
+                    ).toDateString()}.pdf`;
+
+                    const totalBalance =
+                      utils.getTotalAmountAndConvertToDefaultCurrency({
+                        transactions: getTransactionData({
+                          getTransactionData: true,
+                          startDate: 0,
+                          finishDate: Date.now(),
+                          selectedLogbook,
+                          groupSorted: sortedTransactions.groupSorted,
+                        }).transactions,
+                        logbooks: logbooks.logbooks,
+                        targetCurrencyName:
+                          selectedLogbook.logbook_currency.name,
+                        globalCurrencyRates,
+                      });
+
+                    const totalBalanceInRange =
+                      utils.getTotalAmountAndConvertToDefaultCurrency({
+                        transactions: getTransactionData({
+                          getTransactionData: true,
+                          startDate: new Date(startDate).getTime(),
+                          finishDate: new Date(finishDate).getTime(),
+                          selectedLogbook,
+                          groupSorted: sortedTransactions.groupSorted,
+                        }).transactions,
+                        logbooks: logbooks.logbooks,
+                        targetCurrencyName:
+                          selectedLogbook.logbook_currency.name,
+                        globalCurrencyRates,
+                      });
+
+                    const openingBalance = utils.getFormattedNumber({
+                      value: totalBalance - totalBalanceInRange,
+                      currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    });
+
                     const printPDF = await utils.createPDF({
+                      appSettings,
                       displayName: userAccount.displayName,
                       uid: userAccount.uid,
                       logbook: selectedLogbook,
@@ -244,7 +287,14 @@ const ExportScreen = ({ navigation }) => {
                         selectedLogbook,
                         groupSorted: sortedTransactions.groupSorted,
                       }).transactions,
-                      openingBalance: 0,
+                      openingBalance: openingBalance,
+                      finalBalance: utils.getFormattedNumber({
+                        value: totalBalance,
+                        currencyIsoCode:
+                          selectedLogbook.logbook_currency.isoCode,
+                        negativeSymbol:
+                          appSettings.logbookSettings.negativeCurrencySymbol,
+                      }),
                       startDate: new Date(startDate).getTime(),
                       finishDate: new Date(finishDate).getTime(),
                       fileName,

@@ -28,3 +28,4 @@ export { default as getTransactionsByLogbookId } from "./getTransactionsByLogboo
 export { default as checkIfLoanContactWillBePaid } from "./checkIfLoanContactWillBePaid";
 export { default as findLoanContactByTransactionId } from "./findLoanContactByTransactionId";
 export { default as getNextLoanPayment } from "./getNextLoanPayment";
+export { default as getCustomDate } from "./getCustomDate";
