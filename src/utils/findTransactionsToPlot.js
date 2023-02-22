@@ -227,14 +227,16 @@ const findTransactionsToPlot = ({
         unsortedMainGraph.forEach((data) => {
           mainGraph.push({
             x: data.x,
-            y: data.y,
+            y: +parseFloat(data.y).toFixed(2),
             epochDate: data.epochDate,
             month: data.month,
             year: data.year,
           });
           shadowGraph.push({
             x: data.x,
-            y: dailyLimit > shadowLimit ? dailyLimit : shadowLimit,
+            y: +parseFloat(
+              dailyLimit > shadowLimit ? dailyLimit : shadowLimit
+            ).toFixed(2),
             epochDate: data.epochDate,
             month: data.month,
             year: data.year,
@@ -254,7 +256,7 @@ const findTransactionsToPlot = ({
       if (transactionList.length > 0) {
         setActiveBudget({
           ...activeBudget,
-          spent: totalSpent,
+          spent: +parseFloat(totalSpent).toFixed(2),
           limit: dailyLimit,
         });
         setGraph({
