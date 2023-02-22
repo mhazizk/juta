@@ -575,7 +575,7 @@ const RootStack = () => {
 
                         dispatchLogbooks({
                           type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-                          payload: newLogbook,
+                          payload: { newLogbook, reducerUpdatedAt: Date.now() },
                         });
 
                         dispatchSortedTransactions({
