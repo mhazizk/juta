@@ -168,6 +168,7 @@ const RecentTransactions = ({
       <TextPrimary
         label={title || "Recent Transactions"}
         style={{
+          paddingHorizontal: 16,
           alignSelf: "flex-start",
           fontSize: 18,
           fontWeight: "bold",
@@ -177,6 +178,7 @@ const RecentTransactions = ({
         <TextSecondary
           label={`No ${title || "Recent Transactions"}`}
           style={{
+            paddingHorizontal: 16,
             alignSelf: "flex-start",
             paddingVertical: 8,
           }}
