@@ -247,13 +247,17 @@ const LogbookScreen = ({ route, navigation }) => {
                       name: "book",
                       pack: "IonIcons",
                     },
-                    props: logbooks.logbooks.map((logbook) => {
-                      return {
-                        ...logbook,
-                        name: logbook.logbook_name,
-                        key: logbook.logbook_id,
-                      };
-                    }),
+                    props: logbooks.logbooks
+                      .sort((a, b) => {
+                        return a.logbook_name.localeCompare(b.logbook_name);
+                      })
+                      .map((logbook) => {
+                        return {
+                          ...logbook,
+                          name: logbook.logbook_name,
+                          key: logbook.logbook_id,
+                        };
+                      }),
                     modalType: "list",
                     selected: (item) => {
                       setTargetLogbook(item);
