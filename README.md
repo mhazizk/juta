@@ -2,7 +2,8 @@
 <img 
     style="margin-left: auto;
            margin-right: auto;
-           width: 30%;"
+           width: 30%;
+           height:auto;"
     src="src/assets/icons/juta-app-icon.png" 
     alt="Juta logo"/>
 
