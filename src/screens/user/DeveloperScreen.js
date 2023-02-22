@@ -29,7 +29,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import mergeTransactionsIntoSortedTransactions from "../../utils/MergeTransactionsIntoSortedTransactions";
+import mergeTransactionsIntoSortedTransactions from "../../utils/mergeTransactionsIntoSortedTransactions";
 import testing from "../../dev/testing";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
