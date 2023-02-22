@@ -154,12 +154,6 @@ const MyLoansHeader = ({
                       <ShowNextPaymentForOneContact />
                     </>
                   )}
-                {!isTotalPaidBalanceEachOther &&
-                  !isUnpaidContactMoreThanOne && (
-                    <>
-                      <ShowNextPaymentForOneContact />
-                    </>
-                  )}
                 {!isTotalPaidBalanceEachOther && isUnpaidContactMoreThanOne && (
                   <>
                     <ShowNextPaymentForOneContact />
