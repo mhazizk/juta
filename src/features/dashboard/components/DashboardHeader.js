@@ -18,9 +18,9 @@ const DashboardHeader = () => {
           width: "100%",
           flexDirection: "column",
           paddingVertical: 16,
+          paddingHorizontal: 16,
         }}
       >
-        <TextPrimary label={__DEV__ ? "DEV MODE" : "PROD MODE"} />
         <TextPrimary
           label={
             getHours <= 4
