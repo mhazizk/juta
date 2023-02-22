@@ -30,7 +30,7 @@ const globalLogbooksReducer = (state, action) => {
       return {
         ...state,
         logbooks: [...foundOtherLogbooks, newLogbook].sort((a, b) => {
-          return a.logbook_name < b.logbook_name ? -1 : 1;
+          return a.logbook_name.localeCompare(b.logbook_name);
         }),
         reducerUpdatedAt,
         // logbookInsertCounter: state.logbookInsertCounter + 1,
