@@ -187,38 +187,34 @@ const RootStack = () => {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        auth.currentUser?.reload().then(async () => {
-          listenSubscriptionStatus({
-            globalFeatureSwitch,
-            appSettings,
-            userAccount,
-            callback: ({ newUserAccount, newAppSettings }) => {
-              dispatchAppSettings({
-                type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-                payload: newAppSettings,
-              });
+        listenSubscriptionStatus({
+          globalFeatureSwitch,
+          appSettings,
+          userAccount,
+          callback: ({ newUserAccount, newAppSettings }) => {
+            dispatchAppSettings({
+              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+              payload: newAppSettings,
+            });
 
-              dispatchUserAccount({
-                type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-                payload: newUserAccount,
-              });
-              setTimeout(async () => {
-                await firestore.setData(
-                  FIRESTORE_COLLECTION_NAMES.USERS,
-                  newUserAccount.uid,
-                  newUserAccount
-                );
-                await firestore.setData(
-                  FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                  newUserAccount.uid,
-                  newAppSettings
-                );
-              }, 5000);
-            },
-          });
+            dispatchUserAccount({
+              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+              payload: newUserAccount,
+            });
+            setTimeout(async () => {
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.USERS,
+                newUserAccount.uid,
+                newUserAccount
+              );
+              await firestore.setData(
+                FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                newUserAccount.uid,
+                newAppSettings
+              );
+            }, 5000);
+          },
         });
-        // console.log("App has come to the foreground!");
-        // console.log(appState.current);
       }
       appState.current = nextAppState;
       console.log(appState.current);
@@ -541,8 +537,8 @@ const RootStack = () => {
                     // console.log(navigation);
                     navigation.navigate(screenList.modalScreen, {
                       modalType: "textInput",
-                      title: "Create New Log Book",
-                      placeholder: "Enter new log book name ...",
+                      title: "Create New Logbook",
+                      placeholder: "Enter new logbook name...",
                       selected: (item) => {
                         const newLogbook = {
                           _timestamps: {
