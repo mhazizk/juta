@@ -161,7 +161,7 @@ const ActionScreen = ({ route, navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     modalType: "textInput",
                     title: "Create new Logbook",
-                    placeholder: "Enter new logbook name ...",
+                    placeholder: "Enter new logbook name...",
                     selected: (item) => {
                       const newLogbook = {
                         _timestamps: {
