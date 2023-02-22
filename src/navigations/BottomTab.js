@@ -12,7 +12,7 @@ import LogbookScreen from "../features/logbook/screens/LogbookScreen";
 import {
   useGlobalBadgeCounter,
   useGlobalTheme,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
 import SearchScreen from "../screens/search/SearchScreen";
@@ -47,7 +47,7 @@ const BottomTab = ({ route, navigation }) => {
               let rn = route.name;
 
               if (rn === screenList.dashboardScreen) {
-                iconName = focused ? "analytics" : "analytics-outline";
+                iconName = focused ? "grid" : "grid-outline";
                 return <IonIcons name={iconName} color={color} size={size} />;
               } else if (rn === screenList.logbookScreen) {
                 iconName = focused ? "book" : "book-outline";
