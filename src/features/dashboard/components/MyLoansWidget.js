@@ -139,11 +139,6 @@ const MyLoansWidget = ({
                   <ShowNextPaymentForOneContact />
                 </>
               )}
-              {!isTotalPaidBalanceEachOther && !isUnpaidContactMoreThanOne && (
-                <>
-                  <ShowNextPaymentForOneContact />
-                </>
-              )}
               {!isTotalPaidBalanceEachOther && isUnpaidContactMoreThanOne && (
                 <>
                   <ShowNextPaymentForOneContact />
