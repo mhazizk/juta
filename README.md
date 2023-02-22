@@ -38,9 +38,21 @@ Juta has many features to help you manage your daily spendings:
 
   Categorize your spendings to help you understand your income and expense
 
+- 💸 **Custom categories**
+
+  Create your own categories to match your needs
+
+- 📊 **Analytics**
+
+  Analyze your spendings with Juta analytics
+
 - 💰 **Budget planning**
 
   Plan your budget to help you manage your spendings
+
+- 📖 **Logbook**
+
+  Track your spendings with isolated logbook
 
 - 📖 **Multi logbooks support**
 
@@ -49,19 +61,26 @@ Juta has many features to help you manage your daily spendings:
 
 - 💸 **Track your debt / loan**
 
-  Juta helps you to track your debt / loan.
-  You can also add your debt / loan contact to help you remember who you owe
+  Never forget who you owe with Juta loan feature
 
 - 💲 **Secondary currencies support**
 
   No more need to convert your currencies.
   Just log your transaction in your main currency and Juta will automatically convert it to your chosen secondary currency
 
+- 🔎 **Search your transactions**
+
+  Easily search your transactions with Juta search feature
+
 - 💱 **Easy currency converter**
 
   Want to convert all your currencies?
 
   Juta has a built-in currency converter to help you convert your currencies easily
+
+- 🖨️ **Export**
+
+  Need quick report? Just export your transactions to PDF
 
 - 📱 **Multi devices support**
 
@@ -82,15 +101,17 @@ Coming soon at juta official web
 
 ## Release Notes
 
-### 0.7.3-alpha (on progress)
+### 0.7.3-alpha
 
 - New features:
 - Bugfixes:
-  - Fix multi budgets support (on progress)
+  - Fix crash when adding new logbook on My Logbooks
+  - Fix My Loans widget showing wrong date
+  - Fix subscription update status
   - Fix settings sync
   - Fix multi devices support
   - Fix paywall
-  - Fix graph limit line on analytics screen (on progress)
+  - Fix graph limit line on Analytics
 
 ### 0.7.0-alpha
 
