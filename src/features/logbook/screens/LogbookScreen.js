@@ -280,22 +280,25 @@ const LogbookScreen = ({ route, navigation }) => {
                       alignItems: "center",
                     },
                     {
-                      backgroundColor: globalTheme.colors.foreground,
+                      backgroundColor: globalTheme.headerButton.backgroundColor,
                     },
                   ]}
                 >
-                  <TextButtonPrimary
+                  <TextPrimary
                     label={
                       selectedLogbook?.name[0].toUpperCase() +
                       selectedLogbook?.name.substring(1)
                     }
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      color: globalTheme.headerButton.color,
+                    }}
                     numberOfLines={1}
                   />
                   <IonIcons
                     name="chevron-down"
                     size={18}
-                    color={globalTheme.colors.background}
+                    color={globalTheme.headerButton.color}
                     style={{ flexShrink: 0, paddingHorizontal: 16 }}
                   />
                 </View>
