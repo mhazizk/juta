@@ -283,7 +283,10 @@ const TransactionList = ({
                   {/* // TAG : Sum Amount */}
                   <View
                     style={{
-                      backgroundColor: globalTheme.colors.secondary,
+                      backgroundColor: utils.hexToRgb({
+                        hex: globalTheme.colors.listSection,
+                        opacity: 0.07,
+                      }),
                       padding: 8,
                       borderRadius: 8,
                       alignItems: "flex-end",
@@ -306,7 +309,8 @@ const TransactionList = ({
                       <TextPrimary
                         label={utils.getFormattedNumber({
                           value: sumAmount(section.data),
-                          currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                          currencyIsoCode:
+                            selectedLogbook.logbook_currency.isoCode,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
