@@ -82,13 +82,39 @@ const AboutScreen = ({ item, navigation }) => {
           />
         </ListSection>
         <ListSection>
+          {/* // TAG : Website */}
+          <ListItem
+            pressable
+            leftLabel="Visit website"
+            iconLeftName="globe"
+            iconPack="IonIcons"
+            onPress={() => Linking.openURL("https://juta-web.vercel.app")}
+          />
+          {/* // TAG : Twitter */}
+          <ListItem
+            pressable
+            leftLabel="Visit twitter"
+            iconLeftName="logo-twitter"
+            iconPack="IonIcons"
+            onPress={() => Linking.openURL("https://twitter.com/juta_app")}
+          />
+          {/* // TAG : Github */}
+          <ListItem
+            pressable
+            leftLabel="Visit github"
+            iconLeftName="logo-github"
+            iconPack="IonIcons"
+            onPress={() => Linking.openURL("https://github.com/mhazizk/juta")}
+          />
+        </ListSection>
+        <ListSection>
           {/* // TAG : Open Source */}
           <ListItem
             pressable
             leftLabel="Open source libraries"
             iconLeftName="code"
             iconPack="IonIcons"
-            onPress={() => alert('Library list will shown soon :)')}
+            onPress={() => alert("Library list will shown soon :)")}
           />
         </ListSection>
       </CustomScrollView>
