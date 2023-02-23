@@ -7,6 +7,7 @@ import { TextPrimary } from "../../components/Text";
 import screenList from "../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
+  useGlobalBudgets,
   useGlobalCurrencyRates,
   useGlobalFeatureSwitch,
   useGlobalTheme,
@@ -37,6 +38,7 @@ const SettingsScreen = ({ navigation }) => {
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
     useGlobalCurrencyRates();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
+  const { budgets } = useGlobalBudgets();
   const [dashboardSettings, setDashboardSettings] = useState(
     appSettings.dashboardSettings
   );
@@ -416,12 +418,47 @@ const SettingsScreen = ({ navigation }) => {
                         _timestamps,
                       };
 
+                      let patchBudgets = [];
+                      console.log(JSON.stringify({ budgets }, null, 2));
+                      if (budgets.budgets.length > 0) {
+                        budgets.budgets.forEach((budget) => {
+                          if (!!budget) {
+                            const convertedLimit = utils.convertCurrency({
+                              amount: budget.limit,
+                              from: appSettings.logbookSettings.defaultCurrency
+                                .name,
+                              target: item.name,
+                              globalCurrencyRates,
+                            });
+                            const newBudget = {
+                              ...budget,
+                              limit: convertedLimit,
+                              _timestamps: {
+                                ...budget._timestamps,
+                                updated_at: Date.now(),
+                                updated_by: userAccount.uid,
+                              },
+                            };
+                            patchBudgets.push(newBudget);
+                          }
+                        });
+                      }
+
+                      console.log(JSON.stringify({ patchBudgets }, null, 2));
+
                       setLogbookSettings({
                         ...logbookSettings,
                         defaultCurrency: item,
                       });
 
                       setTimeout(async () => {
+                        patchBudgets.forEach(async (budget) => {
+                          await firestore.setData(
+                            FIRESTORE_COLLECTION_NAMES.BUDGETS,
+                            budget.budget_id,
+                            budget
+                          );
+                        });
                         await firestore.setData(
                           FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
                           appSettings.uid,
