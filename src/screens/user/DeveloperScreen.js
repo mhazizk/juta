@@ -464,12 +464,12 @@ const DeveloperScreen = ({ item, navigation }) => {
             iconLeftName="document"
             iconPack="IonIcons"
             onPress={() => {
-              const unsubscribe = firestore.getAndListenMultipleDocs(
-                FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-                appSettings.uid,
-                (data) => console.log(JSON.stringify(data)),
-                (error) => console.log(error)
-              );
+              const unsubscribe = firestore.getAndListenMultipleDocs({
+                collectionName: FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+                documentId: appSettings.uid,
+                getAllDocsCallback: (data) => console.log(JSON.stringify(data)),
+                errorCallback: (error) => console.log(error),
+              });
 
               return setTimeout(() => {
                 unsubscribe();
@@ -617,12 +617,12 @@ const DeveloperScreen = ({ item, navigation }) => {
             iconLeftName="document"
             iconPack="IonIcons"
             onPress={() => {
-              const unsubscribe = firestore.getAndListenOneDoc(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                appSettings.uid,
-                (data) => console.log(JSON.stringify(data)),
-                (error) => console.log(error)
-              );
+              const unsubscribe = firestore.getAndListenOneDoc({
+                collectionName: FIRESTORE_COLLECTION_NAMES.USERS,
+                documentId: appSettings.uid,
+                callback: (data) => console.log(JSON.stringify(data)),
+                errorCallback: (error) => console.log(error),
+              });
 
               return setTimeout(() => {
                 unsubscribe();
