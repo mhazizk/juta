@@ -20,6 +20,7 @@ import CustomScrollView from "../../shared-components/CustomScrollView";
 import ListSection from "../../components/List/ListSection";
 import CheckList from "../../components/CheckList";
 import { ListItem } from "../../components/List";
+import LOADING_TYPES from "../modal/loading.type";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -110,11 +111,10 @@ const NewBudgetScreen = ({ navigation }) => {
           );
         }, 5000);
         return navigation.navigate(screenList.loadingScreen, {
-          label: "Saving Budget ...",
-          loadingType: "insertBudget",
+          label: "Saving Budget...",
+          loadingType: LOADING_TYPES.BUDGETS.INSERT_ONE,
           insertBudget: newBudget,
           reducerUpdatedAt: Date.now(),
-          // initialBudgetInsertCounter: budgets.budgetInsertCounter,
         });
     }
   };
@@ -212,7 +212,8 @@ const NewBudgetScreen = ({ navigation }) => {
                     .slice(0, 15) + "..."
                 : utils.getFormattedNumber({
                     value: newBudget.limit,
-                    currencyIsoCode: appSettings.logbookSettings.defaultCurrency.isoCode,
+                    currencyIsoCode:
+                      appSettings.logbookSettings.defaultCurrency.isoCode,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })
