@@ -1,11 +1,9 @@
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, View } from "react-native";
 import auth from "../../api/firebase/auth";
 import firestore from "../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
-import { colorOfTheYear2023 } from "../../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
 import { ListItem } from "../../components/List";
 import ListSection from "../../components/List/ListSection";
 import Loading from "../../components/Loading";
@@ -13,18 +11,11 @@ import { TextPrimary } from "../../components/Text";
 import UserHeaderComponent from "../../components/UserHeader";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../features/subscription/model/featureName";
-import useFirestoreSubscriptions from "../../hooks/useFirestoreSubscriptions";
 import screenList from "../../navigations/ScreenList";
-import appSettingsFallback from "../../reducers/fallback-state/appSettingsFallback";
 import {
-  useGlobalAppSettings,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalFeatureSwitch,
+  useGlobalAppSettings, useGlobalFeatureSwitch,
   useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalUserAccount
 } from "../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import CustomScrollView from "../../shared-components/CustomScrollView";
