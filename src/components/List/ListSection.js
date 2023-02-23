@@ -27,7 +27,7 @@ const ListSection = ({
           backgroundColor:
             backgroundColor ||
             utils.hexToRgb({
-              hex: globalTheme.colors.foreground,
+              hex: globalTheme.colors.listSection,
               opacity: 0.07,
             }),
         }}
