@@ -320,7 +320,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "row",
-                  flex: 1,
                 }}
               >
                 <TextPrimary
@@ -350,7 +349,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   style={[
                     {
                       ...globalTheme.text.textPrimary,
-                      height: 36,
+                      paddingVertical: 16,
+                      minHeight: 36,
                       fontSize: 36,
                     },
                     {
@@ -402,7 +402,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }
                   name="close-circle"
                   size={20}
-                  style={{ padding: 16 }}
+                  style={{
+                    padding: 16,
+                  }}
                   color={globalTheme.colors.foreground}
                 />
               )}
