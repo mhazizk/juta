@@ -57,7 +57,8 @@ const BottomTab = ({ route, navigation }) => {
                 return (
                   <View
                     style={{
-                      backgroundColor: globalTheme.colors.primary,
+                      backgroundColor:
+                        globalTheme.bottomTab.actionButton.backgroundColor,
                       alignItems: "center",
                       justifyContent: "center",
                       width: 54,
@@ -67,7 +68,7 @@ const BottomTab = ({ route, navigation }) => {
                   >
                     <FontAwesome5
                       name={iconName}
-                      color={globalTheme.colors.background}
+                      color={globalTheme.bottomTab.actionButton.iconColor}
                       size={18}
                     />
                   </View>
@@ -82,7 +83,8 @@ const BottomTab = ({ route, navigation }) => {
               // return <IonIcons name={iconName} color={color} size={size} />
             },
             tabBarIconStyle: {},
-            tabBarActiveTintColor: globalTheme.colors.primary,
+            tabBarActiveTintColor: globalTheme.bottomTab.activeTintColor,
+            tabBarInactiveTintColor: globalTheme.bottomTab.inactiveTintColor,
             // tabBarActiveBackgroundColor: 'black',
             tabBarLabelStyle: { fontSize: 12, paddingBottom: 0 },
             tabBarShowLabel: false,
