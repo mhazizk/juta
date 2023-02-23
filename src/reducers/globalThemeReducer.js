@@ -1,7 +1,3 @@
-import { darkFallTheme } from "../assets/themes/darkFallTheme/darkFallTheme";
-import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
-import { darkMonoTheme } from "../assets/themes/darkMonoTheme/darkMonoTheme";
-import { lightMonoTheme } from "../assets/themes/lightMonoTheme/lightMonoTheme";
 import THEME_CONSTANTS from "../constants/themeConstants";
 import REDUCER_ACTIONS from "./reducer.action";
 
