@@ -35,11 +35,24 @@ export const lightMonoTheme = {
     secondary: palette.white[400],
     header: palette.white[600],
     textHeader: palette.black[600],
+    listSection: palette.black[600],
     incomeAmount: "#008888",
     incomeSymbol: "#00B19B",
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  headerButton: {
+    backgroundColor: palette.black[600],
+    color: palette.white[600],
+  },
+  bottomTab: {
+    activeTintColor: palette.black[600],
+    inactiveTintColor: palette.white[200],
+    actionButton: {
+      backgroundColor: palette.black[600],
+      iconColor: palette.white[600],
+    },
   },
   widgets: {
     totalExpense: {
@@ -177,7 +190,7 @@ export const lightMonoTheme = {
       minHeight: 48,
     },
     listItem: {
-      borderColor: palette.black[400],
+      borderColor: palette.white[400],
       display: "flex",
       flex: 1,
       alignItems: "center",
