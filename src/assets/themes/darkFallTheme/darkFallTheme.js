@@ -36,11 +36,24 @@ export const darkFallTheme = {
     secondary: palette.black[400],
     header: palette.primary,
     textHeader: palette.black[600],
+    listSection: palette.white[600],
     incomeAmount: "#00B19B",
     incomeSymbol: "#008888",
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  headerButton: {
+    backgroundColor: palette.black[600],
+    color: palette.white[600],
+  },
+  bottomTab: {
+    activeTintColor: palette.primary,
+    inactiveTintColor: palette.black[200],
+    actionButton: {
+      backgroundColor: palette.primary,
+      iconColor: palette.black[600],
+    },
   },
   widgets: {
     totalExpense: {
