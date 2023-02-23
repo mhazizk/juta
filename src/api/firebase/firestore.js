@@ -66,34 +66,52 @@ const setAndListenOneDoc = (
 };
 
 // Listen to realtime one Doc
-const getAndListenOneDoc = (
+const getAndListenOneDoc = ({
+  skipFirstRun = false,
   collectionName,
   documentId = null,
   callback,
-  errorCallback
-) => {
+  errorCallback,
+}) => {
+  let isFirstRun = skipFirstRun;
   const query = doc(db, collectionName, documentId);
 
   return onSnapshot(
     query,
     (querySnapshot) => {
-      callback(querySnapshot.data());
+      if (isFirstRun) {
+        isFirstRun = false;
+        return;
+      } else {
+        callback(querySnapshot.data());
+      }
     },
     (error) => {
-      Alert.alert("Error", error.message);
+      switch (error.code) {
+        case "permission-denied":
+          break;
+        case "insufficient-permissions":
+          break;
+
+        default:
+          Alert.alert("Error", error.message);
+          break;
+      }
       errorCallback(error);
     }
   );
 };
 
 // Listen to realtime multiple docs
-const getAndListenMultipleDocs = (
+const getAndListenMultipleDocs = ({
+  skipFirstRun = false,
   collectionName,
   documentId = null,
   errorCallback,
   getAllDocsCallback,
-  getChangesDocsCallback
-) => {
+  getChangesDocsCallback,
+}) => {
+  let isFirstRun = skipFirstRun;
   const q = query(
     collection(db, collectionName),
     where("uid", "==", documentId)
@@ -104,16 +122,41 @@ const getAndListenMultipleDocs = (
     (querySnapshots) => {
       getAllDocsCallback(querySnapshots.docs.map((doc) => doc.data()));
 
+      let initialLength = 0;
+      if (isFirstRun) {
+        initialLength = querySnapshots.docChanges().length;
+      }
+      let counter = 0;
+      const isBothEqualToZero = counter === 0 && initialLength === 0;
       querySnapshots.docChanges().forEach((change) => {
-        switch (change.type) {
-          case "added":
-            getChangesDocsCallback(change.doc.data(), "added");
+        console.log({ initialLength, counter, isFirstRun });
+        switch (isFirstRun) {
+          case true:
+            switch (true) {
+              case counter === initialLength - 1 && !isBothEqualToZero:
+                counter++;
+                isFirstRun = false;
+                break;
+              case counter < initialLength && !isBothEqualToZero:
+                counter++;
+                break;
+            }
             break;
-          case "modified":
-            getChangesDocsCallback(change.doc.data(), "modified");
-            break;
-          case "removed":
-            getChangesDocsCallback(change.doc.data(), "removed");
+          case false:
+            switch (change.type) {
+              case "added":
+                getChangesDocsCallback(change.doc.data(), "added");
+                break;
+              case "modified":
+                getChangesDocsCallback(change.doc.data(), "modified");
+                break;
+              case "removed":
+                getChangesDocsCallback(change.doc.data(), "removed");
+                break;
+
+              default:
+                break;
+            }
             break;
 
           default:
@@ -122,7 +165,16 @@ const getAndListenMultipleDocs = (
       });
     },
     (error) => {
-      Alert.alert("Error", error.message);
+      switch (error.code) {
+        case "permission-denied":
+          break;
+        case "insufficient-permissions":
+          break;
+
+        default:
+          Alert.alert("Error", error.message);
+          break;
+      }
       errorCallback(error);
     }
   );
