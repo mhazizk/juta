@@ -35,6 +35,7 @@ const LogoutScreen = ({ navigation }) => {
       // unsubscribeFeatures,
     } = useFirestoreSubscriptions({
       uid: userAccount.uid,
+      unsubscribeAll: true,
     });
 
     // unsubscribe from firestore subscriptions
