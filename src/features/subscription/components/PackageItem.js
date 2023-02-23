@@ -1,13 +1,16 @@
 import { Image, Text, TouchableNativeFeedback, View } from "react-native";
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
-import { useGlobalAppSettings, useGlobalTheme } from "../../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../../reducers/GlobalContext";
 import subscriptionTypes from "../model/subscriptionType";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import { Path, Svg } from "react-native-svg";
 
 const PackageItem = ({ purchasePackage, monthToYearPrice, onPress }) => {
   const { appSettings } = useGlobalAppSettings();
-  const {globalTheme} = useGlobalTheme()
+  const { globalTheme } = useGlobalTheme();
   const {
     identifier,
     product: {
