@@ -174,7 +174,7 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                       targetCurrencyName:
                         appSettings.logbookSettings.defaultCurrency.name,
                     }) < 0
-                      ? `Debt left to pay to ${contact.contact_name}`
+                      ? `left to pay to ${contact.contact_name}`
                       : utils.getTotalAmountAndConvertToDefaultCurrency({
                           invertResult: true,
                           globalCurrencyRates,
@@ -184,7 +184,7 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                             appSettings.logbookSettings.defaultCurrency.name,
                         }) === 0
                       ? "No debt or loan to pay"
-                      : `Loan left to receive from ${contact.contact_name}`
+                      : `left to receive from ${contact.contact_name}`
                   }
                   style={{
                     fontSize: 20,
