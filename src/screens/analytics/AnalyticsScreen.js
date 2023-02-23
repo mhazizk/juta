@@ -91,6 +91,9 @@ const AnalyticsScreen = () => {
     utils.getSpentList({
       expenseOnly: true,
       groupSorted: sortedTransactions.groupSorted,
+      logbooks: logbooks.logbooks,
+      globalCurrencyRates,
+      targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
       categories: categories.categories,
       rangeDay: graph?.rangeDay,
       setSpentList: (item) => setSpentList(item),
