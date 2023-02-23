@@ -1,8 +1,14 @@
+import convertCurrency from "./convertCurrency";
+import FindById from "./FindById";
+import getTotalAmountAndConvertToDefaultCurrency from "./getTotalAmountAndConvertToDefaultCurrency";
 
 const getSpentList = ({
+  globalCurrencyRates,
+  targetCurrencyName,
+  logbooks,
   groupSorted,
-  expenseOnly,
-  incomeOnly,
+  expenseOnly = false,
+  incomeOnly = false,
   categories,
   rangeDay,
   setSpentList,
@@ -19,16 +25,38 @@ const getSpentList = ({
       groupSorted.forEach((logbook) =>
         logbook.transactions.forEach((section) =>
           section.data.forEach((transaction) => {
+            const logbookCurrencyName = FindById.findLogbookById({
+              id: transaction.logbook_id,
+              logbooks,
+            }).logbook_currency.name;
             if (
               transaction.details.date <= today &&
               transaction.details.date >= today - 1000 * 60 * 60 * 24 * rangeDay
             ) {
+              const convertedAmount = convertCurrency({
+                amount: transaction.details.amount,
+                from: logbookCurrencyName,
+                target: targetCurrencyName,
+                globalCurrencyRates,
+              });
               switch (true) {
                 case expenseOnly && transaction.details.in_out === "expense":
-                  transactionList.push(transaction);
+                  transactionList.push({
+                    ...transaction,
+                    details: {
+                      ...transaction.details,
+                      amount: convertedAmount,
+                    },
+                  });
                   break;
                 case incomeOnly && transaction.details.in_out === "income":
-                  transactionList.push(transaction);
+                  transactionList.push({
+                    ...transaction,
+                    details: {
+                      ...transaction.details,
+                      amount: convertedAmount,
+                    },
+                  });
                   break;
                 default:
                   break;
