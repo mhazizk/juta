@@ -163,7 +163,9 @@ const SettingsScreen = ({ navigation }) => {
                       name: "contrast",
                       pack: "IonIcons",
                     },
-                    props: THEME_CONSTANTS.OPTIONS.map((theme) => theme),
+                    props: THEME_CONSTANTS.OPTIONS.sort((a, b) => {
+                      return a.name.localeCompare(b.name);
+                    }).map((theme) => theme),
                     defaultOption: THEME_CONSTANTS.OPTIONS.find((theme) => {
                       return theme.id === appSettings.theme_id;
                     }),
