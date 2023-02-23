@@ -258,7 +258,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "row",
-                flex: 1,
               }}
             >
               <TextSecondary
@@ -289,9 +288,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 style={[
                   {
                     ...globalTheme.text.textPrimary,
-                    paddingLeft: 0,
                     paddingVertical: 16,
-                    paddingRight: 16,
                     minHeight: 36,
                     fontSize: 36,
                   },
