@@ -88,7 +88,7 @@ const AboutScreen = ({ item, navigation }) => {
             leftLabel="Open source libraries"
             iconLeftName="code"
             iconPack="IonIcons"
-            onPress={() => alert("OTW")}
+            onPress={() => alert('Library list will shown soon :)')}
           />
         </ListSection>
       </CustomScrollView>
