@@ -102,6 +102,14 @@ Coming soon at juta official web
 
 ## Release Notes
 
+### 0.7.7-alpha
+
+- New features:
+  - Add new theme
+- Bugfixes:
+  - Fix theme load on initial setup
+  - Fix color scheme
+
 ### 0.7.5-alpha
 
 - New features:
