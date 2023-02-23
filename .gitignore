@@ -11,7 +11,7 @@ npm-debug.*
 web-build/
 *.env
 *.easignore
-DeveloperScreen.js
+src/screens/user/DeveloperScreen.js
 
 # macOS
 .DS_Store
