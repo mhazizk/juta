@@ -1,6 +1,7 @@
 import { Image } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import OnboardingImg1 from "../../../assets/img/onboarding2.png";
+import JutaLogo from "../../../assets/icons/juta-app-icon.png";
+import OnboardingImg1 from "../../../assets/img/onboarding1.png";
 import OnboardingImg2 from "../../../assets/img/onboarding2.png";
 import OnboardingImg3 from "../../../assets/img/onboarding3.png";
 import OnboardingImg4 from "../../../assets/img/onboarding4.png";
@@ -40,13 +41,21 @@ const OnboardingScreen = ({ navigation }) => {
           {
             backgroundColor: "#000",
             image: (
+              <Image source={JutaLogo} style={{ width: 150, height: 150 }} />
+            ),
+            title: "Welcome to Juta",
+            subtitle: "Your personal expense tracker",
+          },
+          {
+            backgroundColor: "#FFBD00",
+            image: (
               <Image
                 source={OnboardingImg1}
                 style={{ width: 250, height: 250 }}
               />
             ),
-            title: "Welcome",
-            subtitle: "to Juta",
+            title: `Dashboard for you`,
+            subtitle: "Track everything in one place",
           },
           {
             backgroundColor: "#00695C",
@@ -56,7 +65,7 @@ const OnboardingScreen = ({ navigation }) => {
                 style={{ width: 250, height: 250 }}
               />
             ),
-            title: "Log Your Expense",
+            title: "Log your expense",
             subtitle: "No more writing expense on paper",
           },
           {
@@ -67,8 +76,8 @@ const OnboardingScreen = ({ navigation }) => {
                 style={{ width: 250, height: 250 }}
               />
             ),
-            title: "Categorize Your Expense",
-            subtitle: "Easy to track expense based on category",
+            title: "Categorize everything",
+            subtitle: "Categorize your expense to get better insight",
           },
           {
             backgroundColor: "#893050",
@@ -78,18 +87,18 @@ const OnboardingScreen = ({ navigation }) => {
                 style={{ width: 250, height: 250 }}
               />
             ),
-            title: "Analyze Your Expense",
-            subtitle: "Easy to analyze expense in dashboard mode",
+            title: "Analyze your expense",
+            subtitle: "Get insight of your expense",
           },
           {
-            backgroundColor: "#FFBD00",
+            backgroundColor: "#000",
             image: (
               <Image
                 source={OnboardingImg5}
                 style={{ width: 250, height: 250 }}
               />
             ),
-            title: `Let's Start`,
+            title: `Let's start`,
             subtitle: "",
           },
         ]}
