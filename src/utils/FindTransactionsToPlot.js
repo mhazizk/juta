@@ -16,6 +16,7 @@ const findTransactionsToPlot = ({
   appSettings,
   globalCurrencyRates,
 }) => {
+  console.log(JSON.stringify({ budgets }, null, 2));
   let transactionList = [];
   let spentList = [];
   let totalSpent = 0;
@@ -207,9 +208,9 @@ const findTransactionsToPlot = ({
           }
         }
       }
-      if (budgets.budgets.length) {
+      if (budgets.budgets.length > 0) {
         budgets.budgets.forEach((budget) => {
-          if (budget.start_date <= today && budget.finish_date >= today) {
+          if (budget?.start_date <= today && budget?.finish_date >= today) {
             const range = budget.finish_date - budget.start_date;
             const rangeDay = range / (1000 * 60 * 60 * 24);
             dailyLimit = +parseFloat(budget.limit / rangeDay).toFixed(2);
