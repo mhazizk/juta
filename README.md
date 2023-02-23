@@ -102,6 +102,15 @@ Coming soon at juta official web
 
 ## Release Notes
 
+### 0.7.5-alpha
+
+- New features:
+- Bugfixes:
+  - Fix currency auto converter in Analytics
+  - Fix currency auto converter in My Budgets
+  - Fix remove button on New Transaction
+  - Reduce startup time
+
 ### 0.7.3-alpha
 
 - New features:
