@@ -7,7 +7,6 @@ import SECRET_KEYS from "../constants/secretManager";
 
 const useFirestoreSubscriptions = ({
   uid,
-  subscribeAll,
   unsubscribeAll = false,
 
   appSettings,
@@ -42,14 +41,17 @@ const useFirestoreSubscriptions = ({
 
   globalFeatureSwitch,
   dispatchGlobalFeatureSwitch,
+
+  skipFirstRun = false,
 }) => {
   console.log("useFirestoreSubscriptions");
 
   // TAG : App Settings Subscription //
-  const unsubscribeAppSettings = firestore.getAndListenOneDoc(
-    FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-    uid,
-    (data) => {
+  const unsubscribeAppSettings = firestore.getAndListenOneDoc({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+    documentId: uid,
+    callback: (data) => {
       console.log("changed app settings");
       if (!!data) {
         dispatchBadgeCounter({
@@ -62,15 +64,15 @@ const useFirestoreSubscriptions = ({
         });
       }
     },
-    (error) => {}
-  );
-  // unsubscribeAppSettings = userAccountSubscription;
+    errorCallback: (error) => {},
+  });
 
   // TAG : User Account Subscription //
-  const unsubscribeUserAccount = firestore.getAndListenOneDoc(
-    FIRESTORE_COLLECTION_NAMES.USERS,
-    uid,
-    (data) => {
+  const unsubscribeUserAccount = firestore.getAndListenOneDoc({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.USERS,
+    documentId: uid,
+    callback: (data) => {
       if (!!data) {
         dispatchBadgeCounter({
           type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
@@ -82,14 +84,15 @@ const useFirestoreSubscriptions = ({
         });
       }
     },
-    (error) => {}
-  );
+    errorCallback: (error) => {},
+  });
 
   // TAG : Loan Contacts Subscription //
-  const unsubscribeLoan = firestore.getAndListenOneDoc(
-    FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
-    uid,
-    (data) => {
+  const unsubscribeLoan = firestore.getAndListenOneDoc({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
+    documentId: uid,
+    callback: (data) => {
       if (!!data) {
         dispatchGlobalLoan({
           type: REDUCER_ACTIONS.LOAN.SET_MULTI_ACTIONS,
@@ -97,14 +100,15 @@ const useFirestoreSubscriptions = ({
         });
       }
     },
-    (error) => {}
-  );
+    errorCallback: (error) => {},
+  });
 
   // TAG : Currency rates Subscription //
-  const unsubscribeCurrencyRates = firestore.getAndListenOneDoc(
-    FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-    uid,
-    (data) => {
+  const unsubscribeCurrencyRates = firestore.getAndListenOneDoc({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+    documentId: uid,
+    callback: (data) => {
       if (!!data) {
         dispatchGlobalCurrencyRates({
           type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
@@ -112,16 +116,17 @@ const useFirestoreSubscriptions = ({
         });
       }
     },
-    (error) => {}
-  );
+    errorCallback: (error) => {},
+  });
 
   // TAG : Logbooks Subscription //
-  const unsubscribeLogbooks = firestore.getAndListenMultipleDocs(
-    FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-    uid,
-    (error) => {},
-    (data) => {},
-    (data, type) => {
+  const unsubscribeLogbooks = firestore.getAndListenMultipleDocs({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+    documentId: uid,
+    errorCallback: (error) => {},
+    getAllDocsCallback: (data) => {},
+    getChangesDocsCallback: (data, type) => {
       if (!!data) {
         switch (type) {
           case "added":
@@ -154,28 +159,20 @@ const useFirestoreSubscriptions = ({
             break;
         }
       }
-    }
-  );
+    },
+  });
 
   // TAG : Transactions Subscription //
-  const unsubscribeTransactions = firestore.getAndListenMultipleDocs(
-    FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
-    uid,
-    (error) => {},
-    (data) => {},
-    (data, type) => {
-      let prevTransaction = null;
+  const unsubscribeTransactions = firestore.getAndListenMultipleDocs({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.TRANSACTIONS,
+    documentId: uid,
+    errorCallback: (error) => {},
+    getAllDocsCallback: (data) => {},
+    getChangesDocsCallback: (data, type) => {
       if (!!data) {
         switch (type) {
           case "added":
-            // Check duplicate between new and prev transaction
-            // if (prevTransaction) {
-            //   isTimestampSame =
-            //     data._timestamps.updated_at ===
-            //     prevTransaction._timestamps.updated_at;
-            // }
-            // console.log({ prevTransaction, isTimestampSame });
-
             dispatchBadgeCounter({
               type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
               payload: 1,
@@ -247,17 +244,17 @@ const useFirestoreSubscriptions = ({
             break;
         }
       }
-    }
-  );
-  // unsubscribeTransactions = transactionsSubscription;
+    },
+  });
 
   // TAG : Repeated Transactions Subscription //
-  const unsubscribeRepeatedTransactions = firestore.getAndListenMultipleDocs(
-    FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
-    uid,
-    (error) => {},
-    (data) => {},
-    (data, type) => {
+  const unsubscribeRepeatedTransactions = firestore.getAndListenMultipleDocs({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.REPEATED_TRANSACTIONS,
+    documentId: uid,
+    errorCallback: (error) => {},
+    getAllDocsCallback: (data) => {},
+    getChangesDocsCallback: (data, type) => {
       if (!!data) {
         switch (type) {
           case "added":
@@ -292,14 +289,16 @@ const useFirestoreSubscriptions = ({
             break;
         }
       }
-    }
-  );
+    },
+  });
 
   // TAG : Categories Subscription //
-  const unsubscribeCategories = firestore.getAndListenOneDoc(
-    FIRESTORE_COLLECTION_NAMES.CATEGORIES,
-    uid,
-    (data) => {
+  const unsubscribeCategories = firestore.getAndListenOneDoc({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+    documentId: uid,
+    errorCallback: (error) => {},
+    callback: (data) => {
       if (!!data) {
         dispatchCategories({
           type: REDUCER_ACTIONS.CATEGORIES.SET,
@@ -307,17 +306,16 @@ const useFirestoreSubscriptions = ({
         });
       }
     },
-    (error) => {}
-  );
-  // unsubscribeCategories = categoriesSubscription;
+  });
 
   // TAG : Budgets Subscription //
-  const unsubscribeBudgets = firestore.getAndListenMultipleDocs(
-    FIRESTORE_COLLECTION_NAMES.BUDGETS,
-    uid,
-    (error) => {},
-    (data) => {},
-    (data, type) => {
+  const unsubscribeBudgets = firestore.getAndListenMultipleDocs({
+    skipFirstRun,
+    collectionName: FIRESTORE_COLLECTION_NAMES.BUDGETS,
+    documentId: uid,
+    errorCallback: (error) => {},
+    getAllDocsCallback: (data) => {},
+    getChangesDocsCallback: (data, type) => {
       if (!!data) {
         console.log({ data, type });
         switch (type) {
@@ -355,8 +353,8 @@ const useFirestoreSubscriptions = ({
             break;
         }
       }
-    }
-  );
+    },
+  });
 
   if (unsubscribeAll) {
     return {
