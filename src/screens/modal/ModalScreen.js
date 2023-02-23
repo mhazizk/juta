@@ -178,7 +178,15 @@ const ModalScreen = ({ route, navigation }) => {
                   }}
                 >
                   <View style={globalTheme.list.listContainer}>
-                    <CountryFlag isoCode={item?.isoCode} size={18} />
+                    <View
+                      style={{
+                        borderRadius: 4,
+                        overflow: "hidden",
+                        alignItems: "center",
+                      }}
+                    >
+                      <CountryFlag isoCode={item?.isoCode} size={20} />
+                    </View>
                     <View
                       style={{
                         ...globalTheme.list.listItem,
