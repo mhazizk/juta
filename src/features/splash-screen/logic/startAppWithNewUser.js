@@ -96,6 +96,7 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
       setTimeout(async () => {
         useFirestoreSubscriptions({
           uid: userAccountData.uid,
+          skipFirstRun: true,
 
           appSettings: appSettings,
           dispatchAppSettings: dispatchAppSettings,
