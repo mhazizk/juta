@@ -108,7 +108,7 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="pencil"
                     size={48}
-                    color={globalTheme.colors.primary}
+                    color={globalTheme.bottomTab.actionButton.backgroundColor}
                   />
                 </View>
                 <TextPrimary label="Transaction" />
@@ -235,7 +235,7 @@ const ActionScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="book"
                     size={48}
-                    color={globalTheme.colors.primary}
+                    color={globalTheme.bottomTab.actionButton.backgroundColor}
                   />
                 </View>
                 <TextPrimary label="Logbook" />
