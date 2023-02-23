@@ -316,7 +316,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
           </ListSection>
 
           <ListSection>
-            {/* // TAG : Show Transaction Time */}
+            {/* // TAG : Convert all transactions */}
             <CheckList
               pressable
               primaryLabel="Convert all existing transactions"
