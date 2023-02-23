@@ -1,7 +1,7 @@
 import { darkFallTheme } from "../assets/themes/darkFallTheme/darkFallTheme";
-import { colorOfTheYear2023 } from "../assets/themes/colorOfTheYear2023/colorOfTheYear2023";
 import { darkMonoTheme } from "../assets/themes/darkMonoTheme/darkMonoTheme";
 import { lightMonoTheme } from "../assets/themes/lightMonoTheme/lightMonoTheme";
+import { creamyLighteaTheme } from "../assets/themes/creamyLightea/creamyLighteaTheme";
 
 const THEME_CONSTANTS = {
   DEFAULT: {
@@ -26,8 +26,8 @@ const THEME_CONSTANTS = {
       style: darkFallTheme,
     },
     {
-      ...colorOfTheYear2023.identifier,
-      style: colorOfTheYear2023,
+      ...creamyLighteaTheme.identifier,
+      style: creamyLighteaTheme,
     },
   ],
 };
