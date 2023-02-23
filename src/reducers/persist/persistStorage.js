@@ -43,7 +43,7 @@ const asyncStorage = async ({ action, key, rawValue }) => {
       await AsyncStorage.setItem(
         key,
         JSON.stringify(rawValue),
-        alert("item saved")
+        // alert("item saved")
       );
     } catch (error) {
       alert(error);
