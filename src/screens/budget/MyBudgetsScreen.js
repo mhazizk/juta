@@ -100,9 +100,9 @@ const MyBudgetsScreen = ({ route, navigation }) => {
   };
 
   const findInactiveBudget = () => {
-    if (budgets.budgets.length) {
+    if (budgets.budgets.length > 0) {
       const inactiveBudget = budgets.budgets.filter(
-        (budget) => Date.now() > budget.finish_date
+        (budget) => Date.now() > budget?.finish_date
       );
       return setInactiveBudgets(inactiveBudget);
     }
