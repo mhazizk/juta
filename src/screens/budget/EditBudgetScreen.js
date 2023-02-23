@@ -23,6 +23,7 @@ import {
 } from "../../reducers/GlobalContext";
 import CustomScrollView from "../../shared-components/CustomScrollView";
 import * as utils from "../../utils";
+import LOADING_TYPES from "../modal/loading.type";
 
 const EditBudgetScreen = ({ navigation, route }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -113,10 +114,10 @@ const EditBudgetScreen = ({ navigation, route }) => {
             finalPatchBudget.budget_id,
             finalPatchBudget
           );
-        }, 1);
+        }, 5000);
         return navigation.navigate(screenList.loadingScreen, {
-          label: "Saving Budget ...",
-          loadingType: "patchBudget",
+          label: "Saving Budget...",
+          loadingType: LOADING_TYPES.BUDGETS.PATCH_ONE,
           patchBudget: finalPatchBudget,
           reducerUpdatedAt: Date.now(),
         });
@@ -361,7 +362,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
 
                           navigation.navigate(screenList.loadingScreen, {
                             label: "Deleting Budget...",
-                            loadingType: "deleteBudget",
+                            loadingType: LOADING_TYPES.BUDGETS.DELETE_ONE,
                             deleteBudget: patchBudget,
                             reducerUpdatedAt: Date.now(),
                           });
