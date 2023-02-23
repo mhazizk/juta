@@ -398,7 +398,7 @@ const LoadingScreen = ({ route, navigation }) => {
 
           // TAG : Insert One Budget Method
           case reducerUpdatedAt !== budgetsReducerUpdatedAt &&
-            loadingType === "insertBudget":
+            loadingType === LOADING_TYPES.BUDGETS.INSERT_ONE:
             console.log("start insert budget");
             dispatchBudgets({
               type: REDUCER_ACTIONS.BUDGETS.INSERT,
@@ -409,7 +409,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Patch One Budget Method
           case patchBudget &&
             reducerUpdatedAt !== budgetsReducerUpdatedAt &&
-            loadingType === "patchBudget":
+            loadingType === LOADING_TYPES.BUDGETS.PATCH_ONE:
             dispatchBudgets({
               type: REDUCER_ACTIONS.BUDGETS.PATCH,
               payload: { patchBudget, reducerUpdatedAt },
@@ -419,7 +419,7 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Delete One Budget Method
           case deleteBudget &&
             reducerUpdatedAt !== budgetsReducerUpdatedAt &&
-            loadingType === "deleteBudget":
+            loadingType === LOADING_TYPES.BUDGETS.DELETE_ONE:
             dispatchBudgets({
               type: REDUCER_ACTIONS.BUDGETS.DELETE_ONE,
               payload: { deleteBudget, reducerUpdatedAt },
@@ -742,17 +742,20 @@ const LoadingScreen = ({ route, navigation }) => {
 
     switch (true) {
       // Insert One Budget
-      case isReducerTimestampSame && loadingType === "insertBudget":
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.BUDGETS.INSERT_ONE:
         navigation.navigate(screenList.myBudgetsScreen);
         break;
 
       // Patch One Budget
-      case isReducerTimestampSame && loadingType === "patchBudget":
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.BUDGETS.PATCH_ONE:
         navigation.navigate(screenList.myBudgetsScreen);
         break;
 
       // Delete One Budget
-      case isReducerTimestampSame && loadingType === "deleteBudget":
+      case isReducerTimestampSame &&
+        loadingType === LOADING_TYPES.BUDGETS.DELETE_ONE:
         navigation.navigate(screenList.myBudgetsScreen);
         break;
 
