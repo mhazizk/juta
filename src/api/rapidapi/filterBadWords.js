@@ -1,4 +1,6 @@
 import axios from "axios";
+import SECRET_KEYS from "../../constants/secretManager";
+import getSecretFromCloudFunctions from "../firebase/getSecretFromCloudFunctions";
 
 const filterBadWords = async (text) => {
   const options = {
@@ -6,7 +8,9 @@ const filterBadWords = async (text) => {
     url: "https://community-purgomalum.p.rapidapi.com/json",
     params: { text },
     headers: {
-      "X-RapidAPI-Key": "e9ee1dd2e7mshd504c4cef4a0be6p1a0dadjsnd2b27b85c6ae",
+      "X-RapidAPI-Key": await getSecretFromCloudFunctions(
+        SECRET_KEYS.RAPID_API_KEY
+      ),
       "X-RapidAPI-Host": "community-purgomalum.p.rapidapi.com",
     },
   };
