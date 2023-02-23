@@ -35,11 +35,24 @@ export const darkMonoTheme = {
     secondary: palette.black[400],
     header: palette.black[600],
     textHeader: palette.white[600],
+    listSection: palette.white[600],
     incomeAmount: "#00B19B",
     incomeSymbol: "#008888",
     success: palette.green,
     warn: palette.orange,
     danger: palette.red,
+  },
+  headerButton: {
+    backgroundColor: palette.white[600],
+    color: palette.black[600],
+  },
+  bottomTab: {
+    activeTintColor: palette.white[600],
+    inactiveTintColor: palette.black[200],
+    actionButton: {
+      backgroundColor: palette.white[600],
+      iconColor: palette.black[600],
+    },
   },
   widgets: {
     totalExpense: {
