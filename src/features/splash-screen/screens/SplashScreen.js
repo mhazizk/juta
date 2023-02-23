@@ -189,7 +189,15 @@ const SplashScreen = ({ route, navigation }) => {
       default:
         break;
     }
-  }, [user, loading, error, isFirstRun, fromScreen, targetScreen]);
+  }, [
+    user,
+    loading,
+    error,
+    isFirstRun,
+    fromScreen,
+    targetScreen,
+    sortedTransactions.reducerUpdatedAt,
+  ]);
 
   return (
     <>
