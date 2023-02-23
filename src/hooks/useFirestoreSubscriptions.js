@@ -8,7 +8,7 @@ import SECRET_KEYS from "../constants/secretManager";
 const useFirestoreSubscriptions = ({
   uid,
   subscribeAll,
-  unsubscribeAll,
+  unsubscribeAll = false,
 
   appSettings,
   dispatchAppSettings,
@@ -317,25 +317,61 @@ const useFirestoreSubscriptions = ({
     uid,
     (error) => {},
     (data) => {},
-    (data) => {}
-    // dispatchBudgets({
-    //   type: REDUCER_ACTIONS.BUDGETS.SET,
-    //   payload: data,
-    // }),
+    (data, type) => {
+      if (!!data) {
+        console.log({ data, type });
+        switch (type) {
+          case "added":
+            dispatchBudgets({
+              type: REDUCER_ACTIONS.BUDGETS.INSERT,
+              payload: {
+                newBudget: data,
+                reducerUpdatedAt: Date.now(),
+              },
+            });
+            break;
+          case "modified":
+            console.log("modified");
+            dispatchBudgets({
+              type: REDUCER_ACTIONS.BUDGETS.PATCH,
+              payload: {
+                patchBudget: data,
+                reducerUpdatedAt: Date.now(),
+              },
+            });
+            break;
+          case "removed":
+            dispatchBudgets({
+              type: REDUCER_ACTIONS.BUDGETS.DELETE_ONE,
+              payload: {
+                deleteBudget: data,
+                reducerUpdatedAt: Date.now(),
+              },
+            });
+
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
   );
 
-  return {
-    unsubscribeAppSettings: unsubscribeAppSettings(),
-    unsubscribeUserAccount: unsubscribeUserAccount(),
-    unsubscribeLogbooks: unsubscribeLogbooks(),
-    unsubscribeTransactions: unsubscribeTransactions(),
-    unsubscribeCategories: unsubscribeCategories(),
-    unsubscribeBudgets: unsubscribeBudgets(),
-    unsubscribeRepeatedTransactions: unsubscribeRepeatedTransactions(),
-    unsubscribeCurrencyRates: unsubscribeCurrencyRates(),
-    unsubscribeLoan: unsubscribeLoan(),
-    // unsubscribeFeatures: unsubscribeFeatures(),
-  };
+  if (unsubscribeAll) {
+    return {
+      unsubscribeAppSettings: unsubscribeAppSettings(),
+      unsubscribeUserAccount: unsubscribeUserAccount(),
+      unsubscribeLogbooks: unsubscribeLogbooks(),
+      unsubscribeTransactions: unsubscribeTransactions(),
+      unsubscribeCategories: unsubscribeCategories(),
+      unsubscribeBudgets: unsubscribeBudgets(),
+      unsubscribeRepeatedTransactions: unsubscribeRepeatedTransactions(),
+      unsubscribeCurrencyRates: unsubscribeCurrencyRates(),
+      unsubscribeLoan: unsubscribeLoan(),
+      // unsubscribeFeatures: unsubscribeFeatures(),
+    };
+  }
 };
 
 export default useFirestoreSubscriptions;
