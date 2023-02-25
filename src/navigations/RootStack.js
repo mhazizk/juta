@@ -829,7 +829,7 @@ const RootStack = () => {
       />
       {/* // TAG : Edit Loan Contact Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "New Loan Contact" }}
+        options={{ ...showHeader, title: "Edit Loan Contact" }}
         name={screenList.editLoanContactScreen}
         component={EditLoanContactScreen}
       />
