@@ -6,7 +6,7 @@ const logOutRevenueCat = async () => {
       return Promise.resolve();
     })
     .catch((error) => {
-      alert(error.message);
+      // alert(error.message);
       return Promise.reject(error);
     });
 };
