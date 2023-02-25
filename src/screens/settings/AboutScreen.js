@@ -117,6 +117,13 @@ const AboutScreen = ({ item, navigation }) => {
             onPress={() => alert("Library list will shown soon :)")}
           />
         </ListSection>
+        <TextPrimary
+          label={`© ${new Date().getFullYear()} mhazizk`}
+          style={{
+            textAlign: "center",
+            padding: 16,
+          }}
+        />
       </CustomScrollView>
     </>
   );
