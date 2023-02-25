@@ -113,7 +113,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
       case fontSize === "large":
         return large;
 
-        defaultOption: return medium;
+      default:
+        return medium;
     }
   };
 

@@ -51,12 +51,12 @@ export const uploadAndGetAttachmentImageURL = async (
     console.log(JSON.stringify(error));
   });
   if (snapshot) {
-    alert("line 50");
+    // alert("line 50");
   }
   const url = await getDownloadURL(snapshot.ref);
 
   if (url) {
-    alert("line 54");
+    // alert("line 54");
   }
   return url;
 };

@@ -58,7 +58,7 @@ export const lightMonoTheme = {
     totalExpense: {
       cardBackgroundColor: palette.black[600],
       cardTextColor: palette.white[600],
-      cardIconColor: palette.black[600],
+      cardIconColor: palette.white[600],
     },
     myLoans: {
       cardBackgroundColor: "#0899ba",

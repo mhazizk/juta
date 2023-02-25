@@ -241,7 +241,11 @@ const AnalyticsScreen = () => {
                       />
                     </View>
                     <TextSecondary
-                      label={`Total expense in the last ${graph?.rangeDay} days`}
+                      label={`Total expenses in the last ${
+                        graph?.rangeDay !== 365
+                          ? graph?.rangeDay + " days"
+                          : "year"
+                      }`}
                       style={{ paddingRight: 8 }}
                     />
                   </View>
@@ -267,7 +271,7 @@ const AnalyticsScreen = () => {
                       hex: globalTheme.colors.secondary,
                       opacity: 0.5,
                     })}
-                    width={Dimensions.get("window").width}
+                    width={Dimensions.get("window").width - 32}
                     height={220}
                     showAxisLabels
                     textColor={globalTheme.text.textSecondary.color}
