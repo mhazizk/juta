@@ -102,6 +102,10 @@ Coming soon at juta official web
 
 ## Release Notes
 
+### 0.7.8-alpha
+- Bugfixes:
+  - Fix screen name
+
 ### 0.7.7-alpha
 
 - New features:
