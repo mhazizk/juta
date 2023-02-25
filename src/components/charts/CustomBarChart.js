@@ -87,7 +87,7 @@ export const CustomBarChart = ({
             case rangeDay === 7:
               return (length - leftSpace) * 30;
             case rangeDay === 30:
-              return (length - leftSpace) * 16;
+              return (length - leftSpace) * 20;
             case rangeDay === 365:
               return (length - leftSpace) * 24;
 
