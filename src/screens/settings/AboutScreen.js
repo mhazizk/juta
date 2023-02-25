@@ -98,13 +98,17 @@ const AboutScreen = ({ item, navigation }) => {
             iconPack="IonIcons"
             onPress={() => Linking.openURL("https://twitter.com/juta_app")}
           />
-          {/* // TAG : Github */}
+        </ListSection>
+        <ListSection>
+          {/* // TAG : Release notes */}
           <ListItem
             pressable
-            leftLabel="Visit github"
+            leftLabel="Release notes"
             iconLeftName="logo-github"
             iconPack="IonIcons"
-            onPress={() => Linking.openURL("https://github.com/mhazizk/juta")}
+            onPress={() =>
+              Linking.openURL("https://github.com/mhazizk/juta-release-notes")
+            }
           />
         </ListSection>
         <ListSection>
