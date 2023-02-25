@@ -44,7 +44,7 @@ const OnboardingScreen = ({ navigation }) => {
               <Image source={JutaLogo} style={{ width: 150, height: 150 }} />
             ),
             title: "Welcome to Juta",
-            subtitle: "Your personal expense tracker",
+            subtitle: "Your personal finance tracker",
           },
           {
             backgroundColor: "#FFBD00",
