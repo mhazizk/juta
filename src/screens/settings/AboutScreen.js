@@ -122,7 +122,7 @@ const AboutScreen = ({ item, navigation }) => {
           />
         </ListSection>
         <TextPrimary
-          label={`© ${new Date().getFullYear()} mhazizk`}
+          label={`© Juta ${new Date().getFullYear()}`}
           style={{
             textAlign: "center",
             padding: 16,
