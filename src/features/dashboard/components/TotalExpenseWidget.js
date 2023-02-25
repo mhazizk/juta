@@ -343,15 +343,21 @@ const TotalExpenseWidget = ({
                     symbol={appSettings.logbookSettings.defaultCurrency.symbol}
                     rangeDay={graph?.rangeDay}
                     //  Graph Style
-                    successColor={globalTheme.widgets.totalExpense.success}
+                    successColor={
+                      globalTheme.widgets.totalExpense.cardIconColor
+                    }
                     primaryColor={utils.hexToRgb({
-                      hex: globalTheme.widgets.totalExpense.cardTextColor,
+                      hex: globalTheme.widgets.totalExpense.cardIconColor,
                       opacity: 0.1,
                     })}
-                    overBudgetBarColor={globalTheme.widgets.totalExpense.danger}
-                    warnBudgetBarColor={globalTheme.widgets.totalExpense.warn}
+                    overBudgetBarColor={
+                      globalTheme.widgets.totalExpense.cardIconColor
+                    }
+                    warnBudgetBarColor={
+                      globalTheme.widgets.totalExpense.cardIconColor
+                    }
                     shadowBarColor={utils.hexToRgb({
-                      hex: globalTheme.widgets.totalExpense.success,
+                      hex: globalTheme.widgets.totalExpense.cardIconColor,
                       opacity: 0,
                     })}
                     width={Dimensions.get("window").width - 32}
