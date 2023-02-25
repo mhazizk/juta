@@ -39,7 +39,7 @@ const getOneDoc = async (collectionName, documentId = null) => {
     //   console.log(`${doc.id} => ${doc.data()}`);
     // });
   } catch (error) {
-    Alert.alert("Error", error.message);
+    // Alert.alert("Error", error.message);
     return Promise.reject(error);
   }
 };
@@ -59,7 +59,7 @@ const setAndListenOneDoc = (
       callback(querySnapshot.data());
     },
     (error) => {
-      Alert.alert("Error", error.message);
+      // Alert.alert("Error", error.message);
       errorCallback(error);
     }
   );
