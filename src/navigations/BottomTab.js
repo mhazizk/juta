@@ -15,8 +15,8 @@ import {
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import ActionScreen from "../screens/modal/ActionScreen";
-import SearchScreen from "../screens/search/SearchScreen";
-import UserScreen from "../screens/user/UserScreen";
+import SearchScreen from "../features/search/screens/SearchScreen";
+import UserScreen from "../features/user/screens/UserScreen";
 import screenList from "./ScreenList";
 
 const Tab = createBottomTabNavigator();
