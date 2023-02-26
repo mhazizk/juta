@@ -8,17 +8,19 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "resourceClass": "m1-medium",
+        "simulator": true
       }
     },
     "staging": {
       "channel": "staging",
+      "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
-      "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "resourceClass": "m1-medium",
+        "simulator": true
       }
     },
     "production": {
