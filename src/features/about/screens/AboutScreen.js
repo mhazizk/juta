@@ -5,7 +5,7 @@ import {
   useGlobalAppSettings,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
-import JutaLogo from "../../assets/icons/juta-app-icon.png";
+import JutaLogo from "../../../assets/icons/juta-app-icon.png";
 import Constants from "expo-constants";
 import { TextPrimary } from "../../../components/Text";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
