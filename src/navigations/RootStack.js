@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
-  createStackNavigator,
+  createStackNavigator
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -23,6 +23,10 @@ import BudgetPreviewScreen from "../features/budgets/screens/BudgetPreviewScreen
 import EditBudgetScreen from "../features/budgets/screens/EditBudgetScreen";
 import MyBudgetsScreen from "../features/budgets/screens/MyBudgetsScreen";
 import NewBudgetScreen from "../features/budgets/screens/NewBudgetScreen";
+import CategoryPreviewScreen from "../features/categories/screens/CategoryPreviewScreen";
+import EditCategoryScreen from "../features/categories/screens/EditCategoryScreen";
+import MyCategoriesScreen from "../features/categories/screens/MyCategoriesScreen";
+import NewCategoryScreen from "../features/categories/screens/NewCategoryScreen";
 import DashboardScreen from "../features/dashboard/screens/DashboardScreen";
 import DevicesScreen from "../features/devices/screens/DevicesScreen";
 import ExportScreen from "../features/export/screens/ExportScreen";
@@ -46,6 +50,7 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
+import SearchScreen from "../features/search/screens/SearchScreen";
 import SplashScreen from "../features/splash-screen/screens/SplashScreen";
 import getFeatureLimit from "../features/subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../features/subscription/model/featureName";
@@ -63,31 +68,23 @@ import {
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
-  useGlobalCurrencyRates,
-  useGlobalLoan,
+  useGlobalCurrencyRates, useGlobalFeatureSwitch, useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalFeatureSwitch,
-  useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalTheme,
+  useGlobalUserAccount
 } from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
-import CategoryPreviewScreen from "../screens/categories/CategoryPreviewScreen";
-import EditCategoryScreen from "../screens/categories/EditCategoryScreen";
-import MyCategoriesScreen from "../screens/categories/MyCategoriesScreen";
-import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import ActionScreen from "../screens/modal/ActionScreen";
 import LoadingScreen from "../screens/modal/LoadingScreen";
 import ModalScreen from "../screens/modal/ModalScreen";
-import SearchScreen from "../screens/search/SearchScreen";
-import AboutScreen from "../screens/settings/AboutScreen";
-import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
-import MyAccountScreen from "../screens/settings/MyAccountScreen";
-import SettingsScreen from "../screens/settings/SettingsScreen";
+import AboutScreen from "../features/about/screens/AboutScreen";
+import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
+import MyAccountScreen from "../features/my-account/screens/MyAccountScreen";
+import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
-import DeveloperScreen from "../screens/user/DeveloperScreen";
-import UserScreen from "../screens/user/UserScreen";
+import DeveloperScreen from "../features/user/screens/DeveloperScreen";
+import UserScreen from "../features/user/screens/UserScreen";
 import BottomTab from "./BottomTab";
 import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
