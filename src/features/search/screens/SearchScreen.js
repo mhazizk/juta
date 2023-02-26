@@ -34,7 +34,6 @@ const SearchScreen = ({ navigation }) => {
     inputRef.current.focus();
   }, [searchQuery]);
 
-  const checkmark = require("../../../src/assets/img/checkmark.png");
   return (
     <>
       <View
