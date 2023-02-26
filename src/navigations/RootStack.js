@@ -1,20 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
-  createStackNavigator,
+  createStackNavigator
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Alert, AppState, TouchableOpacity, View } from "react-native";
+import { Alert, AppState, View } from "react-native";
 import uuid from "react-native-uuid";
-import IonIcons from "react-native-vector-icons/Ionicons";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
-import getSecretFromCloudFunctions from "../api/firebase/getSecretFromCloudFunctions";
 import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
-import { TextPrimary } from "../components/Text";
-import SECRET_KEYS from "../constants/secretManager";
+import AnalyticsScreen from "../features/analytics/screens/AnalyticsScreen";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import LoginScreen from "../features/auth/screens/LoginScreen";
@@ -22,11 +19,17 @@ import LogoutScreen from "../features/auth/screens/LogoutScreen";
 import SignUpScreen from "../features/auth/screens/SignUpScreen";
 import UpdateEmailScreen from "../features/auth/screens/UpdateEmailScreen";
 import UpdatePasswordScreen from "../features/auth/screens/UpdatePasswordScreen";
+import BudgetPreviewScreen from "../features/budgets/screens/BudgetPreviewScreen";
+import EditBudgetScreen from "../features/budgets/screens/EditBudgetScreen";
+import MyBudgetsScreen from "../features/budgets/screens/MyBudgetsScreen";
+import NewBudgetScreen from "../features/budgets/screens/NewBudgetScreen";
+import CategoryPreviewScreen from "../features/categories/screens/CategoryPreviewScreen";
+import EditCategoryScreen from "../features/categories/screens/EditCategoryScreen";
+import MyCategoriesScreen from "../features/categories/screens/MyCategoriesScreen";
+import NewCategoryScreen from "../features/categories/screens/NewCategoryScreen";
 import DashboardScreen from "../features/dashboard/screens/DashboardScreen";
 import DevicesScreen from "../features/devices/screens/DevicesScreen";
 import ExportScreen from "../features/export/screens/ExportScreen";
-import FeatureWishlistScreen from "../features/feature-wishlist/screens/FeatureWishlistScreen";
-import NewFeatureWishlistScreen from "../features/feature-wishlist/screens/NewFeatureWishlistScreen";
 import EditGroupScreen from "../features/groups/screens/EditGroupScreen";
 import GroupPreviewScreen from "../features/groups/screens/GroupPreviewScreen";
 import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
@@ -47,6 +50,7 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
+import SearchScreen from "../features/search/screens/SearchScreen";
 import SplashScreen from "../features/splash-screen/screens/SplashScreen";
 import getFeatureLimit from "../features/subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../features/subscription/model/featureName";
@@ -64,36 +68,23 @@ import {
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
-  useGlobalCurrencyRates,
-  useGlobalLoan,
+  useGlobalCurrencyRates, useGlobalFeatureSwitch, useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalFeatureSwitch,
-  useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalTheme,
+  useGlobalUserAccount
 } from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
-import AnalyticsScreen from "../screens/analytics/AnalyticsScreen";
-import BudgetPreviewScreen from "../screens/budget/BudgetPreviewScreen";
-import EditBudgetScreen from "../screens/budget/EditBudgetScreen";
-import MyBudgetsScreen from "../screens/budget/MyBudgetsScreen";
-import NewBudgetScreen from "../screens/budget/NewBudgetScreen";
-import CategoryPreviewScreen from "../screens/categories/CategoryPreviewScreen";
-import EditCategoryScreen from "../screens/categories/EditCategoryScreen";
-import MyCategoriesScreen from "../screens/categories/MyCategoriesScreen";
-import NewCategoryScreen from "../screens/categories/NewCategoryScreen";
 import ActionScreen from "../screens/modal/ActionScreen";
 import LoadingScreen from "../screens/modal/LoadingScreen";
 import ModalScreen from "../screens/modal/ModalScreen";
-import SearchScreen from "../screens/search/SearchScreen";
-import AboutScreen from "../screens/settings/AboutScreen";
-import ChangeAccountPasswordScreen from "../screens/settings/ChangeAccountPasswordScreen";
-import MyAccountScreen from "../screens/settings/MyAccountScreen";
-import SettingsScreen from "../screens/settings/SettingsScreen";
+import AboutScreen from "../features/about/screens/AboutScreen";
+import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
+import MyAccountScreen from "../features/my-account/screens/MyAccountScreen";
+import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
-import DeveloperScreen from "../screens/user/DeveloperScreen";
-import UserScreen from "../screens/user/UserScreen";
+import DeveloperScreen from "../features/user/screens/DeveloperScreen";
+import UserScreen from "../features/user/screens/UserScreen";
 import BottomTab from "./BottomTab";
 import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
