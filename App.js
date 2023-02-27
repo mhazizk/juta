@@ -1,13 +1,5 @@
 import "expo-dev-client";
 
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  // StatusBar,
-} from "react-native";
 import "react-native-gesture-handler";
 import RootStack from "./src/navigations/RootStack";
 import {
@@ -16,12 +8,8 @@ import {
   DefaultTheme,
 } from "@react-navigation/native";
 import {
-  GlobalStateProvider,
-  useGlobalAppSettings,
-  useGlobalTheme,
+  GlobalStateProvider, useGlobalTheme
 } from "./src/reducers/GlobalContext";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useRef } from "react";
 import sentryInit from "./src/sentry/sentryInit";
 import * as Sentry from "sentry-expo";
