@@ -120,6 +120,15 @@ const AboutScreen = ({ item, navigation }) => {
             iconPack="IonIcons"
             onPress={() => alert("Library list will shown soon :)")}
           />
+          <ListItem
+            pressable
+            leftLabel="Test new Error with attachment"
+            iconLeftName="code"
+            iconPack="IonIcons"
+            onPress={() => {
+              throw new Error("Test new Error with attachment");
+            }}
+          />
         </ListSection>
         <TextPrimary
           label={`© Juta ${new Date().getFullYear()}`}
