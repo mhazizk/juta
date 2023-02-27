@@ -142,6 +142,7 @@ const SplashScreen = ({ route, navigation }) => {
               currentUser: user,
               globalContext,
             }).then((screenName) => {
+              console.log({ screenName });
               navigation.replace(screenName);
             });
             break;
