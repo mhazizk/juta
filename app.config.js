@@ -1,10 +1,10 @@
 module.exports = ({ config }) => {
-  const name = "Juta";
+  const name = "Juta-hermes";
   const expoProjectID = "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3";
   const channelNameOptions = ["production", "staging", "development"];
 
-  const appVersion = "0.7.12-alpha";
-  const androidVersionCode = 24;
+  const appVersion = "0.8.0-alpha";
+  const androidVersionCode = 25;
   const iosBuildNumber = "1";
 
   const channelName = channelNameOptions[0];
@@ -13,6 +13,7 @@ module.exports = ({ config }) => {
     ...config,
     name: name,
     version: appVersion,
+    jsEngine: "hermes",
     android: {
       ...config.android,
       versionCode: androidVersionCode,
