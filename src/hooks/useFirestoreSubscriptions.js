@@ -54,10 +54,10 @@ const useFirestoreSubscriptions = ({
     callback: (data) => {
       console.log("changed app settings");
       if (!!data) {
-        dispatchBadgeCounter({
-          type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
-          payload: 1,
-        });
+        // dispatchBadgeCounter({
+        //   type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
+        //   payload: 1,
+        // });
         dispatchAppSettings({
           type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
           payload: data,
@@ -74,10 +74,10 @@ const useFirestoreSubscriptions = ({
     documentId: uid,
     callback: (data) => {
       if (!!data) {
-        dispatchBadgeCounter({
-          type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
-          payload: 1,
-        });
+        // dispatchBadgeCounter({
+        //   type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_USER_TAB,
+        //   payload: 1,
+        // });
         dispatchUserAccount({
           type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
           payload: data,
@@ -198,10 +198,10 @@ const useFirestoreSubscriptions = ({
             break;
           case "modified":
             // TODO : fix patch transaction with different target logbook
-            dispatchBadgeCounter({
-              type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-              payload: 1,
-            });
+            // dispatchBadgeCounter({
+            //   type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+            //   payload: 1,
+            // });
 
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
@@ -215,10 +215,10 @@ const useFirestoreSubscriptions = ({
             break;
 
           case "removed":
-            dispatchBadgeCounter({
-              type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
-              payload: 1,
-            });
+            // dispatchBadgeCounter({
+            //   type: REDUCER_ACTIONS.BADGE_COUNTER.TAB.SET_BADGE_IN_LOGBOOK_TAB,
+            //   payload: 1,
+            // });
 
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED

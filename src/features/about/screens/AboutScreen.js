@@ -43,12 +43,7 @@ const AboutScreen = ({ item, navigation }) => {
           <TextPrimary label={Constants.expoConfig.version} />
           <TextPrimary label={Platform.constants.Manufacturer} />
           <TextPrimary label={Platform.constants.Model} />
-          <TextPrimary
-            label={
-              Platform.OS[0].toUpperCase() +
-              Platform.OS.substring(1).toLowerCase()
-            }
-          />
+          <TextPrimary label={utils.getDeviceOSName()} />
         </View>
         <ListSection>
           {/* // TAG : Rate */}
@@ -115,10 +110,10 @@ const AboutScreen = ({ item, navigation }) => {
           {/* // TAG : Open Source */}
           <ListItem
             pressable
-            leftLabel="Open source libraries"
+            leftLabel="Open source license"
             iconLeftName="code"
             iconPack="IonIcons"
-            onPress={() => alert("Library list will shown soon :)")}
+            onPress={() => alert("License list will shown soon :)")}
           />
         </ListSection>
         <TextPrimary

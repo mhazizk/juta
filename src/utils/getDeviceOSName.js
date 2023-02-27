@@ -1,8 +1,9 @@
 import * as Device from "expo-device";
-import * as Application from "expo-application";
+import { Platform } from "react-native";
 
 const getDeviceOSName = () => {
-  return Device.osName;
+  return Platform.OS === "android" ? "Android" : "iOS";
+  // return Device.osName;
 };
 
 export default getDeviceOSName;
