@@ -1,9 +1,13 @@
 module.exports = ({ config }) => {
   const name = "Juta";
+  const expoProjectID = "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3";
+  const channelNameOptions = ["production", "staging", "development"];
 
-  const appVersion = "0.7.11-alpha";
-  const androidVersionCode = 23;
+  const appVersion = "0.7.12-alpha";
+  const androidVersionCode = 24;
   const iosBuildNumber = "1";
+
+  const channelName = channelNameOptions[0];
 
   return {
     ...config,
@@ -16,6 +20,10 @@ module.exports = ({ config }) => {
     ios: {
       ...config.ios,
       buildNumber: iosBuildNumber,
+    },
+    updates: {
+      ...config.updates,
+      url: `https://u.expo.dev/${expoProjectID}`,
     },
     extra: {
       ...config.extra,
