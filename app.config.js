@@ -13,7 +13,7 @@ module.exports = ({ config }) => {
       ...config.android,
       versionCode: androidVersionCode,
     },
-    iOS: {
+    ios: {
       ...config.ios,
       buildNumber: iosBuildNumber,
     },
