@@ -3,7 +3,7 @@
     "version": ">= 3.4.1"
   },
   "build": {
-    "development-simulator" :{
+    "development-simulator": {
       "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
