@@ -1,27 +1,14 @@
 import { useIsFocused } from "@react-navigation/native";
-import { useEffect, useMemo, useState } from "react";
-import { Dimensions, Image, TouchableOpacity, View } from "react-native";
-import Carousel from "react-native-reanimated-carousel";
-import CoinsImg from "../../../../src/assets/img/coins.png";
-import { ButtonPrimary, ImgButton } from "../../../components/Button";
-import { CustomBarChart } from "../../../components/charts/CustomBarChart";
+import { useEffect, useState } from "react";
+import { Dimensions, View } from "react-native";
 import Loading from "../../../components/Loading";
 import { MyBudgetsWidget } from "../components/MyBudgetsWidget";
 import RecentTransactions from "../../../components/RecentTransactions";
-import { TextPrimary, TextSecondary } from "../../../components/Text";
 import TotalExpenseWidget from "../components/TotalExpenseWidget";
 import screenList from "../../../navigations/ScreenList";
 import {
-  useGlobalAppSettings,
-  useGlobalBudgets,
-  useGlobalCategories,
-  useGlobalLogbooks,
-  useGlobalSortedTransactions,
-  useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalAppSettings, useGlobalTheme
 } from "../../../reducers/GlobalContext";
-import * as utils from "../../../utils";
-import * as Constants from "expo-constants";
 import DashboardHeader from "../components/DashboardHeader";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import MyLoansWidget from "../components/MyLoansWidget";
