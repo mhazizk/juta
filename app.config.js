@@ -2,8 +2,8 @@ module.exports = ({ config }) => {
   const name = "Juta";
 
   const appVersion = "0.7.10-alpha";
-  const androidVersionCode = 22;
-  const iosBuildNumber = 1;
+  const androidVersionCode = 23;
+  const iosBuildNumber = "1";
 
   return {
     ...config,
@@ -12,6 +12,10 @@ module.exports = ({ config }) => {
     android: {
       ...config.android,
       versionCode: androidVersionCode,
+    },
+    iOS: {
+      ...config.ios,
+      buildNumber: iosBuildNumber,
     },
     extra: {
       ...config.extra,
