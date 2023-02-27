@@ -113,7 +113,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
     const newTransaction = transactionDetailsModel({
       userAccountUid: userAccount.uid,
-      logbookId: selectedLogbook?.logbook_id || logbooks.logbooks[0].logbook_id,
+      logbookId:
+        selectedLogbook?.logbook_id || logbooks?.logbooks[0]?.logbook_id,
     });
 
     setTransaction(route.params?.newTransaction || newTransaction);
