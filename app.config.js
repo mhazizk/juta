@@ -4,7 +4,7 @@ module.exports = ({ config }) => {
   const channelNameOptions = ["production", "staging", "development"];
 
   const appVersion = "0.8.0-alpha";
-  const androidVersionCode = 25;
+  const androidVersionCode = 26;
   const iosBuildNumber = "1";
 
   const channelName = channelNameOptions[0];
