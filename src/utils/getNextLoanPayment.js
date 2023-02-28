@@ -5,7 +5,8 @@ import getTotalAmountAndConvertToDefaultCurrency from "./getTotalAmountAndConver
 /**
  *
  * @param getNextAmount - Option to get the next amount to pay
- * @param getNextDate - Option to get the next date to pay
+ * @param getNextDate - Option to get the next date to pay in days string
+ * @param getNextCustomDate - Option to get the next date to pay in custom date format (YYYY/MM/DD)
  * @param checkIfAllPaid - Option to check if all the loan has been paid
  * @param getTotalContactsNotYetPaid - Option to get the total contacts that has not yet paid
  * @param getContactNames - Option to get the contact names
@@ -22,6 +23,7 @@ const getNextLoanPayment = ({
   checkIfAllPaid = false,
   getTotalContactsNotYetPaid = false,
   getContactNames = false,
+  getNextCustomDate = false,
   globalCurrencyRates,
   targetCurrencyName,
   logbooks,
@@ -74,16 +76,28 @@ const getNextLoanPayment = ({
       return getSum;
 
     case getNextDate:
-      return (
-        (nearestPaymentDateinMillis - Date.now()) /
-        (24 * 60 * 60 * 1000)
-      ).toFixed(0);
+      const nextDate = new Date(nearestPaymentDateinMillis).getDate();
+      switch (true) {
+        case nextDate > 1:
+          return `in ${nextDate} days`;
+        case nextDate === 0:
+          return "Today";
+        case nextDate === 1:
+          return "Tomorrow";
+        case nextDate < 0:
+          return "Overdue";
+        default:
+          break;
+      }
 
     case checkIfAllPaid:
       return contactsNotYetPaid?.length === 0;
 
     case getTotalContactsNotYetPaid:
       return contactsNotYetPaid?.length;
+
+    case getNextCustomDate:
+      return getCustomDate(nearestPaymentDateinMillis);
 
     case getContactNames:
       const filterNames = contactsNotYetPaid.filter((contact) => {
