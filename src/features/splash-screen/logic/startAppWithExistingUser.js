@@ -29,6 +29,7 @@ import {
 import mergeTransactionsIntoSortedTransactions from "../../../utils/mergeTransactionsIntoSortedTransactions";
 import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
+import * as Sentry from "@sentry/react-native";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -446,6 +447,9 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           dispatchGlobalFeatureSwitch,
         });
       }, 1000);
+      Sentry.setUser({
+        id: currentUser.uid,
+      });
       return screenList.bottomTabNavigator;
     })
     .catch((err) => {

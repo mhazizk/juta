@@ -10,6 +10,9 @@ import {
 import IonIcons from "react-native-vector-icons/Ionicons";
 import * as utils from "../../../utils";
 import TextTicker from "react-native-text-ticker";
+import { getCalendars } from "expo-localization";
+
+const is24hours = getCalendars()[0]?.uses24hourClock;
 
 const LoanTransactionItem = ({
   showDate = false,
@@ -190,17 +193,14 @@ const LoanTransactionItem = ({
                         //   appSettings.locale,
                         //   { hour: "2-digit", minute: "2-digit" }
                         // )}
-                        label={
-                          new Date(transactionHour)
-                            .getHours()
-                            .toString()
-                            .padStart(2, "0") +
-                          ":" +
-                          new Date(transactionHour)
-                            .getMinutes()
-                            .toString()
-                            .padStart(2, "0")
-                        }
+                        label={new Date(transactionHour).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hourCycle: is24hours ? "h24" : "h12",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                         // label={getTime(transactionHour)}
                         style={{ fontSize: 14 }}
                       />

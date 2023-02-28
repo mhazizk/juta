@@ -14,12 +14,10 @@ import {
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
-import loanContactModel from "../model/loanContactModel";
 import screenList from "../../../navigations/ScreenList";
 import { useIsFocused } from "@react-navigation/native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import * as utils from "../../../utils";
-import MyLoansWidget from "../../dashboard/components/MyLoansWidget";
 import MyLoansHeader from "../components/MyLoansHeader";
 
 const MyLoansScreen = ({ navigation }) => {

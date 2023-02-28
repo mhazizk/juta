@@ -11,11 +11,9 @@ const configureRevenueCat = async (uid) => {
           SECRET_KEYS.REVENUE_CAT_GOOGLE_API_KEY
         )
       : env.REVENUE_CAT.appleApiKey;
-  return Promise.all([
-    Purchases.configure({ apiKey: apiKey, appUserID: uid }),
-    Purchases.setDebugLogsEnabled(true),
-  ])
+  return Promise.all([Purchases.setDebugLogsEnabled(true)])
     .then(() => {
+      Purchases.configure({ apiKey: apiKey, appUserID: uid });
       return Promise.resolve();
     })
     .catch((error) => {

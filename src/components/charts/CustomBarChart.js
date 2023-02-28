@@ -14,6 +14,7 @@ import {
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
+import getTotalDaysInMonth from "../../utils/getTotalDaysInMonth";
 // import {get} from 'date-fns'
 
 export const CustomBarChart = ({
@@ -160,6 +161,7 @@ export const CustomBarChart = ({
                 style={{
                   data: {
                     fill: rangeDay === 7 ? shadowBarColor : "transparent",
+                    // fill: shadowBarColor,
                   },
                 }}
                 data={shadowGraph}
@@ -191,11 +193,7 @@ export const CustomBarChart = ({
                         // ),
                       ];
                     case 365:
-                      return [
-                        new Date(datum.x).toDateString().slice(4, 7),
-                        datum.year,
-                      ];
-                    // return [datum.x, datum.year];
+                      return [datum.monthName, datum.year];
 
                     default:
                       return datum.x;
@@ -245,10 +243,10 @@ export const CustomBarChart = ({
                   verticalAnchor={rangeDay === 7 ? "end" : "start"}
                   style={{
                     fill: ({ datum }) => {
-                      let epoch364Days;
+                      let epoch365Days;
                       let epoch180Days;
-                      let epoch29Days;
-                      let epoch15Days;
+                      let epochFullMonth;
+                      let epochHalfMonth;
                       let epochNow;
                       let now;
                       let midMonth;
@@ -262,35 +260,61 @@ export const CustomBarChart = ({
                       // let datumLastYear;
 
                       if (rangeDay === 365) {
-                        datumNow = datum.month;
-                        now = new Date().getMonth();
-                        midYear = now - 6;
-                        lastYear = now - 11;
+                        datumNow = datum.x;
+                        const month = new Date().getMonth() + 1;
+                        const absMonthNow = ("0" + Math.abs(month)).slice(-2);
+                        const year = new Date().getFullYear();
+                        now = `${year}/${absMonthNow}`;
+
+                        const isPrevYear = month - 6 < 0 ? true : false;
+                        const prev6Month = month + 6;
+                        const prev12Month = month + 1;
+                        const absPrev6Month = (
+                          "0" + Math.abs(prev6Month)
+                        ).slice(-2);
+                        const absPrev12Month = (
+                          "0" + Math.abs(prev12Month)
+                        ).slice(-2);
+                        const prevYear = isPrevYear ? year - 1 : year;
+                        midYear = `${prevYear}/${absPrev6Month}`;
+                        lastYear = `${prevYear}/${absPrev12Month}`;
                       }
 
                       if (rangeDay === 7 || rangeDay === 30) {
+                        const thisYear = new Date().getFullYear();
+                        const thisMonth = new Date().getMonth() + 1;
+                        const totalDaysInMonth = getTotalDaysInMonth(
+                          thisYear,
+                          thisMonth
+                        );
                         // Epoch
-                        epoch364Days = 1000 * 60 * 60 * 24 * 364;
+                        epoch365Days = 1000 * 60 * 60 * 24 * 365;
                         epoch180Days = 1000 * 60 * 60 * 24 * 180;
-                        epoch29Days = 1000 * 60 * 60 * 24 * 29;
-                        epoch15Days = 1000 * 60 * 60 * 24 * 15;
+                        epochFullMonth =
+                          1000 * 60 * 60 * 24 * (totalDaysInMonth - 1);
+                        epochHalfMonth =
+                          1000 *
+                          60 *
+                          60 *
+                          24 *
+                          Math.floor(totalDaysInMonth / 2);
 
                         epochNow = Date.now();
 
                         // Month
                         now = new Date().toDateString();
                         midMonth = new Date(
-                          epochNow - epoch15Days
+                          epochNow - epochHalfMonth
                         ).toDateString();
                         lastMonth = new Date(
-                          epochNow - epoch29Days
+                          epochNow - epochFullMonth
                         ).toDateString();
                         // Year
                         midYear = new Date(
                           epochNow - epoch180Days
                         ).toDateString();
                         lastYear = new Date(
-                          epochNow - epoch364Days
+                          epochNow - epoch365Days
                         ).toDateString();
 
                         // Datum
