@@ -14,6 +14,7 @@ import {
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils";
+import getTotalDaysInMonth from "../../utils/getTotalDaysInMonth";
 // import {get} from 'date-fns'
 
 export const CustomBarChart = ({
@@ -244,8 +245,8 @@ export const CustomBarChart = ({
                     fill: ({ datum }) => {
                       let epoch365Days;
                       let epoch180Days;
-                      let epoch29Days;
-                      let epoch15Days;
+                      let epochFullMonth;
+                      let epochHalfMonth;
                       let epochNow;
                       let now;
                       let midMonth;
@@ -280,21 +281,33 @@ export const CustomBarChart = ({
                       }
 
                       if (rangeDay === 7 || rangeDay === 30) {
+                        const thisYear = new Date().getFullYear();
+                        const thisMonth = new Date().getMonth() + 1;
+                        const totalDaysInMonth = getTotalDaysInMonth(
+                          thisYear,
+                          thisMonth
+                        );
                         // Epoch
                         epoch365Days = 1000 * 60 * 60 * 24 * 365;
                         epoch180Days = 1000 * 60 * 60 * 24 * 180;
-                        epoch29Days = 1000 * 60 * 60 * 24 * 29;
-                        epoch15Days = 1000 * 60 * 60 * 24 * 15;
+                        epochFullMonth =
+                          1000 * 60 * 60 * 24 * (totalDaysInMonth - 1);
+                        epochHalfMonth =
+                          1000 *
+                          60 *
+                          60 *
+                          24 *
+                          Math.floor(totalDaysInMonth / 2);
 
                         epochNow = Date.now();
 
                         // Month
                         now = new Date().toDateString();
                         midMonth = new Date(
-                          epochNow - epoch15Days
+                          epochNow - epochHalfMonth
                         ).toDateString();
                         lastMonth = new Date(
-                          epochNow - epoch29Days
+                          epochNow - epochFullMonth
                         ).toDateString();
                         // Year
                         midYear = new Date(
