@@ -160,6 +160,7 @@ export const CustomBarChart = ({
                 style={{
                   data: {
                     fill: rangeDay === 7 ? shadowBarColor : "transparent",
+                    // fill: shadowBarColor,
                   },
                 }}
                 data={shadowGraph}
@@ -191,11 +192,7 @@ export const CustomBarChart = ({
                         // ),
                       ];
                     case 365:
-                      return [
-                        new Date(datum.x).toDateString().slice(4, 7),
-                        datum.year,
-                      ];
-                    // return [datum.x, datum.year];
+                      return [datum.monthName, datum.year];
 
                     default:
                       return datum.x;
@@ -245,7 +242,7 @@ export const CustomBarChart = ({
                   verticalAnchor={rangeDay === 7 ? "end" : "start"}
                   style={{
                     fill: ({ datum }) => {
-                      let epoch364Days;
+                      let epoch365Days;
                       let epoch180Days;
                       let epoch29Days;
                       let epoch15Days;
@@ -262,15 +259,29 @@ export const CustomBarChart = ({
                       // let datumLastYear;
 
                       if (rangeDay === 365) {
-                        datumNow = datum.month;
-                        now = new Date().getMonth();
-                        midYear = now - 6;
-                        lastYear = now - 11;
+                        datumNow = datum.x;
+                        const month = new Date().getMonth() + 1;
+                        const absMonthNow = ("0" + Math.abs(month)).slice(-2);
+                        const year = new Date().getFullYear();
+                        now = `${year}/${absMonthNow}`;
+
+                        const isPrevYear = month - 6 < 0 ? true : false;
+                        const prev6Month = month + 6;
+                        const prev12Month = month + 1;
+                        const absPrev6Month = (
+                          "0" + Math.abs(prev6Month)
+                        ).slice(-2);
+                        const absPrev12Month = (
+                          "0" + Math.abs(prev12Month)
+                        ).slice(-2);
+                        const prevYear = isPrevYear ? year - 1 : year;
+                        midYear = `${prevYear}/${absPrev6Month}`;
+                        lastYear = `${prevYear}/${absPrev12Month}`;
                       }
 
                       if (rangeDay === 7 || rangeDay === 30) {
                         // Epoch
-                        epoch364Days = 1000 * 60 * 60 * 24 * 364;
+                        epoch365Days = 1000 * 60 * 60 * 24 * 365;
                         epoch180Days = 1000 * 60 * 60 * 24 * 180;
                         epoch29Days = 1000 * 60 * 60 * 24 * 29;
                         epoch15Days = 1000 * 60 * 60 * 24 * 15;
@@ -290,7 +301,7 @@ export const CustomBarChart = ({
                           epochNow - epoch180Days
                         ).toDateString();
                         lastYear = new Date(
-                          epochNow - epoch364Days
+                          epochNow - epoch365Days
                         ).toDateString();
 
                         // Datum
