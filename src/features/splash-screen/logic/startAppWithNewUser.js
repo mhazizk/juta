@@ -5,6 +5,7 @@ import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions"
 import screenList from "../../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
+import * as Sentry from "@sentry/react-native";
 
 const startAppWithNewUser = async ({ currentUser, globalContext }) => {
   const {
@@ -132,6 +133,9 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
           dispatchGlobalFeatureSwitch,
         });
       }, 1000);
+      Sentry.setUser({
+        id: currentUser.uid,
+      });
       return screenList.bottomTabNavigator;
     })
     .catch((err) => {

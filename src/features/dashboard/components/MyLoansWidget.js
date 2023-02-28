@@ -16,6 +16,8 @@ import Loading from "../../../components/Loading";
 import TextTicker from "react-native-text-ticker";
 import * as utils from "../../../utils";
 
+const customDate = utils.getCustomDate(Date.now());
+
 const MyLoansWidget = ({
   height = 150,
   marginRight = 0,
@@ -210,6 +212,17 @@ const ShowNextPaymentForOneContact = () => {
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { logbooks } = useGlobalLogbooks();
 
+  const nearestPaymentDate = utils.getNextLoanPayment({
+    getNextCustomDate: true,
+    globalCurrencyRates,
+    globalLoan,
+    logbooks: logbooks.logbooks,
+    targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+    groupSorted: sortedTransactions.groupSorted,
+  });
+
+  const isOverdue = nearestPaymentDate < customDate;
+
   return (
     <>
       <View
@@ -233,7 +246,7 @@ const ShowNextPaymentForOneContact = () => {
         />
 
         <TextPrimary
-          label="Next payment"
+          label={isOverdue ? "Payment" : "Next Payment"}
           style={{
             fontWeight: "bold",
             fontSize: 18,
@@ -342,7 +355,7 @@ const ShowNextPaymentForOneContact = () => {
           </View>
         )}
         <TextPrimary
-          label={`in ${utils.getNextLoanPayment({
+          label={utils.getNextLoanPayment({
             getNextDate: true,
             globalLoan,
             groupSorted: sortedTransactions.groupSorted,
@@ -350,7 +363,7 @@ const ShowNextPaymentForOneContact = () => {
             logbooks: logbooks.logbooks,
             targetCurrencyName:
               appSettings.logbookSettings.defaultCurrency.name,
-          })} days`}
+          })}
           style={{
             // fontSize: 18,
             textAlign: "center",
@@ -369,6 +382,17 @@ const ShowNextPaymentForManyContacts = () => {
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { sortedTransactions } = useGlobalSortedTransactions();
   const { logbooks } = useGlobalLogbooks();
+
+  const nearestPaymentDate = utils.getNextLoanPayment({
+    getNextCustomDate: true,
+    globalCurrencyRates,
+    globalLoan,
+    logbooks: logbooks.logbooks,
+    targetCurrencyName: appSettings.logbookSettings.defaultCurrency.name,
+    groupSorted: sortedTransactions.groupSorted,
+  });
+
+  const isOverdue = nearestPaymentDate < customDate;
 
   return (
     <>
@@ -392,7 +416,7 @@ const ShowNextPaymentForManyContacts = () => {
           }}
         />
         <TextPrimary
-          label="Next payment"
+          label={isOverdue ? "Payment" : "Next Payment"}
           style={{
             fontWeight: "bold",
             // fontSize: 18,
@@ -435,7 +459,7 @@ const ShowNextPaymentForManyContacts = () => {
           />
         </View>
         <TextPrimary
-          label={`in ${utils.getNextLoanPayment({
+          label={utils.getNextLoanPayment({
             getNextDate: true,
             globalLoan,
             groupSorted: sortedTransactions.groupSorted,
@@ -443,7 +467,7 @@ const ShowNextPaymentForManyContacts = () => {
             logbooks: logbooks.logbooks,
             targetCurrencyName:
               appSettings.logbookSettings.defaultCurrency.name,
-          })} days`}
+          })}
           style={{
             // fontSize: 18,
             textAlign: "center",
