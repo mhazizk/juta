@@ -1,5 +1,5 @@
 module.exports = ({ config }) => {
-  const name = "Juta-hermes";
+  const name = "Juta";
   const expoProjectID = "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3";
   const channelNameOptions = ["production", "staging", "development"];
 
