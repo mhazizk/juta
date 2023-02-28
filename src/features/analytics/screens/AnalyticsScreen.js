@@ -157,7 +157,7 @@ const AnalyticsScreen = () => {
   }, [graph?.rangeDay]);
 
   useEffect(() => {
-    console.log({ graph });
+    console.log(JSON.stringify({ graph }, null, 2));
   }, [graph]);
 
   // useEffect(() => {
