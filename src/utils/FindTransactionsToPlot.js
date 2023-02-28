@@ -106,46 +106,55 @@ const findTransactionsToPlot = ({
           });
         });
         if (graph.rangeDay === 365) {
+          let totalPreviousDays = 0;
+          // make this month number into 0
+          const monthDeviation = 0 - month;
           for (let i = 0; i < 12; i++) {
             let sumAmount = [];
             let reducedAmount = 0;
+            let currentYear = year;
+
             transactionList.forEach((list) => {
               if (
                 new Date(list.transaction.details.date).getMonth() ===
                 month - i
               ) {
+                currentMonth = new Date(
+                  list.transaction.details.date
+                ).getMonth();
+
+                currentYear = new Date(
+                  list.transaction.details.date
+                ).getFullYear();
+
                 sumAmount.push(list.transaction.details.amount);
               }
             });
             if (sumAmount.length) {
               reducedAmount = sumAmount.reduce((a, b) => a + b, 0);
             }
-            const monthName = new Date(
-              today - 1000 * 60 * 60 * 24 * 30 * i
-            ).toLocaleDateString(appSettings.locale, {
-              month: "short",
-            });
-            const monthNumber = new Date(
-              today - 1000 * 60 * 60 * 24 * 30 * i
-            ).getMonth();
-            const nYear = new Date(
-              today - 1000 * 60 * 60 * 24 * 30 * i
-            ).getFullYear();
+            const selected = today - 1000 * 60 * 60 * 24 * totalPreviousDays;
+            const monthName = new Date(selected).toLocaleDateString(
+              appSettings.locale,
+              {
+                month: "short",
+              }
+            );
+            const nYear = new Date(selected).getFullYear();
+            const monthNumber = (
+              "0" +
+              (new Date(selected).getMonth() + 1)
+            ).slice(-2);
             unsortedMainGraph.push({
-              x: monthName,
+              x: `${nYear}/${monthNumber}`,
               y: reducedAmount,
-              month: monthNumber,
+              monthName: monthName,
               year: nYear,
             });
             unsortedMainGraph.sort((a, b) => {
-              if (a.month < b.month) {
-                return -1;
-              }
-              if (a.month > b.month) {
-                return 1;
-              }
-              return 0;
+              return a.x.localeCompare(b.x);
             });
+            totalPreviousDays += getTotalDaysInMonth(currentYear, month - i);
           }
         }
 
@@ -154,10 +163,23 @@ const findTransactionsToPlot = ({
             let sumAmount = [];
             let reducedAmount = 0;
             let date = new Date(today - 1000 * 60 * 60 * 24 * i);
+            let currentDate = date.getDate();
+            let currentMonth = date.getMonth() + 1;
+            let currentYear = date.getFullYear();
             transactionList.forEach((list) => {
+              const transactionDate = new Date(
+                list.transaction.details.date
+              ).getDate();
+              const transactionMonth =
+                new Date(list.transaction.details.date).getMonth() + 1;
+              const transactionYear = new Date(
+                list.transaction.details.date
+              ).getFullYear();
+
               if (
-                new Date(list.transaction.details.date).getDate() ===
-                date.getDate()
+                transactionDate === currentDate &&
+                transactionMonth === currentMonth &&
+                transactionYear === currentYear
               ) {
                 sumAmount.push(list.transaction.details.amount);
               }
@@ -192,9 +214,7 @@ const findTransactionsToPlot = ({
                 x = `${numDay}`;
                 break;
             }
-
             unsortedMainGraph.push({
-              // i: date.getDate(),
               i: date.getTime(),
               x: x,
               y: reducedAmount,
@@ -222,7 +242,18 @@ const findTransactionsToPlot = ({
         let shadowLimit = 0;
         unsortedMainGraph.forEach((data) => {
           if (data.y > shadowLimit) {
-            shadowLimit = data.y;
+            switch (graph.rangeDay) {
+              case 7:
+                shadowLimit = data.y;
+                break;
+              case 30:
+                shadowLimit = data.y;
+              case 365:
+                shadowLimit = data.y;
+
+              default:
+                break;
+            }
           }
         });
         unsortedMainGraph.forEach((data) => {
@@ -230,7 +261,7 @@ const findTransactionsToPlot = ({
             x: data.x,
             y: +parseFloat(data.y).toFixed(2),
             epochDate: data.epochDate,
-            month: data.month,
+            monthName: data.monthName,
             year: data.year,
           });
           shadowGraph.push({
@@ -239,7 +270,7 @@ const findTransactionsToPlot = ({
               dailyLimit > shadowLimit ? dailyLimit : shadowLimit
             ).toFixed(2),
             epochDate: data.epochDate,
-            month: data.month,
+            monthName: data.monthName,
             year: data.year,
           });
           if (dailyLimit && dailyLimit < shadowLimit) {
@@ -247,7 +278,7 @@ const findTransactionsToPlot = ({
               x: data.x,
               y: dailyLimit,
               epochDate: data.epochDate,
-              month: data.month,
+              monthName: data.monthName,
               year: data.year,
             });
           }
@@ -292,3 +323,15 @@ const findTransactionsToPlot = ({
 };
 
 export default findTransactionsToPlot;
+
+/**
+ * Get total days in month
+ *
+ * @param year - year
+ * @param month - month in number format (1-12)
+ * @returns total days in month
+ */
+const getTotalDaysInMonth = (year, month) => {
+  console.log({ year, month });
+  return new Date(year, month, 0).getDate() + 1;
+};
