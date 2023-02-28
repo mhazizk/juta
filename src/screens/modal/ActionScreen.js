@@ -18,6 +18,7 @@ import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNa
 import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
+import getLogbookModel from "../../features/logbook/model/getLogbookModel";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -163,23 +164,12 @@ const ActionScreen = ({ route, navigation }) => {
                     title: "Create new Logbook",
                     placeholder: "Enter new logbook name...",
                     selected: (item) => {
-                      const newLogbook = {
-                        _timestamps: {
-                          created_at: Date.now(),
-                          created_by: userAccount.uid,
-                          updated_at: Date.now(),
-                          updated_by: userAccount.uid,
-                        },
+                      const newLogbook = getLogbookModel({
+                        logbookName: item,
                         uid: userAccount.uid,
-                        group_id: null,
-                        logbook_currency:
+                        defaultCurrency:
                           appSettings.logbookSettings.defaultCurrency,
-                        logbook_type: "basic",
-                        logbook_id: uuid.v4(),
-                        logbook_name: item,
-                        logbook_records: [],
-                        logbook_categories: [],
-                      };
+                      });
 
                       setTimeout(async () => {
                         await firestore.setData(
