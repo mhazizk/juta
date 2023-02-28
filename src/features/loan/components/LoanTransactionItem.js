@@ -12,7 +12,7 @@ import * as utils from "../../../utils";
 import TextTicker from "react-native-text-ticker";
 import { getCalendars } from "expo-localization";
 
-const is24hours = getCalendars()[0].uses24hourClock;
+const is24hours = getCalendars()[0]?.uses24hourClock;
 
 const LoanTransactionItem = ({
   showDate = false,
