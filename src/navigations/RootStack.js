@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
-  createStackNavigator
+  createStackNavigator,
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -68,11 +68,14 @@ import {
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
-  useGlobalCurrencyRates, useGlobalFeatureSwitch, useGlobalLoan,
+  useGlobalCurrencyRates,
+  useGlobalFeatureSwitch,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions, useGlobalTheme,
-  useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalTheme,
+  useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import ActionScreen from "../screens/modal/ActionScreen";
@@ -88,6 +91,7 @@ import UserScreen from "../features/user/screens/UserScreen";
 import BottomTab from "./BottomTab";
 import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
+import getLogbookModel from "../features/logbook/model/getLogbookModel";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -531,26 +535,12 @@ const RootStack = () => {
                       title: "Create New Logbook",
                       placeholder: "Enter new logbook name...",
                       selected: (item) => {
-                        const newLogbook = {
-                          _timestamps: {
-                            created_at: Date.now(),
-                            created_by: userAccount.uid,
-                            updated_at: Date.now(),
-                            updated_by: userAccount.uid,
-                          },
+                        const newLogbook = getLogbookModel({
+                          logbookName: item,
                           uid: userAccount.uid,
-                          logbook_currency: {
-                            name: "IDR",
-                            symbol: "Rp",
-                            isoCode: "id",
-                          },
-                          logbook_type: "basic",
-                          group_id: null,
-                          logbook_id: uuid.v4(),
-                          logbook_name: item,
-                          logbook_records: [],
-                          logbook_categories: [],
-                        };
+                          defaultCurrency:
+                            appSettings.logbookSettings.defaultCurrency,
+                        });
 
                         setTimeout(async () => {
                           await firestore.setData(

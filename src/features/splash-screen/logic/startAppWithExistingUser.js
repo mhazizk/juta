@@ -30,6 +30,7 @@ import mergeTransactionsIntoSortedTransactions from "../../../utils/mergeTransac
 import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import * as Sentry from "@sentry/react-native";
+import getLogbookModel from "../../logbook/model/getLogbookModel";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -312,11 +313,26 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // TAG : Logbooks
 
+      const newLogbook = getLogbookModel({
+        logbookName: "My Logbook",
+        uid: currentUser.uid,
+        defaultCurrency: appSettingsData.logbookSettings.defaultCurrency,
+      });
+      if (!logbooksData) {
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+            newLogbook.logbook_id,
+            newLogbook
+          );
+        }, 1);
+      }
+
       dispatchLogbooks({
         type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
         payload: {
           ...initialLogbooks,
-          logbooks: logbooksData || [],
+          logbooks: logbooksData || [newLogbook],
         },
       });
 
