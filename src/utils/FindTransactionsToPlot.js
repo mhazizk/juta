@@ -1,6 +1,7 @@
 // import * as utils from "../utils";
 import FindById from "./FindById";
 import convertCurrency from "./convertCurrency";
+import getTotalDaysInMonth from "./getTotalDaysInMonth";
 
 const findTransactionsToPlot = ({
   groupSorted,
@@ -26,7 +27,7 @@ const findTransactionsToPlot = ({
   let limitLine = [];
   let dailyLimit = 0;
   let today = Date.now();
-  let month = new Date(today).getMonth();
+  let month = new Date(today).getMonth() + 1;
   let year = new Date(today).getFullYear();
   let day = new Date(today).getDate();
 
@@ -109,7 +110,7 @@ const findTransactionsToPlot = ({
           let totalPreviousDays = 0;
           // make this month number into 0
           const monthDeviation = 0 - month;
-          for (let i = 0; i < 12; i++) {
+          for (let i = 1; i <= 12; i++) {
             let sumAmount = [];
             let reducedAmount = 0;
             let currentYear = year;
@@ -159,7 +160,9 @@ const findTransactionsToPlot = ({
         }
 
         if (graph.rangeDay === 7 || graph.rangeDay === 30) {
-          for (let i = 0; i < graph.rangeDay; i++) {
+          const totalDays =
+            graph.rangeDay === 7 ? 7 : getTotalDaysInMonth(year, month);
+          for (let i = 0; i < totalDays; i++) {
             let sumAmount = [];
             let reducedAmount = 0;
             let date = new Date(today - 1000 * 60 * 60 * 24 * i);
@@ -323,15 +326,3 @@ const findTransactionsToPlot = ({
 };
 
 export default findTransactionsToPlot;
-
-/**
- * Get total days in month
- *
- * @param year - year
- * @param month - month in number format (1-12)
- * @returns total days in month
- */
-const getTotalDaysInMonth = (year, month) => {
-  console.log({ year, month });
-  return new Date(year, month, 0).getDate() + 1;
-};
