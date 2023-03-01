@@ -155,8 +155,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
 
       const newCategories = categoriesFallback({
         uid: userAccount.uid,
-        created_by: userAccount.uid,
-        updated_by: userAccount.uid,
       });
 
       dispatchCategories({
