@@ -16,7 +16,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "simulator": true
       }
     },
     "staging": {
