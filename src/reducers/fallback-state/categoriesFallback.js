@@ -1,9 +1,7 @@
 const categoriesFallback = ({
   uid = null,
   created_at = null,
-  created_by = null,
   updated_at = null,
-  updated_by = null,
 }) => {
   return {
     uid: uid,
@@ -19,9 +17,9 @@ const categoriesFallback = ({
         is_deletable: false,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -35,9 +33,9 @@ const categoriesFallback = ({
         is_deletable: false,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -47,9 +45,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -59,9 +57,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -71,9 +69,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -83,9 +81,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -95,9 +93,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -107,9 +105,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -119,9 +117,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -131,9 +129,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -143,9 +141,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -155,9 +153,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -167,9 +165,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -179,9 +177,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
     ],
@@ -197,9 +195,9 @@ const categoriesFallback = ({
         is_deletable: false,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -213,9 +211,9 @@ const categoriesFallback = ({
         is_deletable: false,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -225,9 +223,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -237,9 +235,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -249,9 +247,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
       {
@@ -261,9 +259,9 @@ const categoriesFallback = ({
         is_deletable: true,
         _timestamps: {
           created_at: Date.now() || created_at,
-          created_by: null || created_by,
+          created_by: null || uid,
           updated_at: Date.now() || updated_at,
-          updated_by: null || updated_by,
+          updated_by: null || uid,
         },
       },
     ],
