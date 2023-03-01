@@ -11,7 +11,7 @@ import {
   GlobalStateProvider,
   useGlobalTheme,
 } from "./src/reducers/GlobalContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import sentryInit from "./src/sentry/sentryInit";
 import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
@@ -40,7 +40,6 @@ function App() {
         setNotification(notification);
       });
 
-    // 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         // Event handler when user taps on notification
