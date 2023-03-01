@@ -28,6 +28,7 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import firestore from "../../../api/firebase/firestore";
 import startAppWithNewUser from "../logic/startAppWithNewUser";
+import isInternetReachable from "../../../utils/isInternetReachable";
 
 const SplashScreen = ({ route, navigation }) => {
   const fromScreen = route.params?.fromScreen || null;
@@ -50,9 +51,11 @@ const SplashScreen = ({ route, navigation }) => {
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [isFirstRun, setIsFirstRun] = useState(true);
   const [user, loading, error] = useAuthState(auth);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     console.log({ __DEV__ });
+
     persistStorage
       .asyncStorage({
         action: PERSIST_ACTIONS.GET,
@@ -62,6 +65,16 @@ const SplashScreen = ({ route, navigation }) => {
         setIsFirstRun(isFirstRun);
       })
       .catch((error) => {});
+
+    isInternetReachable().then((isInternetConnected) => {
+      if (!isInternetConnected) {
+        navigation.replace(screenList.noInternetScreen, {
+          fromScreen: screenList.splashScreen,
+        });
+      } else {
+        setIsConnected(true);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -101,95 +114,97 @@ const SplashScreen = ({ route, navigation }) => {
       dispatchBadgeCounter,
     };
 
-    switch (isFirstRun) {
-      case true:
-        switch (true) {
-          case isNotLoggedIn:
-            navigation.replace(screenList.onboardingScreen);
-            break;
-        }
-        break;
-      case undefined:
-        switch (true) {
-          case isNotLoggedIn:
-            navigation.replace(screenList.onboardingScreen);
-            break;
-          case isLoggedInAndVerified:
-            persistStorage
-              .asyncStorage({
-                action: PERSIST_ACTIONS.SET,
-                key: "isFirstRun",
-                rawValue: false,
-              })
-              .then(() => {})
-              .catch((error) => {});
-            break;
-        }
-        break;
-      case false:
-        switch (true) {
-          case loggedInWithPersistingAccount:
-            startAppWithExistingUser({
-              currentUser: user,
-              globalContext,
-            }).then((screenName) => {
-              navigation.replace(screenName);
-            });
-            break;
-          case loggedInFromLoginScreen:
-            startAppWithExistingUser({
-              currentUser: user,
-              globalContext,
-            }).then((screenName) => {
-              console.log({ screenName });
-              navigation.replace(screenName);
-            });
-            break;
-          case isLoggedInButNotVerified:
-            if (!userAccount) {
-              const fetchUserAccount = firestore.getOneDoc(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                userAccount?.uid
-              );
-              dispatchUserAccount({
-                type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
-                payload: fetchUserAccount,
+    if (isConnected) {
+      switch (isFirstRun) {
+        case true:
+          switch (true) {
+            case isNotLoggedIn:
+              navigation.replace(screenList.onboardingScreen);
+              break;
+          }
+          break;
+        case undefined:
+          switch (true) {
+            case isNotLoggedIn:
+              navigation.replace(screenList.onboardingScreen);
+              break;
+            case isLoggedInAndVerified:
+              persistStorage
+                .asyncStorage({
+                  action: PERSIST_ACTIONS.SET,
+                  key: "isFirstRun",
+                  rawValue: false,
+                })
+                .then(() => {})
+                .catch((error) => {});
+              break;
+          }
+          break;
+        case false:
+          switch (true) {
+            case loggedInWithPersistingAccount:
+              startAppWithExistingUser({
+                currentUser: user,
+                globalContext,
+              }).then((screenName) => {
+                navigation.replace(screenName);
               });
-            }
-            if (!appSettings || appSettings?.uid !== userAccount?.uid) {
-              const appSettingsData = firestore.getOneDoc(
-                FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                userAccount?.uid
-              );
-              dispatchAppSettings({
-                type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-                payload: appSettingsData,
+              break;
+            case loggedInFromLoginScreen:
+              startAppWithExistingUser({
+                currentUser: user,
+                globalContext,
+              }).then((screenName) => {
+                console.log({ screenName });
+                navigation.replace(screenName);
               });
-            }
-            navigation.replace(screenList.emailVerificationScreen, {
-              fromScreen: screenList.splashScreen,
-            });
-            break;
-          case newAccountToRedirect:
-            startAppWithNewUser({
-              currentUser: user,
-              globalContext,
-            }).then((screenName) => {
-              navigation.replace(screenName);
-            });
-            break;
-          case isNotLoggedIn:
-            navigation.replace(screenList.loginScreen);
-            break;
-
-          default:
-            break;
-        }
-        break;
-      default:
-        break;
+              break;
+            case isLoggedInButNotVerified:
+              if (!userAccount) {
+                const fetchUserAccount = firestore.getOneDoc(
+                  FIRESTORE_COLLECTION_NAMES.USERS,
+                  userAccount?.uid
+                );
+                dispatchUserAccount({
+                  type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
+                  payload: fetchUserAccount,
+                });
+              }
+              if (!appSettings || appSettings?.uid !== userAccount?.uid) {
+                const appSettingsData = firestore.getOneDoc(
+                  FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                  userAccount?.uid
+                );
+                dispatchAppSettings({
+                  type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
+                  payload: appSettingsData,
+                });
+              }
+              navigation.replace(screenList.emailVerificationScreen, {
+                fromScreen: screenList.splashScreen,
+              });
+              break;
+            case newAccountToRedirect:
+              startAppWithNewUser({
+                currentUser: user,
+                globalContext,
+              }).then((screenName) => {
+                navigation.replace(screenName);
+              });
+              break;
+            case isNotLoggedIn:
+              navigation.replace(screenList.loginScreen);
+              break;
+            default:
+              break;
+          }
+          break;
+        default:
+          break;
+      }
     }
   }, [
+    isConnected,
     user,
     loading,
     error,
