@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
-  createStackNavigator
+  createStackNavigator,
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -41,7 +41,7 @@ import LoanContactPreviewScreen from "../features/loan/screens/LoanContactPrevie
 import LoanContactSelectorScreen from "../features/loan/screens/LoanContactSelectorScreen";
 import MyLoansScreen from "../features/loan/screens/MyLoansScreen";
 import NewLoanContactScreen from "../features/loan/screens/NewLoanContactScreen";
-import createNewLogbook from "../features/logbook/model/createNewLogbook";
+import createNewLogbook from "../features/logbook/model/createNewLogbookAndSyncToFirestore";
 import EditLogbookScreen from "../features/logbook/screens/EditLogbookScreen";
 import LogbookPreviewScren from "../features/logbook/screens/LogbookPreviewScreen";
 import LogbookScreen from "../features/logbook/screens/LogbookScreen";
@@ -61,6 +61,7 @@ import FEATURE_NAME from "../features/subscription/model/featureName";
 import MySubscriptionScreen from "../features/subscription/screens/MySubscriptionScreen";
 import PaywallScreen from "../features/subscription/screens/PaywallScreen";
 import SubscriptionHistoryScreen from "../features/subscription/screens/SubscriptionHistoryScreen";
+import NoInternetScreen from "../features/system/screens/NoInternetScreen";
 import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyPolicyScreen";
 import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOfServiceScreen";
 import EditTransactionDetailsScreen from "../features/transactions/screens/EditTransactionDetailsScreen";
@@ -79,7 +80,9 @@ import {
   useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions, useGlobalTheme, useGlobalUserAccount
+  useGlobalSortedTransactions,
+  useGlobalTheme,
+  useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import ActionScreen from "../screens/modal/ActionScreen";
@@ -325,7 +328,7 @@ const RootStack = () => {
         component={BottomTab}
       />
 
-      {/* // SECTION : MODAL // */}
+      {/* // SECTION : MODAL AND SYSTEM // */}
       {/* // TAG : Modal Screen */}
       <Stack.Screen
         options={{
@@ -361,6 +364,15 @@ const RootStack = () => {
         }}
         name={screenList.loadingScreen}
         component={LoadingScreen}
+      />
+
+      {/* // TAG : No Internet Screen */}
+      <Stack.Screen
+        options={{
+          ...noHeader,
+        }}
+        name={screenList.noInternetScreen}
+        component={NoInternetScreen}
       />
 
       {/* // SECTION : AUTH */}
