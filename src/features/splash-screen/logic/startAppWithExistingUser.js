@@ -269,15 +269,13 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // TAG : Categories
 
-      const fallbackCategories = categoriesFallback({
+      const newCategoriesData = categoriesFallback({
         uid: currentUser.uid,
-        created_by: currentUser.uid,
-        updated_by: currentUser.uid,
       });
 
       const categories = {
         ...initialCategories,
-        categories: categoriesData || { ...fallbackCategories },
+        categories: categoriesData || { ...newCategoriesData },
       };
 
       dispatchCategories({
@@ -290,7 +288,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.CATEGORIES,
             currentUser.uid,
-            fallbackCategories
+            newCategoriesData
           );
         }, 1);
       }
