@@ -1,10 +1,10 @@
 import uuid from "react-native-uuid";
 /**
- * @description - get logbook model
+ *  Get logbook model
  *
  * @param logbookName - logbook name
- * @param uid - user id
- * @param defaultCurrency - default currency from app settings
+ * @param uid - user account uid
+ * @param defaultCurrency - default currency object from appSettings.logbookSettings
  */
 const getLogbookModel = ({ logbookName, uid, defaultCurrency }) => {
   return {
