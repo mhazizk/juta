@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
   createStackNavigator,
+  createStackNavigator,
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -71,8 +72,14 @@ import {
   useGlobalCurrencyRates,
   useGlobalFeatureSwitch,
   useGlobalLoan,
+  useGlobalCurrencyRates,
+  useGlobalFeatureSwitch,
+  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
+  useGlobalSortedTransactions,
+  useGlobalTheme,
+  useGlobalUserAccount,
   useGlobalSortedTransactions,
   useGlobalTheme,
   useGlobalUserAccount,
@@ -92,6 +99,7 @@ import BottomTab from "./BottomTab";
 import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
 import getLogbookModel from "../features/logbook/model/getLogbookModel";
+import createNewLogbook from "../features/logbook/model/createNewLogbook";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -532,47 +540,16 @@ const RootStack = () => {
                     // console.log(navigation);
                     navigation.navigate(screenList.modalScreen, {
                       modalType: "textInput",
-                      title: "Create New Logbook",
+                      title: "Create new logbook",
                       placeholder: "Enter new logbook name...",
                       selected: (item) => {
-                        const newLogbook = getLogbookModel({
+                        createNewLogbook({
+                          dispatchLogbooks,
+                          dispatchSortedTransactions,
                           logbookName: item,
                           uid: userAccount.uid,
                           defaultCurrency:
                             appSettings.logbookSettings.defaultCurrency,
-                        });
-
-                        setTimeout(async () => {
-                          await firestore.setData(
-                            FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                            newLogbook.logbook_id,
-                            newLogbook
-                          );
-                        }, 5000);
-
-                        dispatchLogbooks({
-                          type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-                          payload: { newLogbook, reducerUpdatedAt: Date.now() },
-                        });
-
-                        dispatchSortedTransactions({
-                          type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                            .INSERT_LOGBOOK,
-                          payload: {
-                            newLogbook: {
-                              logbook_id: newLogbook.logbook_id,
-                              transactions: [],
-                            },
-                            logbookToOpen: {
-                              name: newLogbook.logbook_name,
-                              logbook_id: newLogbook.logbook_id,
-                              logbook_currency: {
-                                name: "IDR",
-                                symbol: "Rp",
-                                isoCode: "id",
-                              },
-                            },
-                          },
                         });
                       },
                     });
