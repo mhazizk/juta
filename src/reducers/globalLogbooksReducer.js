@@ -33,7 +33,6 @@ const globalLogbooksReducer = (state, action) => {
           return a.logbook_name.localeCompare(b.logbook_name);
         }),
         reducerUpdatedAt,
-        // logbookInsertCounter: state.logbookInsertCounter + 1,
       };
 
     case REDUCER_ACTIONS.LOGBOOKS.DELETE_ONE:
@@ -58,7 +57,6 @@ const globalLogbooksReducer = (state, action) => {
           return a.logbook_name < b.logbook_name ? -1 : 1;
         }),
         reducerUpdatedAt,
-        // logbookDeleteCounter: state.logbookDeleteCounter + 1,
       };
 
     case REDUCER_ACTIONS.LOGBOOKS.PATCH:
@@ -97,7 +95,6 @@ const globalLogbooksReducer = (state, action) => {
             return a.logbook_name < b.logbook_name ? -1 : 1;
           }),
           reducerUpdatedAt,
-          // logbookPatchCounter: state.logbookPatchCounter + 1,
         };
       }
       return state;

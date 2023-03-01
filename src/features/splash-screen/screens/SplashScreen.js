@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { Image } from "react-native";
 import Footer from "../../../components/Footer";
 import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
@@ -24,7 +24,6 @@ import screenList from "../../../navigations/ScreenList";
 import startAppWithExistingUser from "../logic/startAppWithExistingUser";
 import persistStorage from "../../../reducers/persist/persistStorage";
 import PERSIST_ACTIONS from "../../../reducers/persist/persist.actions";
-import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import firestore from "../../../api/firebase/firestore";

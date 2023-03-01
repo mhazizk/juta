@@ -127,7 +127,6 @@ export const globalSortedTransactionsReducer = (state, action) => {
         groupSorted: [...filterOtherLogbooks],
         logbookToOpen: null,
         reducerUpdatedAt,
-        // sortedLogbookDeleteCounter: state.sortedLogbookDeleteCounter + 1,
       };
 
     // TAG : Insert New Logbook
@@ -141,7 +140,6 @@ export const globalSortedTransactionsReducer = (state, action) => {
         groupSorted: newGroupSortedToBeReplaced,
         logbookToOpen: action.payload.logbookToOpen,
         reducerUpdatedAt,
-        // sortedLogbookInsertCounter: state.sortedLogbookInsertCounter + 1,
       };
 
     // TAG : Set Initial Sorted Transactions
