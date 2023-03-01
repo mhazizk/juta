@@ -33,6 +33,7 @@ import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialG
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
+import getLogbookModel from "../../logbook/model/getLogbookModel";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -60,21 +61,12 @@ const InitialSetupScreen = ({ route, navigation }) => {
       updated_by: userAccount.uid,
     },
   });
-  const [newLogbook, setNewLogbook] = useState({
-    _timestamps: {
-      created_at: null,
-      created_by: userAccount.uid,
-      updated_by: userAccount.uid,
-      updated_at: null,
-    },
-    uid: userAccount.uid,
-    logbook_currency: selectedAppSettings.logbookSettings.defaultCurrency,
-    logbook_type: "basic",
-    logbook_id: logbookId,
-    logbook_name: "",
-    logbook_records: [],
-    logbook_categories: [],
-    group_id: null,
+  const [newLogbook, setNewLogbook] = useState(() => {
+    return getLogbookModel({
+      logbookName: "",
+      uid: userAccount.uid,
+      defaultCurrency: selectedAppSettings.logbookSettings.defaultCurrency,
+    });
   });
 
   useEffect(() => {
@@ -132,22 +124,6 @@ const InitialSetupScreen = ({ route, navigation }) => {
         },
       };
 
-      // const logbookToDispatch = {
-      //   _timestamps: {
-      //     created_at: Date.now(),
-      //     updated_at: Date.now(),
-      //   },
-      //   _id: newLogbook.logbook_id,
-      //   uid: newLogbook.uid,
-      //   logbook_currency: newLogbook.logbook_currency,
-      //   logbook_type: "basic",
-      //   logbook_id: newLogbook.logbook_id,
-      //   logbook_name: newLogbook.logbook_name || "My Logbook",
-      //   logbook_records: [],
-      //   logbook_categories: [],
-      //   __v: 0,
-      // };
-
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
         payload: selectedAppSettings,
@@ -176,9 +152,21 @@ const InitialSetupScreen = ({ route, navigation }) => {
           },
         ],
       });
-      const newCurrencyRateList = await getCurrencyRate(
+
+      let newCurrencyRateList = globalCurrencyRates.data;
+      const fetchNewCurrencyList = await getCurrencyRate(
         globalCurrencyRates.data
       );
+
+      const nullish = [null, undefined, "error"];
+
+      const isFetchNewCurrencyNullish =
+        fetchNewCurrencyList.includes(nullish) ||
+        fetchNewCurrencyList?.length < 1;
+
+      if (!isFetchNewCurrencyNullish) {
+        newCurrencyRateList = fetchNewCurrencyList;
+      }
 
       const currencyRatesToDispatch = {
         ...initialGlobalCurrencyRates,
