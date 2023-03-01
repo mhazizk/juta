@@ -19,6 +19,7 @@ import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import REDUCER_ACTIONS from "../../reducers/reducer.action";
 import getLogbookModel from "../../features/logbook/model/getLogbookModel";
+import createNewLogbook from "../../features/logbook/model/createNewLogbook";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -91,7 +92,44 @@ const ActionScreen = ({ route, navigation }) => {
               style={{ flex: 1 }}
               onPress={() => {
                 navigation.goBack();
-                navigation.navigate(screenList.newTransactionDetailsScreen);
+
+                if (logbooks.logbooks.length < 1) {
+                  Alert.alert(
+                    "No logbooks found",
+                    "Uh, oh, looks like you dont have any logbook to log your new transaction. Create new logbook first",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Create new logbook",
+                        onPress: () => {
+                          return navigation.navigate(screenList.modalScreen, {
+                            modalType: "textInput",
+                            title: "Create new logbook",
+                            placeholder: "Enter new logbook name...",
+                            selected: (item) => {
+                              createNewLogbook({
+                                dispatchLogbooks,
+                                dispatchSortedTransactions,
+                                logbookName: item,
+                                uid: userAccount.uid,
+                                defaultCurrency:
+                                  appSettings.logbookSettings.defaultCurrency,
+                              });
+
+                              navigation.goBack();
+                            },
+                          });
+                        },
+                      },
+                    ]
+                  );
+                } else {
+                  navigation.goBack();
+                  navigation.navigate(screenList.newTransactionDetailsScreen);
+                }
               }}
             >
               <View
@@ -161,49 +199,17 @@ const ActionScreen = ({ route, navigation }) => {
                 } else {
                   navigation.navigate(screenList.modalScreen, {
                     modalType: "textInput",
-                    title: "Create new Logbook",
+                    title: "Create new logbook",
                     placeholder: "Enter new logbook name...",
                     selected: (item) => {
-                      const newLogbook = getLogbookModel({
+                      createNewLogbook({
+                        dispatchLogbooks,
+                        dispatchSortedTransactions,
                         logbookName: item,
                         uid: userAccount.uid,
                         defaultCurrency:
                           appSettings.logbookSettings.defaultCurrency,
                       });
-
-                      setTimeout(async () => {
-                        await firestore.setData(
-                          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-                          newLogbook.logbook_id,
-                          newLogbook
-                        );
-                      }, 1);
-
-                      dispatchLogbooks({
-                        type: REDUCER_ACTIONS.LOGBOOKS.INSERT,
-                        payload: { newLogbook, reducerUpdatedAt: Date.now() },
-                      });
-
-                      dispatchSortedTransactions({
-                        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                          .INSERT_LOGBOOK,
-                        payload: {
-                          newLogbook: {
-                            logbook_id: newLogbook.logbook_id,
-                            transactions: [],
-                          },
-                          logbookToOpen: {
-                            name: newLogbook.logbook_name,
-                            logbook_id: newLogbook.logbook_id,
-                            logbook_currency: {
-                              name: "IDR",
-                              symbol: "Rp",
-                              isoCode: "id",
-                            },
-                          },
-                        },
-                      });
-
                       navigation.goBack();
                     },
                   });
