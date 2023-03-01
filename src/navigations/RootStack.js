@@ -1,18 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
-  createStackNavigator,
-  createStackNavigator,
+  createStackNavigator
 } from "@react-navigation/stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Alert, AppState, View } from "react-native";
-import uuid from "react-native-uuid";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
+import AboutScreen from "../features/about/screens/AboutScreen";
 import AnalyticsScreen from "../features/analytics/screens/AnalyticsScreen";
+import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import LoginScreen from "../features/auth/screens/LoginScreen";
@@ -41,10 +41,12 @@ import LoanContactPreviewScreen from "../features/loan/screens/LoanContactPrevie
 import LoanContactSelectorScreen from "../features/loan/screens/LoanContactSelectorScreen";
 import MyLoansScreen from "../features/loan/screens/MyLoansScreen";
 import NewLoanContactScreen from "../features/loan/screens/NewLoanContactScreen";
+import createNewLogbook from "../features/logbook/model/createNewLogbook";
 import EditLogbookScreen from "../features/logbook/screens/EditLogbookScreen";
 import LogbookPreviewScren from "../features/logbook/screens/LogbookPreviewScreen";
 import LogbookScreen from "../features/logbook/screens/LogbookScreen";
 import MyLogbooksScreen from "../features/logbook/screens/MyLogbooksScreen";
+import MyAccountScreen from "../features/my-account/screens/MyAccountScreen";
 import InitialSetupScreen from "../features/onboarding/screens/InitialSetupScreen";
 import OnboardingScreen from "../features/onboarding/screens/OnboardingScreen";
 import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfilePictureScreen";
@@ -52,6 +54,7 @@ import EditRepeatedTransactionScreen from "../features/repeated-transactions/scr
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
 import SearchScreen from "../features/search/screens/SearchScreen";
+import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import SplashScreen from "../features/splash-screen/screens/SplashScreen";
 import getFeatureLimit from "../features/subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../features/subscription/model/featureName";
@@ -63,6 +66,8 @@ import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOf
 import EditTransactionDetailsScreen from "../features/transactions/screens/EditTransactionDetailsScreen";
 import NewTransactionDetailsScreen from "../features/transactions/screens/NewTransactionDetailsScreen";
 import TransactionPreviewScreen from "../features/transactions/screens/TransactionPreviewScreen";
+import DeveloperScreen from "../features/user/screens/DeveloperScreen";
+import UserScreen from "../features/user/screens/UserScreen";
 import useFirestoreSubscriptions from "../hooks/useFirestoreSubscriptions";
 import {
   useGlobalAppSettings,
@@ -72,34 +77,18 @@ import {
   useGlobalCurrencyRates,
   useGlobalFeatureSwitch,
   useGlobalLoan,
-  useGlobalCurrencyRates,
-  useGlobalFeatureSwitch,
-  useGlobalLoan,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
-  useGlobalSortedTransactions,
-  useGlobalTheme,
-  useGlobalUserAccount,
-  useGlobalSortedTransactions,
-  useGlobalTheme,
-  useGlobalUserAccount,
+  useGlobalSortedTransactions, useGlobalTheme, useGlobalUserAccount
 } from "../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../reducers/reducer.action";
 import ActionScreen from "../screens/modal/ActionScreen";
 import LoadingScreen from "../screens/modal/LoadingScreen";
 import ModalScreen from "../screens/modal/ModalScreen";
-import AboutScreen from "../features/about/screens/AboutScreen";
-import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
-import MyAccountScreen from "../features/my-account/screens/MyAccountScreen";
-import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import DashboardTourScreen from "../screens/tour/DashboardTourScreen";
-import DeveloperScreen from "../features/user/screens/DeveloperScreen";
-import UserScreen from "../features/user/screens/UserScreen";
 import BottomTab from "./BottomTab";
 import HeaderButtonRight from "./components/HeaderButtonRight";
 import screenList from "./ScreenList";
-import getLogbookModel from "../features/logbook/model/getLogbookModel";
-import createNewLogbook from "../features/logbook/model/createNewLogbook";
 const Stack = createStackNavigator();
 
 const RootStack = () => {
