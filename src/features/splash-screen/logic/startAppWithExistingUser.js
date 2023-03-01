@@ -163,17 +163,17 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         featureName: FEATURE_NAME.DEVICES,
       });
 
-      if (filteredDevicesLoggedIn.length >= maxDevicesLoggedIn) {
-        alert(
-          `You have reached the maximum number of devices allowed for your subscription plan.\nPlease upgrade your subscription plan to add more devices.`
-        );
-        signOut(auth)
-          .then(() => {})
-          .catch((error) => {
-            alert(error);
-          });
-        return;
-      }
+      // if (filteredDevicesLoggedIn.length >= maxDevicesLoggedIn) {
+      //   alert(
+      //     `You have reached the maximum number of devices allowed for your subscription plan.\nPlease upgrade your subscription plan to add more devices.`
+      //   );
+      //   signOut(auth)
+      //     .then(() => {})
+      //     .catch((error) => {
+      //       alert(error);
+      //     });
+      //   return;
+      // }
 
       // TAG : currentUser account
 
@@ -235,20 +235,28 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // TAG : App settings
 
+      const newAppSettings = {
+        ...appSettingsFallback,
+        uid: currentUser.uid,
+        _timestamps: {
+          ...appSettingsFallback._timestamps,
+          created_by: currentUser.uid,
+          updated_by: currentUser.uid,
+        },
+      };
+
       dispatchAppSettings({
         type: REDUCER_ACTIONS.APP_SETTINGS.FORCE_SET,
-        payload: appSettingsData
-          ? updatedAppSettings
-          : {
-              ...appSettingsFallback,
-              uid: currentUser.uid,
-              _timestamps: {
-                ...appSettingsFallback._timestamps,
-                created_by: currentUser.uid,
-                updated_by: currentUser.uid,
-              },
-            },
+        payload: appSettingsData ? updatedAppSettings : newAppSettings,
       });
+
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+          currentUser.uid,
+          appSettingsData ? updatedAppSettings : newAppSettings
+        );
+      }, 1);
 
       // TAG : Global theme
 
@@ -271,6 +279,12 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         ...initialCategories,
         categories: categoriesData || { ...fallbackCategories },
       };
+
+      dispatchCategories({
+        type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
+        payload: categories,
+      });
+
       if (!categoriesData) {
         setTimeout(async () => {
           await firestore.setData(
@@ -281,44 +295,16 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }, 1);
       }
 
-      dispatchCategories({
-        type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-        payload: categories,
-      });
-
-      // TAG : Transactions
-
-      const checkedTransactionsAndRepeatedTransactions =
-        createNewTransactionFromActiveRepeatedTransaction(
-          repeatedTransactionsData,
-          transactionsData
-        );
-
-      // Merge transactions into sorted transactions
-      const groupSorted = mergeTransactionsIntoSortedTransactions(
-        checkedTransactionsAndRepeatedTransactions.getAllTransactions,
-        logbooksData
-      );
-
-      const initialSortedTransactionsToDispatch = {
-        ...initialSortedTransactions,
-        reducerUpdatedAt: newReducerUpdatedAt,
-        groupSorted: groupSorted,
-      };
-
-      dispatchSortedTransactions({
-        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET,
-        payload: initialSortedTransactionsToDispatch,
-      });
-
       // TAG : Logbooks
 
+      let newLogbooksData = logbooksData;
       const newLogbook = getLogbookModel({
         logbookName: "My Logbook",
         uid: currentUser.uid,
         defaultCurrency: appSettingsData.logbookSettings.defaultCurrency,
       });
-      if (!logbooksData) {
+      if (logbooksData.length < 1) {
+        newLogbooksData = [newLogbook];
         setTimeout(async () => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
@@ -332,8 +318,33 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
         payload: {
           ...initialLogbooks,
-          logbooks: logbooksData || [newLogbook],
+          logbooks: newLogbooksData,
         },
+      });
+
+      // TAG : Transactions
+
+      const checkedTransactionsAndRepeatedTransactions =
+        createNewTransactionFromActiveRepeatedTransaction(
+          repeatedTransactionsData,
+          transactionsData
+        );
+
+      // Merge transactions into sorted transactions
+      const groupSorted = mergeTransactionsIntoSortedTransactions(
+        checkedTransactionsAndRepeatedTransactions.getAllTransactions,
+        newLogbooksData
+      );
+
+      const initialSortedTransactionsToDispatch = {
+        ...initialSortedTransactions,
+        reducerUpdatedAt: newReducerUpdatedAt,
+        groupSorted: groupSorted,
+      };
+
+      dispatchSortedTransactions({
+        type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED.FORCE_SET,
+        payload: initialSortedTransactionsToDispatch,
       });
 
       // TAG : budgets
@@ -341,7 +352,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       // Check budget if it is expired
       // const budget = budgetsData[0];
       let newBudget;
-      if (budgetsData.length) {
+      if (budgetsData.length > 1) {
         console.log(budgetsData);
         const today = Date.now();
         const budget = budgetsData[0];
