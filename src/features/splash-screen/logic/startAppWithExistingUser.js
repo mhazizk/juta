@@ -32,6 +32,7 @@ import FEATURE_NAME from "../../subscription/model/featureName";
 import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
 import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
+import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -61,6 +62,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     dispatchGlobalCurrencyRates,
     badgeCounter,
     dispatchBadgeCounter,
+    expoPushToken,
   } = globalContext;
 
   const deviceId = getDeviceId();
@@ -113,9 +115,11 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
     currentUser.uid
   );
+
   const collectionName = await getSecretFromCloudFunctions(
     SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
   );
+
   const docId = await getSecretFromCloudFunctions(
     SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
   );
@@ -188,15 +192,19 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         photoURL: currentUser.photoURL,
       });
 
+      const newDevice = getNewDeviceIdentifier({
+        expoPushToken,
+        deviceId: deviceIdData,
+        deviceName: deviceNameData,
+        deviceOSName: deviceOSNameData,
+      });
+
       const loggedInUserAccount = {
         ...userAccountData,
         devicesLoggedIn: [
           ...filteredDevicesLoggedIn,
           {
-            device_id: deviceIdData,
-            device_name: deviceNameData,
-            device_os_name: deviceOSNameData,
-            last_login: Date.now(),
+            ...newDevice,
           },
         ],
       };
