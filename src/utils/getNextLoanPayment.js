@@ -76,7 +76,8 @@ const getNextLoanPayment = ({
       return getSum;
 
     case getNextDate:
-      const nextDate = new Date(nearestPaymentDateinMillis).getDate();
+      const nextDate =
+        new Date(nearestPaymentDateinMillis).getDate() - new Date().getDate();
       switch (true) {
         case nextDate > 1:
           return `in ${nextDate} days`;
