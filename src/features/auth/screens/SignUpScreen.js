@@ -3,6 +3,7 @@
 import { View, Dimensions, TouchableOpacity } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
+  useExpoPushToken,
   useGlobalAppSettings,
   useGlobalCurrencyRates,
   useGlobalFeatureSwitch,
@@ -33,6 +34,7 @@ import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromClou
 import SECRET_KEYS from "../../../constants/secretManager";
 
 const SignUpScreen = ({ route, navigation }) => {
+  const { expoPushToken, setExpoPushToken } = useExpoPushToken();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { dispatchGlobalFeatureSwitch } = useGlobalFeatureSwitch();
   const { globalCurrencyRates, dispatchGlobalCurrencyRates } =

@@ -31,6 +31,8 @@ import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
+import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
+import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -60,6 +62,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     dispatchGlobalCurrencyRates,
     badgeCounter,
     dispatchBadgeCounter,
+    expoPushToken,
   } = globalContext;
 
   const deviceId = getDeviceId();
@@ -112,14 +115,18 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     FIRESTORE_COLLECTION_NAMES.LOAN_CONTACTS,
     currentUser.uid
   );
+
   const collectionName = await getSecretFromCloudFunctions(
     SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
   );
+
   const docId = await getSecretFromCloudFunctions(
     SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
   );
   const loadSubs = firestore.getOneDoc(collectionName, docId);
   const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
+
+  const fetchNewCurrencyData = await getCurrencyRate(globalCurrencyRates.data);
 
   return Promise.all([
     deviceId,
@@ -185,15 +192,19 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         photoURL: currentUser.photoURL,
       });
 
+      const newDevice = getNewDeviceIdentifier({
+        expoPushToken,
+        deviceId: deviceIdData,
+        deviceName: deviceNameData,
+        deviceOSName: deviceOSNameData,
+      });
+
       const loggedInUserAccount = {
         ...userAccountData,
         devicesLoggedIn: [
           ...filteredDevicesLoggedIn,
           {
-            device_id: deviceIdData,
-            device_name: deviceNameData,
-            device_os_name: deviceOSNameData,
-            last_login: Date.now(),
+            ...newDevice,
           },
         ],
       };
@@ -269,15 +280,13 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // TAG : Categories
 
-      const fallbackCategories = categoriesFallback({
+      const newCategoriesData = categoriesFallback({
         uid: currentUser.uid,
-        created_by: currentUser.uid,
-        updated_by: currentUser.uid,
       });
 
       const categories = {
         ...initialCategories,
-        categories: categoriesData || { ...fallbackCategories },
+        categories: categoriesData || { ...newCategoriesData },
       };
 
       dispatchCategories({
@@ -290,7 +299,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.CATEGORIES,
             currentUser.uid,
-            fallbackCategories
+            newCategoriesData
           );
         }, 1);
       }
@@ -374,6 +383,53 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         });
       }
 
+      // TAG : Global currency rates
+
+      let newCurrencyRateData;
+
+      const nullish = [null, undefined, "error"];
+
+      const isNewFetchNullish =
+        fetchNewCurrencyData.includes(nullish) ||
+        fetchNewCurrencyData.length < 1;
+
+      const isStoredCurrencyRatesAvailable = currencyRatesData?.length > 0;
+
+      if (isStoredCurrencyRatesAvailable) {
+        newCurrencyRateData = currencyRatesData;
+      }
+
+      if (!isNewFetchNullish) {
+        newCurrencyRateData = fetchNewCurrencyData;
+      }
+
+      const newCurrencyRates = {
+        ...initialGlobalCurrencyRates,
+        uid: currentUser.uid,
+        data: newCurrencyRateData,
+        _timestamps: {
+          created_at: Date.now(),
+          created_by: currentUser.uid,
+          updated_at: Date.now(),
+          updated_by: currentUser.uid,
+        },
+      };
+
+      dispatchGlobalCurrencyRates({
+        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+        payload: newCurrencyRates,
+      });
+
+      if (!isNewFetchNullish) {
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+            currentUser.uid,
+            newCurrencyRates
+          );
+        }, 1);
+      }
+
       // TAG : Repeated transactions
 
       dispatchRepeatedTransactions({
@@ -383,21 +439,6 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           repeatedTransactions:
             checkedTransactionsAndRepeatedTransactions.getAllRepeatedTransactions ||
             [],
-        },
-      });
-
-      // TAG : Global currency rates
-
-      dispatchGlobalCurrencyRates({
-        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
-        payload: currencyRatesData || {
-          ...initialGlobalCurrencyRates,
-          uid: currentUser.uid,
-          _timestamps: {
-            ...initialGlobalCurrencyRates._timestamps,
-            created_by: currentUser.uid,
-            updated_by: currentUser.uid,
-          },
         },
       });
 
@@ -422,17 +463,22 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           );
         }
       );
+
+      // TAG : Global Loan
+
+      const newLoanContactsData = {
+        ...initialGlobalLoan,
+        uid: currentUser.uid,
+        _timestamps: {
+          ...initialGlobalLoan._timestamps,
+          created_by: currentUser.uid,
+          updated_by: currentUser.uid,
+        },
+      };
+
       dispatchGlobalLoan({
         type: REDUCER_ACTIONS.LOAN.FORCE_SET,
-        payload: loanContactsData || {
-          ...initialGlobalLoan,
-          uid: currentUser.uid,
-          _timestamps: {
-            ...initialGlobalLoan._timestamps,
-            created_by: currentUser.uid,
-            updated_by: currentUser.uid,
-          },
-        },
+        payload: loanContactsData || newLoanContactsData,
       });
 
       setTimeout(() => {

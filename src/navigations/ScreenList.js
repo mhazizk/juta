@@ -6,6 +6,7 @@ const screenList = {
   modalScreen: "Modal Screen",
   actionScreen: "Action Screen",
   loadingScreen: "Loading Screen",
+  noInternetScreen: "No Internet Screen",
 
   // Initial Screen
   initialSplashScreen: "Initial Splash Screen",

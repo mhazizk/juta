@@ -12,14 +12,9 @@ import {
   useGlobalTheme,
   useGlobalUserAccount,
 } from "../../reducers/GlobalContext";
-import uuid from "react-native-uuid";
-import firestore from "../../api/firebase/firestore";
-import FIRESTORE_COLLECTION_NAMES from "../../api/firebase/firestoreCollectionNames";
 import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
-import REDUCER_ACTIONS from "../../reducers/reducer.action";
-import getLogbookModel from "../../features/logbook/model/getLogbookModel";
-import createNewLogbook from "../../features/logbook/model/createNewLogbook";
+import createNewLogbookAndSyncToFirestore from "../../features/logbook/model/createNewLogbookAndSyncToFirestore";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -91,8 +86,6 @@ const ActionScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={{ flex: 1 }}
               onPress={() => {
-                navigation.goBack();
-
                 if (logbooks.logbooks.length < 1) {
                   Alert.alert(
                     "No logbooks found",
@@ -110,7 +103,7 @@ const ActionScreen = ({ route, navigation }) => {
                             title: "Create new logbook",
                             placeholder: "Enter new logbook name...",
                             selected: (item) => {
-                              createNewLogbook({
+                              createNewLogbookAndSyncToFirestore({
                                 dispatchLogbooks,
                                 dispatchSortedTransactions,
                                 logbookName: item,
@@ -202,7 +195,7 @@ const ActionScreen = ({ route, navigation }) => {
                     title: "Create new logbook",
                     placeholder: "Enter new logbook name...",
                     selected: (item) => {
-                      createNewLogbook({
+                      createNewLogbookAndSyncToFirestore({
                         dispatchLogbooks,
                         dispatchSortedTransactions,
                         logbookName: item,
