@@ -109,7 +109,7 @@ const RecentTransactions = ({
                 !startDate &&
                 !finishDate &&
                 transaction._timestamps.updated_at >=
-                  Date.now() - 1000 * 60 * 60 * 24 * 7 &&
+                  Date.now() - 1000 * 60 * 60 * 24 * 365 &&
                 transaction._timestamps.updated_at <= Date.now()
               ) {
                 finalArray.push({
