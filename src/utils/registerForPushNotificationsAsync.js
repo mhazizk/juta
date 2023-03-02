@@ -3,7 +3,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
 /**
- * Register for push notifications and listen for expo-notifications
+ * Register for push notifications and listen for `expo-notifications`
  * 
  * Should be called at start in `App.js`
  * 
