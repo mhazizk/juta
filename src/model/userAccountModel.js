@@ -15,7 +15,6 @@ const userAccountModel = ({
   email,
   emailVerified,
   photoURL,
-  expoPushToken,
   premium,
 }) => {
   const userAccountObject = {
@@ -37,7 +36,6 @@ const userAccountModel = ({
     devicesLoggedIn: [],
     featureWishlist: [],
     groups: [],
-    expoPushToken: [expoPushToken], // Starting 0.8.2-alpha userAccount JSON requires expoPushToken for push notification
   };
   return userAccountObject;
 };
