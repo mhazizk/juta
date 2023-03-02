@@ -43,6 +43,7 @@ const globalFeatureWishlistContext = createContext();
 const globalCurrencyRatesContext = createContext();
 const globalLoanContext = createContext();
 const globalFeatureSwitchContext = createContext();
+const expoPushTokenContext = createContext();
 
 // TAG : useContext //
 export const useGlobalTransactions = () => {
@@ -109,8 +110,14 @@ export const useGlobalFeatureSwitch = () => {
   return useContext(globalFeatureSwitchContext);
 };
 
+export const useExpoPushToken = () => {
+  return useContext(expoPushTokenContext);
+};
+
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
+  const [expoPushToken, setExpoPushToken] = useState("");
+
   const [userAccount, dispatchUserAccount] = useReducer(
     globalUserAccountReducer,
     initialUserAccount
@@ -165,108 +172,114 @@ export const GlobalStateProvider = ({ children }) => {
     initialGlobalLoan
   );
 
-  const [globalFeatureSwitch, dispatchGlobalFeatureSwitch] =
-    useReducer(
-      globalFeatureSwitchReducer,
-      initialGlobalFeatureSwitch
-    );
+  const [globalFeatureSwitch, dispatchGlobalFeatureSwitch] = useReducer(
+    globalFeatureSwitchReducer,
+    initialGlobalFeatureSwitch
+  );
 
   // const [groups, dispatchGroups] = useReducer(globalGroups, initialGroups);
 
   return (
     <>
-      <globalSettingsContext.Provider
+      <expoPushTokenContext.Provider
         value={{
-          appSettings,
-          dispatchAppSettings,
+          expoPushToken,
+          setExpoPushToken,
         }}
       >
-        <globalThemeContext.Provider
+        <globalSettingsContext.Provider
           value={{
-            globalTheme,
-            dispatchGlobalTheme,
+            appSettings,
+            dispatchAppSettings,
           }}
         >
-          <globalUserAccountContext.Provider
+          <globalThemeContext.Provider
             value={{
-              userAccount,
-              dispatchUserAccount,
+              globalTheme,
+              dispatchGlobalTheme,
             }}
           >
-            <globalLogbooksContext.Provider
+            <globalUserAccountContext.Provider
               value={{
-                logbooks,
-                dispatchLogbooks,
+                userAccount,
+                dispatchUserAccount,
               }}
             >
-              <globalCategoriesContext.Provider
+              <globalLogbooksContext.Provider
                 value={{
-                  categories,
-                  dispatchCategories,
+                  logbooks,
+                  dispatchLogbooks,
                 }}
               >
-                <globalSortedTransactionsContext.Provider
+                <globalCategoriesContext.Provider
                   value={{
-                    sortedTransactions,
-                    dispatchSortedTransactions,
+                    categories,
+                    dispatchCategories,
                   }}
                 >
-                  <globalBudgetsContext.Provider
+                  <globalSortedTransactionsContext.Provider
                     value={{
-                      budgets,
-                      dispatchBudgets,
+                      sortedTransactions,
+                      dispatchSortedTransactions,
                     }}
                   >
-                    <globalBadgeCounterContext.Provider
+                    <globalBudgetsContext.Provider
                       value={{
-                        badgeCounter,
-                        dispatchBadgeCounter,
+                        budgets,
+                        dispatchBudgets,
                       }}
                     >
-                      <globalRepeatedTransactionsContext.Provider
+                      <globalBadgeCounterContext.Provider
                         value={{
-                          repeatedTransactions,
-                          dispatchRepeatedTransactions,
+                          badgeCounter,
+                          dispatchBadgeCounter,
                         }}
                       >
-                        <globalFeatureWishlistContext.Provider
+                        <globalRepeatedTransactionsContext.Provider
                           value={{
-                            globalFeatureWishlist,
-                            dispatchGlobalFeatureWishlist,
+                            repeatedTransactions,
+                            dispatchRepeatedTransactions,
                           }}
                         >
-                          <globalCurrencyRatesContext.Provider
+                          <globalFeatureWishlistContext.Provider
                             value={{
-                              globalCurrencyRates,
-                              dispatchGlobalCurrencyRates,
+                              globalFeatureWishlist,
+                              dispatchGlobalFeatureWishlist,
                             }}
                           >
-                            <globalLoanContext.Provider
+                            <globalCurrencyRatesContext.Provider
                               value={{
-                                globalLoan,
-                                dispatchGlobalLoan,
+                                globalCurrencyRates,
+                                dispatchGlobalCurrencyRates,
                               }}
                             >
-                              <globalFeatureSwitchContext.Provider
+                              <globalLoanContext.Provider
                                 value={{
-                                  globalFeatureSwitch,
-                                  dispatchGlobalFeatureSwitch,
+                                  globalLoan,
+                                  dispatchGlobalLoan,
                                 }}
                               >
-                                {children}
-                              </globalFeatureSwitchContext.Provider>
-                            </globalLoanContext.Provider>
-                          </globalCurrencyRatesContext.Provider>
-                        </globalFeatureWishlistContext.Provider>
-                      </globalRepeatedTransactionsContext.Provider>
-                    </globalBadgeCounterContext.Provider>
-                  </globalBudgetsContext.Provider>
-                </globalSortedTransactionsContext.Provider>
-              </globalCategoriesContext.Provider>
-            </globalLogbooksContext.Provider>
-          </globalUserAccountContext.Provider>
-        </globalThemeContext.Provider>
-      </globalSettingsContext.Provider>
+                                <globalFeatureSwitchContext.Provider
+                                  value={{
+                                    globalFeatureSwitch,
+                                    dispatchGlobalFeatureSwitch,
+                                  }}
+                                >
+                                  {children}
+                                </globalFeatureSwitchContext.Provider>
+                              </globalLoanContext.Provider>
+                            </globalCurrencyRatesContext.Provider>
+                          </globalFeatureWishlistContext.Provider>
+                        </globalRepeatedTransactionsContext.Provider>
+                      </globalBadgeCounterContext.Provider>
+                    </globalBudgetsContext.Provider>
+                  </globalSortedTransactionsContext.Provider>
+                </globalCategoriesContext.Provider>
+              </globalLogbooksContext.Provider>
+            </globalUserAccountContext.Provider>
+          </globalThemeContext.Provider>
+        </globalSettingsContext.Provider>
+      </expoPushTokenContext.Provider>
     </>
   );
 };

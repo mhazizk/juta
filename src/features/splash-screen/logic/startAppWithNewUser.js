@@ -6,6 +6,7 @@ import screenList from "../../../navigations/ScreenList";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
 import * as Sentry from "@sentry/react-native";
+import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 
 const startAppWithNewUser = async ({ currentUser, globalContext }) => {
   const {
@@ -33,6 +34,7 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
     dispatchGlobalCurrencyRates,
     badgeCounter,
     dispatchBadgeCounter,
+    expoPushToken,
   } = globalContext;
 
   return Promise.all([
@@ -48,18 +50,19 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
       const deviceName = data[2];
       const deviceOSName = data[3];
       const rcCustomerInfo = data[4];
+      const newDevice = getNewDeviceIdentifier({
+        expoPushToken,
+        deviceId,
+        deviceName,
+        deviceOSName,
+      });
       const loggedInUserAccount = {
         ...userAccountData,
         devicesLoggedIn: [
           ...userAccountData.devicesLoggedIn.filter((device) => {
             return device.device_id !== deviceId;
           }),
-          {
-            device_id: deviceId,
-            device_name: deviceName,
-            device_os_name: deviceOSName,
-            last_login: Date.now(),
-          },
+          newDevice,
         ],
       };
       dispatchUserAccount({
