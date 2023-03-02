@@ -9,9 +9,10 @@ import {
 } from "@react-navigation/native";
 import {
   GlobalStateProvider,
+  useExpoPushToken,
   useGlobalTheme,
 } from "./src/reducers/GlobalContext";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import sentryInit from "./src/sentry/sentryInit";
 import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
@@ -21,14 +22,39 @@ import registerForPushNotificationsAsync from "./src/utils/registerForPushNotifi
 setNotificationHandler();
 
 function App() {
-  const [expoPushToken, setExpoPushToken] = useState("");
+  useEffect(() => {
+    sentryInit();
+  }, []);
+
+  try {
+    return (
+      <>
+        <GlobalStateProvider>
+          <GlobalStateWrapper />
+        </GlobalStateProvider>
+      </>
+    );
+  } catch (error) {
+    Sentry.Native.nativeCrash();
+  }
+}
+export default Sentry.Native.wrap(App);
+
+const GlobalStateWrapper = () => {
+  const { globalTheme } = useGlobalTheme();
+  const { expoPushToken, setExpoPushToken } = useExpoPushToken();
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  const routingInstrumentation =
+    new Sentry.Native.ReactNavigationInstrumentation();
+  const navigationRef = useRef();
   useEffect(() => {
-    sentryInit();
+    console.log({ globalTheme });
+  }, [globalTheme]);
 
+  useEffect(() => {
     // Register for push notifications and listen for notifications
     registerForPushNotificationsAsync().then((token) =>
       setExpoPushToken(token)
@@ -53,29 +79,6 @@ function App() {
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
-
-  try {
-    return (
-      <>
-        <GlobalStateProvider>
-          <ThemeWrapper />
-        </GlobalStateProvider>
-      </>
-    );
-  } catch (error) {
-    Sentry.Native.nativeCrash();
-  }
-}
-export default Sentry.Native.wrap(App);
-
-const ThemeWrapper = () => {
-  const { globalTheme } = useGlobalTheme();
-  const routingInstrumentation =
-    new Sentry.Native.ReactNavigationInstrumentation();
-  const navigationRef = useRef();
-  useEffect(() => {
-    console.log({ globalTheme });
-  }, [globalTheme]);
 
   return (
     <NavigationContainer
