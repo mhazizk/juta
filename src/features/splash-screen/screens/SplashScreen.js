@@ -4,6 +4,7 @@ import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import JutaLogo from "../../../assets/icons/juta-app-icon.png";
 import {
+  useExpoPushToken,
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
@@ -33,6 +34,7 @@ import isInternetReachable from "../../../utils/isInternetReachable";
 const SplashScreen = ({ route, navigation }) => {
   const fromScreen = route.params?.fromScreen || null;
   const targetScreen = route.params?.targetScreen || null;
+  const { expoPushToken, setExpoPushToken } = useExpoPushToken();
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -75,6 +77,7 @@ const SplashScreen = ({ route, navigation }) => {
         setIsConnected(true);
       }
     });
+    console.log({ expoPushToken });
   }, []);
 
   useEffect(() => {
@@ -112,9 +115,10 @@ const SplashScreen = ({ route, navigation }) => {
       dispatchGlobalCurrencyRates,
       badgeCounter,
       dispatchBadgeCounter,
+      expoPushToken,
     };
 
-    if (isConnected) {
+    if (isConnected && !!expoPushToken) {
       switch (isFirstRun) {
         case true:
           switch (true) {
@@ -204,6 +208,7 @@ const SplashScreen = ({ route, navigation }) => {
       }
     }
   }, [
+    expoPushToken,
     isConnected,
     user,
     loading,
