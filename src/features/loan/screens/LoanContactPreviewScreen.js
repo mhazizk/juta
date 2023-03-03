@@ -42,6 +42,7 @@ import { TouchableOpacity } from "react-native";
 import LoanTransactionItem from "../components/LoanTransactionItem";
 import TransactionListSection from "../../../components/List/TransactionListSection";
 import transactionDetailsModel from "../../transactions/models/transactionDetailsModel";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const LoanContactPreviewScreen = ({ route, navigation }) => {
   const { contact, transactionDetails } = route?.params;
@@ -411,17 +412,7 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
           </View>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              // backgroundColor: "red",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -568,7 +559,7 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                 />
               )}
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
