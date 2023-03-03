@@ -124,7 +124,9 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
   );
   const loadSubs = firestore.getOneDoc(collectionName, docId);
-  const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
+
+  // TODO : commented for testing on iOS simulator
+  // const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
 
   const fetchNewCurrencyData = await getCurrencyRate(globalCurrencyRates.data);
 
@@ -142,7 +144,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     loadCurrencyRatesFromFirestore,
     loadLoanContactsFromFirestore,
     loadSubs,
-    loadRCCustomerInfo,
+    // loadRCCustomerInfo,
   ])
     .then((data) => {
       const deviceIdData = data[0];
@@ -158,7 +160,8 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       const currencyRatesData = data[10];
       const loanContactsData = data[11];
       const subsData = data[12];
-      const rcCustomerInfoData = data[13];
+      // const rcCustomerInfoData = data[13];
+      // TODO : commented for testing on iOS simulator
 
       const filteredDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
         (device) => device.device_id !== deviceIdData
@@ -209,19 +212,23 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         ],
       };
 
-      let updatedUserAccount;
+      // TODO : commented for testing on iOS simulator
+      // let updatedUserAccount;
+      // TODO : temporary assign this variable to userAccountData
+      let updatedUserAccount = userAccountData;
       let updatedAppSettings = appSettingsData;
 
-      updateSubscriptionStatus({
-        globalFeatureSwitch: subsData,
-        rcCustomerInfo: rcCustomerInfoData,
-        appSettings: appSettingsData,
-        userAccount: loggedInUserAccount,
-        callback: ({ newUserAccount, newAppSettings }) => {
-          updatedUserAccount = newUserAccount;
-          updatedAppSettings = newAppSettings;
-        },
-      });
+      // TODO : commented for testing on iOS simulator
+      // updateSubscriptionStatus({
+      //   globalFeatureSwitch: subsData,
+      //   rcCustomerInfo: rcCustomerInfoData,
+      //   appSettings: appSettingsData,
+      //   userAccount: loggedInUserAccount,
+      //   callback: ({ newUserAccount, newAppSettings }) => {
+      //     updatedUserAccount = newUserAccount;
+      //     updatedAppSettings = newAppSettings;
+      //   },
+      // });
 
       dispatchGlobalFeatureSwitch({
         type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
