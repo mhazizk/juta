@@ -13,7 +13,7 @@ import {
 import {
   ButtonSecondary,
   ButtonSecondaryDanger,
-  ButtonSecondaryDisabled
+  ButtonSecondaryDisabled,
 } from "../../../components/Button";
 import { TextPrimary } from "../../../components/Text";
 import * as utils from "../../../utils";
@@ -21,6 +21,7 @@ import screenList from "../../../navigations/ScreenList";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ListSection from "../../../components/List/ListSection";
 import { ListItem } from "../../../components/List";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const CategoryPreviewScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -211,16 +212,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               {!category.is_deletable && (
@@ -291,7 +283,7 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
                 />
               )}
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
