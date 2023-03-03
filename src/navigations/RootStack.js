@@ -182,34 +182,36 @@ const RootStack = () => {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        listenSubscriptionStatus({
-          globalFeatureSwitch,
-          appSettings,
-          userAccount,
-          callback: ({ newUserAccount, newAppSettings }) => {
-            dispatchAppSettings({
-              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-              payload: newAppSettings,
-            });
 
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-              payload: newUserAccount,
-            });
-            setTimeout(async () => {
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                newUserAccount.uid,
-                newUserAccount
-              );
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                newUserAccount.uid,
-                newAppSettings
-              );
-            }, 5000);
-          },
-        });
+        // TODO : commented for testing on iOS simulator
+        // listenSubscriptionStatus({
+        //   globalFeatureSwitch,
+        //   appSettings,
+        //   userAccount,
+        //   callback: ({ newUserAccount, newAppSettings }) => {
+        //     dispatchAppSettings({
+        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        //       payload: newAppSettings,
+        //     });
+
+        //     dispatchUserAccount({
+        //       type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+        //       payload: newUserAccount,
+        //     });
+        //     setTimeout(async () => {
+        //       await firestore.setData(
+        //         FIRESTORE_COLLECTION_NAMES.USERS,
+        //         newUserAccount.uid,
+        //         newUserAccount
+        //       );
+        //       await firestore.setData(
+        //         FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        //         newUserAccount.uid,
+        //         newAppSettings
+        //       );
+        //     }, 5000);
+        //   },
+        // });
       }
       appState.current = nextAppState;
       console.log(appState.current);
