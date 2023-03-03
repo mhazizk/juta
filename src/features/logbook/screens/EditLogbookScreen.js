@@ -23,6 +23,7 @@ import ListSection from "../../../components/List/ListSection";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import CheckList from "../../../components/CheckList";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -330,16 +331,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -357,7 +349,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
