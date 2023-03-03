@@ -1,4 +1,5 @@
 import getCustomDate from "./getCustomDate";
+import getRelativeDate from "./getRelativeDate";
 
 const mergeTransactionsIntoSortedTransactions = (transactions, logbooks) => {
   const loadedLogbooks = logbooks.sort((a, b) => {
@@ -37,16 +38,14 @@ const groupTransactionsByDate = (transactions) => {
   if (transactions) {
     const grouped = Object.values(
       sortedTransactions.reduce((group, transaction) => {
-        group[new Date(transaction.details.date).toDateString()] = group[
-          new Date(transaction.details.date).toDateString()
+        group[getCustomDate(transaction.details.date)] = group[
+          getCustomDate(transaction.details.date)
         ] || {
-          title: new Date(transaction.details.date).toDateString(),
+          title: getRelativeDate(transaction.details.date),
           customDate: getCustomDate(transaction.details.date),
           data: [],
         };
-        group[new Date(transaction.details.date).toDateString()].data.push(
-          transaction
-        );
+        group[getCustomDate(transaction.details.date)].data.push(transaction);
         return group;
       }, {})
     );
