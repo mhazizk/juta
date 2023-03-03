@@ -118,7 +118,9 @@ const SplashScreen = ({ route, navigation }) => {
       expoPushToken,
     };
 
-    if (isConnected && !!expoPushToken) {
+    // TODO : commented for testing on iOS simulator
+    // if (isConnected && !!expoPushToken) {
+    if (isConnected) {
       switch (isFirstRun) {
         case true:
           switch (true) {
