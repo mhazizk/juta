@@ -25,6 +25,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ListSection from "../../../components/List/ListSection";
 import { ListItem } from "../../../components/List";
 import { useIsFocused } from "@react-navigation/native";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -278,16 +279,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -317,7 +309,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 />
               )}
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
