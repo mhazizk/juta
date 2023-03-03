@@ -18,6 +18,7 @@ import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
 import setNotificationHandler from "./src/utils/setNotificationHandler";
 import registerForPushNotificationsAsync from "./src/utils/registerForPushNotificationsAsync";
+import { StatusBar } from "react-native";
 
 setNotificationHandler();
 
@@ -89,6 +90,15 @@ const GlobalStateWrapper = () => {
         routingInstrumentation.registerNavigationContainer(navigationRef);
       }}
     >
+      <StatusBar
+        animated={true}
+        barStyle={
+          globalTheme.identifier.id.includes("dark")
+            ? "light-content"
+            : "dark-content"
+        }
+        backgroundColor={globalTheme.colors.header}
+      />
       <RootStack />
     </NavigationContainer>
   );
