@@ -10,6 +10,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { deleteAttachmentImage } from "../../../api/firebase/cloudStorage";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import {
   ButtonSecondary,
   ButtonSecondaryDanger,
@@ -443,16 +444,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
           </ListSection> */}
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -507,7 +499,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 }
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
