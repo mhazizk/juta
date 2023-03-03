@@ -228,7 +228,7 @@ const TotalExpenseWidget = ({
                   <TextPrimary
                     style={{
                       fontSize: 20,
-                      fontStyle: "bold",
+                      fontWeight: "bold",
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       paddingBottom: 4,
                     }}
