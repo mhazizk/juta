@@ -18,6 +18,7 @@ import {
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const NewLoanContactScreen = ({ route, navigation }) => {
   const { fromScreen, targetScreen } = route.params;
@@ -195,16 +196,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -222,7 +214,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
