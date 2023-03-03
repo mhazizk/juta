@@ -1,3 +1,5 @@
+import * as utils from '../../utils'
+
 /*
  * Insert many transactions into existing state
  * @param message {Object} - the message object
