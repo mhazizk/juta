@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
+  Platform,
   TextInput,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -9,6 +10,7 @@ import {
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import ActionButtonWrapper from "../../components/ActionButtonWrapper";
 import {
   ButtonDisabled,
   ButtonPrimary,
@@ -398,21 +400,19 @@ const ModalScreen = ({ route, navigation }) => {
         {/* // TAG : Action Button */}
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
+            height: 16,
           }}
-        >
+        />
+        <ActionButtonWrapper paddingHorizontal={64}>
           {/* // TAG : Cancel Button */}
-          <View style={{ paddingRight: 8 }}>
+          <View style={{ flex: 1, paddingRight: 8 }}>
             <ButtonSecondary
               label="Cancel"
               onPress={() => navigation.goBack()}
             />
           </View>
           {/* // TAG : Save Button */}
-          <View style={{ paddingLeft: 8 }}>
+          <View style={{ flex: 2, paddingLeft: 8 }}>
             {!showButton && (
               <>
                 <ButtonDisabled label={mainButtonLabel} />
@@ -479,7 +479,7 @@ const ModalScreen = ({ route, navigation }) => {
               />
             )}
           </View>
-        </View>
+        </ActionButtonWrapper>
       </View>
     </>
   );
