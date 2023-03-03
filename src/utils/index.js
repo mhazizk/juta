@@ -29,3 +29,4 @@ export { default as checkIfLoanContactWillBePaid } from "./checkIfLoanContactWil
 export { default as findLoanContactByTransactionId } from "./findLoanContactByTransactionId";
 export { default as getNextLoanPayment } from "./getNextLoanPayment";
 export { default as getCustomDate } from "./getCustomDate";
+export { default as getRelativeDate } from "./getRelativeDate";
