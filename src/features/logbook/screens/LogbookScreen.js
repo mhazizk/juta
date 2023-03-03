@@ -153,7 +153,7 @@ const LogbookScreen = ({ route, navigation }) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
       // console.log(filtered)
-      setFilteredTransactions(filtered.transactions.map((section) => section));
+      setFilteredTransactions(filtered.transactions?.map((section) => section));
     }
 
     // if (selectedLogbook && sortedTransactions) {
