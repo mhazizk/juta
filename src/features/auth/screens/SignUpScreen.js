@@ -349,7 +349,8 @@ const SignUpScreen = ({ route, navigation }) => {
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                paddingVertical: 16,
+                alignItems: "flex-start",
                 justifyContent: "flex-start",
                 width: "100%",
               }}
@@ -366,36 +367,46 @@ const SignUpScreen = ({ route, navigation }) => {
                   setAgreeTerms(!agreeTerms);
                 }}
               />
-              <TextPrimary label="I accept all" />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(screenList.termsOfServiceScreen);
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  paddingVertical: 0,
+                  marginVertical: 0,
+                  width: "100%",
                 }}
               >
-                <TextPrimary
-                  label="Terms of Service"
-                  style={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 4,
-                    fontWeight: "bold",
+                <TextPrimary label="I accept all" />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(screenList.termsOfServiceScreen);
                   }}
-                />
-              </TouchableOpacity>
-              <TextPrimary label="and" />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(screenList.privacyPolicyScreen);
-                }}
-              >
-                <TextPrimary
-                  label="Privacy Policy"
-                  style={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 4,
-                    fontWeight: "bold",
+                >
+                  <TextPrimary
+                    label="Terms of Service"
+                    style={{
+                      paddingHorizontal: 4,
+                      fontWeight: "bold",
+                    }}
+                  />
+                </TouchableOpacity>
+                <TextPrimary label="and" />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(screenList.privacyPolicyScreen);
                   }}
-                />
-              </TouchableOpacity>
+                >
+                  <TextPrimary
+                    label="Privacy Policy"
+                    style={{
+                      padding:4,
+                      fontWeight: "bold",
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
             {/* // TAG : Button Active */}
             {showButton && (
