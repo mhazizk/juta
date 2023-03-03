@@ -1,11 +1,11 @@
 const CURRENCY_CONSTANTS = {
   DEFAULT: {
-    name: "IDR",
-    symbol: "Rp",
-    isoCode: "id",
-    thousandSeparator: ".",
-    significantDigits: 0,
-    decimalSeparator: ",",
+    name: "USD",
+    symbol: "$",
+    isoCode: "us",
+    thousandSeparator: ",",
+    significantDigits: 2,
+    decimalSeparator: ".",
   },
   OPTIONS: [
     {
