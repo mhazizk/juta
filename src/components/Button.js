@@ -43,7 +43,7 @@ export const ButtonPrimary = ({
               minWidth: 80,
               minHeight: 48,
               width: width || null,
-              paddingHorizontal: 16,
+              paddingHorizontal: width ? 16 : 4,
               justifyContent: "center",
               alignItems: "center",
               // margin: 4
@@ -88,7 +88,7 @@ export const ButtonPrimaryIcon = ({
               minWidth: 80,
               minHeight: 48,
               width: width || null,
-              paddingHorizontal: 16,
+              paddingHorizontal: width ? 16 : 4,
               justifyContent: "center",
               alignItems: "center",
               // margin: 4
@@ -137,7 +137,7 @@ export const ButtonPrimaryDanger = ({
               minWidth: 80,
               minHeight: 48,
               width: width || null,
-              paddingHorizontal: 16,
+              paddingHorizontal: width ? 16 : 4,
               justifyContent: "center",
               alignItems: "center",
               // margin: 4
@@ -174,7 +174,7 @@ export const ButtonDisabled = ({
             minWidth: 80,
             minHeight: 48,
             width: width || null,
-            paddingHorizontal: 16,
+            paddingHorizontal: width ? 16 : 4,
             justifyContent: "center",
             alignItems: "center",
             // margin: 4
@@ -208,7 +208,7 @@ export const ButtonPrimaryIconDisabled = ({
             minWidth: 80,
             minHeight: 48,
             width: width || null,
-            paddingHorizontal: 16,
+            paddingHorizontal: width ? 16 : 4,
             justifyContent: "center",
             alignItems: "center",
             // margin: 4
@@ -254,7 +254,7 @@ export const ButtonSecondary = ({
               minWidth: 80,
               minHeight: 48,
               width: width || null,
-              paddingHorizontal: 16,
+              paddingHorizontal: width ? 16 : 4,
               justifyContent: "center",
               alignItems: "center",
               // margin: 4
@@ -290,7 +290,7 @@ export const ButtonSecondaryDisabled = ({
             minWidth: 80,
             minHeight: 48,
             width: width || null,
-            paddingHorizontal: 16,
+            paddingHorizontal: width ? 16 : 4,
             justifyContent: "center",
             alignItems: "center",
             // margin: 4
@@ -329,7 +329,7 @@ export const ButtonSecondaryIconDisabled = ({
             minWidth: 80,
             minHeight: 48,
             width: width || null,
-            paddingHorizontal: 16,
+            paddingHorizontal: width ? 16 : 4,
             justifyContent: "center",
             alignItems: "center",
             // margin: 4
