@@ -45,6 +45,7 @@ import {
 } from "../../../api/firebase/cloudStorage";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
@@ -316,7 +317,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     },
                   });
                 }}
-                clearButtonMode="while-editing"
+                clearButtonMode="never"
                 defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
                   currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
@@ -347,7 +348,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             )}
           </TouchableOpacity>
           {/* </ScrollView> */}
-
           {/* // TAG : Details Section */}
           <View
             style={[
@@ -368,7 +368,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-
           <ListSection>
             {/* // TAG : Transaction */}
             <ListItem
@@ -814,7 +813,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
           </ListSection>
-
           {/* // TAG : Attachment Image */}
           {/* // TODO : hold the release of attachments */}
           {/* <ListSection>
@@ -984,18 +982,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </>
             )}
           </ListSection> */}
-
-          {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -1020,7 +1007,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
