@@ -265,14 +265,23 @@ const LoadingScreen = ({ route, navigation }) => {
 
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                    .PATCH_TRANSACTION,
+                    .PATCH_MANY_TRANSACTIONS,
                   payload: {
-                    prevTransaction,
-                    patchTransaction: finalTransaction,
-                    logbookToOpen,
+                    patchedTransactions: [finalTransaction],
                     reducerUpdatedAt,
                   },
                 });
+
+                // dispatchSortedTransactions({
+                //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+                //     .PATCH_TRANSACTION,
+                //   payload: {
+                //     prevTransaction,
+                //     patchTransaction: finalTransaction,
+                //     logbookToOpen,
+                //     reducerUpdatedAt,
+                //   },
+                // });
               });
             } else {
               const finalTransaction = {
@@ -301,14 +310,23 @@ const LoadingScreen = ({ route, navigation }) => {
 
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                  .PATCH_TRANSACTION,
+                  .PATCH_MANY_TRANSACTIONS,
                 payload: {
-                  prevTransaction,
-                  patchTransaction: finalTransaction,
-                  logbookToOpen,
+                  patchedTransactions: [finalTransaction],
                   reducerUpdatedAt,
                 },
               });
+
+              // dispatchSortedTransactions({
+              //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+              //     .PATCH_TRANSACTION,
+              //   payload: {
+              //     prevTransaction,
+              //     patchTransaction: finalTransaction,
+              //     logbookToOpen,
+              //     reducerUpdatedAt,
+              //   },
+              // });
             }
             break;
 
