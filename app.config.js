@@ -3,7 +3,7 @@ module.exports = ({ config }) => {
   const expoProjectID = "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3";
   const channelNameOptions = ["production", "staging", "development"];
 
-  const appVersion = "0.8.2-alpha";
+  const appVersion = "0.8.2-alpha-iOS";
   const androidVersionCode = 27;
   const iosBuildNumber = "1";
 
