@@ -5,7 +5,10 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
-import { ButtonPrimary, ButtonSecondaryDanger } from "../../../components/Button";
+import {
+  ButtonPrimary,
+  ButtonSecondaryDanger,
+} from "../../../components/Button";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import { TextPrimary } from "../../../components/Text";
@@ -19,6 +22,7 @@ import {
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import * as utils from "../../../utils";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const EditBudgetScreen = ({ navigation, route }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -321,16 +325,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1 }}>
               <ButtonSecondaryDanger
@@ -379,7 +374,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
