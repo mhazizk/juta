@@ -23,6 +23,7 @@ import {
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import * as utils from "../../../utils";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const EditLoanContactScreen = ({ route, navigation }) => {
   const { fromScreen, targetScreen, loanContactTransactionDetails } =
@@ -249,16 +250,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1, paddingHorizontal: 8 }}>
               <ButtonSecondaryDanger
@@ -307,7 +299,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
