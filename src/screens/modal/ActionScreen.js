@@ -15,6 +15,7 @@ import {
 import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import createNewLogbookAndSyncToFirestore from "../../features/logbook/model/createNewLogbookAndSyncToFirestore";
+import ActionButtonWrapper from "../../components/ActionButtonWrapper";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -234,14 +235,7 @@ const ActionScreen = ({ route, navigation }) => {
         </View>
 
         {/* // TAG : Action Button */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-          }}
-        >
+        <ActionButtonWrapper>
           {/* // TAG : Cancel Button */}
           <View style={{ paddingRight: 0 }}>
             <ButtonSecondary
@@ -250,7 +244,7 @@ const ActionScreen = ({ route, navigation }) => {
               onPress={() => navigation.goBack()}
             />
           </View>
-        </View>
+        </ActionButtonWrapper>
       </View>
     </>
   );
