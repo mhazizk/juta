@@ -3,6 +3,7 @@ import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ionIcons from "../../../assets/iconPacks/ionIcons";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
@@ -260,16 +261,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -317,7 +309,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>
