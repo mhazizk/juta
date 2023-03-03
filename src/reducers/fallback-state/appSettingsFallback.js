@@ -1,3 +1,4 @@
+import CURRENCY_CONSTANTS from "../../constants/currencyConstants";
 import THEME_CONSTANTS from "../../constants/themeConstants";
 
 const appSettingsFallback = {
@@ -22,8 +23,10 @@ const appSettingsFallback = {
   },
   searchSettings: { showTransactionsResult: true, showSettingsResult: true },
   logbookSettings: {
-    defaultCurrency: { name: "IDR", symbol: "Rp", isoCode: "id" },
-    secondaryCurrency: { name: "USD", symbol: "$", isoCode: "us" },
+    defaultCurrency: CURRENCY_CONSTANTS.DEFAULT,
+    secondaryCurrency: CURRENCY_CONSTANTS.OPTIONS.find((currency) => {
+      return currency.isoCode === "eu";
+    }),
     showSecondaryCurrency: false,
     showTransactionNotes: true,
     negativeCurrencySymbol: "-",
@@ -31,7 +34,7 @@ const appSettingsFallback = {
     dailySummary: "expense-only",
   },
   hiddenScreens: [],
-  currency: { name: "IDR", symbol: "Rp", isoCode: "id" },
+  currency: CURRENCY_CONSTANTS.DEFAULT,
   theme_id: THEME_CONSTANTS.DEFAULT.id,
 };
 export default appSettingsFallback;
