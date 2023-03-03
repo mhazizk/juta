@@ -45,6 +45,7 @@ import * as ImagePicker from "expo-image-picker";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import transactionDetailsModel from "../models/transactionDetailsModel";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -378,7 +379,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       },
                     });
                   }}
-                  clearButtonMode="while-editing"
+                  clearButtonMode="never"
                   defaultValue={utils.getFormattedNumber({
                     value: transaction.details.amount,
                     currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
@@ -1291,16 +1292,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </ListSection> */}
 
             {/* // TAG : Action Button */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingTop: 8,
-                paddingBottom: 24,
-                paddingHorizontal: 48,
-              }}
-            >
+            <ActionButtonWrapper>
               {/* // TAG : Cancel Button */}
               <View style={{ flex: 1, paddingRight: 8 }}>
                 <ButtonSecondary
@@ -1322,7 +1314,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }}
                 />
               </View>
-            </View>
+            </ActionButtonWrapper>
           </CustomScrollView>
         </View>
       )}
