@@ -205,12 +205,21 @@ const useFirestoreSubscriptions = ({
 
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .PATCH_TRANSACTION,
+                .PATCH_MANY_TRANSACTIONS,
               payload: {
-                patchTransaction: data,
+                patchedTransactions: [data],
                 reducerUpdatedAt: Date.now(),
               },
             });
+
+            // dispatchSortedTransactions({
+            //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+            //     .PATCH_TRANSACTION,
+            //   payload: {
+            //     patchTransaction: data,
+            //     reducerUpdatedAt: Date.now(),
+            //   },
+            // });
             // }
             break;
 
