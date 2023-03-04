@@ -24,6 +24,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import * as utils from "../../../utils";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditLoanContactScreen = ({ route, navigation }) => {
   const { fromScreen, targetScreen, loanContactTransactionDetails } =
@@ -192,7 +193,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                     { name: "non-profit" },
                     { name: "government" },
                   ],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setContact({
                       ...contact,
