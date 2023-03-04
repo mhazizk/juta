@@ -118,12 +118,19 @@ const ModalScreen = ({ route, navigation }) => {
   };
 
   const ShowModalContent = () => {
+    const themeVariant = globalTheme.identifier.id.includes("light")
+      ? "light"
+      : "dark";
+    const textColor = globalTheme.text.textPrimary.color;
+
     switch (showTemporaryDatePicker) {
       case true:
         return (
           <RNDateTimePicker
             mode="date"
             display="spinner"
+            textColor={textColor}
+            themeVariant={themeVariant}
             value={new Date(selectedItem)}
             minimumDate={
               minimumDateInMillis ? new Date(minimumDateInMillis) : null
@@ -142,6 +149,8 @@ const ModalScreen = ({ route, navigation }) => {
               <RNDateTimePicker
                 mode="date"
                 display="spinner"
+                textColor={textColor}
+                themeVariant={themeVariant}
                 value={new Date(selectedItem)}
                 minimumDate={
                   minimumDateInMillis ? new Date(minimumDateInMillis) : null
@@ -159,6 +168,8 @@ const ModalScreen = ({ route, navigation }) => {
               <RNDateTimePicker
                 mode="datetime"
                 display="spinner"
+                textColor={textColor}
+                themeVariant={themeVariant}
                 value={new Date(selectedItem)}
                 minimumDate={
                   minimumDateInMillis ? new Date(minimumDateInMillis) : null
