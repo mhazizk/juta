@@ -1,6 +1,6 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect, useState } from "react";
-import { Alert, TextInput, View } from "react-native";
+import { Alert, Platform, TextInput, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../../api/firebase/firestore";
@@ -23,6 +23,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import * as utils from "../../../utils";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditBudgetScreen = ({ navigation, route }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -167,7 +168,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   budget_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={patchBudget.budget_name}
               value={patchBudget.budget_name}
             />
@@ -236,7 +237,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  modalType: "textInput",
+                  modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                   title: "Budget Limit",
                   placeholder: "Enter budget limit ...",
                   keyboardType: "numeric",
@@ -284,7 +285,55 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 backgroundColor: globalTheme.colors.secondary,
               }}
               onPress={() => {
-                showDatePicker({ mode: "start" });
+                const finishDate = utils.getCustomDate(patchBudget.finish_date);
+
+                switch (Platform.OS) {
+                  case "android":
+                    return utils.datePicker({
+                      initialDateInMillis: patchBudget.start_date,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        const startDate = utils.getCustomDate(dateInMillis);
+                        if (startDate > finishDate) {
+                          setNewBudget({
+                            ...newBudget,
+                            start_date: dateInMillis,
+                            finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
+                          });
+                        } else {
+                          setNewBudget({
+                            ...newBudget,
+                            start_date: dateInMillis,
+                          });
+                        }
+                      },
+                    });
+
+                  case "ios":
+                    return navigation.navigate(screenList.modalScreen, {
+                      title: "Select date",
+                      modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                      defaultOption: patchBudget.start_date,
+                      minimumDateInMillis: new Date(
+                        new Date().setHours(0, 0, 0, 0)
+                      ).getTime(),
+                      selected: (dateInMillis) => {
+                        const startDate = utils.getCustomDate(dateInMillis);
+                        if (startDate > finishDate) {
+                          setNewBudget({
+                            ...newBudget,
+                            start_date: dateInMillis,
+                            finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
+                          });
+                        } else {
+                          setNewBudget({
+                            ...newBudget,
+                            start_date: dateInMillis,
+                          });
+                        }
+                      },
+                    });
+                }
               }}
             />
             {/* // TAG : Finish date */}
@@ -306,7 +355,39 @@ const EditBudgetScreen = ({ navigation, route }) => {
                 backgroundColor: globalTheme.colors.secondary,
               }}
               onPress={() => {
-                showDatePicker({ mode: "finish" });
+                switch (Platform.OS) {
+                  case "android":
+                    return utils.datePicker({
+                      initialDateInMillis: patchBudget.finish_date,
+                      minimumDateInMillis:
+                        newBudget.start_date + 1000 * 60 * 60 * 24,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        setNewBudget({
+                          ...newBudget,
+                          finish_date: dateInMillis,
+                        });
+                      },
+                    });
+
+                  case "ios":
+                    return navigation.navigate(screenList.modalScreen, {
+                      title: "Select date",
+                      modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                      defaultOption: patchBudget.finish_date,
+                      minimumDateInMillis:
+                        newBudget.start_date + 1000 * 60 * 60 * 24,
+                      selected: (dateInMillis) => {
+                        const dateAtMidnightInMillis = new Date(
+                          dateInMillis
+                        ).setHours(23, 59, 59, 999);
+                        setNewBudget({
+                          ...newBudget,
+                          finish_date: dateAtMidnightInMillis,
+                        });
+                      },
+                    });
+                }
               }}
             />
             {/* // TAG : Repeat */}
@@ -341,7 +422,7 @@ const EditBudgetScreen = ({ navigation, route }) => {
                         style: "cancel",
                       },
                       {
-                        text: "YES",
+                        text: "Delete",
                         onPress: () => {
                           setTimeout(async () => {
                             await firestore.deleteData(
