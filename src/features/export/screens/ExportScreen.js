@@ -17,6 +17,7 @@ import { TextPrimary } from "../../../components/Text";
 import Loading from "../../../components/Loading";
 import screenList from "../../../navigations/ScreenList";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const ExportScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -146,7 +147,7 @@ const ExportScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select Logbook",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: logbooks?.logbooks?.map((logbook) => {
                       return {
                         ...logbook,
