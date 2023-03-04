@@ -14,7 +14,9 @@ import {
 import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
 import { RoundProgressBar } from "../../../components/charts/RoundProgressBar";
 import * as utils from "../../../utils";
+import TextTicker from "react-native-text-ticker";
 
+// TODO : fix budget showing warning with cost to go, not cost to date
 export const MyBudgetsWidget = ({
   label,
   props,
@@ -58,14 +60,16 @@ export const MyBudgetsWidget = ({
     findActiveBudget();
   }, [sortedTransactions.groupSorted]);
 
-  useEffect(() => {}, [activeBudget]);
+  useEffect(() => {
+    // ShowMyBudgetContent();
+  }, [activeBudget]);
 
   // TAG : Function Section
   const findActiveBudget = () => {
     let spentList = [];
     let transactionList = [];
 
-    if (budgets.budgets?.length) {
+    if (budgets.budgets?.length > 0) {
       const activeBudget = budgets.budgets.find(
         (budget) => Date.now() <= budget?.finish_date
       );
@@ -126,147 +130,430 @@ export const MyBudgetsWidget = ({
             overflow: "hidden",
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 16,
-            }}
-          >
-            {activeBudget.spent / activeBudget?.budget?.limit > 0.8 && (
-              <IonIcons
-                name="warning"
-                size={18}
-                color={globalTheme.widgets.myBudgets.cardTextColor}
-                style={{ paddingRight: 8 }}
-              />
-            )}
+          <ShowMyBudgetContent activeBudget={activeBudget} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
 
+const ShowMyBudgetContent = ({ activeBudget }) => {
+  const { spent, budget } = activeBudget;
+  const budgetRatio = spent / budget?.limit;
+  switch (true) {
+    case budgetRatio < 0.8:
+      return <ShowOnTrack activeBudget={activeBudget} />;
+    case budgetRatio >= 0.8 && budgetRatio < 1:
+      return <ShowWarning activeBudget={activeBudget} />;
+    case budgetRatio >= 1:
+      return <ShowOverBudget activeBudget={activeBudget} />;
+    case !activeBudget.budget:
+      return <ShowNoBudget activeBudget={activeBudget} />;
+  }
+};
+
+const ShowOnTrack = ({ activeBudget }) => {
+  const { spent, budget } = activeBudget;
+  const { globalTheme } = useGlobalTheme();
+  const { appSettings } = useGlobalAppSettings();
+  return (
+    <>
+      <View
+        style={{
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          flex: 1,
+          padding: 16,
+        }}
+      >
+        <View
+          style={{
+            alignItems: "flex-start",
+          }}
+        >
+          <RoundProgressBar
+            // Styling
+            showPercentage={false}
+            fontSize={20}
+            fontColor={globalTheme.widgets.myBudgets.cardTextColor}
+            radius={26}
+            strokeWidth={10}
+            width={64}
+            height={64}
+            color={globalTheme.widgets.myBudgets.cardTextColor}
+            // Data
+            spent={spent}
+            limit={budget?.limit}
+            data={{
+              labels: ["Active"],
+              data: [
+                (spent > budget?.limit ? budget?.limit : spent) / budget?.limit,
+              ],
+            }}
+          />
+        </View>
+        <View
+          style={{
+            alignItems: "flex-start",
+            width: "100%",
+            height: "100%",
+            paddingVertical: 8,
+          }}
+        >
+          <TextPrimary
+            label={`Budget\nOn Track`}
+            style={{
+              paddingBottom: 4,
+              fontSize: 18,
+              fontWeight: "bold",
+              color: globalTheme.widgets.myBudgets.cardTextColor,
+            }}
+          />
+          <TextTicker
+            style={{
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+            duration={3000}
+            loop
+            bounce
+            repeatSpacer={50}
+            marqueeDelay={1000}
+            shouldAnimateTreshold={10}
+          >
             <TextPrimary
-              label="My Budgets"
+              label={`Limit: ${
+                appSettings.logbookSettings.defaultCurrency.symbol
+              } ${utils.getFormattedNumber({
+                value: utils.dailyLimit({
+                  limit: budget?.limit,
+                  spent: spent,
+                  startDate: budget?.start_date,
+                  finishDate: budget?.finish_date,
+                }),
+                negativeSymbol:
+                  appSettings.logbookSettings.negativeCurrencySymbol,
+                currencyIsoCode:
+                  appSettings.logbookSettings.defaultCurrency.isoCode,
+              })}/day`}
               style={{
-                fontSize: 18,
+                // flex: 1,
+                textAlign: "center",
+                fontSize: 16,
                 fontWeight: "bold",
                 color: globalTheme.widgets.myBudgets.cardTextColor,
               }}
             />
-          </View>
-          {activeBudget.budget && (
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  paddingHorizontal: 16,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <RoundProgressBar
-                  // Styling
-                  fontSize={24}
-                  fontColor={globalTheme.widgets.myBudgets.cardTextColor}
-                  radius={32}
-                  strokeWidth={10}
-                  width={74}
-                  height={74}
-                  color={globalTheme.widgets.myBudgets.cardTextColor}
-                  // Data
-                  spent={activeBudget.spent}
-                  limit={activeBudget.budget.limit}
-                  data={{
-                    labels: ["Active"],
-                    data: [
-                      (activeBudget.spent > activeBudget.budget.limit
-                        ? activeBudget.budget.limit
-                        : activeBudget.spent) / activeBudget.budget.limit,
-                    ],
-                  }}
-                />
-                <View style={{ flex: 1, paddingLeft: 8 }}>
-                  {activeBudget.spent / activeBudget.budget.limit <= 0.8 && (
-                    <TextPrimary
-                      label="On Track"
-                      style={{
-                        fontSize: 14,
-                        fontWeight: "bold",
-                        color: globalTheme.widgets.myBudgets.cardTextColor,
-                      }}
-                    />
-                  )}
-                  {activeBudget.spent / activeBudget.budget.limit > 0.8 &&
-                    activeBudget.spent / activeBudget.budget.limit < 1 && (
-                      <TextPrimary
-                        label="Almost There"
-                        style={{
-                          fontSize: 14,
-                          fontWeight: "bold",
-                          color: globalTheme.widgets.myBudgets.cardTextColor,
-                        }}
-                      />
-                    )}
-                  {activeBudget.spent / activeBudget.budget.limit >= 1 && (
-                    <TextPrimary
-                      label="Over budget"
-                      style={{
-                        fontSize: 14,
-                        fontWeight: "bold",
-                        color: globalTheme.widgets.myBudgets.cardTextColor,
-                      }}
-                    />
-                  )}
+          </TextTicker>
+        </View>
+      </View>
+      <FontAwesome5Icon
+        name="piggy-bank"
+        color="#3ed7b1"
+        size={100}
+        style={{
+          transform: [{ rotate: "-0deg" }, { scaleX: -1 }],
+          zIndex: -1,
+          position: "absolute",
+          bottom: -0,
+          right: -0,
+        }}
+      />
+    </>
+  );
+};
 
-                  <View
-                    style={{
-                      marginVertical: 4,
-                      height: 1,
-                      width: "100%",
-                      backgroundColor:
-                        globalTheme.widgets.myBudgets.cardTextColor,
-                    }}
-                  />
-                  <TextPrimary
-                    label={`${(
-                      (activeBudget.spent / activeBudget.budget.limit) *
-                      100
-                    ).toFixed(0)}% spent`}
-                    style={{
-                      fontSize: 14,
-                      color: globalTheme.widgets.myBudgets.cardTextColor,
-                    }}
-                  />
-                  {activeBudget.spent / activeBudget.budget.limit < 1 && (
-                    <TextPrimary
-                      label={`${(
-                        ((activeBudget.budget.limit - activeBudget.spent) /
-                          activeBudget.budget.limit) *
-                        100
-                      ).toFixed(0)}% left`}
-                      style={{
-                        fontSize: 14,
-                        color: globalTheme.widgets.myBudgets.cardTextColor,
-                      }}
-                    />
-                  )}
-                </View>
-              </View>
-            </>
-          )}
-          {!activeBudget.budget && (
-            <FontAwesome5Icon
-              name="piggy-bank"
-              color={globalTheme.widgets.myBudgets.cardIconColor}
-              size={100}
+const ShowWarning = ({ activeBudget }) => {
+  const { spent, budget } = activeBudget;
+  const { globalTheme } = useGlobalTheme();
+  const { appSettings } = useGlobalAppSettings();
+  return (
+    <>
+      <View
+        style={{
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          flex: 1,
+          padding: 16,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <RoundProgressBar
+            // Styling
+            showPercentage={false}
+            fontSize={20}
+            fontColor={globalTheme.widgets.myBudgets.cardTextColor}
+            radius={26}
+            strokeWidth={10}
+            width={64}
+            height={64}
+            color={globalTheme.widgets.myBudgets.cardTextColor}
+            // Data
+            spent={spent}
+            limit={budget?.limit}
+            data={{
+              labels: ["Active"],
+              data: [
+                (spent > budget?.limit ? budget?.limit : spent) / budget?.limit,
+              ],
+            }}
+          />
+          <IonIcons
+            name="warning"
+            size={28}
+            color={globalTheme.widgets.myBudgets.cardTextColor}
+            style={{
+              position: "absolute",
+              top: 16,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            alignItems: "flex-start",
+            width: "100%",
+            height: "100%",
+            paddingVertical: 8,
+          }}
+        >
+          <TextPrimary
+            label={`Budget\nWarning`}
+            style={{
+              paddingBottom: 4,
+              fontSize: 18,
+              fontWeight: "bold",
+              color: globalTheme.widgets.myBudgets.cardTextColor,
+            }}
+          />
+          <TextTicker
+            style={{
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+            duration={3000}
+            loop
+            bounce
+            repeatSpacer={50}
+            marqueeDelay={1000}
+            shouldAnimateTreshold={10}
+          >
+            <TextPrimary
+              label={`Limit: ${
+                appSettings.logbookSettings.defaultCurrency.symbol
+              } ${utils.getFormattedNumber({
+                value: utils.dailyLimit({
+                  limit: budget?.limit,
+                  spent: spent,
+                  startDate: budget?.start_date,
+                  finishDate: budget?.finish_date,
+                }),
+                negativeSymbol:
+                  appSettings.logbookSettings.negativeCurrencySymbol,
+                currencyIsoCode:
+                  appSettings.logbookSettings.defaultCurrency.isoCode,
+              })}/day`}
               style={{
-                transform: [{ rotate: "-0deg" }, { scaleX: -1 }],
-                zIndex: -1,
-                position: "absolute",
-                bottom: -10,
-                right: -10,
+                // flex: 1,
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "bold",
+                color: globalTheme.widgets.myBudgets.cardTextColor,
               }}
             />
-          )}
+          </TextTicker>
         </View>
-      </TouchableOpacity>
+      </View>
+      <FontAwesome5Icon
+        name="piggy-bank"
+        color="#f6b148"
+        size={100}
+        style={{
+          transform: [{ rotate: "-0deg" }, { scaleX: -1 }],
+          zIndex: -1,
+          position: "absolute",
+          bottom: -0,
+          right: -0,
+        }}
+      />
+    </>
+  );
+};
+
+const ShowOverBudget = ({ activeBudget }) => {
+  const { spent, budget } = activeBudget;
+  const { globalTheme } = useGlobalTheme();
+  const { appSettings } = useGlobalAppSettings();
+  return (
+    <>
+      <View
+        style={{
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          flex: 1,
+          padding: 16,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <RoundProgressBar
+            // Styling
+            showPercentage={false}
+            fontSize={20}
+            fontColor={globalTheme.widgets.myBudgets.cardTextColor}
+            radius={26}
+            strokeWidth={10}
+            width={64}
+            height={64}
+            color={globalTheme.widgets.myBudgets.cardTextColor}
+            // Data
+            spent={spent}
+            limit={budget?.limit}
+            data={{
+              labels: ["Active"],
+              data: [
+                (spent > budget?.limit ? budget?.limit : spent) / budget?.limit,
+              ],
+            }}
+          />
+          <IonIcons
+            name="warning"
+            size={28}
+            color={globalTheme.widgets.myBudgets.cardTextColor}
+            style={{
+              position: "absolute",
+              top: 16,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            alignItems: "flex-start",
+            width: "100%",
+            height: "100%",
+            paddingVertical: 8,
+          }}
+        >
+          <TextPrimary
+            label={`Over\nBudget`}
+            style={{
+              paddingBottom: 4,
+              fontSize: 18,
+              fontWeight: "bold",
+              color: globalTheme.widgets.myBudgets.cardTextColor,
+            }}
+          />
+          <TextTicker
+            style={{
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+            duration={3000}
+            loop
+            bounce
+            repeatSpacer={50}
+            marqueeDelay={1000}
+            shouldAnimateTreshold={10}
+          >
+            <TextPrimary
+              label={`Limit: ${
+                appSettings.logbookSettings.defaultCurrency.symbol
+              } ${utils.getFormattedNumber({
+                value: utils.dailyLimit({
+                  limit: budget?.limit,
+                  spent: spent,
+                  startDate: budget?.start_date,
+                  finishDate: budget?.finish_date,
+                }),
+                negativeSymbol:
+                  appSettings.logbookSettings.negativeCurrencySymbol,
+                currencyIsoCode:
+                  appSettings.logbookSettings.defaultCurrency.isoCode,
+              })}/day`}
+              style={{
+                // flex: 1,
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "bold",
+                color: globalTheme.widgets.myBudgets.cardTextColor,
+              }}
+            />
+          </TextTicker>
+        </View>
+      </View>
+      <FontAwesome5Icon
+        name="piggy-bank"
+        color="#dc5690"
+        size={100}
+        style={{
+          transform: [{ rotate: "-0deg" }, { scaleX: -1 }],
+          zIndex: -1,
+          position: "absolute",
+          bottom: -0,
+          right: -0,
+        }}
+      />
+    </>
+  );
+};
+
+const ShowNoBudget = () => {
+  const { globalTheme } = useGlobalTheme();
+  const { appSettings } = useGlobalAppSettings();
+
+  return (
+    <>
+      <View
+        style={{
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          flex: 1,
+          padding: 16,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <TextPrimary
+            label="My Budgets"
+            style={{
+              paddingBottom: 4,
+              fontSize: 18,
+              fontWeight: "bold",
+              color: globalTheme.widgets.myBudgets.cardTextColor,
+            }}
+          />
+        </View>
+      </View>
+      <FontAwesome5Icon
+        name="piggy-bank"
+        color={utils.hexToRgb({
+          hex: globalTheme.widgets.myBudgets.cardTextColor,
+          opacity: 0.3,
+        })}
+        size={100}
+        style={{
+          transform: [{ rotate: "-0deg" }, { scaleX: -1 }],
+          zIndex: -1,
+          position: "absolute",
+          bottom: -0,
+          right: -0,
+        }}
+      />
     </>
   );
 };
