@@ -30,6 +30,7 @@ import LANGUAGE_CONSTANTS from "../../../constants/languageConstants";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import FONT_SIZE_CONSTANTS from "../../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../../constants/logbookSettingsConstants";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const SettingsScreen = ({ navigation }) => {
   const { globalFeatureSwitch } = useGlobalFeatureSwitch();
@@ -158,7 +159,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select Theme",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     iconProps: {
                       name: "contrast",
                       pack: "IonIcons",
@@ -213,7 +214,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Font Size",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: FONT_SIZE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option };
                     }),
@@ -240,7 +241,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Language",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: LANGUAGE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option.name, locale: option.locale };
                     }),
@@ -406,7 +407,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
-                    modalType: "currencyList",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
@@ -487,7 +488,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
-                    modalType: "currencyList",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
@@ -646,7 +647,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set negative currency symbol",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS,
                     defaultOption:
                       NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS.find(
