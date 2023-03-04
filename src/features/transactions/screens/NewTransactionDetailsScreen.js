@@ -46,6 +46,7 @@ import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import transactionDetailsModel from "../models/transactionDetailsModel";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -469,7 +470,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Transaction",
                     props: [{ name: "expense" }, { name: "income" }],
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     selected: (item) => {
                       setTransaction({
                         ...transaction,
@@ -501,15 +502,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 }, ${
                   !transaction?.details?.date
                     ? "Pick date"
-                    : new Date(transaction.details.date)
-                        .getHours()
-                        .toString()
-                        .padStart(2, "0") +
-                      ":" +
-                      new Date(transaction.details.date)
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, "0")
+                    : new Date(transaction?.details?.date).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )
                 }`}
                 iconPack="IonIcons"
                 iconLeftName="calendar"
@@ -534,25 +533,51 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       ? globalTheme.list.incomeContainer.color
                       : globalTheme.text.textPrimary.color,
                 }}
-                onPress={() =>
-                  utils.datePicker({
-                    initialDateInMillis: transaction?.details?.date,
-                    pickerStyle: "dateAndTime",
-                    callback: (dateInMillis) => {
-                      setTransaction({
-                        ...transaction,
-                        details: {
-                          ...transaction.details,
-                          date: dateInMillis,
+                onPress={() => {
+                  switch (Platform.OS) {
+                    case "android":
+                      return utils.datePicker({
+                        initialDateInMillis: transaction?.details?.date,
+                        pickerStyle: "dateAndTime",
+                        callback: (dateInMillis) => {
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              date: dateInMillis,
+                            },
+                          });
+                          setLocalRepeatedTransactions({
+                            ...localRepeatedTransactions,
+                            repeat_start_date: dateInMillis,
+                          });
                         },
                       });
-                      setLocalRepeatedTransactions({
-                        ...localRepeatedTransactions,
-                        repeat_start_date: dateInMillis,
+
+                    case "ios":
+                      return navigation.navigate(screenList.modalScreen, {
+                        title: "Select date",
+                        modalType: MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER,
+                        defaultOption: transaction?.details?.date,
+                        selected: (dateInMillis) => {
+                          setTransaction({
+                            ...transaction,
+                            details: {
+                              ...transaction.details,
+                              date: dateInMillis,
+                            },
+                          });
+                          setLocalRepeatedTransactions({
+                            ...localRepeatedTransactions,
+                            repeat_start_date: dateInMillis,
+                          });
+                        },
                       });
-                    },
-                  })
-                }
+
+                    default:
+                      return;
+                  }
+                }}
               />
               {/* // TAG : From Logbook */}
               <ListItem
@@ -589,7 +614,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Logbooks",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: loadedLogbooks,
                     iconProps: {
                       name: "book",
@@ -653,7 +678,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select category",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props:
                       transaction.details.in_out === "expense"
                         ? categories.categories.expense.sort((a, b) => {
@@ -1008,7 +1033,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   ) {
                     navigation.navigate(screenList.modalScreen, {
                       title: "Repeat Transaction",
-                      modalType: "list",
+                      modalType: MODAL_TYPE_CONSTANTS.LIST,
                       iconProps: {
                         name: "repeat",
                         pack: "IonIcons",
