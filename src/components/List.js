@@ -132,7 +132,10 @@ export const ListItem = ({
             {rightLabel && useRightLabelContainer && (
               <>
                 <View
-                  style={[{ ...rightLabelContainerStyle }, { maxWidth: "70%" }]}
+                  style={[
+                    { ...rightLabelContainerStyle },
+                    { maxWidth: "85%" },
+                  ]}
                 >
                   {useFlagIcon && (
                     <CountryFlag
