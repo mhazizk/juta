@@ -16,6 +16,7 @@ import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import createNewLogbookAndSyncToFirestore from "../../features/logbook/model/createNewLogbookAndSyncToFirestore";
 import ActionButtonWrapper from "../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../constants/modalTypeConstants";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -100,7 +101,7 @@ const ActionScreen = ({ route, navigation }) => {
                         text: "Create new logbook",
                         onPress: () => {
                           return navigation.navigate(screenList.modalScreen, {
-                            modalType: "textInput",
+                            modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                             title: "Create new logbook",
                             placeholder: "Enter new logbook name...",
                             selected: (item) => {
@@ -192,7 +193,7 @@ const ActionScreen = ({ route, navigation }) => {
                   );
                 } else {
                   navigation.navigate(screenList.modalScreen, {
-                    modalType: "textInput",
+                    modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                     title: "Create new logbook",
                     placeholder: "Enter new logbook name...",
                     selected: (item) => {
