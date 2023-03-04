@@ -20,6 +20,7 @@ import {
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { getDeviceId } from "../../../utils";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -73,7 +74,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Change display name",
-                    modalType: "textInput",
+                    modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                     maxLength: 14,
                     defaultOption: userAccount.displayName,
                     selected: (item) => {
