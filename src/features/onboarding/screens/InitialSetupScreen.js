@@ -34,6 +34,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -589,7 +590,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
             onPress={() =>
               navigation.navigate(screenList.modalScreen, {
                 title: "New Logbook",
-                modalType: "textInput",
+                modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                 placeholder: "Enter new logbook name ...",
                 defaultOption: newLogbook.logbook_name || "",
                 selected: (item) =>
