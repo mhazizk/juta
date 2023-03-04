@@ -20,6 +20,7 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import TransactionList from "../../../features/transactions/components/TransactionList";
 import * as utils from "../../../utils";
 import TextTicker from "react-native-text-ticker";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 const { width, height } = Dimensions.get("screen");
 
 const LogbookScreen = ({ route, navigation }) => {
@@ -258,7 +259,7 @@ const LogbookScreen = ({ route, navigation }) => {
                           key: logbook.logbook_id,
                         };
                       }),
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     selected: (item) => {
                       setTargetLogbook(item);
                     },
