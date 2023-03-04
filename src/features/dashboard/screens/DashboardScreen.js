@@ -7,7 +7,8 @@ import RecentTransactions from "../../../components/RecentTransactions";
 import TotalExpenseWidget from "../components/TotalExpenseWidget";
 import screenList from "../../../navigations/ScreenList";
 import {
-  useGlobalAppSettings, useGlobalTheme
+  useGlobalAppSettings,
+  useGlobalTheme,
 } from "../../../reducers/GlobalContext";
 import DashboardHeader from "../components/DashboardHeader";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
@@ -20,7 +21,8 @@ const DashboardScreen = ({ navigation }) => {
   const { globalTheme } = useGlobalTheme();
   const [screenLoading, setScreenLoading] = useState(false);
 
-  const cardHeight = 200 - 16; // 200 is the height of card in the carousel
+  // const cardHeight = 200 - 16; // 200 is the height of card in the carousel
+  const cardHeight = screenWidth / 2 - 24;
   const isFocus = useIsFocused();
 
   useEffect(() => {}, []);
@@ -104,6 +106,7 @@ const DashboardScreen = ({ navigation }) => {
               )} */}
               {/* // TAG : My Loans widget */}
               <MyLoansWidget
+                height={cardHeight}
                 marginRight={8}
                 onPress={() => {
                   navigation.navigate(screenList.myLoansScreen);
@@ -114,8 +117,9 @@ const DashboardScreen = ({ navigation }) => {
               {appSettings.dashboardSettings.showMyBudgetsWidget && (
                 <MyBudgetsWidget
                   isFocused={isFocus}
+                  boxHeight={cardHeight}
                   boxMarginLeft={8}
-                  boxWidth={screenWidth / 2 - 24}
+                  boxWidth={cardHeight}
                   onPress={() =>
                     navigation.navigate(screenList.myBudgetsScreen)
                   }
