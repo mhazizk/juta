@@ -1,6 +1,6 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
+import { Platform, TextInput, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../../api/firebase/firestore";
@@ -21,6 +21,7 @@ import ListSection from "../../../components/List/ListSection";
 import { ListItem } from "../../../components/List";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -32,7 +33,7 @@ const NewBudgetScreen = ({ navigation }) => {
   const [newBudget, setNewBudget] = useState({
     uid: appSettings.uid,
     budget_id: uuid.v4(),
-    budget_name: "Monthly Budget",
+    budget_name: "",
     repeat: false,
     limit: 0,
     start_date: +new Date().setHours(0, 0, 0, 0),
@@ -162,7 +163,7 @@ const NewBudgetScreen = ({ navigation }) => {
                 budget_name: string,
               });
             }}
-            clearButtonMode="while-editing"
+            clearButtonMode="never"
             defaultValue={newBudget.budget_name}
             value={newBudget.budget_name}
           />
@@ -229,7 +230,7 @@ const NewBudgetScreen = ({ navigation }) => {
             }}
             onPress={() => {
               navigation.navigate(screenList.modalScreen, {
-                modalType: "textInput",
+                modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                 title: "Set budget limit",
                 placeholder: "Enter budget limit ...",
                 keyboardType: "numeric",
@@ -276,7 +277,55 @@ const NewBudgetScreen = ({ navigation }) => {
               backgroundColor: globalTheme.colors.secondary,
             }}
             onPress={() => {
-              showDatePicker({ mode: "start" });
+              const finishDate = utils.getCustomDate(newBudget.finish_date);
+
+              switch (Platform.OS) {
+                case "android":
+                  return utils.datePicker({
+                    initialDateInMillis: newBudget.start_date,
+                    pickerStyle: "dateOnly",
+                    callback: (dateInMillis) => {
+                      const startDate = utils.getCustomDate(dateInMillis);
+                      if (startDate > finishDate) {
+                        setNewBudget({
+                          ...newBudget,
+                          start_date: dateInMillis,
+                          finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
+                        });
+                      } else {
+                        setNewBudget({
+                          ...newBudget,
+                          start_date: dateInMillis,
+                        });
+                      }
+                    },
+                  });
+
+                case "ios":
+                  return navigation.navigate(screenList.modalScreen, {
+                    title: "Select date",
+                    modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                    defaultOption: newBudget.start_date,
+                    minimumDateInMillis: new Date(
+                      new Date().setHours(0, 0, 0, 0)
+                    ).getTime(),
+                    selected: (dateInMillis) => {
+                      const startDate = utils.getCustomDate(dateInMillis);
+                      if (startDate > finishDate) {
+                        setNewBudget({
+                          ...newBudget,
+                          start_date: dateInMillis,
+                          finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
+                        });
+                      } else {
+                        setNewBudget({
+                          ...newBudget,
+                          start_date: dateInMillis,
+                        });
+                      }
+                    },
+                  });
+              }
             }}
           />
           {/* // TAG : Finish date */}
@@ -298,7 +347,39 @@ const NewBudgetScreen = ({ navigation }) => {
               backgroundColor: globalTheme.colors.secondary,
             }}
             onPress={() => {
-              showDatePicker({ mode: "finish" });
+              switch (Platform.OS) {
+                case "android":
+                  return utils.datePicker({
+                    initialDateInMillis: newBudget.finish_date,
+                    minimumDateInMillis:
+                      newBudget.start_date + 1000 * 60 * 60 * 24,
+                    pickerStyle: "dateOnly",
+                    callback: (dateInMillis) => {
+                      setNewBudget({
+                        ...newBudget,
+                        finish_date: dateInMillis,
+                      });
+                    },
+                  });
+
+                case "ios":
+                  return navigation.navigate(screenList.modalScreen, {
+                    title: "Select date",
+                    modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                    defaultOption: newBudget.finish_date,
+                    minimumDateInMillis:
+                      newBudget.start_date + 1000 * 60 * 60 * 24,
+                    selected: (dateInMillis) => {
+                      const dateAtMidnightInMillis = new Date(
+                        dateInMillis
+                      ).setHours(23, 59, 59, 999);
+                      setNewBudget({
+                        ...newBudget,
+                        finish_date: dateAtMidnightInMillis,
+                      });
+                    },
+                  });
+              }
             }}
           />
           {/* // TAG : Repeat */}
