@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -20,6 +21,7 @@ import {
 import CustomTextInput from "../../components/CustomTextInput";
 import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
+import MODAL_TYPE_CONSTANTS from "../../constants/modalTypeConstants";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
@@ -48,6 +50,8 @@ const ModalScreen = ({ route, navigation }) => {
     modalType,
     defaultOption = null,
     props,
+    minimumDateInMillis = null,
+    initialDateInMillis,
     keyboardType = "default",
     maxLength = null,
     iconProps = null,
@@ -57,11 +61,14 @@ const ModalScreen = ({ route, navigation }) => {
     // Returns
     selected,
   } = route.params;
+  const isTextInput = modalType === MODAL_TYPE_CONSTANTS.TEXT_INPUT;
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const [selectedItem, setSelectedItem] = useState(defaultOption);
   const [textInput, setTextInput] = useState(defaultOption);
   const [showButton, setShowButton] = useState(false);
+  const [showTemporaryDatePicker, setShowTemporaryDatePicker] = useState(false);
+  const textInputRef = useRef();
 
   const colors = [
     { name: "Default", color: globalTheme.colors.foreground },
@@ -86,18 +93,358 @@ const ModalScreen = ({ route, navigation }) => {
     }
   }, [selectedItem, textInput]);
 
+  useEffect(() => {
+    ShowModalContent();
+  }, [showTemporaryDatePicker]);
+
   const onPressReturn = () => {
-    switch (true) {
-      case modalType === "list" ||
-        modalType === "currencyList" ||
-        modalType === "colorPicker" ||
-        modalType === "iconPicker":
+    switch (modalType) {
+      case MODAL_TYPE_CONSTANTS.DATE_PICKER:
         return selected(selectedItem);
-      case modalType === "textInput":
+      case MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER:
+        return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.COLOR_PICKER:
+        return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.CURRENCY_LIST:
+        return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.TEXT_INPUT:
         return selected(textInput);
+      case MODAL_TYPE_CONSTANTS.LIST:
+        return selected(selectedItem);
 
       default:
         return;
+    }
+  };
+
+  const ShowModalContent = () => {
+    switch (showTemporaryDatePicker) {
+      case true:
+        return (
+          <RNDateTimePicker
+            mode="date"
+            display="spinner"
+            value={new Date(selectedItem)}
+            minimumDate={
+              minimumDateInMillis ? new Date(minimumDateInMillis) : null
+            }
+            onChange={(event, selectedDate) => {
+              const currentDate = selectedDate || new Date(selectedItem);
+              event.type === "set" && setSelectedItem(currentDate.getTime());
+              event.type === "dismissed";
+            }}
+          />
+        );
+      case false:
+        switch (modalType) {
+          case MODAL_TYPE_CONSTANTS.DATE_PICKER:
+            return (
+              <RNDateTimePicker
+                mode="date"
+                display="spinner"
+                value={new Date(selectedItem)}
+                minimumDate={
+                  minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                }
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || new Date(selectedItem);
+                  event.type === "set" &&
+                    setSelectedItem(currentDate.getTime());
+                  event.type === "dismissed";
+                }}
+              />
+            );
+          case MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER:
+            return (
+              <RNDateTimePicker
+                mode="datetime"
+                display="spinner"
+                value={new Date(selectedItem)}
+                minimumDate={
+                  minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                }
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || new Date(selectedItem);
+                  event.type === "set" &&
+                    setSelectedItem(currentDate.getTime());
+                  event.type === "dismissed";
+                }}
+              />
+            );
+          case MODAL_TYPE_CONSTANTS.LIST:
+            return (
+              <FlatList
+                data={props}
+                keyExtractor={(item, id) => item?.name + id}
+                renderItem={({ item }) => (
+                  <>
+                    <ListItem
+                      pressable
+                      iconLeftName={item?.icon?.name || iconProps?.name}
+                      iconPack={item?.icon?.pack || iconProps?.pack}
+                      iconLeftColor={
+                        iconProps?.color
+                          ? iconProps?.color
+                          : item?.icon?.color === "default"
+                          ? globalTheme.colors.foreground
+                          : item?.icon?.color
+                      }
+                      iconRightName={
+                        // selectedItem?.id === item?.id ||
+                        selectedItem?.name === item?.name
+                          ? "checkmark-circle"
+                          : null
+                      }
+                      leftLabel={
+                        item?.name[0].toUpperCase() + item?.name.substring(1)
+                      }
+                      onPress={() => {
+                        setSelectedItem(item);
+                      }}
+                    />
+                  </>
+                )}
+              />
+            );
+
+          case MODAL_TYPE_CONSTANTS.CURRENCY_LIST:
+            return (
+              <FlatList
+                data={props}
+                keyExtractor={(item, id) => item?.name + id}
+                renderItem={({ item }) => (
+                  <>
+                    <TouchableNativeFeedback
+                      onPress={() => {
+                        setSelectedItem(item);
+                      }}
+                    >
+                      <View style={globalTheme.list.listContainer}>
+                        <View
+                          style={{
+                            borderRadius: 4,
+                            overflow: "hidden",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CountryFlag isoCode={item?.isoCode} size={20} />
+                        </View>
+                        <View
+                          style={{
+                            ...globalTheme.list.listItem,
+                            paddingLeft: 16,
+                          }}
+                        >
+                          <TextPrimary
+                            label={`${
+                              item?.name[0].toUpperCase() +
+                              item?.name.substring(1)
+                            } / ${item?.symbol}`}
+                          />
+                          <IonIcons
+                            name="checkmark-circle"
+                            size={22}
+                            style={{
+                              display:
+                                selectedItem?.name == item?.name
+                                  ? "flex"
+                                  : "none",
+                            }}
+                            color={globalTheme.colors.foreground}
+                          />
+                        </View>
+                      </View>
+                    </TouchableNativeFeedback>
+                  </>
+                )}
+              />
+            );
+
+          case MODAL_TYPE_CONSTANTS.TEXT_INPUT:
+            return (
+              <View
+                style={{
+                  paddingLeft: 16,
+                  paddingRight: !textInput ? 16 : 0,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <TextInput
+                  keyboardType={keyboardType}
+                  style={{
+                    paddingHorizontal: 16,
+                    fontSize: 16,
+                    borderRadius: 16,
+                    borderWidth: 1,
+                    height: 48,
+                    flex: 1,
+                    borderColor: globalTheme.colors.primary,
+                    color: globalTheme.text.textPrimary.color,
+                  }}
+                  ref={textInputRef}
+                  placeholder={placeholder}
+                  placeholderTextColor={globalTheme.text.textSecondary.color}
+                  defaultValue={defaultOption || ""}
+                  value={textInput}
+                  onChangeText={(input) => setTextInput(input)}
+                  autoFocus={true}
+                  maxLength={maxLength}
+                />
+                {textInput && (
+                  <IonIcons
+                    onPress={() => setTextInput("")}
+                    name="close-circle"
+                    size={20}
+                    style={{ paddingHorizontal: 16 }}
+                    color={globalTheme.colors.foreground}
+                  />
+                )}
+              </View>
+            );
+          case MODAL_TYPE_CONSTANTS.ACTION:
+            return (
+              <>
+                {/* // TAG : Delete Action */}
+                <TouchableNativeFeedback onPress={() => {}}>
+                  <View style={globalTheme.list.listContainer}>
+                    <IonIcons
+                      name="trash"
+                      size={18}
+                      // color={item?.icon?.color}
+                      style={{ paddingRight: 16 }}
+                    />
+                    <View style={globalTheme.list.listItem}>
+                      <TextPrimary label="Delete" />
+                    </View>
+                  </View>
+                </TouchableNativeFeedback>
+              </>
+            );
+          case MODAL_TYPE_CONSTANTS.COLOR_PICKER:
+            return (
+              <FlatList
+                horizontal
+                // numColumns={4}
+                // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
+                data={colors}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                keyExtractor={(item, id) => item?.name}
+                renderItem={({ item }) => (
+                  <>
+                    <TouchableOpacity
+                      style={{ marginRight: 8 }}
+                      onPress={() => {
+                        setSelectedItem(item);
+                      }}
+                    >
+                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
+
+                      {/* Color Circle */}
+                      <View
+                        style={{
+                          height: 48,
+                          width: 48,
+                          borderRadius: 48 / 2,
+                          backgroundColor: item.color,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <IonIcons
+                          name="checkmark-sharp"
+                          size={24}
+                          color={globalTheme.colors.background}
+                          style={{
+                            display:
+                              selectedItem?.color === item?.color
+                                ? "flex"
+                                : "none",
+                          }}
+                        />
+                      </View>
+
+                      {/* </View> */}
+                    </TouchableOpacity>
+                  </>
+                )}
+              />
+            );
+
+          case MODAL_TYPE_CONSTANTS.ICON_PICKER:
+            return (
+              <FlatList
+                numColumns={6}
+                columnWrapperStyle={{
+                  justifyContent: "space-between",
+                  padding: 8,
+                }}
+                showsHorizontalScrollIndicator={false}
+                data={props}
+                style={{ height: "100%" }}
+                contentContainerStyle={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                keyExtractor={(item, id) => item?.name}
+                renderItem={({ item }) => (
+                  <>
+                    <TouchableOpacity
+                      style={{ marginRight: 8 }}
+                      onPress={() => {
+                        setSelectedItem(item);
+                      }}
+                    >
+                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
+
+                      {/* Color Circle */}
+                      <View
+                        style={{
+                          height: 48,
+                          width: 48,
+                          borderWidth: 2,
+                          borderRadius: 48 / 2,
+                          borderColor:
+                            selectedItem?.name === item.name
+                              ? globalTheme.colors.primary
+                              : "transparent",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {item.pack === "IonIcons" && (
+                          <IonIcons
+                            name={item.name}
+                            size={24}
+                            color={
+                              item.color === "default"
+                                ? globalTheme.colors.foreground
+                                : item.color
+                            }
+                          />
+                        )}
+                        {/* <IonIcons name='checkmark-sharp' size={24} color={globalTheme.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
+                      </View>
+
+                      {/* </View> */}
+                    </TouchableOpacity>
+                  </>
+                )}
+              />
+            );
+
+          default:
+            return;
+        }
     }
   };
 
@@ -127,137 +474,41 @@ const ModalScreen = ({ route, navigation }) => {
           },
         ]}
       >
-        <View style={{ padding: 16 }}>
-          <TextPrimary label={title} style={{ fontSize: 24 }} />
-        </View>
-
-        {/* // TAG : Flatlist Category Props */}
-        {modalType === "list" && (
-          <FlatList
-            data={props}
-            keyExtractor={(item, id) => item?.name + id}
-            renderItem={({ item }) => (
-              <>
-                <ListItem
-                  pressable
-                  iconLeftName={item?.icon?.name || iconProps?.name}
-                  iconPack={item?.icon?.pack || iconProps?.pack}
-                  iconLeftColor={
-                    iconProps?.color
-                      ? iconProps?.color
-                      : item?.icon?.color === "default"
-                      ? globalTheme.colors.foreground
-                      : item?.icon?.color
-                  }
-                  iconRightName={
-                    // selectedItem?.id === item?.id ||
-                    selectedItem?.name === item?.name
-                      ? "checkmark-circle"
-                      : null
-                  }
-                  leftLabel={
-                    item?.name[0].toUpperCase() + item?.name.substring(1)
-                  }
-                  onPress={() => {
-                    setSelectedItem(item);
-                  }}
-                />
-              </>
-            )}
-          />
-        )}
-
-        {/* // TAG : Flatlist Params Currency */}
-        {modalType === "currencyList" && (
-          <FlatList
-            data={props}
-            keyExtractor={(item, id) => item?.name + id}
-            renderItem={({ item }) => (
-              <>
-                <TouchableNativeFeedback
-                  onPress={() => {
-                    setSelectedItem(item);
-                  }}
-                >
-                  <View style={globalTheme.list.listContainer}>
-                    <View
-                      style={{
-                        borderRadius: 4,
-                        overflow: "hidden",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CountryFlag isoCode={item?.isoCode} size={20} />
-                    </View>
-                    <View
-                      style={{
-                        ...globalTheme.list.listItem,
-                        paddingLeft: 16,
-                      }}
-                    >
-                      <TextPrimary
-                        label={`${
-                          item?.name[0].toUpperCase() + item?.name.substring(1)
-                        } / ${item?.symbol}`}
-                      />
-                      <IonIcons
-                        name="checkmark-circle"
-                        size={22}
-                        style={{
-                          display:
-                            selectedItem?.name == item?.name ? "flex" : "none",
-                        }}
-                        color={globalTheme.colors.foreground}
-                      />
-                    </View>
-                  </View>
-                </TouchableNativeFeedback>
-              </>
-            )}
-          />
-        )}
-
-        {/* // TAG : Text Input Params */}
-        {modalType === "textInput" && (
+        {/* // TAG : Header */}
+        <View style={{ flex: 0, padding: 16 }}>
           <View
             style={{
-              paddingLeft: 16,
-              paddingRight: !textInput ? 16 : 0,
               flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "space-between",
             }}
           >
-            <TextInput
-              keyboardType={keyboardType}
-              style={{
-                paddingHorizontal: 16,
-                fontSize: 16,
-                borderRadius: 16,
-                borderWidth: 1,
-                height: 48,
-                flex: 1,
-                borderColor: globalTheme.colors.primary,
-                color: globalTheme.text.textPrimary.color,
-              }}
-              placeholder={placeholder}
-              placeholderTextColor={globalTheme.text.textSecondary.color}
-              defaultValue={defaultOption || ""}
-              value={textInput}
-              onChangeText={(input) => setTextInput(input)}
-              maxLength={maxLength}
-            />
-            {textInput && (
-              <IonIcons
-                onPress={() => setTextInput("")}
-                name="close-circle"
-                size={20}
-                style={{ paddingHorizontal: 16 }}
-                color={globalTheme.colors.foreground}
-              />
+            <TextPrimary label={title} style={{ fontSize: 24 }} />
+            {modalType === MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER && (
+              <TouchableOpacity
+                style={{
+                  flex: 0,
+                  alignItems: "flex-end",
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
+                onPress={() => {
+                  setShowTemporaryDatePicker(!showTemporaryDatePicker);
+                }}
+              >
+                <TextPrimary
+                  label={new Date(selectedItem).toLocaleString("en-US", {
+                    dateStyle: "long",
+                  })}
+                />
+              </TouchableOpacity>
             )}
           </View>
-        )}
+        </View>
+
+        <ShowModalContent />
 
         {/* // TAG : Option Flatlist Params */}
         {modalType === "action" && (
@@ -422,7 +673,7 @@ const ModalScreen = ({ route, navigation }) => {
               <ButtonPrimary
                 label={mainButtonLabel}
                 onPress={() => {
-                  if (modalType === "textInput" && !textInput) {
+                  if (isTextInput && !textInput) {
                     Alert.alert(
                       "Error",
                       "Please enter a value",
@@ -436,12 +687,12 @@ const ModalScreen = ({ route, navigation }) => {
                     );
                   }
 
-                  if (modalType === "textInput" && textInput) {
+                  if (isTextInput && textInput) {
                     onPressReturn();
                     navigation.goBack();
                   }
 
-                  if (modalType !== "textInput") {
+                  if (!isTextInput) {
                     onPressReturn();
                     navigation.goBack();
                   }
@@ -452,7 +703,7 @@ const ModalScreen = ({ route, navigation }) => {
               <ButtonPrimaryDanger
                 label={mainButtonLabel}
                 onPress={() => {
-                  if (modalType === "textInput" && !textInput) {
+                  if (isTextInput && !textInput) {
                     Alert.alert(
                       "Error",
                       "Please enter a value",
@@ -466,12 +717,12 @@ const ModalScreen = ({ route, navigation }) => {
                     );
                   }
 
-                  if (modalType === "textInput" && textInput) {
+                  if (isTextInput && textInput) {
                     onPressReturn();
                     navigation.goBack();
                   }
 
-                  if (modalType !== "textInput") {
+                  if (!isTextInput) {
                     onPressReturn();
                     navigation.goBack();
                   }
