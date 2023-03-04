@@ -10,6 +10,7 @@ import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
+import MODAL_TYPE_CONSTANTS from "../constants/modalTypeConstants";
 import AboutScreen from "../features/about/screens/AboutScreen";
 import AnalyticsScreen from "../features/analytics/screens/AnalyticsScreen";
 import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
@@ -542,7 +543,7 @@ const RootStack = () => {
                   if (logbookLimit > logbooks.logbooks?.length) {
                     // console.log(navigation);
                     navigation.navigate(screenList.modalScreen, {
-                      modalType: "textInput",
+                      modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                       title: "Create new logbook",
                       placeholder: "Enter new logbook name...",
                       selected: (item) => {
