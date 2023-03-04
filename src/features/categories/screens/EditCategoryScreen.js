@@ -8,6 +8,7 @@ import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import { TextPrimary } from "../../../components/Text";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -75,7 +76,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Pick icon",
-                  modalType: "iconPicker",
+                  modalType: MODAL_TYPE_CONSTANTS.ICON_PICKER,
                   mainButtonLabel: "Select",
                   props: ionIcons,
                   defaultOption: category.category.icon,
@@ -191,7 +192,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Category Type",
                   props: [{ name: "expense" }, { name: "income" }],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setCategory({
                       ...category,
@@ -228,7 +229,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Pick Icon Color",
-                  modalType: "colorPicker",
+                  modalType: MODAL_TYPE_CONSTANTS.COLOR_PICKER,
                   selected: (item) => {
                     setCategory({
                       ...category,
