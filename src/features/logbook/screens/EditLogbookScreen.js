@@ -24,6 +24,7 @@ import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import CheckList from "../../../components/CheckList";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -267,7 +268,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Main Currency",
-                  modalType: "currencyList",
+                  modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                   props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                     return a.name.localeCompare(b.name);
                   }),
