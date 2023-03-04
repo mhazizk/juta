@@ -301,9 +301,15 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
-                new Date(transaction?.details?.date).toDateString() +
-                " " +
-                new Date(transaction?.details?.date).toLocaleTimeString()
+                new Date(transaction.details.date).toDateString() +
+                ", " +
+                new Date(transaction?.details?.date).toLocaleTimeString(
+                  "en-US",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )
               }
             />
             {/* // TAG : Logbook */}
