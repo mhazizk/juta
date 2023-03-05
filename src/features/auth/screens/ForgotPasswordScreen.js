@@ -65,7 +65,7 @@ const ForgotPasswordScreen = () => {
         style={{
           width: "100%",
           paddingTop: 48,
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "center",
         }}
       >
