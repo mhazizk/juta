@@ -350,9 +350,11 @@ const SignUpScreen = ({ route, navigation }) => {
               style={{
                 flexDirection: "row",
                 paddingVertical: 16,
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
                 width: "100%",
+                // flexWrap: "wrap",
               }}
             >
               <CheckList
@@ -361,7 +363,6 @@ const SignUpScreen = ({ route, navigation }) => {
                 singleChecklist
                 marginRight={0}
                 item={true}
-                // primaryLabel="I accept all Terms of Services and Privacy Policy"
                 selected={agreeTerms}
                 onPress={() => {
                   setAgreeTerms(!agreeTerms);
@@ -376,9 +377,10 @@ const SignUpScreen = ({ route, navigation }) => {
                   paddingVertical: 0,
                   marginVertical: 0,
                   width: "100%",
+                  flex: 1,
                 }}
               >
-                <TextPrimary label="I accept all" />
+                <TextPrimary label="I accept " />
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate(screenList.termsOfServiceScreen);
@@ -387,21 +389,24 @@ const SignUpScreen = ({ route, navigation }) => {
                   <TextPrimary
                     label="Terms of Service"
                     style={{
-                      paddingHorizontal: 4,
                       fontWeight: "bold",
                     }}
                   />
                 </TouchableOpacity>
-                <TextPrimary label="and" />
+                <TextPrimary label=" and " />
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate(screenList.privacyPolicyScreen);
+                  }}
+                  style={{
+                    flexWrap: "wrap",
+                    flexDirection: "row",
                   }}
                 >
                   <TextPrimary
                     label="Privacy Policy"
                     style={{
-                      padding:4,
+                      paddingTop: 4,
                       fontWeight: "bold",
                     }}
                   />
