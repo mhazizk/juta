@@ -429,7 +429,7 @@ export const ButtonSecondaryDanger = ({
               minWidth: 80,
               minHeight: 48,
               width: width || null,
-              paddingHorizontal: 16,
+              paddingHorizontal: width ? 16 : 4,
               justifyContent: "center",
               alignItems: "center",
               // margin: 4
