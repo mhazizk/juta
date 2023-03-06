@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Platform, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -228,6 +228,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
     }, 1);
   };
 
+  const headerTextPosition = Platform.OS === "ios" ? "12%" : "5%";
+
   const pages = [
     // TAG : Select Theme
     {
@@ -240,7 +242,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
           <Text
             style={{
               position: "absolute",
-              top: "5%",
+              top: headerTextPosition,
               color: globalTheme.colors.primary,
               // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 30,
@@ -339,7 +341,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
     //       <Text
     //         style={{
     //           position: "absolute",
-    //           top: "5%",
+    //           top: headerTextPosition,
     //           color: selectedColor(selectedAppSettings.theme_id),
     //           fontSize: 30,
     //         }}
@@ -445,7 +447,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
           <Text
             style={{
               position: "absolute",
-              top: "5%",
+              top: headerTextPosition,
               color: globalTheme.colors.primary,
               // color: selectedColor(selectedAppSettings.theme_id),
               fontSize: 30,
@@ -548,31 +550,34 @@ const InitialSetupScreen = ({ route, navigation }) => {
       image: <Image />,
       title: (
         <>
-          <Text
+          <View
             style={{
-              paddingHorizontal: 16,
               position: "absolute",
-              top: "5%",
-              color: globalTheme.colors.primary,
-              // color: selectedColor(selectedAppSettings.theme_id),
-              fontSize: 30,
+              top: headerTextPosition,
+              alignItems: "center",
             }}
           >
-            Create Your First Logbook
-          </Text>
-          <Text
-            style={{
-              paddingHorizontal: 16,
-              position: "absolute",
-              top: "10%",
-              textAlign: "center",
-              color: globalTheme.colors.primary,
-              // color: selectedColor(selectedAppSettings.theme_id),
-              fontSize: 18,
-            }}
-          >
-            Logbook is a book to save your transactions, just like ordinary book
-          </Text>
+            <Text
+              style={{
+                paddingHorizontal: 16,
+                color: globalTheme.colors.primary,
+                fontSize: 30,
+              }}
+            >
+              Create Your First Logbook
+            </Text>
+            <Text
+              style={{
+                paddingHorizontal: 16,
+                textAlign: "center",
+                color: globalTheme.colors.primary,
+                fontSize: 18,
+              }}
+            >
+              Logbook is a book to save your transactions, just like ordinary
+              book
+            </Text>
+          </View>
           <Text
             style={{
               paddingHorizontal: 16,
@@ -591,7 +596,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
               navigation.navigate(screenList.modalScreen, {
                 title: "New Logbook",
                 modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
-                placeholder: "Enter new logbook name ...",
+                placeholder: "Enter new logbook name...",
                 defaultOption: newLogbook.logbook_name || "",
                 selected: (item) =>
                   setNewLogbook({
@@ -644,7 +649,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
       backgroundColor: globalTheme.colors.background,
       image: <Image source={doneSetup} style={{ width: 250, height: 250 }} />,
       title: "Everything is Set !",
-      subtitle: "Finish Setup and start using Juta App",
+      subtitle: "Finish Setup and start using Juta",
     },
   ];
 
