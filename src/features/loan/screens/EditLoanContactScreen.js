@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  TextInput,
+  TouchableNativeFeedback,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import uuid from "react-native-uuid";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -231,21 +237,57 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                 color: globalTheme.text.textPrimary.color,
               }}
               onPress={() => {
-                utils.datePicker({
-                  minimumDateInMillis:
-                    getLatestTransactionDate(loanContactTransactionDetails) ||
-                    Date.now() + 1 * 24 * 60 * 60 * 1000,
-                  initialDateInMillis:
-                    getLatestTransactionDate(loanContactTransactionDetails) ||
-                    Date.now() + 7 * 24 * 60 * 60 * 1000,
-                  pickerStyle: "dateOnly",
-                  callback: (dateInMillis) => {
-                    setContact({
-                      ...contact,
-                      payment_due_date: dateInMillis,
+                const initialDateInMillis =
+                  getLatestTransactionDate(loanContactTransactionDetails) ||
+                  new Date().setHours(0, 0, 0, 0).getTime() +
+                    7 * 24 * 60 * 60 * 1000;
+
+                const minimumDateInMillis =
+                  getLatestTransactionDate(loanContactTransactionDetails) ||
+                  new Date().setHours(0, 0, 0, 0).getTime() +
+                    1 * 24 * 60 * 60 * 1000;
+
+                switch (Platform.OS) {
+                  case "android":
+                    return utils.datePicker({
+                      minimumDateInMillis: minimumDateInMillis,
+                      initialDateInMillis: initialDateInMillis,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        const dateInMidnight = new Date(dateInMillis).setHours(
+                          23,
+                          59,
+                          59,
+                          999
+                        );
+                        setContact({
+                          ...contact,
+                          payment_due_date: new Date(dateInMidnight).getTime(),
+                        });
+                      },
                     });
-                  },
-                });
+
+                  case "ios":
+                    return navigation.navigate(screenList.modalScreen, {
+                      title: "Select date",
+                      modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                      defaultOption: initialDateInMillis,
+                      minimumDateInMillis: minimumDateInMillis,
+                      selected: (dateInMillis) => {
+                        const dateInMidnight = new Date(dateInMillis).setHours(
+                          23,
+                          59,
+                          59,
+                          999
+                        );
+
+                        setContact({
+                          ...contact,
+                          payment_due_date: new Date(dateInMidnight).getTime(),
+                        });
+                      },
+                    });
+                }
               }}
             />
           </ListSection>
