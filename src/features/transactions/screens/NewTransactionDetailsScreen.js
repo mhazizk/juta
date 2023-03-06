@@ -922,7 +922,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       textAlign="right"
                       returnKeyType="done"
                       keyboardType="default"
-                      placeholder="Add additional notes ..."
+                      placeholder="Add notes..."
                       placeholderTextColor={
                         globalTheme.text.textSecondary.color
                       }
@@ -1150,10 +1150,10 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 pressable
                 disabled={
                   !getFeatureLimit({
-                  globalFeatureSwitch,
-                   subscriptionPlan: userAccount.subscription.plan,
-                   featureName: FEATURE_NAME.ATTACHMENT_IMAGES}
-                  )
+                    globalFeatureSwitch,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                  })
                 }
                 leftLabel="Attachment Images"
                 iconLeftName="image"
@@ -1161,23 +1161,23 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 rightLabel={
                   transaction?.details?.attachment_URL?.length
                     ? transaction?.details?.attachment_URL?.length + " image(s)"
-                    : "Add attachment"
+                    : "Add"
                 }
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                  getFeatureLimit({
-                  globalFeatureSwitch,
-                   subscriptionPlan: userAccount.subscription.plan,
-                   featureName: FEATURE_NAME.ATTACHMENT_IMAGES}
-                  )
+                    getFeatureLimit({
+                      globalFeatureSwitch,
+                      subscriptionPlan: userAccount.subscription.plan,
+                      featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                    })
                   ) {
                     // No permissions request is necessary for launching the image library
                     let result = await ImagePicker.launchImageLibraryAsync({
                       mediaTypes: ImagePicker.MediaTypeOptions.Images,
                       // allowsEditing: true,
                       allowsMultipleSelection: true,
-                      quality: 1,
+                      quality: 0,
                       // TODO : try compressing image for firebase storage
                     });
 
@@ -1307,7 +1307,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     <IonIcons
                       name="close-circle"
                       size={20}
-                      style={{ padding: 16 }}
+                      style={{ paddingVertical: 16, paddingRight: 8 }}
                       color={globalTheme.colors.foreground}
                     />
                     <TextPrimary label="Clear all" />
