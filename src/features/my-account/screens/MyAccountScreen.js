@@ -13,9 +13,10 @@ import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import screenList from "../../../navigations/ScreenList";
 import {
-  useGlobalAppSettings, useGlobalFeatureSwitch,
+  useGlobalAppSettings,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
@@ -126,8 +127,9 @@ const MyAccountScreen = ({ item, navigation }) => {
               />
             </ListSection>
             <ListSection>
+              {/* // TODO : Commented for app store review */}
               {/* // TAG : Premium Subscription */}
-              <ListItem
+              {/* <ListItem
                 pressable
                 leftLabel="Subscription"
                 rightLabel={
@@ -140,7 +142,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.mySubscriptionScreen)
                 }
-              />
+              /> */}
               {/* // TAG : Export Data */}
               <ListItem
                 pressable
