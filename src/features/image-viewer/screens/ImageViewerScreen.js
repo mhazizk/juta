@@ -1,4 +1,7 @@
-import { useGlobalAppSettings } from "../../../reducers/GlobalContext";
+import {
+  useGlobalAppSettings,
+  useGlobalTheme,
+} from "../../../reducers/GlobalContext";
 import { View, Text, Image, Animated, Dimensions } from "react-native";
 import {
   PanGestureHandler,
@@ -8,9 +11,11 @@ import {
 import { useState, useRef, createRef } from "react";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import Carousel from "react-native-reanimated-carousel";
+import { TextPrimary } from "../../../components/Text";
 
 const ImageViewerScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
 
   return (
     <>
@@ -22,7 +27,10 @@ const ImageViewerScreen = ({ route, navigation }) => {
         data={route?.params?.uriList}
         key={(index) => index}
         style={{
+          flex: 1,
           backgroundColor: "black",
+          alignItems: "center",
+          justifyContent: "center",
         }}
         renderItem={({ index }) => (
           <>
