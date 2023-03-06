@@ -407,7 +407,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
-                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
@@ -488,7 +488,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
-                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
