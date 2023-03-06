@@ -267,7 +267,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Main Currency",
+                  title: "Main currency",
                   modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                   props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                     return a.name.localeCompare(b.name);
