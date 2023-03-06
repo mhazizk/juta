@@ -36,8 +36,6 @@ export const uploadAndGetAttachmentImageURL = async (
   const response = await fetch(imageUri);
   const blob = await response.blob();
 
-  console.log("blob :" + blob.size);
-
   const storage = getStorage(app);
 
   const imagePath = ref(
@@ -45,13 +43,23 @@ export const uploadAndGetAttachmentImageURL = async (
     `attachments/${attachmentId}.${imageExtension}`
   );
 
-  console.log(imagePath);
+  console.log(
+    JSON.stringify(
+      {
+        blobSize: blob.size,
+        imagePath,
+      },
+      null,
+      2
+    )
+  );
   // const snapshot = await uploadBytes(imagePath, blob);
   const snapshot = await uploadBytes(imagePath, blob).catch((error) => {
-    console.log(JSON.stringify(error));
+    console.log(JSON.stringify(error, null, 2));
   });
   if (snapshot) {
     // alert("line 50");
+    console.log(JSON.stringify({ snapshot }, null, 2));
   }
   const url = await getDownloadURL(snapshot.ref);
 
