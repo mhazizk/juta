@@ -44,7 +44,7 @@ const BottomTab = ({ route, navigation }) => {
         <View
           style={{
             position: "absolute",
-            height: 50,
+            height: 400,
             right: 0,
             left: 0,
             top: 0,
