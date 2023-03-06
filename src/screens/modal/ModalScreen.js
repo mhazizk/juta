@@ -111,6 +111,10 @@ const ModalScreen = ({ route, navigation }) => {
         return selected(textInput);
       case MODAL_TYPE_CONSTANTS.LIST:
         return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.ICON_PICKER:
+        return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.ACTION:
+        return selected(selectedItem);
 
       default:
         return;
