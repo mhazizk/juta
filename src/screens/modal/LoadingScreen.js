@@ -105,7 +105,7 @@ const LoadingScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log({ onLoad: route.params.initialRawTransactionsLength })
-    console.log("loadingScreenParams :" + JSON.stringify(route?.params));
+    console.log(JSON.stringify(route?.params, null, 2));
 
     // TAG : Transaction Timeout
     setTimeout(
@@ -131,6 +131,7 @@ const LoadingScreen = ({ route, navigation }) => {
                 }
               );
 
+              // TODO : fix upload image to firebase cloud storage
               const getNewURL = async () => {
                 const attachmentURL = [];
                 await newAttachmentURL.reduce(async (prev, curr) => {
@@ -153,6 +154,7 @@ const LoadingScreen = ({ route, navigation }) => {
                     attachment_URL: attachmentURL,
                   },
                 };
+                console.log(JSON.stringify({ finalTransaction }, null, 2));
                 // TODO : commented out for testing
                 setTimeout(async () => {
                   await firestore.setData(
