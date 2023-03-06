@@ -844,9 +844,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               pressable
               disabled={
                 !getFeatureLimit({
-                globalFeatureSwitch,
-                subscriptionPlan: userAccount.subscription.plan,
-                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                  globalFeatureSwitch,
+                  subscriptionPlan: userAccount.subscription.plan,
+                  featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
                 })
               }
               leftLabel="Attachment Images"
@@ -860,11 +860,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               iconRightName="add"
               onPress={async () => {
                 if (
-                getFeatureLimit({
-                globalFeatureSwitch,
-                subscriptionPlan: userAccount.subscription.plan,
-                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
-                })
+                  getFeatureLimit({
+                    globalFeatureSwitch,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                  })
                 ) {
                   // No permissions request is necessary for launching the image library
                   let result = await ImagePicker.launchImageLibraryAsync({
@@ -998,7 +998,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="close-circle"
                     size={20}
-                    style={{ padding: 16 }}
+                    style={{ paddingVertical: 16, paddingRight: 8 }}
                     color={globalTheme.colors.foreground}
                   />
                   <TextPrimary label="Clear all" />
