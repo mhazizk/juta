@@ -156,7 +156,7 @@ const MyLoansWidget = ({
                 name="cash"
                 color={utils.hexToRgb({
                   hex: globalTheme.widgets.myLoans.cardTextColor,
-                  opacity: 0.3,
+                  opacity: 0.2,
                 })}
                 size={100}
                 style={{
