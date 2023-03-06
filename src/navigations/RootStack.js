@@ -183,7 +183,6 @@ const RootStack = () => {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-
         // TODO : commented for testing on iOS simulator
         // listenSubscriptionStatus({
         //   globalFeatureSwitch,
@@ -194,7 +193,6 @@ const RootStack = () => {
         //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
         //       payload: newAppSettings,
         //     });
-
         //     dispatchUserAccount({
         //       type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
         //       payload: newUserAccount,
