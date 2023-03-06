@@ -10,7 +10,7 @@ import { TextPrimary } from "./Text";
 const CustomTextInput = ({
   title,
   editable = true,
-  inputType,
+  inputType = "default",
   inputQuery,
   inputRef,
   //   secureTextEntry = false,
@@ -23,6 +23,26 @@ const CustomTextInput = ({
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  let keyboardInputType;
+
+  switch (inputType) {
+    case "email":
+      keyboardInputType = "email-address";
+      break;
+    case "password":
+      keyboardInputType = "default";
+      break;
+    case "displayName":
+      keyboardInputType = "default";
+      break;
+    case "search":
+      keyboardInputType = "default";
+      break;
+    default:
+      keyboardInputType = "default";
+      break;
+  }
 
   const rightButton = () => {
     switch (true) {
@@ -120,7 +140,7 @@ const CustomTextInput = ({
           <TextInput
             editable={editable}
             ref={inputRef}
-            keyboardType={inputType === "password" ? "default" : "default"}
+            keyboardType={keyboardInputType}
             returnKeyType={returnKeyType || "default"}
             placeholder={placeholder || "Type something here ..."}
             placeholderTextColor={globalTheme.text.textSecondary.color}
@@ -134,7 +154,7 @@ const CustomTextInput = ({
             secureTextEntry={inputType === "password" && secureTextEntry}
             onChangeText={(searchText) => onChange(searchText)}
             onEndEditing={onEndEditing}
-            clearButtonMode="while-editing"
+            clearButtonMode="never"
             value={inputQuery}
           />
           {rightButton()}
