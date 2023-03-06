@@ -100,7 +100,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
               maxLength={30}
               textAlign="center"
               returnKeyType="done"
-              placeholder="Type category name ..."
+              placeholder="Type category name..."
               placeholderTextColor={globalTheme.text.textSecondary.color}
               style={[
                 {
@@ -121,7 +121,7 @@ const NewCategoryScreen = ({ route, navigation }) => {
                   },
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={category.category.name}
               value={category.category.name}
             />
