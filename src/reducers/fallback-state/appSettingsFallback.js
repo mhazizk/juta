@@ -21,6 +21,11 @@ const appSettingsFallback = {
     showMyLogbooksWidget: true,
     showMyLoansWidget: true,
   },
+  budgetSettings: {
+    firstDayOfTheWeek: "monday",
+    firstDateOfTheMonth: 1,
+    firstMonthOfTheYear: "january",
+  },
   searchSettings: { showTransactionsResult: true, showSettingsResult: true },
   logbookSettings: {
     defaultCurrency: CURRENCY_CONSTANTS.DEFAULT,
