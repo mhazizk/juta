@@ -218,6 +218,14 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       let updatedUserAccount = userAccountData;
       let updatedAppSettings = appSettingsData;
 
+      // TAG : check if appSettings has budgetSettings property
+      if (!updatedAppSettings.hasOwnProperty("budgetSettings")) {
+        updatedAppSettings = {
+          ...updatedAppSettings,
+          budgetSettings: appSettingsFallback.budgetSettings,
+        };
+      }
+
       // TODO : commented for testing on iOS simulator
       // updateSubscriptionStatus({
       //   globalFeatureSwitch: subsData,
