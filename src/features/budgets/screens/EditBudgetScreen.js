@@ -295,14 +295,14 @@ const EditBudgetScreen = ({ navigation, route }) => {
                       callback: (dateInMillis) => {
                         const startDate = utils.getCustomDate(dateInMillis);
                         if (startDate > finishDate) {
-                          setNewBudget({
-                            ...newBudget,
+                          setPatchBudget({
+                            ...patchBudget,
                             start_date: dateInMillis,
                             finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
                           });
                         } else {
-                          setNewBudget({
-                            ...newBudget,
+                          setPatchBudget({
+                            ...patchBudget,
                             start_date: dateInMillis,
                           });
                         }
@@ -320,14 +320,14 @@ const EditBudgetScreen = ({ navigation, route }) => {
                       selected: (dateInMillis) => {
                         const startDate = utils.getCustomDate(dateInMillis);
                         if (startDate > finishDate) {
-                          setNewBudget({
-                            ...newBudget,
+                          setPatchBudget({
+                            ...patchBudget,
                             start_date: dateInMillis,
                             finish_date: dateInMillis + 1000 * 60 * 60 * 24 * 1,
                           });
                         } else {
-                          setNewBudget({
-                            ...newBudget,
+                          setPatchBudget({
+                            ...patchBudget,
                             start_date: dateInMillis,
                           });
                         }
@@ -360,11 +360,11 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     return utils.datePicker({
                       initialDateInMillis: patchBudget.finish_date,
                       minimumDateInMillis:
-                        newBudget.start_date + 1000 * 60 * 60 * 24,
+                        patchBudget.start_date + 1000 * 60 * 60 * 24,
                       pickerStyle: "dateOnly",
                       callback: (dateInMillis) => {
-                        setNewBudget({
-                          ...newBudget,
+                        setPatchBudget({
+                          ...patchBudget,
                           finish_date: dateInMillis,
                         });
                       },
@@ -376,13 +376,13 @@ const EditBudgetScreen = ({ navigation, route }) => {
                       modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
                       defaultOption: patchBudget.finish_date,
                       minimumDateInMillis:
-                        newBudget.start_date + 1000 * 60 * 60 * 24,
+                        patchBudget.start_date + 1000 * 60 * 60 * 24,
                       selected: (dateInMillis) => {
                         const dateAtMidnightInMillis = new Date(
                           dateInMillis
                         ).setHours(23, 59, 59, 999);
-                        setNewBudget({
-                          ...newBudget,
+                        setPatchBudget({
+                          ...patchBudget,
                           finish_date: dateAtMidnightInMillis,
                         });
                       },
