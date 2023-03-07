@@ -1,5 +1,3 @@
-// TODO : Create a login screen
-
 import { View, Dimensions, TouchableOpacity } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
