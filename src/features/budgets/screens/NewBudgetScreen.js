@@ -22,6 +22,8 @@ import { ListItem } from "../../../components/List";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
+import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
@@ -34,6 +36,7 @@ const NewBudgetScreen = ({ navigation }) => {
     uid: appSettings.uid,
     budget_id: uuid.v4(),
     budget_name: "",
+    budget_type: BUDGET_TYPE_CONSTANTS.DEFAULT,
     repeat: false,
     limit: 0,
     start_date: +new Date().setHours(0, 0, 0, 0),
@@ -258,6 +261,115 @@ const NewBudgetScreen = ({ navigation }) => {
               });
             }}
           />
+          {/* // TAG : Budget type */}
+          <ListItem
+            pressable
+            iconLeftName="pricetags"
+            iconPack="IonIcons"
+            iconRightName="chevron-forward"
+            leftLabel="Budget type"
+            useRightLabelContainer
+            rightLabel={
+              BUDGET_TYPE_CONSTANTS.OPTIONS.find((budget) => {
+                return budget.id === newBudget.budget_type;
+              }).name
+            }
+            rightLabelContainerStyle={{
+              flexDirection: "row",
+              maxWidth: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 8,
+              borderRadius: 8,
+              backgroundColor: globalTheme.colors.secondary,
+            }}
+            onPress={() => {
+              navigation.navigate(screenList.modalScreen, {
+                modalType: MODAL_TYPE_CONSTANTS.LIST,
+                title: "Select budget type",
+                defaultOption:
+                  BUDGET_TYPE_CONSTANTS.OPTIONS.find((budget) => {
+                    return budget.id === newBudget.budget_type;
+                  }) || null,
+                props: BUDGET_TYPE_CONSTANTS.OPTIONS,
+                selected: (item) => {
+                  const today = Date.now();
+                  let startDateInMillis = newBudget.start_date;
+                  let finishDateInMillis = newBudget.finish_date;
+                  switch (item.id) {
+                    case "YEARLY":
+                      startDateInMillis = new Date(
+                        new Date().getFullYear(),
+                        0,
+                        1,
+                        0,
+                        0,
+                        0
+                      ).getTime();
+                      finishDateInMillis = utils.getNextDateInRange(
+                        startDateInMillis,
+                        "yearly"
+                      );
+
+                      break;
+                    case "MONTHLY":
+                      // startDate = utils.getFirstDateOfTheMonth(today).getTime();
+                      startDateInMillis = new Date(
+                        new Date().getFullYear(),
+                        new Date().getMonth(),
+                        appSettings.budgetSettings.firstDateOfTheMonth,
+                        0,
+                        0,
+                        0
+                      ).getTime();
+
+                      finishDateInMillis = utils.getNextDateInRange(
+                        startDateInMillis,
+                        "monthly"
+                      );
+
+                      break;
+                    case "WEEKLY":
+                      const getDay = new Date(today).getDay();
+                      const userPreferredDayOfTheWeek =
+                        BUDGET_SETTINGS_CONSTANTS.FIRST_DAY_OF_THE_WEEK.OPTIONS.findIndex(
+                          (day) => {
+                            return (
+                              day ===
+                              appSettings.budgetSettings.firstDayOfTheWeek
+                            );
+                          }
+                        );
+                      const different = userPreferredDayOfTheWeek - getDay;
+                      startDateInMillis = new Date(
+                        new Date().setDate(new Date().getDate() + different)
+                      ).getTime();
+
+                      finishDateInMillis = utils.getNextDateInRange(
+                        startDateInMillis,
+                        "weekly"
+                      );
+                      break;
+                    case "CUSTOM":
+                      // startDate = utils.getFirstDateOfTheMonth(today);
+                      // finishDate = utils.getLastDateOfTheMonth(today);
+                      break;
+
+                    default:
+                      break;
+                  }
+                  setNewBudget({
+                    ...newBudget,
+                    budget_type: item.id,
+                    start_date: startDateInMillis,
+                    finish_date: finishDateInMillis,
+                  });
+                },
+              });
+            }}
+          />
+        </ListSection>
+        <ListSection>
           {/* // TAG : Start date */}
           <ListItem
             pressable
@@ -306,9 +418,9 @@ const NewBudgetScreen = ({ navigation }) => {
                     title: "Select date",
                     modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
                     defaultOption: newBudget.start_date,
-                    minimumDateInMillis: new Date(
-                      new Date().setHours(0, 0, 0, 0)
-                    ).getTime(),
+                    // minimumDateInMillis: new Date(
+                    //   new Date().setHours(0, 0, 0, 0)
+                    // ).getTime(),
                     selected: (dateInMillis) => {
                       const startDate = utils.getCustomDate(dateInMillis);
                       if (startDate > finishDate) {
