@@ -31,6 +31,7 @@ import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import FONT_SIZE_CONSTANTS from "../../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../../constants/logbookSettingsConstants";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
 
 const SettingsScreen = ({ navigation }) => {
   const { globalFeatureSwitch } = useGlobalFeatureSwitch();
@@ -48,6 +49,9 @@ const SettingsScreen = ({ navigation }) => {
   );
   const [logbookSettings, setLogbookSettings] = useState(
     appSettings.logbookSettings
+  );
+  const [budgetSettings, setBudgetSettings] = useState(
+    appSettings.budgetSettings
   );
   const [currencyRates, setCurrencyRates] = useState(globalCurrencyRates);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +80,25 @@ const SettingsScreen = ({ navigation }) => {
     updated_at: Date.now(),
     updated_by: userAccount.uid,
   };
+
+  useEffect(() => {
+    if (!!budgetSettings) {
+      const payload = {
+        budgetSettings: budgetSettings,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      setTimeout(() => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+          payload: payload,
+        });
+      }, 1);
+    }
+  }, [budgetSettings]);
 
   useEffect(() => {
     if (!!logbookSettings) {
@@ -385,6 +408,154 @@ const SettingsScreen = ({ navigation }) => {
                 }}
               />
             </ListSection> */}
+          </>
+        )}
+
+        {/* // SECTION : Budget Section */}
+        {budgetSettings && (
+          <>
+            <SettingsHeaderList label="Budget Settings" iconName="pie-chart" />
+            <ListSection>
+              {/* // TAG : First day of the week */}
+              <ListItem
+                pressable
+                leftLabel="First day of the week"
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  budgetSettings.firstDayOfTheWeek
+                )}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first day of the week",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    defaultOption: { name: budgetSettings.firstDayOfTheWeek },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_DAY_OF_THE_WEEK.OPTIONS.map(
+                        (day) => {
+                          return {
+                            name: day,
+                            value: day,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstDayOfTheWeek: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstDayOfTheWeek: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+              {/* // TAG : First date of the month */}
+              <ListItem
+                pressable
+                leftLabel="First date of the month"
+                rightLabel={budgetSettings.firstDateOfTheMonth}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first date of the month",
+                    modalType: MODAL_TYPE_CONSTANTS.NUMBER_PICKER,
+                    defaultOption: { name: budgetSettings.firstDateOfTheMonth },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_DATE_OF_THE_MONTH.OPTIONS().map(
+                        (date) => {
+                          return {
+                            name: date,
+                            value: date,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstDateOfTheMonth: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstDateOfTheMonth: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+              {/* // TAG : First month of the year */}
+              <ListItem
+                pressable
+                leftLabel="First month of the year"
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  budgetSettings.firstMonthOfTheYear
+                )}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first month of the year",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    defaultOption: { name: budgetSettings.firstMonthOfTheYear },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.map(
+                        (day) => {
+                          return {
+                            name: day,
+                            value: day,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstMonthOfTheYear: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstMonthOfTheYear: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+            </ListSection>
           </>
         )}
 
