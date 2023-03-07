@@ -113,6 +113,8 @@ const ModalScreen = ({ route, navigation }) => {
         return selected(selectedItem);
       case MODAL_TYPE_CONSTANTS.ICON_PICKER:
         return selected(selectedItem);
+      case MODAL_TYPE_CONSTANTS.NUMBER_PICKER:
+        return selected(selectedItem);
       case MODAL_TYPE_CONSTANTS.ACTION:
         return selected(selectedItem);
 
@@ -148,6 +150,80 @@ const ModalScreen = ({ route, navigation }) => {
         );
       case false:
         switch (modalType) {
+          case MODAL_TYPE_CONSTANTS.NUMBER_PICKER:
+            return (
+              <FlatList
+                numColumns={7}
+                columnWrapperStyle={{
+                  justifyContent: "space-between",
+                  padding: 8,
+                }}
+                showsHorizontalScrollIndicator={false}
+                data={props}
+                style={
+                  {
+                    // height: "100%",
+                  }
+                }
+                contentContainerStyle={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                keyExtractor={(item, id) => item?.name}
+                renderItem={({ item }) => (
+                  <>
+                    <TouchableOpacity
+                      // style={{ marginRight: 8 }}
+                      onPress={() => {
+                        setSelectedItem(item);
+                      }}
+                    >
+                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
+
+                      {/* Color Circle */}
+                      <View
+                        style={{
+                          height: 48,
+                          width: 48,
+                          borderWidth: 2,
+                          borderRadius: 48 / 2,
+                          borderColor:
+                            selectedItem?.name === item.name
+                              ? globalTheme.colors.primary
+                              : "transparent",
+                          backgroundColor:
+                            selectedItem?.name === item.name
+                              ? globalTheme.colors.primary
+                              : "transparent",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <TextPrimary
+                          label={item.name}
+                          style={{
+                            fontWeight:
+                              selectedItem?.name === item.name
+                                ? "bold"
+                                : "normal",
+                            color:
+                              selectedItem?.name === item.name
+                                ? globalTheme.colors.background
+                                : globalTheme.text.textPrimary.color,
+                          }}
+                        />
+                        {/* <IonIcons name='checkmark-sharp' size={24} color={globalTheme.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
+                      </View>
+
+                      {/* </View> */}
+                    </TouchableOpacity>
+                  </>
+                )}
+              />
+            );
+
           case MODAL_TYPE_CONSTANTS.DATE_PICKER:
             return (
               <RNDateTimePicker
