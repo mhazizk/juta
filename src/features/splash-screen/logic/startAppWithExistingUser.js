@@ -33,6 +33,7 @@ import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
 import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
 import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
+import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -375,11 +376,26 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // Check budget if it is expired
       // const budget = budgetsData[0];
+      const budgets = budgetsData;
+      const addedBudgetType = budgetsData.map((budget) => {
+        if (!budget.hasOwnProperty("budget_type")) {
+          return {
+            ...budget,
+            budget_type:
+              BUDGET_TYPE_CONSTANTS.OPTIONS[
+                BUDGET_TYPE_CONSTANTS.OPTIONS.length - 1
+              ].id,
+          };
+        } else {
+          return budget;
+        }
+      });
+
       let newBudget;
-      if (budgetsData.length > 1) {
-        console.log(budgetsData);
+      if (addedBudgetType.length > 1) {
+        console.log(addedBudgetType);
         const today = Date.now();
-        const budget = budgetsData[0];
+        const budget = addedBudgetType[0];
         // const foundBudget = budget.find((budget) => {
         //   today > budget.finish_date;
         // });
@@ -394,7 +410,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }
         dispatchBudgets({
           type: REDUCER_ACTIONS.BUDGETS.SET,
-          payload: newBudget || budgetsData[0],
+          payload: newBudget || addedBudgetType[0],
         });
       }
 
