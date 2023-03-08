@@ -54,6 +54,7 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
+import MyReportsScreen from "../features/reports/screens/MyReportsScreen";
 import SearchScreen from "../features/search/screens/SearchScreen";
 import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import SplashScreen from "../features/splash-screen/screens/SplashScreen";
@@ -473,6 +474,17 @@ const RootStack = () => {
         }}
         name={screenList.analyticsScreen}
         component={AnalyticsScreen}
+      />
+
+      {/* // SECTION : REPORTS */}
+      {/* // TAG : Reports Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Reports",
+        }}
+        name={screenList.myReportsScreen}
+        component={MyReportsScreen}
       />
 
       {/* // SECTION : TRANSACTION SECTION : */}
