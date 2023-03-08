@@ -8,7 +8,7 @@ import getLastDateOfTheMonth from "./getLastDateOfTheMonth";
  *
  * @param startDateInMillis - Date in milliseconds
  * @param range - Range constants (daily, weekly, monthly, yearly)
- * @param getTimeAtMidnight - Reset time at midnight (default as `true`)
+ * @param getTimeAtMidnight - Make input date to `0h:0m:0s` and return date at `23h:59m:59s` (default as `true`)
  * @returns target date in milliseconds
  * @example
  * const startDateInMillis = new Date().getTime();
