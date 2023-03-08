@@ -1,12 +1,18 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import { useEffect, useState } from "react";
-import { Platform, TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
-import { TextPrimary } from "../../../components/Text";
+import { TextPrimary, TextSecondary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -24,76 +30,26 @@ import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
 import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
+import newBudgetModel from "../model/newBudgetModel";
 
 const NewBudgetScreen = ({ navigation }) => {
   const { budgets, dispatchBudgets } = useGlobalBudgets();
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  // const [date, setDate] = useState(new Date());
 
-  const [newBudget, setNewBudget] = useState({
-    uid: appSettings.uid,
-    budget_id: uuid.v4(),
-    budget_name: "",
-    budget_type: BUDGET_TYPE_CONSTANTS.DEFAULT,
-    repeat: false,
-    limit: 0,
-    start_date: +new Date().setHours(0, 0, 0, 0),
-    finish_date: new Date(Date.now() + 2629746000).setHours(0, 0, 0, 0),
-    _timestamps: {
-      created_at: Date.now(),
-      updated_at: Date.now(),
-      created_by: userAccount.uid,
-      updated_by: userAccount.uid,
-    },
+  const [newBudget, setNewBudget] = useState(() => {
+    return newBudgetModel({
+      appSettings,
+      userAccountUid: userAccount.uid,
+    });
   });
+
+  const inputBudgetName = useRef();
 
   useEffect(() => {
     console.log(newBudget);
   }, [newBudget]);
-
-  // TAG : Function Section
-
-  // Set Date in Date Picker
-  const onChangeStart = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setNewBudget({
-      ...newBudget,
-      start_date: new Date(currentDate).getTime(),
-    });
-  };
-
-  // Set Date in Date Picker
-  const onChangeFinish = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setNewBudget({
-      ...newBudget,
-      finish_date: new Date(currentDate).getTime(),
-    });
-  };
-
-  // Date Picker
-  const showMode = ({ currentMode, mode }) => {
-    DateTimePickerAndroid.open({
-      value:
-        mode === "start"
-          ? new Date(newBudget.start_date)
-          : new Date(newBudget.finish_date),
-      onChange: mode === "start" ? onChangeStart : onChangeFinish,
-      mode: currentMode,
-      is24Hour: true,
-      minimumDate:
-        mode === "start"
-          ? new Date().setHours(0, 0, 0, 0)
-          : new Date(newBudget.start_date + 1000 * 60 * 60 * 24),
-    });
-  };
-
-  // Date Picker
-  const showDatePicker = ({ mode }) => {
-    showMode({ currentMode: "date", mode: mode });
-  };
 
   const checkFinalBudget = () => {
     switch (true) {
@@ -126,60 +82,69 @@ const NewBudgetScreen = ({ navigation }) => {
   return (
     <>
       <CustomScrollView>
-        <View
+        <TouchableOpacity
+          onPress={() => inputBudgetName.current.focus()}
           style={{
+            minHeight: Dimensions.get("window").height / 2,
+            minWidth: "100%",
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            paddingHorizontal: 16,
           }}
         >
-          <FontAwesome5Icon
-            name="piggy-bank"
-            color={globalTheme.colors.foreground}
-            size={48}
+          <View
             style={{
-              transform: [{ scaleX: -1 }],
-              paddingBottom: 16,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
             }}
-          />
-          <TextInput
-            maxLength={30}
-            textAlign="center"
-            returnKeyType="done"
-            placeholder="Type budget name ..."
-            placeholderTextColor={globalTheme.text.textSecondary.color}
-            style={[
-              {
-                ...globalTheme.text.textPrimary,
-                paddingLeft: 0,
-                paddingVertical: 16,
-                minHeight: 24,
-                fontSize: 24,
-              },
-              {},
-            ]}
-            onChangeText={(string) => {
-              setNewBudget({
-                ...newBudget,
-                budget_name: string,
-              });
-            }}
-            clearButtonMode="never"
-            defaultValue={newBudget.budget_name}
-            value={newBudget.budget_name}
-          />
-          {newBudget.budget_name && (
-            <IonIcons
-              onPress={() => setNewBudget({ ...newBudget, budget_name: "" })}
-              name="close-circle"
-              size={20}
-              style={{ padding: 16 }}
+          >
+            <FontAwesome5Icon
+              name="piggy-bank"
               color={globalTheme.colors.foreground}
+              size={48}
+              style={{
+                transform: [{ scaleX: -1 }],
+                paddingBottom: 16,
+              }}
             />
-          )}
-        </View>
+            <TextInput
+              ref={inputBudgetName}
+              maxLength={30}
+              textAlign="center"
+              returnKeyType="done"
+              placeholder="Type budget name..."
+              placeholderTextColor={globalTheme.text.textSecondary.color}
+              style={[
+                {
+                  ...globalTheme.text.textPrimary,
+                  paddingLeft: 0,
+                  paddingVertical: 16,
+                  minHeight: 24,
+                  fontSize: 24,
+                },
+                {},
+              ]}
+              onChangeText={(string) => {
+                setNewBudget({
+                  ...newBudget,
+                  budget_name: string,
+                });
+              }}
+              clearButtonMode="never"
+              defaultValue={newBudget.budget_name}
+              value={newBudget.budget_name}
+            />
+            {newBudget.budget_name && (
+              <IonIcons
+                onPress={() => setNewBudget({ ...newBudget, budget_name: "" })}
+                name="close-circle"
+                size={20}
+                style={{ padding: 16 }}
+                color={globalTheme.colors.foreground}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
         {/* // TAG : Budget Details */}
         <View
           style={{
@@ -261,6 +226,8 @@ const NewBudgetScreen = ({ navigation }) => {
               });
             }}
           />
+        </ListSection>
+        <ListSection>
           {/* // TAG : Budget type */}
           <ListItem
             pressable
@@ -351,8 +318,6 @@ const NewBudgetScreen = ({ navigation }) => {
                       );
                       break;
                     case "CUSTOM":
-                      // startDate = utils.getFirstDateOfTheMonth(today);
-                      // finishDate = utils.getLastDateOfTheMonth(today);
                       break;
 
                     default:
@@ -368,14 +333,93 @@ const NewBudgetScreen = ({ navigation }) => {
               });
             }}
           />
+          {/* // TAG : Month to start */}
+          {newBudget.budget_type === "MONTHLY" && (
+            <ListItem
+              pressable
+              iconLeftName="calendar"
+              iconPack="IonIcons"
+              iconRightName="chevron-forward"
+              leftLabel="Month to start"
+              useRightLabelContainer
+              rightLabel={utils.upperCaseThisFirstLetter(
+                BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.find(
+                  (month, index) => {
+                    if (index === new Date(newBudget.start_date).getMonth()) {
+                      return month;
+                    }
+                  }
+                )
+              )}
+              rightLabelContainerStyle={{
+                flexDirection: "row",
+                maxWidth: "50%",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: globalTheme.colors.secondary,
+              }}
+              onPress={() => {
+                navigation.navigate(screenList.modalScreen, {
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
+                  title: "Select month to start",
+                  props:
+                    BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.map(
+                      (budget, index) => {
+                        return {
+                          name: budget,
+                          id: index,
+                        };
+                      }
+                    ),
+                  defaultOption: {
+                    name: BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.find(
+                      (month, index) => {
+                        if (
+                          index === new Date(newBudget.start_date).getMonth()
+                        ) {
+                          return month;
+                        }
+                      }
+                    ),
+                  },
+                  selected: (item) => {
+                    const startDateInMillis = new Date(
+                      new Date().getFullYear(),
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.findIndex(
+                        (month) => {
+                          return month === item.name;
+                        }
+                      ),
+                      appSettings.budgetSettings.firstDateOfTheMonth,
+                      0,
+                      0,
+                      0
+                    ).getTime();
+                    setNewBudget({
+                      ...newBudget,
+                      start_date: startDateInMillis,
+                      finish_date: utils.getNextDateInRange(
+                        startDateInMillis,
+                        "monthly"
+                      ),
+                    });
+                  },
+                });
+              }}
+            />
+          )}
         </ListSection>
         <ListSection>
           {/* // TAG : Start date */}
           <ListItem
-            pressable
+            pressable={newBudget.budget_type === "CUSTOM"}
             iconLeftName="calendar"
             iconPack="IonIcons"
-            iconRightName="chevron-forward"
+            iconRightName={
+              newBudget.budget_type === "CUSTOM" ? "chevron-forward" : null
+            }
             leftLabel="Start date"
             useRightLabelContainer
             rightLabel={new Date(newBudget.start_date).toDateString()}
@@ -442,10 +486,12 @@ const NewBudgetScreen = ({ navigation }) => {
           />
           {/* // TAG : Finish date */}
           <ListItem
-            pressable
+            pressable={newBudget.budget_type === "CUSTOM"}
             iconLeftName="calendar"
             iconPack="IonIcons"
-            iconRightName="chevron-forward"
+            iconRightName={
+              newBudget.budget_type === "CUSTOM" ? "chevron-forward" : null
+            }
             leftLabel="Finish date"
             useRightLabelContainer
             rightLabel={new Date(newBudget.finish_date).toDateString()}
@@ -508,6 +554,33 @@ const NewBudgetScreen = ({ navigation }) => {
             }}
           /> */}
         </ListSection>
+
+        {/* // TAG : Info  */}
+        {newBudget.budget_type !== "CUSTOM" && (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-start",
+              // justifyContent: "flex-start",
+              width: "100%",
+              paddingHorizontal: 16,
+              paddingBottom: 16,
+            }}
+          >
+            <IonIcons
+              name="information-circle-outline"
+              size={20}
+              color={globalTheme.colors.secondary}
+              style={{
+                paddingRight: 8,
+              }}
+            />
+            <TextSecondary
+              label="You can set your preferred start date at the Budget Settings section in Settings screen"
+              style={{ flex: 1 }}
+            />
+          </View>
+        )}
 
         {/* // TAG : Action Button */}
         <ActionButtonWrapper>
