@@ -8,8 +8,11 @@ import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
-  useGlobalCategories, useGlobalFeatureSwitch, useGlobalLogbooks,
-  useGlobalRepeatedTransactions, useGlobalUserAccount
+  useGlobalCategories,
+  useGlobalFeatureSwitch,
+  useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
@@ -59,6 +62,8 @@ const UserScreen = ({ navigation }) => {
             iconPack="IonIcons"
             onPress={() => navigation.navigate(screenList.myGroupsScreen)}
           /> */}
+            </ListSection>
+            <ListSection>
               {/* // TAG : My Logbooks */}
               <ListItem
                 pressable
@@ -100,6 +105,14 @@ const UserScreen = ({ navigation }) => {
                 pressable
                 leftLabel="My Loans"
                 iconLeftName="cash"
+                iconPack="IonIcons"
+                onPress={() => navigation.navigate(screenList.myLoansScreen)}
+              />
+              {/* // TAG : My Reports */}
+              <ListItem
+                pressable
+                leftLabel="My Reports"
+                iconLeftName="analytics"
                 iconPack="IonIcons"
                 onPress={() => navigation.navigate(screenList.myLoansScreen)}
               />
