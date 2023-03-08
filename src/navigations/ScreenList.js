@@ -35,6 +35,9 @@ const screenList = {
   // Analytics Screen
   analyticsScreen: "Analytics Screen",
 
+  // Reports Screen
+  myReportsScreen: "My Reports Screen",
+
   // Transactions Screen
   transactionDetailsScreen: "Transaction Details Screen",
   newTransactionDetailsScreen: "New Transaction Details Screen",
