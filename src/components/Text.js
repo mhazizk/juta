@@ -1,4 +1,5 @@
 import { Text } from "react-native";
+import Animated from "react-native-reanimated";
 import { lightMonoTheme } from "../assets/themes/lightMonoTheme/lightMonoTheme";
 import {
   useGlobalAppSettings,
@@ -14,12 +15,12 @@ export const TextPrimary = ({ label, props, numberOfLines, theme, style }) => {
 
   return (
     <>
-      <Text
+      <Animated.Text
         numberOfLines={numberOfLines}
         style={[{ ...globalTheme.text.textPrimary }, { ...style }]}
       >
         {label || "Primary Text"}
-      </Text>
+      </Animated.Text>
     </>
   );
 };
