@@ -14,7 +14,7 @@ const TransactionListSection = ({
   marginTop,
   marginBottom = 8,
   children,
-  backgroundColor,
+  backgroundColor = null,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
