@@ -1,40 +1,114 @@
-import { View, Text } from "react-native";
-import { TextPrimary } from "../../../components/Text";
 import {
   useGlobalAppSettings,
-  useGlobalBudgets,
+  useGlobalCategories,
+  useGlobalCurrencyRates,
+  useGlobalLogbooks,
   useGlobalSortedTransactions,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
-import IncomeExpenseDeviation from "../components/IncomeExpenseDeviation";
-import IonIcons from "react-native-vector-icons/Ionicons";
-import DateRange from "../components/DateRange";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as utils from "../../../utils";
 import ReportSection from "../components/ReportSection";
-import reportSectionPropsModel from "../model/reportSectionPropsModel";
+import Loading from "../../../components/Loading";
+import getReportSectionProps from "../model/getReportSectionProps";
 
 const MyReportsScreen = ({ route, navigation }) => {
-  const { globalTheme } = useGlobalTheme();
   const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+  const { globalCurrencyRates } = useGlobalCurrencyRates();
+  const { logbooks } = useGlobalLogbooks();
+  const { categories } = useGlobalCategories();
   const { sortedTransactions } = useGlobalSortedTransactions();
-  const { budgets } = useGlobalBudgets();
-  const [startViewDate, setStartViewDate] = useState(() => {
-    const dateAtMidnight = new Date().setHours(0, 0, 0, 0);
-    return utils.getFirstDateOfTheMonth(new Date(dateAtMidnight).getTime());
-  });
-  const [endViewDate, setEndViewDate] = useState(() => {
-    const dateAtMidnight = new Date().setHours(23, 59, 59, 999);
+  const [sections, setSections] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    return utils.getLastDateOfTheMonth(new Date(dateAtMidnight).getTime());
-  });
+  useEffect(() => {
+    if (!sections.length) {
+      const newSections = getReportSectionProps("monthly");
+      getTransactionListAndGraphData(newSections);
+    }
+  }, []);
+
+  const getTransactionListAndGraphData = (sections) => {
+    if (sections.length > 0) {
+      const newSections = [];
+      sections.forEach((section) => {
+        const newData = {
+          ...section.data,
+        };
+        utils.getTopCategoryListInRange({
+          appSettings,
+          globalCurrencyRates,
+          logbooks: logbooks.logbooks,
+          categories: categories.categories,
+          groupSorted: sortedTransactions.groupSorted,
+          transactionTypeToGet: "all",
+          startDateInMillis: section.startDateInMillis,
+          endDateInMillis: section.endDateInMillis,
+          callback: ({
+            allCategoryList,
+            expenseCategoryList,
+            incomeCategoryList,
+          }) => {
+            const totalIncome = incomeCategoryList.reduce((total, category) => {
+              return total + category.totalAmount;
+            }, 0);
+            const totalExpense = expenseCategoryList.reduce(
+              (total, category) => {
+                return total + category.totalAmount;
+              },
+              0
+            );
+
+            newData.expenseCategoryList = expenseCategoryList;
+            newData.incomeCategoryList = incomeCategoryList;
+            newData.totalIncome = totalIncome;
+            newData.totalExpense = totalExpense;
+            newData.incomeGraph = incomeCategoryList.map((item) => {
+              return {
+                x: item.category.name,
+                y: item.totalAmount,
+                iconPack: item.category.icon.pack,
+                iconName: item.category.icon.name,
+                categoryName: item.category.name,
+              };
+            });
+            newData.expenseGraph = expenseCategoryList.map((item) => {
+              return {
+                x: item.category.name,
+                y: item.totalAmount,
+                iconPack: item.category.icon.pack,
+                iconName: item.category.icon.name,
+                categoryName: item.category.name,
+              };
+            });
+          },
+        });
+        newSections.push({
+          ...section,
+          data: newData,
+        });
+      });
+      return setSections(newSections);
+    }
+  };
+
+  useEffect(() => {
+    if (sections?.length > 0) {
+      setIsLoading(false);
+    }
+  }, [sections]);
+
   return (
-    <CustomScrollView nestedScrollEnabled>
-      <ReportSection
-        totalSectionLength={reportSectionPropsModel.totalSectionLength}
-        sections={reportSectionPropsModel.sections}
-      />
+    <CustomScrollView
+      nestedScrollEnabled
+      contentContainerStyle={{
+        justifyContent: isLoading ? "center" : "flex-start",
+      }}
+    >
+      {!isLoading && <ReportSection sections={sections} />}
+      {isLoading && <Loading />}
     </CustomScrollView>
   );
 };
