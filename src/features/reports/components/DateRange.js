@@ -8,14 +8,16 @@ const DateRange = ({ startDateInMillis, endDateInMillis }) => {
   return (
     <View
       style={{
+        width: "100%",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: 16,
+        paddingBottom: 16,
       }}
     >
       <View
         style={{
+          width: "100%",
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -27,7 +29,7 @@ const DateRange = ({ startDateInMillis, endDateInMillis }) => {
       >
         <TextPrimary
           label={new Date(startDateInMillis).toDateString()}
-          style={{ fontWeight: "bold" }}
+          //   style={{ fontWeight: "bold" }}
         />
         <IonIcons
           name="arrow-forward"
@@ -39,7 +41,7 @@ const DateRange = ({ startDateInMillis, endDateInMillis }) => {
         />
         <TextPrimary
           label={new Date(endDateInMillis).toDateString()}
-          style={{ fontWeight: "bold" }}
+          //   style={{ fontWeight: "bold" }}
         />
       </View>
     </View>
