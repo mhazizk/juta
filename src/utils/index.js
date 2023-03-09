@@ -33,3 +33,4 @@ export { default as getRelativeDate } from "./getRelativeDate";
 export { default as getFirstDateOfTheMonth } from "./getFirstDateOfTheMonth";
 export { default as getLastDateOfTheMonth } from "./getLastDateOfTheMonth";
 export { default as getNextDateInRange } from "./getNextDateInRange";
+export { default as getTopCategoryListInRange } from "./getTopCategoryListInRange";
