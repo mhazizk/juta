@@ -15,11 +15,10 @@ import CoinsImg from "../../../assets/img/coins.png";
 import { CustomBarChart } from "../../../components/charts/CustomBarChart";
 import { useIsFocused } from "@react-navigation/native";
 import Loading from "../../../components/Loading";
+import Animated from "react-native-reanimated";
 
 const TotalExpenseWidget = ({
-  // graph,
-  // showGraph,
-  // activeBudget,
+  enteringAnimation = null,
   cardHeight,
   onPress,
 }) => {
@@ -117,7 +116,8 @@ const TotalExpenseWidget = ({
   return (
     <>
       {widgetLoading && (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             // flex: 1,
             height: cardHeight,
@@ -130,7 +130,7 @@ const TotalExpenseWidget = ({
           }}
         >
           <Loading />
-        </View>
+        </Animated.View>
       )}
       {!widgetLoading && (
         <TouchableOpacity
@@ -148,7 +148,8 @@ const TotalExpenseWidget = ({
             width: "100%",
           }}
         >
-          <View
+          <Animated.View
+            entering={enteringAnimation}
             style={{
               backgroundColor:
                 globalTheme.widgets.totalExpense.cardBackgroundColor,
@@ -375,7 +376,7 @@ const TotalExpenseWidget = ({
                 </View>
               </>
             )}
-          </View>
+          </Animated.View>
         </TouchableOpacity>
       )}
     </>
