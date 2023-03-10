@@ -6,6 +6,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Alert, AppState, View } from "react-native";
+import { Easing } from "react-native-reanimated";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
@@ -346,6 +347,20 @@ const RootStack = () => {
       {/* // TAG : Action Screen */}
       <Stack.Screen
         options={{
+          // transitionSpec: {
+          //   open: {
+          //     animation: "spring",
+          //     config: {
+          //       duration: 500,
+          //     },
+          //   },
+          //   close: {
+          //     animation: "spring",
+          //     config: {
+          //       duration: 500,
+          //     },
+          //   },
+          // },
           presentation: "transparentModal",
           headerShown: false,
           cardOverlayEnabled: true,
