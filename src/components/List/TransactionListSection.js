@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import Animated from "react-native-reanimated";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
@@ -7,6 +8,7 @@ import * as utils from "../../utils";
 import { TextPrimary } from "../Text";
 
 const TransactionListSection = ({
+  enteringAnimation = null,
   //   isSingleItem = false,
   isFirstItem = false,
   isLastItem = false,
@@ -22,7 +24,8 @@ const TransactionListSection = ({
   switch (true) {
     case isFirstItem && isSingleItem:
       return (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             width: "100%",
             alignItems: "center",
@@ -40,11 +43,12 @@ const TransactionListSection = ({
           }}
         >
           {children}
-        </View>
+        </Animated.View>
       );
     case isFirstItem:
       return (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             alignItems: "center",
             justifyContent: "center",
@@ -63,11 +67,12 @@ const TransactionListSection = ({
           }}
         >
           {children}
-        </View>
+        </Animated.View>
       );
     case isLastItem:
       return (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             alignItems: "center",
             justifyContent: "center",
@@ -86,11 +91,12 @@ const TransactionListSection = ({
           }}
         >
           {children}
-        </View>
+        </Animated.View>
       );
     default:
       return (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             width: "100%",
             overflow: "hidden",
@@ -104,7 +110,7 @@ const TransactionListSection = ({
           }}
         >
           {children}
-        </View>
+        </Animated.View>
       );
   }
 };
