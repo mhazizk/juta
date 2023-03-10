@@ -11,6 +11,8 @@ import svg, { G } from "react-native-svg";
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import Animated from "react-native-reanimated";
+import getColorShadesForChart from "../../../utils/getColorShadesForChart";
+import { useMemo, useState } from "react";
 
 /**
  * Custom pie chart component
@@ -19,6 +21,7 @@ import Animated from "react-native-reanimated";
  * @returns
  */
 const CustomPieChart = ({
+  useDarkGraphColorShades = false,
   mode = "expense",
   data,
   showUpLine = false,
@@ -39,7 +42,39 @@ const CustomPieChart = ({
   const { globalTheme } = useGlobalTheme();
   const width = graphHeightAndWidth || Dimensions.get("window").width;
   const height = graphHeightAndWidth || width;
-  const colorScale = mode === "income" ? "green" : "red";
+
+  const [incomeColorShades, setIncomeColorShades] = useState([]);
+  const [expenseColorShades, setExpenseColorShades] = useState([]);
+
+  useMemo(() => {
+    const {
+      lighterColorShades: newExpenseColorShades,
+      darkerColorShades: newExpenseColorDarkerShades,
+    } = getColorShadesForChart(
+      data.length + 1,
+      globalTheme.colors.danger,
+      // "#b90d57",
+      1
+    );
+    useDarkGraphColorShades &&
+      setExpenseColorShades(newExpenseColorDarkerShades);
+    !useDarkGraphColorShades && setExpenseColorShades(newExpenseColorShades);
+
+    const {
+      lighterColorShades: newIncomeColorShades,
+      darkerColorShades: newIncomeColorDarkerShades,
+    } = getColorShadesForChart(data.length + 1, globalTheme.colors.success, 1);
+
+    useDarkGraphColorShades && setIncomeColorShades(newIncomeColorDarkerShades);
+    !useDarkGraphColorShades && setIncomeColorShades(newIncomeColorShades);
+  }, [
+    data.length,
+    globalTheme.colors.danger,
+    globalTheme.colors.success,
+    useDarkGraphColorShades,
+  ]);
+
+  const colorScale = mode === "income" ? incomeColorShades : expenseColorShades;
   return (
     <>
       <Animated.View
