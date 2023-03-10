@@ -10,6 +10,7 @@ import { useGlobalTheme } from "../../../reducers/GlobalContext";
 import svg, { G } from "react-native-svg";
 import * as utils from "../../../utils";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import Animated from "react-native-reanimated";
 
 /**
  * Custom pie chart component
@@ -24,68 +25,60 @@ const CustomPieChart = ({
   showDownLine = false,
   showRightLine = false,
   showLeftLine = false,
+  graphHeightAndWidth = null,
+  adjustTop = 0,
+  adjustRight = 0,
+  adjustBottom = 0,
+  adjustLeft = 0,
+  zIndex = 0,
+  iconColor = null,
+  enteringAnimation = null,
+  animateGraph = false,
+  onPress,
 }) => {
   const { globalTheme } = useGlobalTheme();
-  const width = Dimensions.get("window").width;
-  const height = width;
+  const width = graphHeightAndWidth || Dimensions.get("window").width;
+  const height = graphHeightAndWidth || width;
   const colorScale = mode === "income" ? "green" : "red";
   return (
     <>
-      <View
+      <Animated.View
+        entering={enteringAnimation}
         style={{
           position: "relative",
-          width: "100%",
-          height: height,
+          width: graphHeightAndWidth || width,
+          height: graphHeightAndWidth || height,
           alignItems: "center",
+          top: adjustTop,
+          right: adjustRight,
+          bottom: adjustBottom,
+          left: adjustLeft,
           justifyContent: "center",
+          zIndex: zIndex,
         }}
       >
-        {!data?.length && (
-          <View
-            style={{
-              backgroundColor: utils.hexToRgb({
-                hex: globalTheme.colors.listSection,
-                opacity: 0.07,
-              }),
-              width: width / 2,
-              height: height / 2,
-              borderRadius: height / 4,
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 16,
-            }}
-          >
-            <TextPrimary
-              label={`No ${mode} data`}
-              style={{
-                textAlign: "center",
-              }}
-            />
-          </View>
-        )}
-
         <View
           style={{
             position: "absolute",
             width: "100%",
             height: "100%",
             backgroundColor: "transparent",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
             alignItems: "center",
+            justifyContent: "center",
+            zIndex: zIndex,
           }}
         >
           <VictoryPie
             colorScale={[
               utils.hexToRgb({
-                hex: globalTheme.colors.listSection,
+                hex: iconColor || globalTheme.colors.listSection,
                 opacity: 0.07,
               }),
             ]}
             padAngle={({ datum }) => datum.y / 10}
-            innerRadius={140}
+            // innerRadius={140}
+            radius={graphHeightAndWidth * 0.9 || 147}
+            innerRadius={graphHeightAndWidth * 0.8 || 140}
             data={[{ x: "", y: 100 }]}
             labels={() => null}
           />
@@ -96,26 +89,54 @@ const CustomPieChart = ({
             width: "100%",
             height: "100%",
             backgroundColor: "transparent",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
             alignItems: "center",
+            justifyContent: "center",
+            zIndex: zIndex,
           }}
         >
-          <VictoryPie
-            colorScale={colorScale}
-            //   padAngle={({ datum }) => datum.y / 10}
-            padAngle={4}
-            cornerRadius={8}
-            // cornerRadius={({ datum }) => datum.y * 5}
-            radius={130}
-            innerRadius={90}
-            data={data}
-            //   labels={({ datum }) => `${datum.x}: ${datum.y}`}
-            labelComponent={<IconLabel />}
-          />
+          {!!data?.length && (
+            <VictoryPie
+              colorScale={colorScale}
+              animate={{ duration: 2000, easing: "circleIn" }}
+              //   padAngle={({ datum }) => datum.y / 10}
+              padAngle={graphHeightAndWidth * 0.05 || 4}
+              cornerRadius={graphHeightAndWidth * 0.1 || 8}
+              // cornerRadius={({ datum }) => datum.y * 5}
+              radius={graphHeightAndWidth * 0.7 || 130}
+              innerRadius={graphHeightAndWidth * 0.5 || 90}
+              data={data}
+              //   labels={({ datum }) => `${datum.x}: ${datum.y}`}
+              labelComponent={<IconLabel iconColor={iconColor} />}
+            />
+          )}
         </View>
+        {!data?.length && (
+          <View
+            style={{
+              backgroundColor: utils.hexToRgb({
+                hex: iconColor || globalTheme.colors.listSection,
+                opacity: 0.07,
+              }),
+              width: graphHeightAndWidth || width / 2,
+              height: graphHeightAndWidth || height / 2,
+              borderRadius: graphHeightAndWidth / 2 || height / 4,
+              alignItems: "center",
+              justifyContent: "center",
+              padding: graphHeightAndWidth * 0.1 || 16,
+              overflow: "visible",
+            }}
+          >
+            <TextPrimary
+              label={`No ${mode} data`}
+              style={{
+                fontSize: graphHeightAndWidth ? 10 : 14,
+                textAlign: "center",
+                color: iconColor || globalTheme.text.textPrimary.color,
+              }}
+            />
+          </View>
+        )}
+
         {showUpLine && (
           <View
             style={{
@@ -172,7 +193,7 @@ const CustomPieChart = ({
             }}
           />
         )}
-      </View>
+      </Animated.View>
     </>
   );
 };
@@ -180,7 +201,7 @@ export default CustomPieChart;
 
 const IconLabel = (props) => {
   const { globalTheme } = useGlobalTheme();
-  const { index, x, y, datum, width, height } = props;
+  const { index, x, y, datum, width, height, iconColor } = props;
   const cat = datum._y >= 0 ? "😻" : "😹";
   return (
     <G x={x} y={y}>
@@ -199,7 +220,7 @@ const IconLabel = (props) => {
         <IonIcons
           name={datum.iconName}
           size={20}
-          color={globalTheme.colors.foreground}
+          color={iconColor || globalTheme.colors.foreground}
           style={{
             padding: 8,
             //   margin: 8,
