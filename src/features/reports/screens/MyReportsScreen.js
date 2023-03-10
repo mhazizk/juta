@@ -30,6 +30,12 @@ const MyReportsScreen = ({ route, navigation }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (sections?.length > 0) {
+      setIsLoading(false);
+    }
+  }, [sections]);
+
   const getTransactionListAndGraphData = (sections) => {
     if (sections.length > 0) {
       const newSections = [];
@@ -93,12 +99,6 @@ const MyReportsScreen = ({ route, navigation }) => {
       return setSections(newSections);
     }
   };
-
-  useEffect(() => {
-    if (sections?.length > 0) {
-      setIsLoading(false);
-    }
-  }, [sections]);
 
   return (
     <CustomScrollView
