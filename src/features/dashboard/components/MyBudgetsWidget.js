@@ -15,9 +15,11 @@ import { TextButtonPrimary, TextPrimary } from "../../../components/Text";
 import { RoundProgressBar } from "../../../components/charts/RoundProgressBar";
 import * as utils from "../../../utils";
 import TextTicker from "react-native-text-ticker";
+import Animated from "react-native-reanimated";
 
 // TODO : fix budget showing warning with cost to go, not cost to date
 export const MyBudgetsWidget = ({
+  enteringAnimation = null,
   label,
   props,
   onPress,
@@ -110,7 +112,8 @@ export const MyBudgetsWidget = ({
   return (
     <>
       <TouchableOpacity onPress={() => onPress()}>
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             height: boxHeight || 150,
             width: boxWidth || 150,
@@ -131,7 +134,7 @@ export const MyBudgetsWidget = ({
           }}
         >
           <ShowMyBudgetContent activeBudget={activeBudget} />
-        </View>
+        </Animated.View>
       </TouchableOpacity>
     </>
   );
@@ -247,7 +250,7 @@ const ShowOnTrack = ({ activeBudget }) => {
           </TextTicker>
         </View>
       </View>
-      <FontAwesome5Icon
+      {/* <FontAwesome5Icon
         name="piggy-bank"
         color="#3ed7b1"
         size={100}
@@ -258,7 +261,7 @@ const ShowOnTrack = ({ activeBudget }) => {
           bottom: -0,
           right: -0,
         }}
-      />
+      /> */}
     </>
   );
 };
