@@ -272,7 +272,9 @@ const ModalScreen = ({ route, navigation }) => {
                     <ListItem
                       pressable
                       iconLeftName={item?.icon?.name || iconProps?.name}
-                      iconPack={item?.icon?.pack || iconProps?.pack}
+                      iconPack={
+                        item?.icon?.pack || iconProps?.pack || "IonIcons"
+                      }
                       iconLeftColor={
                         iconProps?.color
                           ? iconProps?.color
