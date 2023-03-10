@@ -17,6 +17,7 @@ import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import createNewLogbookAndSyncToFirestore from "../../features/logbook/model/createNewLogbookAndSyncToFirestore";
 import ActionButtonWrapper from "../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../constants/modalTypeConstants";
+import Animated, { SlideInDown } from "react-native-reanimated";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -49,7 +50,8 @@ const ActionScreen = ({ route, navigation }) => {
       </TouchableOpacity>
 
       {/* // TAG : Content card */}
-      <View
+      <Animated.View
+        // entering={SlideInDown.duration(500)}
         style={{
           backgroundColor: globalTheme.colors.background,
           display: "flex",
@@ -246,7 +248,7 @@ const ActionScreen = ({ route, navigation }) => {
             />
           </View>
         </ActionButtonWrapper>
-      </View>
+      </Animated.View>
     </>
   );
 };
