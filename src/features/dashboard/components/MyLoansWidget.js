@@ -15,6 +15,7 @@ import screenList from "../../../navigations/ScreenList";
 import Loading from "../../../components/Loading";
 import TextTicker from "react-native-text-ticker";
 import * as utils from "../../../utils";
+import Animated from "react-native-reanimated";
 
 const customDate = utils.getCustomDate(Date.now());
 
@@ -24,6 +25,7 @@ const MyLoansWidget = ({
   marginHorizontal = 0,
   marginVertical = 0,
   width = Dimensions.get("window").width / 2 - 24,
+  enteringAnimation = null,
   onPress,
 }) => {
   const { globalTheme } = useGlobalTheme();
@@ -96,7 +98,8 @@ const MyLoansWidget = ({
   return (
     <>
       {isLoading && (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             // flex: 1,
             height: height,
@@ -112,12 +115,13 @@ const MyLoansWidget = ({
           }}
         >
           <Loading />
-        </View>
+        </Animated.View>
       )}
       {!isLoading && (
         <>
           <TouchableOpacity onPress={() => onPress()}>
-            <View
+            <Animated.View
+              entering={enteringAnimation}
               style={{
                 height: height,
                 width: width,
@@ -166,7 +170,7 @@ const MyLoansWidget = ({
                   right: -0,
                 }}
               />
-            </View>
+            </Animated.View>
           </TouchableOpacity>
         </>
       )}
