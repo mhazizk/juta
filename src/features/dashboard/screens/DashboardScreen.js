@@ -15,6 +15,16 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import MyLoansWidget from "../components/MyLoansWidget";
 import MyReportsWidget from "../components/MyReportsWidget";
 import Carousel from "react-native-reanimated-carousel";
+import {
+  BounceIn,
+  BounceInDown,
+  BounceInRight,
+  BounceOut,
+  FadeIn,
+  FadeInDown,
+  FadeInLeft,
+  FadeInRight,
+} from "react-native-reanimated";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -78,7 +88,7 @@ const DashboardScreen = ({ navigation }) => {
             <Carousel
               loop
               autoPlay
-              autoPlayInterval={2000}
+              autoPlayInterval={3000}
               scrollAnimationDuration={2000}
               style={{
                 backgroundColor: "transparent",
@@ -94,28 +104,6 @@ const DashboardScreen = ({ navigation }) => {
               renderItem={({ index }) => {
                 switch (index) {
                   case 0:
-                    // TAG : My Budgets Widget
-                    return (
-                      <>
-                        {appSettings.dashboardSettings
-                          .showTotalExpenseWidget && (
-                          <View
-                            style={{
-                              backgroundColor: "transparent",
-                              paddingHorizontal: 4,
-                            }}
-                          >
-                            <TotalExpenseWidget
-                              cardHeight={cardHeight}
-                              onPress={() =>
-                                navigation.navigate(screenList.analyticsScreen)
-                              }
-                            />
-                          </View>
-                        )}
-                      </>
-                    );
-                  case 1:
                     // TAG : My Reports Widget
                     return (
                       <>
@@ -128,9 +116,34 @@ const DashboardScreen = ({ navigation }) => {
                             }}
                           >
                             <MyReportsWidget
+                              enteringAnimation={FadeInRight.duration(1000)}
                               cardHeight={cardHeight}
                               onPress={() =>
                                 navigation.navigate(screenList.myReportsScreen)
+                              }
+                            />
+                          </View>
+                        )}
+                      </>
+                    );
+
+                  case 1:
+                    // TAG : My Budgets Widget
+                    return (
+                      <>
+                        {appSettings.dashboardSettings
+                          .showTotalExpenseWidget && (
+                          <View
+                            style={{
+                              backgroundColor: "transparent",
+                              paddingHorizontal: 4,
+                            }}
+                          >
+                            <TotalExpenseWidget
+                              enteringAnimation={FadeInRight.duration(1000)}
+                              cardHeight={cardHeight}
+                              onPress={() =>
+                                navigation.navigate(screenList.analyticsScreen)
                               }
                             />
                           </View>
@@ -168,6 +181,7 @@ const DashboardScreen = ({ navigation }) => {
               )} */}
               {/* // TAG : My Loans widget */}
               <MyLoansWidget
+                enteringAnimation={FadeInLeft.duration(1000)}
                 height={cardHeight}
                 marginRight={8}
                 onPress={() => {
@@ -178,6 +192,7 @@ const DashboardScreen = ({ navigation }) => {
               {/* // TAG : My Budgets Widget */}
               {appSettings.dashboardSettings.showMyBudgetsWidget && (
                 <MyBudgetsWidget
+                  enteringAnimation={FadeInRight.duration(1000)}
                   isFocused={isFocus}
                   boxHeight={cardHeight}
                   boxMarginLeft={8}
@@ -191,6 +206,7 @@ const DashboardScreen = ({ navigation }) => {
             {/* // TAG : Recent Transactions */}
             {appSettings.dashboardSettings.showRecentTransactions && (
               <RecentTransactions
+                enteringAnimation={FadeInDown.duration(1000)}
                 onPress={({ transaction, selectedLogbook }) => {
                   navigation.navigate(screenList.transactionPreviewScreen, {
                     transaction: transaction,
