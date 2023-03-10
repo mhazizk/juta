@@ -18,7 +18,7 @@ const palette = {
   },
   red: "#CD0E61",
   purple: "#5A31F4",
-  green: "#0ECD9D",
+  green: "#008888",
   orange: "#F49D1A",
   accentOne: "#6b3026",
   accentTwo: "#DBA39A",
@@ -62,7 +62,7 @@ export const creamyLighteaTheme = {
   widgets: {
     totalExpense: {
       cardBackgroundColor: palette.accentTwo,
-      cardTextColor: palette.white[600],
+      cardTextColor: palette.accentOne,
       cardIconColor: palette.accentOne,
     },
     myLoans: {
