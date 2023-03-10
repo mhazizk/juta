@@ -265,6 +265,9 @@ const MyReportsWidget = ({ enteringAnimation = null, cardHeight, onPress }) => {
             }}
           >
             <CustomPieChart
+              useDarkGraphColorShades={globalTheme.identifier.id.includes(
+                "cream"
+              )}
               mode="expense"
               graphHeightAndWidth={Dimensions.get("window").width * 0.18}
               enteringAnimation={PinwheelIn.duration(1000)}
