@@ -50,6 +50,12 @@
     "plugins": [
       "sentry-expo",
       [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Allow this app to collect app-related data that related to you or your device to provide and improve our service."
+        }
+      ],
+      [
         "expo-media-library",
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
