@@ -18,14 +18,74 @@ import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
 import setNotificationHandler from "./src/utils/setNotificationHandler";
 import registerForPushNotificationsAsync from "./src/utils/registerForPushNotificationsAsync";
-import { StatusBar } from "react-native";
+import { Alert, AppState, Platform, StatusBar } from "react-native";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 
 setNotificationHandler();
 
 function App() {
+  const [isGrantedToTrack, setIsGrantedTrack] = useState(false);
+  const appState = useRef(AppState.currentState);
+
   useEffect(() => {
     sentryInit();
+    if (Platform.OS === "ios") {
+      requestiosTrackingPermissionsAsync(isGrantedToTrack).then((isGranted) => {
+        setIsGrantedTrack(isGranted);
+      });
+    }
+
+    // const subscription = AppState.addEventListener("change", (nextAppState) => {
+    //   if (
+    //     appState.current.match(/inactive|background/) &&
+    //     nextAppState === "active"
+    //   ) {
+    // requestiosTrackingPermissionsAsync(isGrantedToTrack).then(
+    //   (isGranted) => {
+    //     setIsGrantedTrack(isGranted);
+    //   }
+    // );
+    //   }
+    //   appState.current = nextAppState;
+    //   console.log(appState.current);
+    // });
+
+    // return () => {
+    //   subscription.remove();
+    // };
   }, []);
+
+  const requestiosTrackingPermissionsAsync = async (isGranted) => {
+    if (!isGranted) {
+      const { status } = await requestTrackingPermissionsAsync(isGranted);
+      if (status === "granted") {
+        return true;
+      } else {
+        trackingAlert(isGranted);
+      }
+    }
+  };
+
+  const trackingAlert = (isGranted) => {
+    return Alert.alert(
+      "Tracking Permission",
+      "Please allow tracking permission to continue using this app",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            return trackingAlert(isGranted);
+          },
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            return requestiosTrackingPermissionsAsync(isGranted);
+          },
+        },
+      ]
+    );
+  };
 
   try {
     return (
