@@ -247,6 +247,18 @@ const MyAccountScreen = ({ item, navigation }) => {
                   ])
                 }
               />
+              {/* // TAG : Delete Account */}
+              <ListItem
+                pressable
+                isDanger
+                leftLabel="Account deletion request"
+                iconLeftName="trash-outline"
+                iconLeftColor={globalTheme.colors.danger}
+                iconPack="IonIcons"
+                onPress={() => {
+                  navigation.navigate(screenList.deleteAccountScreen);
+                }}
+              />
             </ListSection>
           </>
         )}
