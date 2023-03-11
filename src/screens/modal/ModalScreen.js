@@ -26,6 +26,7 @@ import {
   useGlobalAppSettings,
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
+import * as utils from "../../utils/";
 
 /**
  *
@@ -288,9 +289,7 @@ const ModalScreen = ({ route, navigation }) => {
                           ? "checkmark-circle"
                           : null
                       }
-                      leftLabel={
-                        item?.name[0].toUpperCase() + item?.name.substring(1)
-                      }
+                      leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
                       onPress={() => {
                         setSelectedItem(item);
                       }}
@@ -329,10 +328,9 @@ const ModalScreen = ({ route, navigation }) => {
                           }}
                         >
                           <TextPrimary
-                            label={`${
-                              item?.name[0].toUpperCase() +
-                              item?.name.substring(1)
-                            } / ${item?.symbol}`}
+                            label={`${utils.upperCaseThisFirstLetter(
+                              item?.name
+                            )} / ${item?.symbol}`}
                           />
                           <IonIcons
                             name="checkmark-circle"
