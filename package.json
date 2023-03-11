@@ -58,7 +58,8 @@
     "sentry-expo": "~6.0.0",
     "victory-native": "^36.6.8",
     "expo-network": "~5.0.0",
-    "expo-notifications": "~0.17.0"
+    "expo-notifications": "~0.17.0",
+    "expo-tracking-transparency": "~3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
