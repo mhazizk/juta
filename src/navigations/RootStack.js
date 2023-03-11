@@ -15,6 +15,7 @@ import MODAL_TYPE_CONSTANTS from "../constants/modalTypeConstants";
 import AboutScreen from "../features/about/screens/AboutScreen";
 import AnalyticsScreen from "../features/analytics/screens/AnalyticsScreen";
 import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
+import DeleteAccountScreen from "../features/auth/screens/DeleteAccountScreen";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import LoginScreen from "../features/auth/screens/LoginScreen";
@@ -454,6 +455,16 @@ const RootStack = () => {
         }}
         name={screenList.forgotPasswordScreen}
         component={ForgotPasswordScreen}
+      />
+
+      {/* // TAG : Delete Account Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Delete Account",
+        }}
+        name={screenList.deleteAccountScreen}
+        component={DeleteAccountScreen}
       />
 
       {/* // SECTION : TOUR SCREEN */}
