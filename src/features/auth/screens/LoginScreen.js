@@ -127,7 +127,7 @@ const LoginScreen = ({ route, navigation }) => {
       >
         {!screenLoading && (
           <>
-            <LottieBackground />
+            {/* <LottieBackground /> */}
             <View
               style={{
                 width: "100%",
