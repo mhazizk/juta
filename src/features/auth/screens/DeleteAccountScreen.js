@@ -29,7 +29,7 @@ const DeleteAccountScreen = ({ navigation }) => {
         }}
       >
         <IonIcons
-          name="alert-circle-outline"
+          name="warning"
           size={64}
           color={globalTheme.colors.danger}
           style={{
