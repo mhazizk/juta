@@ -251,7 +251,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               <ListItem
                 pressable
                 isDanger
-                leftLabel="Account deletion request"
+                leftLabel="Delete account"
                 iconLeftName="trash-outline"
                 iconLeftColor={globalTheme.colors.danger}
                 iconPack="IonIcons"
