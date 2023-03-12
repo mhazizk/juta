@@ -243,7 +243,7 @@ const SignUpScreen = ({ route, navigation }) => {
       >
         {!screenLoading && (
           <>
-            <LottieBackground />
+            {/* <LottieBackground /> */}
             <View
               style={{
                 width: "100%",
