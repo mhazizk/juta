@@ -6,7 +6,8 @@ const DELETE_ACCOUNT_SCREEN_CONSTANTS = {
     "Your account will be deleted after 30 days since the deletion request is made.",
   FOURTH_LABEL:
     "During this period, you can still cancel your request by logging in to your account and coming back to this menu.",
-  FIFTH_LABEL: "Please enter your password below to confirm your action.",
+  FIFTH_LABEL:
+    "To poceed with the deletion request, please enter your password below.",
   CANCEL_BUTTON_LABEL: "Cancel",
   DELETE_BUTTON_LABEL: "Request Deletion",
 };
