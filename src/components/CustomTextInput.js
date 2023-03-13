@@ -25,22 +25,28 @@ const CustomTextInput = ({
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   let keyboardInputType;
+  let textContentType;
 
   switch (inputType) {
     case "email":
       keyboardInputType = "email-address";
+      textContentType = "emailAddress";
       break;
     case "password":
       keyboardInputType = "default";
+      textContentType = "oneTimeCode";
       break;
     case "displayName":
       keyboardInputType = "default";
+      textContentType = "name";
       break;
     case "search":
       keyboardInputType = "default";
+      textContentType = "none";
       break;
     default:
       keyboardInputType = "default";
+      textContentType = "none";
       break;
   }
 
@@ -140,6 +146,7 @@ const CustomTextInput = ({
           <TextInput
             editable={editable}
             ref={inputRef}
+            textContentType={textContentType}
             keyboardType={keyboardInputType}
             returnKeyType={returnKeyType || "default"}
             placeholder={placeholder || "Type something here ..."}
