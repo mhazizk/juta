@@ -9,6 +9,7 @@ const FIRESTORE_COLLECTION_NAMES = {
   APP_SETTINGS: "appSettings",
   CURRENCY_RATES: "currencyRates",
   FEATURE_WISHLIST: "featureWishlist",
+  DELETION_REQUESTS: "deletionRequests",
 };
 
 export default FIRESTORE_COLLECTION_NAMES;
