@@ -1,7 +1,10 @@
 import { MarkdownView } from "react-native-markdown-view";
 import * as Linking from "expo-linking";
+import { useGlobalTheme } from "../../../reducers/GlobalContext";
 
 const PrivacyPolicy = () => {
+  const { globalTheme } = useGlobalTheme();
+  // TODO : Fix text color on dark mode
   return (
     <>
       <MarkdownView
