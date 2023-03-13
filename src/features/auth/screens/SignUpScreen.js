@@ -30,6 +30,13 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
 import SECRET_KEYS from "../../../constants/secretManager";
+import Animated, {
+  FadeIn,
+  FadeInLeft,
+  FadeOutLeft,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { expoPushToken, setExpoPushToken } = useExpoPushToken();
@@ -264,10 +271,10 @@ const SignUpScreen = ({ route, navigation }) => {
               <AnimatedLoginText />
             </View>
             {/* // SECTION : Input Section */}
-            <View
+            <Animated.View
               style={{
                 // paddingHorizontal: 16,
-                flex: showPasswordConditionsChecklist ? 1 : 0,
+                // flex: showPasswordConditionsChecklist ? 0 : 0,
                 justifyContent: "center",
               }}
             >
@@ -342,7 +349,7 @@ const SignUpScreen = ({ route, navigation }) => {
               {showPasswordConditionsChecklist && (
                 <PasswordConditionsChecklist conditions={passwordConditions} />
               )}
-            </View>
+            </Animated.View>
             {/* //SECTION : Terms of Service and Privacy Policy */}
             <View
               style={{
