@@ -18,7 +18,14 @@ import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
 import setNotificationHandler from "./src/utils/setNotificationHandler";
 import registerForPushNotificationsAsync from "./src/utils/registerForPushNotificationsAsync";
-import { Alert, AppState, Platform, StatusBar } from "react-native";
+import {
+  Alert,
+  AppState,
+  KeyboardAvoidingView,
+  LogBox,
+  Platform,
+  StatusBar,
+} from "react-native";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 
 setNotificationHandler();
@@ -28,6 +35,9 @@ function App() {
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
+    if (__DEV__) {
+      LogBox.ignoreAllLogs();
+    }
     sentryInit();
     if (Platform.OS === "ios") {
       requestiosTrackingPermissionsAsync(isGrantedToTrack).then((isGranted) => {
@@ -35,24 +45,24 @@ function App() {
       });
     }
 
-    // const subscription = AppState.addEventListener("change", (nextAppState) => {
-    //   if (
-    //     appState.current.match(/inactive|background/) &&
-    //     nextAppState === "active"
-    //   ) {
-    // requestiosTrackingPermissionsAsync(isGrantedToTrack).then(
-    //   (isGranted) => {
-    //     setIsGrantedTrack(isGranted);
-    //   }
-    // );
-    //   }
-    //   appState.current = nextAppState;
-    //   console.log(appState.current);
-    // });
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        requestiosTrackingPermissionsAsync(isGrantedToTrack).then(
+          (isGranted) => {
+            setIsGrantedTrack(isGranted);
+          }
+        );
+      }
+      appState.current = nextAppState;
+      console.log(appState.current);
+    });
 
-    // return () => {
-    //   subscription.remove();
-    // };
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   const requestiosTrackingPermissionsAsync = async (isGranted) => {
@@ -90,9 +100,16 @@ function App() {
   try {
     return (
       <>
-        <GlobalStateProvider>
-          <GlobalStateWrapper />
-        </GlobalStateProvider>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{
+            flex: 1,
+          }}
+        >
+          <GlobalStateProvider>
+            <GlobalStateWrapper />
+          </GlobalStateProvider>
+        </KeyboardAvoidingView>
       </>
     );
   } catch (error) {
