@@ -809,7 +809,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         },
                       });
                     }}
-                    clearButtonMode="while-editing"
+                    clearButtonMode="never"
                     defaultValue={transaction.details.notes}
                     value={transaction.details.notes}
                   />
