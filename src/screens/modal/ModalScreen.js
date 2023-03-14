@@ -1,5 +1,5 @@
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
+import Animated, { useSharedValue } from "react-native-reanimated";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ActionButtonWrapper from "../../components/ActionButtonWrapper";
 import {
@@ -27,6 +28,9 @@ import {
   useGlobalTheme,
 } from "../../reducers/GlobalContext";
 import * as utils from "../../utils/";
+
+let keepOffsetYValue = 0;
+let latestDefaultOptionName = null;
 
 /**
  *
@@ -69,7 +73,11 @@ const ModalScreen = ({ route, navigation }) => {
   const [textInput, setTextInput] = useState(defaultOption);
   const [showButton, setShowButton] = useState(false);
   const [showTemporaryDatePicker, setShowTemporaryDatePicker] = useState(false);
+  const [offsetYValue, setOffsetYValue] = useState(0);
   const textInputRef = useRef();
+  const flatListRef = useRef();
+
+  const temporaryOffsetY = useSharedValue(0);
 
   const colors = [
     { name: "Default", color: globalTheme.colors.foreground },
@@ -81,10 +89,65 @@ const ModalScreen = ({ route, navigation }) => {
     { name: "Purple", color: "#9C27B0" },
   ];
 
+  const getItemLayout = (data, index, numColumns) => {
+    const totalRows = Math.round(data.length / numColumns);
+    const rowIndex = Math.round(index / numColumns);
+    const rowHeight = 48;
+    const rowOffset = rowIndex * rowHeight;
+    return {
+      length: data.length,
+      offset: Math.round(rowOffset),
+      index,
+    };
+  };
+
   useEffect(() => {
     // setSelectedItem(defaultOption);
     // setTextInput(defaultOption);
+    resetOffsetYValue(defaultOption);
+    scrollToIndexOnStart();
   }, []);
+
+  const resetOffsetYValue = (defaultOption) => {
+    const newOptionName = defaultOption?.name;
+    const previousOptionName = latestDefaultOptionName;
+    const isOptionSame = newOptionName === previousOptionName;
+
+    if (!isOptionSame) {
+      keepOffsetYValue = 0;
+      latestDefaultOptionName = newOptionName;
+    }
+  };
+
+  const scrollToIndexOnStart = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToOffset({
+        animated: true,
+        offset: keepOffsetYValue,
+      });
+    }, 300);
+  };
+
+  const onFlatListLayoutChange = (event, numColumns) => {
+    flatListRef.current?.scrollToOffset({
+      animated: false,
+      offset: offsetYValue,
+    });
+  };
+
+  const onScrollHandler = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    console.log("contentOffset Y", contentOffset.y);
+    const offsetY = contentOffset.y < 0 ? 0 : contentOffset.y;
+    temporaryOffsetY.value = offsetY;
+  };
+
+  const onTapItem = (item) => {
+    setOffsetYValue(temporaryOffsetY.value);
+    keepOffsetYValue = temporaryOffsetY.value;
+    latestDefaultOptionName = item.name;
+    setSelectedItem(item);
+  };
 
   useEffect(() => {
     if (!!selectedItem || !!textInput) {
@@ -266,9 +329,14 @@ const ModalScreen = ({ route, navigation }) => {
           case MODAL_TYPE_CONSTANTS.LIST:
             return (
               <FlatList
+                ref={flatListRef}
                 data={props}
+                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                onMomentumScrollEnd={onScrollHandler}
+                onScrollEndDrag={onScrollHandler}
                 keyExtractor={(item, id) => item?.name + id}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <>
                     <ListItem
                       pressable
@@ -291,7 +359,7 @@ const ModalScreen = ({ route, navigation }) => {
                       }
                       leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
                       onPress={() => {
-                        setSelectedItem(item);
+                        onTapItem(item);
                       }}
                     />
                   </>
@@ -302,13 +370,18 @@ const ModalScreen = ({ route, navigation }) => {
           case MODAL_TYPE_CONSTANTS.CURRENCY_LIST:
             return (
               <FlatList
+                ref={flatListRef}
                 data={props}
+                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                onMomentumScrollEnd={onScrollHandler}
+                onScrollEndDrag={onScrollHandler}
                 keyExtractor={(item, id) => item?.name + id}
                 renderItem={({ item }) => (
                   <>
                     <TouchableNativeFeedback
                       onPress={() => {
-                        setSelectedItem(item);
+                        onTapItem(item);
                       }}
                     >
                       <View style={globalTheme.list.listContainer}>
@@ -327,11 +400,18 @@ const ModalScreen = ({ route, navigation }) => {
                             paddingLeft: 16,
                           }}
                         >
-                          <TextPrimary
-                            label={`${utils.upperCaseThisFirstLetter(
-                              item?.name
-                            )} / ${item?.symbol}`}
-                          />
+                          <View>
+                            <TextPrimary
+                              label={`${utils.upperCaseThisFirstLetter(
+                                item?.countryName
+                              )}`}
+                            />
+                            <TextPrimary
+                              label={`${utils.upperCaseThisFirstLetter(
+                                item?.name
+                              )} / ${item?.symbol}`}
+                            />
+                          </View>
                           <IonIcons
                             name="checkmark-circle"
                             size={22}
@@ -420,6 +500,10 @@ const ModalScreen = ({ route, navigation }) => {
                 // numColumns={4}
                 // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
                 data={colors}
+                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                onMomentumScrollEnd={onScrollHandler}
+                onScrollEndDrag={onScrollHandler}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
                   paddingHorizontal: 16,
@@ -433,7 +517,7 @@ const ModalScreen = ({ route, navigation }) => {
                     <TouchableOpacity
                       style={{ marginRight: 8 }}
                       onPress={() => {
-                        setSelectedItem(item);
+                        onTapItem(item);
                       }}
                     >
                       {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
@@ -471,12 +555,15 @@ const ModalScreen = ({ route, navigation }) => {
 
           case MODAL_TYPE_CONSTANTS.ICON_PICKER:
             return (
-              <FlatList
+              <Animated.FlatList
+                ref={flatListRef}
                 numColumns={6}
                 columnWrapperStyle={{
                   justifyContent: "space-between",
                   padding: 8,
                 }}
+                snapToAlignment="center"
+                onLayout={(event) => onFlatListLayoutChange(event, 6)}
                 showsHorizontalScrollIndicator={false}
                 data={props}
                 style={{ height: "100%" }}
@@ -486,13 +573,16 @@ const ModalScreen = ({ route, navigation }) => {
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}
+                onMomentumScrollEnd={onScrollHandler}
+                onScrollEndDrag={onScrollHandler}
+                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
                 keyExtractor={(item, id) => item?.name}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <>
                     <TouchableOpacity
                       style={{ marginRight: 8 }}
                       onPress={() => {
-                        setSelectedItem(item);
+                        onTapItem(item);
                       }}
                     >
                       {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
