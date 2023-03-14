@@ -175,6 +175,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               iconRightName="chevron-forward"
               leftLabel="Type"
               useRightLabelContainer
+              rightIconPack="IonIcons"
               rightLabel={
                 category.targetCategoryType[0].toUpperCase() +
                 category.targetCategoryType.substring(1)
@@ -211,6 +212,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               iconRightName="chevron-forward"
               leftLabel="Icon color"
               useRightLabelContainer
+              rightIconPack="IonIcons"
               rightLabel=" "
               rightLabelContainerStyle={{
                 flexDirection: "row",
@@ -228,7 +230,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Pick Icon Color",
+                  title: "Pick icon color",
                   modalType: MODAL_TYPE_CONSTANTS.COLOR_PICKER,
                   selected: (item) => {
                     setCategory({
