@@ -594,7 +594,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(screenList.modalScreen, {
-                title: "New Logbook",
+                title: "Create your first logbook",
                 modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                 placeholder: "Enter new logbook name...",
                 defaultOption: newLogbook.logbook_name || "",
