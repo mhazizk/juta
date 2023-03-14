@@ -29,10 +29,12 @@ const cancelUserDataDeletion = async (uid, email, password) => {
       );
       return cancelDeletionRequest({ uid })
         .then((result) => {
+          const { data } = result;
           Alert.alert(
             "Account deletion request",
-            "Your account deletion request has been cancelled."
+            "Your account deletion request has been cancelled successfully. Your account will not be deleted."
           );
+          return;
         })
         .catch((error) => {
           console.error(JSON.stringify(error, null, 2));
