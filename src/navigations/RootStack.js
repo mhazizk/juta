@@ -542,8 +542,7 @@ const RootStack = () => {
       {/* // TAG : Logbook Screen */}
       <Stack.Screen
         options={{
-          ...showHeader,
-          title: "Logbooks",
+          ...noHeader,
         }}
         name={screenList.logbookScreen}
         component={LogbookScreen}
