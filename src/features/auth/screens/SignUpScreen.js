@@ -36,6 +36,8 @@ import Animated, {
   FadeOutLeft,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withTiming,
 } from "react-native-reanimated";
 
 const SignUpScreen = ({ route, navigation }) => {
@@ -59,6 +61,13 @@ const SignUpScreen = ({ route, navigation }) => {
     passwordConditionsList
   );
   const [user, loading, error] = useAuthState(auth);
+
+  const heightView = useSharedValue(0);
+  const animatedHeightStyle = useAnimatedStyle(() => {
+    return {
+      height: withTiming(heightView.value, 500),
+    };
+  });
 
   useEffect(() => {}, []);
 
@@ -272,11 +281,18 @@ const SignUpScreen = ({ route, navigation }) => {
             </View>
             {/* // SECTION : Input Section */}
             <Animated.View
-              style={{
-                // paddingHorizontal: 16,
-                // flex: showPasswordConditionsChecklist ? 0 : 0,
-                justifyContent: "center",
+              onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                heightView.value = height;
               }}
+              style={[
+                {
+                  // paddingHorizontal: 16,
+                  // flex: showPasswordConditionsChecklist ? 0 : 0,
+                  justifyContent: "center",
+                },
+                // animatedHeightStyle,
+              ]}
             >
               <View
                 style={{
