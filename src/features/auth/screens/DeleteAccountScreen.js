@@ -1,4 +1,4 @@
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, Dimensions, Alert } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { TextDanger, TextPrimary } from "../../../components/Text";
@@ -32,22 +32,17 @@ const DeleteAccountScreen = ({ navigation }) => {
   useEffect(() => {
     fetchDeletionRequest();
   }, []);
-  const newDeletionRequest = {
-    uid: 123,
-    email: "dac",
-    requestDate: Date.now(),
-    // deletionDate: Date.now() + 1000 * 60 * 60 * 24 * 30, // 30 days from now
-    deletionDate: Date.now() + 1000 * 60 * 15 * 1 * 1, // example : 15 min from now
-    deletionTaskId: "",
-    status: "scheduled",
-  };
+
   const fetchDeletionRequest = async () => {
     const userRequest = await firestore.getOneDoc(
       FIRESTORE_COLLECTION_NAMES.DELETION_REQUESTS,
       userAccount.uid
     );
-    if (userRequest) setDeletionRequest(userRequest);
-    // setDeletionRequest(newDeletionRequest);
+    if (userRequest) {
+      setDeletionRequest(userRequest);
+    } else {
+      setDeletionRequest(null);
+    }
     setIsLoading(false);
   };
 
@@ -160,14 +155,39 @@ const DeleteAccountScreen = ({ navigation }) => {
                             .CANCEL_DELETION_BUTTON_LABEL
                         }
                         onPress={() => {
-                          cancelUserDataDeletion(
-                            userAccount.uid,
-                            userAccount.email,
-                            password
-                          ).then(() => {
-                            setIsLoading(true);
-                            fetchDeletionRequest();
-                          });
+                          setIsLoading(true);
+                          //   check if the cancelation request is made within an hour of the deletion request
+                          //   if yes, then show alert
+                          //   else, cancel the deletion request
+                          const requestDateInMillis =
+                            deletionRequest.requestDate;
+                          const currentDateInMillis = Date.now();
+                          const differenceInHours =
+                            (currentDateInMillis - requestDateInMillis) /
+                            (1000 * 60 * 60);
+                          console.log(differenceInHours);
+                          if (differenceInHours < 1) {
+                            Alert.alert(
+                              "Cancel Deletion Request",
+                              "You have just made a deletion request. Please wait for at least an hour before cancelling the request."
+                            );
+                            setIsLoading(false);
+                          } else {
+                            cancelUserDataDeletion(
+                              userAccount.uid,
+                              userAccount.email,
+                              password
+                            )
+                              .then(() => {
+                                setPassword("");
+                                setTimeout(() => {
+                                  fetchDeletionRequest();
+                                }, 1000);
+                              })
+                              .catch((error) => {
+                                setIsLoading(false);
+                              });
+                          }
                         }}
                       />
                     )}
@@ -306,14 +326,21 @@ const DeleteAccountScreen = ({ navigation }) => {
                             .DELETE_BUTTON_LABEL
                         }
                         onPress={() => {
+                          setIsLoading(true);
                           requestUserDataDeletion(
                             userAccount.uid,
                             userAccount.email,
                             password
-                          ).then(() => {
-                            setIsLoading(true);
-                            fetchDeletionRequest();
-                          });
+                          )
+                            .then(() => {
+                              setPassword("");
+                              setTimeout(() => {
+                                fetchDeletionRequest();
+                              }, 1000);
+                            })
+                            .catch((error) => {
+                              setIsLoading(false);
+                            });
                         }}
                       />
                     )}
