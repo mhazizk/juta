@@ -30,6 +30,7 @@ const requestUserDataDeletion = async (uid, email, password) => {
             "Account deletion request",
             "Your account deletion request has been made. Your account will be deleted after 30 days."
           );
+          return;
         })
         .catch((error) => {
           console.error(JSON.stringify(error, null, 2));
