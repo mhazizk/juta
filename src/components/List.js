@@ -139,7 +139,10 @@ export const ListItem = ({
             {rightLabel && useRightLabelContainer && (
               <>
                 <View
-                  style={[{ ...rightLabelContainerStyle }, { maxWidth: "85%" }]}
+                  style={[
+                    { ...rightLabelContainerStyle },
+                    { maxWidth: "85%", marginHorizontal: 16 },
+                  ]}
                 >
                   {useFlagIcon && (
                     <CountryFlag
@@ -188,7 +191,7 @@ export const ListItem = ({
                   ? iconRightColor
                   : globalTheme.colors.foreground
               }
-              // style={{ paddingLeft: 16 }}
+              // style={{ paddingLeft: 8 }}
             />
           )}
           {useRightIconPack === "Foundation" && !isLoading && (
