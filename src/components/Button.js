@@ -5,6 +5,7 @@ import {
   useGlobalAppSettings,
   useGlobalTheme,
 } from "../reducers/GlobalContext";
+import { upperCaseThisFirstLetter } from "../utils";
 import {
   TextButtonDisabled,
   TextButtonPrimary,
@@ -57,6 +58,7 @@ export const ButtonPrimary = ({
     </>
   );
 };
+
 /**
  * Button Primary Icon
  *
@@ -107,6 +109,57 @@ export const ButtonPrimaryIcon = ({
             />
           )}
           <TextButtonPrimary label={label} />
+        </View>
+      </TouchableOpacity>
+    </>
+  );
+};
+
+/**
+ * Logbook Button
+ *
+ * @param label, props, onPress, condition, theme, width, style
+ * @returns
+ */
+export const LogbookButton = ({ selectedLogbookName, onPress, width }) => {
+  const { appSettings } = useGlobalAppSettings();
+  const { globalTheme } = useGlobalTheme();
+
+  return (
+    <>
+      <TouchableOpacity onPress={onPress}>
+        <View
+          style={[
+            { ...globalTheme.button.buttonPrimary.buttonStyle },
+            {
+              flexDirection: "row",
+              minWidth: 80,
+              minHeight: 48,
+              width: width || null,
+              paddingHorizontal: width ? 16 : 4,
+              justifyContent: "space-between",
+              alignItems: "center",
+              // margin: 4
+              backgroundColor: globalTheme.headerButton.backgroundColor,
+            },
+          ]}
+        >
+          <TextPrimary
+            label={upperCaseThisFirstLetter(selectedLogbookName)}
+            style={{
+              // flex: 1,
+              // paddingLeft: 16,
+              color: globalTheme.headerButton.color,
+            }}
+            numberOfLines={1}
+          />
+
+          <IonIcons
+            name="chevron-down"
+            size={18}
+            color={globalTheme.headerButton.color}
+            style={{ flexShrink: 0, paddingLeft: 16 }}
+          />
         </View>
       </TouchableOpacity>
     </>
