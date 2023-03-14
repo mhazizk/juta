@@ -250,6 +250,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               iconLeftName="coins"
               iconPack="FontAwesome5"
               leftLabel="Main currency"
+              rightIconPack="IonIcons"
               iconRightName="chevron-forward"
               useRightLabelContainer
               useFlagIcon
