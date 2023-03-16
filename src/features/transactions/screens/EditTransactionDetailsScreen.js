@@ -246,6 +246,22 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     <>
       {transaction && selectedCategory && selectedLogbook && (
         <CustomScrollView>
+          <IonIcons
+            name={selectedCategory?.icon?.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "0%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Amount Section */}
           <TouchableOpacity
             onPress={() => inputAmount.current.focus()}
@@ -687,8 +703,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         selectedLoanContact?.contact_name
                       )
                     : transaction.details.category_id.includes("loan")
-                    ? "Add Borrower name"
-                    : "Add Lender name"
+                    ? "Add"
+                    : "Add"
                 }
                 iconPack="IonIcons"
                 iconLeftName="person"
