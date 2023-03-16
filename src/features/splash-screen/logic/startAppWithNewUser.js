@@ -30,9 +30,9 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
     dispatchBudgets,
     repeatedTransactions,
     dispatchRepeatedTransactions,
+    badgeCounter,
     globalCurrencyRates,
     dispatchGlobalCurrencyRates,
-    badgeCounter,
     dispatchBadgeCounter,
     expoPushToken,
   } = globalContext;
@@ -125,9 +125,6 @@ const startAppWithNewUser = async ({ currentUser, globalContext }) => {
 
           badgeCounter: badgeCounter,
           dispatchBadgeCounter: dispatchBadgeCounter,
-
-          globalCurrencyRates,
-          dispatchGlobalCurrencyRates,
 
           globalLoan,
           dispatchGlobalLoan,
