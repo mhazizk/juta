@@ -187,6 +187,22 @@ const LogbookPreviewScren = ({ route, navigation }) => {
     <>
       {logbook && (
         <CustomScrollView>
+          <IonIcons
+            name="book"
+            size={400}
+            style={{
+              position: "absolute",
+              top: "10%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Logbook Name Section */}
           <View
             style={{
