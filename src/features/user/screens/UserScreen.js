@@ -139,6 +139,34 @@ const UserScreen = ({ navigation }) => {
                 }
                 onPress={() => navigation.navigate(screenList.myReportsScreen)}
               />
+              {/* // TAG : My Currencies */}
+              {/* <ListItem
+                pressable
+                leftLabel="My Currencies"
+                iconLeftName="cash-outline"
+                iconPack="IonIcons"
+                iconRightName={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "burst-new"
+                }
+                iconRightSize={28}
+                iconRightColor={globalTheme.colors.success}
+                rightIconPack={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "Foundation"
+                }
+                onPress={() =>
+                  navigation.navigate(screenList.myCurrenciesScreen)
+                }
+              /> */}
               {/* // TAG : My Repeated Transactions */}
               {/* <ListItem
                 pressable
