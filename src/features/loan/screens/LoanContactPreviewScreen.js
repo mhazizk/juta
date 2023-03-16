@@ -144,8 +144,8 @@ const LoanContactPreviewScreen = ({ route, navigation }) => {
                       targetCurrencyName:
                         appSettings.logbookSettings.defaultCurrency.name,
                     }),
-                    currencyIsoCode:
-                      appSettings.logbookSettings.defaultCurrency.isoCode,
+                    currencyCountryName:
+                      appSettings.logbookSettings.defaultCurrency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
