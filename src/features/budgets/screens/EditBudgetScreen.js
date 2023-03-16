@@ -190,16 +190,16 @@ const EditBudgetScreen = ({ navigation, route }) => {
                   ? utils
                       .getFormattedNumber({
                         value: patchBudget.limit,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })
                       .slice(0, 15) + "..."
                   : utils.getFormattedNumber({
                       value: patchBudget.limit,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })
@@ -224,8 +224,8 @@ const EditBudgetScreen = ({ navigation, route }) => {
                     ? null
                     : utils.getFormattedNumber({
                         value: patchBudget.limit,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       }),
