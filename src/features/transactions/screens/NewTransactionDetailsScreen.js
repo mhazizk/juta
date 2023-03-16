@@ -372,6 +372,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         currency: selectedLogbook.logbook_currency.name,
                       });
                     }
+                    console.log({ float });
                     setTransaction({
                       ...transaction,
                       details: {
@@ -383,13 +384,13 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   clearButtonMode="never"
                   defaultValue={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    currencyCountryName: selectedLogbook.logbook_currency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
                   value={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    currencyCountryName: selectedLogbook.logbook_currency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
