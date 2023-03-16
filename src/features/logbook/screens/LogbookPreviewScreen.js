@@ -227,16 +227,17 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           </View>
 
           <ListSection>
-            {/* // TAG : Main currency */}
+            {/* // TAG : Logbook currency */}
             <ListItem
               iconLeftName="coins"
+              rightIconPack="IonIcons"
               iconPack="FontAwesome5"
-              leftLabel="Main currency"
+              leftLabel="Currency"
               useRightLabelContainer
               useFlagIcon
               flagIsoCode={logbook.logbook_currency.isoCode}
               flagIconSize={18}
-              rightLabel={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
+              rightLabel={`${logbook.logbook_currency.currencyCode} / ${logbook.logbook_currency.symbol}`}
               rightLabelContainerStyle={{
                 flexDirection: "row",
                 maxWidth: "50%",
@@ -263,7 +264,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                   globalCurrencyRates,
                   targetCurrencyName: logbook.logbook_currency.name,
                 }),
-                currencyIsoCode: logbook.logbook_currency.isoCode,
+                currencyCountryName: logbook.logbook_currency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
