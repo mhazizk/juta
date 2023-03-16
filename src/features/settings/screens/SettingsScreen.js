@@ -59,20 +59,12 @@ const SettingsScreen = ({ navigation }) => {
   useEffect(() => {}, []);
 
   useEffect(() => {
-    console.log({ currencyRates });
-    // setTimeout(() => {
-    //   dispatchGlobalCurrencyRates({
-    //     type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
-    //     payload: currencyRates,
-    //   });
-    // }, 1);
-    // setTimeout(async () => {
-    //   await firestore.setData(
-    //     FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-    //     userAccount.uid,
-    //     currencyRates
-    //   );
-    // }, 1000);
+    setTimeout(() => {
+      dispatchGlobalCurrencyRates({
+        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+        payload: currencyRates,
+      });
+    }, 1);
   }, [currencyRates]);
 
   const _timestamps = {
@@ -575,6 +567,28 @@ const SettingsScreen = ({ navigation }) => {
             <ListSection>
               {/* // TAG : Main currency */}
               <ListItem
+                pressable
+                iconLeftName="usd"
+                leftLabel="Set default currency"
+                thirdLabel="This currency also be used for all features in the app"
+                rightLabel={
+                  logbookSettings.defaultCurrency.currencyCode +
+                  " / " +
+                  logbookSettings.defaultCurrency.symbol
+                }
+                useRightLabelContainer={true}
+                useFlagIcon
+                flagIsoCode={logbookSettings.defaultCurrency.isoCode}
+                flagIconSize={18}
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
@@ -643,19 +657,31 @@ const SettingsScreen = ({ navigation }) => {
                     defaultOption: logbookSettings.defaultCurrency,
                   });
                 }}
-                pressable
-                iconLeftName="usd"
-                leftLabel="Set default currency"
-                thirdLabel="This currency also be used for all features in the app"
-                rightLabel={
-                  logbookSettings.defaultCurrency.name +
-                  " / " +
-                  logbookSettings.defaultCurrency.symbol
-                }
               />
 
               {/* // TAG : Secondary Currency */}
               <ListItem
+                pressable
+                iconLeftName="usd"
+                leftLabel="Set secondary currency"
+                useRightLabelContainer={true}
+                useFlagIcon
+                flagIsoCode={logbookSettings.secondaryCurrency.isoCode}
+                flagIconSize={18}
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
+                rightLabel={
+                  logbookSettings.secondaryCurrency.currencyCode +
+                  " / " +
+                  logbookSettings.secondaryCurrency.symbol
+                }
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
@@ -689,14 +715,6 @@ const SettingsScreen = ({ navigation }) => {
                     defaultOption: logbookSettings.secondaryCurrency,
                   });
                 }}
-                pressable
-                iconLeftName="usd"
-                leftLabel="Set secondary currency"
-                rightLabel={
-                  logbookSettings.secondaryCurrency.name +
-                  " / " +
-                  logbookSettings.secondaryCurrency.symbol
-                }
               />
               {/* // TAG : Show secondary currency */}
               <CheckList
@@ -773,30 +791,29 @@ const SettingsScreen = ({ navigation }) => {
                   isLoading
                     ? "Updating... "
                     : "Last update: " +
-                      new Date(currencyRates._timestamps.updated_at).getDate() +
+                      new Date(currencyRates._timestamps.updatedAt).getDate() +
                       "/" +
                       (new Date(
-                        currencyRates._timestamps.updated_at
+                        currencyRates._timestamps.updatedAt
                       ).getMonth() +
                         1) +
                       "/" +
                       new Date(
-                        currencyRates._timestamps.updated_at
+                        currencyRates._timestamps.updatedAt
                       ).getFullYear()
                 }
                 isLoading={isLoading}
                 onPress={() => {
                   setIsLoading(true);
-                  getCurrencyRate(globalCurrencyRates.data).then((data) => {
-                    setCurrencyRates({
-                      ...globalCurrencyRates,
-                      data: data,
-                      _timestamps: {
-                        ...globalCurrencyRates._timestamps,
-                        updated_at: Date.now(),
-                        updated_by: userAccount.uid,
-                      },
-                    });
+                  // getCurrencyRate(globalCurrencyRates.data).then((data) => {
+                  Promise.all([
+                    firestore.getOneDoc(
+                      FIRESTORE_COLLECTION_NAMES.GLOBAL_CURRENCY_RATES,
+                      "allCurrencyRates"
+                    ),
+                  ]).then((data) => {
+                    const newCurrencies = data[0];
+                    setCurrencyRates(newCurrencies);
                     setIsLoading(false);
                   });
                 }}
@@ -811,7 +828,7 @@ const SettingsScreen = ({ navigation }) => {
                 leftLabel="Negative currency symbol"
                 rightLabel={utils.getFormattedNumber({
                   value: -123,
-                  currencyIsoCode: logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName: logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
