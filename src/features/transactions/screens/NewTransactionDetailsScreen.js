@@ -306,6 +306,22 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
           ]}
         >
           <CustomScrollView>
+            <IonIcons
+              name={selectedCategory?.icon?.name}
+              size={400}
+              style={{
+                position: "absolute",
+                top: "0%",
+                bottom: 0,
+                right: "-30%",
+                zIndex: -1,
+              }}
+              color={utils.hexToRgb({
+                hex: globalTheme.colors.secondary,
+                opacity: 0.3,
+              })}
+            />
+
             {/* // TAG : Amount Section */}
             <TouchableOpacity
               onPress={() => inputAmount.current.focus()}
