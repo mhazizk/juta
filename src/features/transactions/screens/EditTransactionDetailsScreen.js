@@ -284,8 +284,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 keyboardType="number-pad"
                 placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode:
-                    appSettings.logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName:
+                    appSettings.logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -324,13 +324,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 clearButtonMode="never"
                 defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
