@@ -127,6 +127,23 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
     <>
       {category && categoryType && (
         <CustomScrollView contentContainerStyle={{ flex: 1 }}>
+          <IonIcons
+            name={category.icon.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "10%",
+              bottom: 0,
+              right: "-30%",
+              // left: 0,
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Category Name Section */}
           <View
             style={{
@@ -137,16 +154,24 @@ const CategoryPreviewScreen = ({ route, navigation }) => {
               paddingHorizontal: 16,
             }}
           >
-            <IonIcons
-              name={category.icon.name}
-              size={48}
-              style={{ padding: 16 }}
-              color={
-                category.icon.color === "default"
-                  ? globalTheme.colors.foreground
-                  : category.icon.color
-              }
-            />
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "visible",
+              }}
+            >
+              <IonIcons
+                name={category.icon.name}
+                size={48}
+                style={{ padding: 16 }}
+                color={
+                  category.icon.color === "default"
+                    ? globalTheme.colors.foreground
+                    : category.icon.color
+                }
+              />
+            </View>
             <TextPrimary
               label={
                 route?.params?.category.name[0].toUpperCase() +
