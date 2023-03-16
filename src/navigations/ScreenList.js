@@ -100,6 +100,9 @@ const screenList = {
   mySubscriptionScreen: "My Subscription Screen",
   subscriptionHistoryScreen: "Subscription History Screen",
 
+  // Currency Screen
+  myCurrenciesScreen: "My Currency List Screen",
+
   // Export Screen
   exportScreen: "Export Screen",
 
