@@ -207,8 +207,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 // }
                 placeholder={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode:
-                    appSettings.logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName:
+                    appSettings.logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -246,13 +246,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 clearButtonMode="while-editing"
                 defaultValue={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
