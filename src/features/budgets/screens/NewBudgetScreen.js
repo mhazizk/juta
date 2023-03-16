@@ -173,16 +173,16 @@ const NewBudgetScreen = ({ navigation }) => {
                 ? utils
                     .getFormattedNumber({
                       value: newBudget.limit,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })
                     .slice(0, 15) + "..."
                 : utils.getFormattedNumber({
                     value: newBudget.limit,
-                    currencyIsoCode:
-                      appSettings.logbookSettings.defaultCurrency.isoCode,
+                    currencyCountryName:
+                      appSettings.logbookSettings.defaultCurrency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })
@@ -207,8 +207,8 @@ const NewBudgetScreen = ({ navigation }) => {
                   ? null
                   : utils.getFormattedNumber({
                       value: newBudget.limit,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     }),
