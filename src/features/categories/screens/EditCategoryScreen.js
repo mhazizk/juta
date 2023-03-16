@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  TextInput,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ionIcons from "../../../assets/iconPacks/ionIcons";
@@ -18,6 +25,7 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import * as utils from "../../../utils";
 
 const EditCategoryScreen = ({ route, navigation }) => {
   const { userAccount } = useGlobalUserAccount();
@@ -62,10 +70,29 @@ const EditCategoryScreen = ({ route, navigation }) => {
     <>
       {category && (
         <CustomScrollView>
+          <IonIcons
+            name={category.category.icon.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "10%",
+              bottom: 0,
+              right: "-30%",
+              // left: 0,
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Category Name Section */}
-          <View
+          <TouchableOpacity
+            onPress={() => inputRef.current.focus()}
             style={{
               flex: 1,
+              width: "100%",
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
@@ -96,16 +123,26 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 })
               }
             >
-              <IonIcons
-                name={category.category.icon.name}
-                size={48}
-                style={{ padding: 16 }}
-                color={
-                  category.category.icon.color === "default"
-                    ? globalTheme.colors.foreground
-                    : category.category.icon.color
-                }
-              />
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "visible",
+                }}
+              >
+                <IonIcons
+                  name={category.category.icon.name}
+                  size={48}
+                  style={{
+                    padding: 16,
+                  }}
+                  color={
+                    category.category.icon.color === "default"
+                      ? globalTheme.colors.foreground
+                      : category.category.icon.color
+                  }
+                />
+              </View>
             </TouchableNativeFeedback>
             <TextInput
               ref={inputRef}
@@ -122,7 +159,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                   minHeight: 24,
                   fontSize: 24,
                 },
-                {},
+                { width: "100%" },
               ]}
               onChangeText={(string) => {
                 setCategory({
@@ -133,7 +170,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                   },
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={category.category.name}
               value={category.category.name}
             />
@@ -152,7 +189,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 color={globalTheme.colors.foreground}
               />
             )}
-          </View>
+          </TouchableOpacity>
 
           {/* // TAG : Category Details */}
           <View
