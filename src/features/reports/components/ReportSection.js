@@ -448,9 +448,9 @@ const ReportSection = ({ sections }) => {
                                     )}
                                     rightLabel={utils.getFormattedNumber({
                                       value: totalAmount,
-                                      currencyIsoCode:
+                                      currencyCountryName:
                                         appSettings.logbookSettings
-                                          .defaultCurrency.isoCode,
+                                          .defaultCurrency.name,
                                       negativeSymbol:
                                         appSettings.logbookSettings
                                           .negativeCurrencySymbol,
@@ -543,9 +543,9 @@ const ReportSection = ({ sections }) => {
                                     )}
                                     rightLabel={utils.getFormattedNumber({
                                       value: totalAmount,
-                                      currencyIsoCode:
+                                      currencyCountryName:
                                         appSettings.logbookSettings
-                                          .defaultCurrency.isoCode,
+                                          .defaultCurrency.name,
                                       negativeSymbol:
                                         appSettings.logbookSettings
                                           .negativeCurrencySymbol,
