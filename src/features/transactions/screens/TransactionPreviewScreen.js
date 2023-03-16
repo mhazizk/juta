@@ -166,6 +166,22 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     <>
       {transaction && selectedCategory && (
         <CustomScrollView>
+          <IonIcons
+            name={selectedCategory?.icon?.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "5%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Amount Section */}
           <View
             style={{
