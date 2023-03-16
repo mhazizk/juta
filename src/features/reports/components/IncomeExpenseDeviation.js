@@ -7,6 +7,8 @@ import {
 } from "../../../reducers/GlobalContext";
 import ListSection from "../../../components/List/ListSection";
 import * as utils from "../../../utils";
+import TextTicker from "react-native-text-ticker";
+import { useEffect, useState } from "react";
 
 /**
  * Component to show income, expense and deviation
@@ -26,9 +28,41 @@ const IncomeExpenseDeviation = ({
   backgroundColor = null,
   defaultTextColor = null,
   showSymbol = false,
+  useWidgetStyle = false,
 }) => {
   const { globalTheme } = useGlobalTheme();
   const { appSettings } = useGlobalAppSettings();
+  const [incomeViewWidth, setIncomeViewWidth] = useState(0);
+  const [expenseViewWidth, setExpenseViewWidth] = useState(0);
+  const [deviationViewWidth, setDeviationViewWidth] = useState(0);
+  const [incomeTextWidth, setIncomeTextWidth] = useState(0);
+  const [expenseTextWidth, setExpenseTextWidth] = useState(0);
+  const [deviationTextWidth, setDeviationTextWidth] = useState(0);
+  const [useAbbreviation, setUseAbbreviation] = useState(false);
+
+  useEffect(() => {
+    console.log(
+      JSON.stringify(
+        {
+          incomeViewWidth,
+          incomeTextWidth,
+          expenseViewWidth,
+          expenseTextWidth,
+          deviationViewWidth,
+          deviationTextWidth,
+        },
+        null,
+        2
+      )
+    );
+  }, [
+    incomeViewWidth,
+    expenseViewWidth,
+    deviationViewWidth,
+    incomeTextWidth,
+    expenseTextWidth,
+    deviationTextWidth,
+  ]);
   return (
     <>
       <ListSection backgroundColor={backgroundColor || null}>
@@ -49,12 +83,12 @@ const IncomeExpenseDeviation = ({
             <View
               style={{
                 flexDirection: "row",
-                flex: 1,
+                // flex: 1,
                 alignItems: "center",
-                width: "100%",
+                // width: "100%",
               }}
             >
-              {!showSymbol && (
+              {!useWidgetStyle && (
                 <IonIcons
                   name="ellipse"
                   size={12}
@@ -64,7 +98,7 @@ const IncomeExpenseDeviation = ({
                   }}
                 />
               )}
-              {showSymbol && (
+              {useWidgetStyle && (
                 <>
                   <View
                     style={{
@@ -89,7 +123,7 @@ const IncomeExpenseDeviation = ({
                   </View>
                 </>
               )}
-              {showLabel && (
+              {!useWidgetStyle && (
                 <TextPrimary
                   label="Total income"
                   style={{
@@ -98,21 +132,61 @@ const IncomeExpenseDeviation = ({
                 />
               )}
             </View>
-            <TextPrimary
-              label={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
-              } ${utils.getFormattedNumber({
-                value: totalIncome,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
-                negativeSymbol:
-                  appSettings.logbookSettings.defaultCurrency
-                    .negativeCurrencySymbol,
-              })}`}
-              style={{
-                color: globalTheme.colors.success,
+            <View
+              onLayout={({ nativeEvent }) => {
+                const { x, y, width, height } = nativeEvent.layout;
+                setIncomeViewWidth(width);
               }}
-            />
+              style={{
+                flex: 1,
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                onLayout={({ nativeEvent }) => {
+                  const { x, y, width, height } = nativeEvent.layout;
+                  setIncomeTextWidth(width);
+                }}
+              >
+                {useWidgetStyle && (
+                  <TextPrimary
+                    numberOfLines={1}
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      useAbbreviation: true,
+                      value: totalIncome,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.defaultCurrency
+                          .negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: globalTheme.colors.success,
+                    }}
+                  />
+                )}
+                {!useWidgetStyle && (
+                  <TextPrimary
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: totalIncome,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.defaultCurrency
+                          .negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: globalTheme.colors.success,
+                    }}
+                  />
+                )}
+              </View>
+            </View>
           </View>
           {/* // TAG : Expense */}
           <View
@@ -125,12 +199,12 @@ const IncomeExpenseDeviation = ({
             <View
               style={{
                 flexDirection: "row",
-                flex: 1,
+                // flex: 1,
                 alignItems: "center",
-                width: "100%",
+                // width: "100%",
               }}
             >
-              {!showSymbol && (
+              {!useWidgetStyle && (
                 <IonIcons
                   name="ellipse"
                   size={12}
@@ -140,7 +214,7 @@ const IncomeExpenseDeviation = ({
                   }}
                 />
               )}
-              {showSymbol && (
+              {useWidgetStyle && (
                 <>
                   <View
                     style={{
@@ -153,20 +227,33 @@ const IncomeExpenseDeviation = ({
                       backgroundColor: globalTheme.colors.danger,
                     }}
                   >
-                    <TextPrimary
-                      label="-"
+                    <TextTicker
                       style={{
+                        ...globalTheme.text.textPrimary,
                         fontSize: 16,
-                        color:
-                          globalTheme.widgets.totalExpense.cardBackgroundColor,
-                        fontWeight: "bold",
                       }}
-                    />
+                      duration={3000}
+                      loop
+                      bounce
+                      repeatSpacer={50}
+                      marqueeDelay={1000}
+                    >
+                      <TextPrimary
+                        label="-"
+                        style={{
+                          fontSize: 16,
+                          color:
+                            globalTheme.widgets.totalExpense
+                              .cardBackgroundColor,
+                          fontWeight: "bold",
+                        }}
+                      />
+                    </TextTicker>
                   </View>
                 </>
               )}
 
-              {showLabel && (
+              {!useWidgetStyle && (
                 <TextPrimary
                   label="Total expense"
                   style={{
@@ -175,39 +262,80 @@ const IncomeExpenseDeviation = ({
                 />
               )}
             </View>
-            <TextPrimary
-              label={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
-              } ${utils.getFormattedNumber({
-                value: totalExpense,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
-                negativeSymbol:
-                  appSettings.logbookSettings.defaultCurrency
-                    .negativeCurrencySymbol,
-              })}`}
-              style={{
-                color: globalTheme.colors.danger,
+            <View
+              onLayout={({ nativeEvent }) => {
+                const { x, y, width, height } = nativeEvent.layout;
+                setExpenseViewWidth(width);
               }}
-            />
+              style={{
+                flex: 1,
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                onLayout={({ nativeEvent }) => {
+                  const { x, y, width, height } = nativeEvent.layout;
+                  setExpenseTextWidth(width);
+                }}
+              >
+                {!useWidgetStyle && (
+                  <TextPrimary
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: totalExpense,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.defaultCurrency
+                          .negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: globalTheme.colors.danger,
+                    }}
+                  />
+                )}
+                {useWidgetStyle && (
+                  <TextPrimary
+                    numberOfLines={1}
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      useAbbreviation: true,
+                      value: totalExpense,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.defaultCurrency
+                          .negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: globalTheme.colors.danger,
+                    }}
+                  />
+                )}
+              </View>
+            </View>
           </View>
           {/* // TAG : Deviation */}
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
+              justifyContent: "space-between",
               width: "100%",
             }}
           >
             <View
               style={{
                 flexDirection: "row",
-                flex: 1,
+                // flex: 1,
                 alignItems: "center",
-                width: "100%",
+                // width: "100%",
               }}
             >
-              {!showSymbol && (
+              {!useWidgetStyle && (
                 <IonIcons
                   name="ellipse"
                   size={12}
@@ -217,7 +345,7 @@ const IncomeExpenseDeviation = ({
                   }}
                 />
               )}
-              {showSymbol && (
+              {useWidgetStyle && (
                 <>
                   <View
                     style={{
@@ -244,7 +372,7 @@ const IncomeExpenseDeviation = ({
                 </>
               )}
 
-              {showLabel && (
+              {!useWidgetStyle && (
                 <TextPrimary
                   label="Deviation"
                   style={{
@@ -253,20 +381,59 @@ const IncomeExpenseDeviation = ({
                 />
               )}
             </View>
-            <TextPrimary
-              label={`${
-                appSettings.logbookSettings.defaultCurrency.symbol
-              } ${utils.getFormattedNumber({
-                value: totalIncome - totalExpense,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
-                negativeSymbol:
-                  appSettings.logbookSettings.negativeCurrencySymbol,
-              })}`}
-              style={{
-                color: defaultTextColor || globalTheme.colors.primary,
+            <View
+              onLayout={({ nativeEvent }) => {
+                const { x, y, width, height } = nativeEvent.layout;
+                setDeviationViewWidth(width);
               }}
-            />
+              style={{
+                flex: 1,
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                onLayout={({ nativeEvent }) => {
+                  const { x, y, width, height } = nativeEvent.layout;
+                  setDeviationTextWidth(width);
+                }}
+              >
+                {useWidgetStyle && (
+                  <TextPrimary
+                    numberOfLines={1}
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      useAbbreviation: true,
+                      value: totalIncome - totalExpense,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: defaultTextColor || globalTheme.colors.primary,
+                    }}
+                  />
+                )}
+                {!useWidgetStyle && (
+                  <TextPrimary
+                    label={`${
+                      appSettings.logbookSettings.defaultCurrency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: totalIncome - totalExpense,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    })}`}
+                    style={{
+                      color: defaultTextColor || globalTheme.colors.primary,
+                    }}
+                  />
+                )}
+              </View>
+            </View>
           </View>
         </View>
       </ListSection>
