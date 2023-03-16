@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
 // import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
 // import "intl/locale-data/jsonp/en";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -46,6 +46,8 @@ const EditLogbookScreen = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [isConvertCurrency, setIsConvertCurrency] = useState(false);
+
+  const inputRef = useRef(null);
 
   // TAG : UseEffect Section //
 
@@ -177,9 +179,27 @@ const EditLogbookScreen = ({ route, navigation }) => {
     <>
       {logbook && selectedCurrency && (
         <CustomScrollView>
-          {/* // TAG : Logbook Name Section */}
-          <View
+          <IonIcons
+            name="book"
+            size={400}
             style={{
+              position: "absolute",
+              top: "0%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
+          {/* // TAG : Logbook Name Section */}
+          <TouchableOpacity
+            onPress={() => inputRef.current.focus()}
+            style={{
+              width: "100%",
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
@@ -194,6 +214,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               color={globalTheme.colors.foreground}
             />
             <TextInput
+              ref={inputRef}
               maxLength={30}
               textAlign="center"
               returnKeyType="done"
@@ -215,7 +236,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   logbook_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={logbook.logbook_name}
               value={logbook.logbook_name}
             />
@@ -228,7 +249,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 color={globalTheme.colors.foreground}
               />
             )}
-          </View>
+          </TouchableOpacity>
           {/* </ScrollView> */}
 
           {/* // TAG : Logbook Details */}
