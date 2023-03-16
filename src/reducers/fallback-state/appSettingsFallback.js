@@ -30,7 +30,7 @@ const appSettingsFallback = {
   logbookSettings: {
     defaultCurrency: CURRENCY_CONSTANTS.DEFAULT,
     secondaryCurrency: CURRENCY_CONSTANTS.OPTIONS.find((currency) => {
-      return currency.isoCode === "eu";
+      return currency.name === "Japan";
     }),
     showSecondaryCurrency: false,
     showTransactionNotes: true,
