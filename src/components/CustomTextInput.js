@@ -13,9 +13,11 @@ const CustomTextInput = ({
   inputType = "default",
   inputQuery,
   inputRef,
+  noMargin = false,
   //   secureTextEntry = false,
   maxLength = null,
   onChange,
+  onClearText,
   onEndEditing,
   placeholder,
   returnKeyType,
@@ -82,6 +84,7 @@ const CustomTextInput = ({
           <IonIcons
             onPress={() => {
               onChange("");
+              onClearText();
             }}
             name="close-circle"
             size={20}
@@ -139,7 +142,7 @@ const CustomTextInput = ({
             borderRadius: 16,
             borderWidth: 1,
             backgroundColor: globalTheme.colors.background,
-            marginVertical: 8,
+            marginVertical: noMargin ? 0 : 8,
           }}
         >
           {leftIcon(inputType)}
