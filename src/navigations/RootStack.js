@@ -513,7 +513,10 @@ const RootStack = () => {
       {/* // SECTION : TRANSACTION SECTION : */}
       {/* // TAG : Transaction Preview Screen */}
       <Stack.Screen
-        options={showHeader}
+        options={{
+          ...showHeader,
+          title: "Transaction Preview",
+        }}
         name={screenList.transactionPreviewScreen}
         component={TransactionPreviewScreen}
       />
