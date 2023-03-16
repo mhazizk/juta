@@ -262,8 +262,8 @@ const TotalExpenseWidget = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: activeBudget.spent,
-                          currencyIsoCode:
-                            appSettings.logbookSettings.defaultCurrency.isoCode,
+                          currencyCountryName:
+                            appSettings.logbookSettings.defaultCurrency.name,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
@@ -309,9 +309,9 @@ const TotalExpenseWidget = ({
                                   .name,
                               globalCurrencyRates: globalCurrencyRates,
                             }),
-                            currencyIsoCode:
+                            currencyCountryName:
                               appSettings.logbookSettings.secondaryCurrency
-                                .isoCode,
+                                .name,
                             negativeSymbol:
                               appSettings.logbookSettings
                                 .negativeCurrencySymbol,
