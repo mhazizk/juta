@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
   return (
     <>
       <MarkdownView
-        onLinkPress={(url: any) => {
+        onLinkPress={(url) => {
           Linking.openURL(url).catch((error) =>
             console.warn("An error occurred: ", error)
           );
