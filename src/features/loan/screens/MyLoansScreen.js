@@ -151,9 +151,9 @@ const MyLoansScreen = ({ navigation }) => {
                                     negativeSymbol:
                                       appSettings.logbookSettings
                                         .negativeCurrencySymbol,
-                                    currencyIsoCode:
+                                    currencyCountryName:
                                       appSettings.logbookSettings
-                                        .defaultCurrency.isoCode,
+                                        .defaultCurrency.name,
                                     value:
                                       utils.getTotalAmountAndConvertToDefaultCurrency(
                                         {
