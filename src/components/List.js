@@ -141,7 +141,7 @@ export const ListItem = ({
                 <View
                   style={[
                     { ...rightLabelContainerStyle },
-                    { maxWidth: "85%", marginHorizontal: 16 },
+                    { maxWidth: "85%", marginHorizontal: 0 },
                   ]}
                 >
                   {useFlagIcon && (
@@ -150,6 +150,7 @@ export const ListItem = ({
                       size={flagIconSize}
                       style={{
                         marginRight: 8,
+                        borderRadius: 4,
                       }}
                     />
                   )}
@@ -191,7 +192,9 @@ export const ListItem = ({
                   ? iconRightColor
                   : globalTheme.colors.foreground
               }
-              // style={{ paddingLeft: 8 }}
+              style={{
+                paddingLeft: iconRightName === "chevron-forward" ? 16 : 0,
+              }}
             />
           )}
           {useRightIconPack === "Foundation" && !isLoading && (
@@ -575,7 +578,7 @@ export const TransactionListItem = ({
                       // })}
                       label={utils.getFormattedNumber({
                         value: transactionAmount,
-                        currencyIsoCode: logbookCurrency.isoCode,
+                        currencyCountryName: logbookCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -617,7 +620,7 @@ export const TransactionListItem = ({
                           target: secondaryCurrency.name,
                           globalCurrencyRates: globalCurrencyRates,
                         }),
-                        currencyIsoCode: secondaryCurrency.isoCode,
+                        currencyCountryName: secondaryCurrency.name,
                       })}
                     />
                   </View>
@@ -833,7 +836,7 @@ export const SearchResultListItem = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: transactionAmount,
-                          currencyIsoCode: logbookCurrency.isoCode,
+                          currencyCountryName: logbookCurrency.name,
                         })}
                       />
                     </View>
@@ -872,7 +875,7 @@ export const SearchResultListItem = ({
                             target: secondaryCurrency.name,
                             globalCurrencyRates: globalCurrencyRates,
                           }),
-                          currencyIsoCode: secondaryCurrency.isoCode,
+                          currencyCountryName: secondaryCurrency.name,
                         })}
                       />
                     </View>
@@ -989,8 +992,8 @@ export const CardList = ({
                   <TextPrimary
                     label={utils.getFormattedNumber({
                       value: spent,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}
                   />
                 </View>
