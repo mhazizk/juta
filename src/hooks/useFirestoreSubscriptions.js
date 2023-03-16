@@ -33,9 +33,6 @@ const useFirestoreSubscriptions = ({
   badgeCounter,
   dispatchBadgeCounter,
 
-  globalCurrencyRates,
-  dispatchGlobalCurrencyRates,
-
   globalLoan,
   dispatchGlobalLoan,
 
@@ -104,20 +101,20 @@ const useFirestoreSubscriptions = ({
   });
 
   // TAG : Currency rates Subscription //
-  const unsubscribeCurrencyRates = firestore.getAndListenOneDoc({
-    skipFirstRun,
-    collectionName: FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-    documentId: uid,
-    callback: (data) => {
-      if (!!data) {
-        dispatchGlobalCurrencyRates({
-          type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
-          payload: data,
-        });
-      }
-    },
-    errorCallback: (error) => {},
-  });
+  // const unsubscribeCurrencyRates = firestore.getAndListenOneDoc({
+  //   skipFirstRun,
+  //   collectionName: FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+  //   documentId: uid,
+  //   callback: (data) => {
+  //     if (!!data) {
+  //       dispatchGlobalCurrencyRates({
+  //         type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
+  //         payload: data,
+  //       });
+  //     }
+  //   },
+  //   errorCallback: (error) => {},
+  // });
 
   // TAG : Logbooks Subscription //
   const unsubscribeLogbooks = firestore.getAndListenMultipleDocs({
