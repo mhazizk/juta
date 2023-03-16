@@ -31,6 +31,7 @@ import CategoryPreviewScreen from "../features/categories/screens/CategoryPrevie
 import EditCategoryScreen from "../features/categories/screens/EditCategoryScreen";
 import MyCategoriesScreen from "../features/categories/screens/MyCategoriesScreen";
 import NewCategoryScreen from "../features/categories/screens/NewCategoryScreen";
+import MyCurrenciesScreen from "../features/currencies/screens/MyCurrenciesScreen";
 import DashboardScreen from "../features/dashboard/screens/DashboardScreen";
 import DevicesScreen from "../features/devices/screens/DevicesScreen";
 import ExportScreen from "../features/export/screens/ExportScreen";
@@ -160,9 +161,6 @@ const RootStack = () => {
       badgeCounter: badgeCounterRef,
       dispatchBadgeCounter,
 
-      globalCurrencyRates: globalCurrencyRatesRef,
-      dispatchGlobalCurrencyRates,
-
       globalLoan: globalLoanRef,
       dispatchGlobalLoan,
     });
@@ -175,7 +173,6 @@ const RootStack = () => {
     budgetsRef,
     badgeCounterRef,
     globalThemeRef,
-    globalCurrencyRatesRef,
     globalLoanRef,
   ]);
 
@@ -723,6 +720,17 @@ const RootStack = () => {
         }}
         name={screenList.searchScreen}
         component={SearchScreen}
+      />
+
+      {/* // SECTION : CURRENCY LIST */}
+      {/* // TAG : My Currencies Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Currencies",
+        }}
+        name={screenList.myCurrenciesScreen}
+        component={MyCurrenciesScreen}
       />
 
       {/* // SECTION : MY GROUPS */}
