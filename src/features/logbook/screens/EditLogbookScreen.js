@@ -244,19 +244,19 @@ const EditLogbookScreen = ({ route, navigation }) => {
           </View>
 
           <ListSection>
-            {/* // TAG : Main currency */}
+            {/* // TAG : Logbook currency */}
             <ListItem
               pressable
               iconLeftName="coins"
               iconPack="FontAwesome5"
-              leftLabel="Main currency"
+              leftLabel="Currency"
               rightIconPack="IonIcons"
               iconRightName="chevron-forward"
               useRightLabelContainer
               useFlagIcon
               flagIsoCode={logbook.logbook_currency.isoCode}
               flagIconSize={18}
-              rightLabel={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
+              rightLabel={`${logbook.logbook_currency.currencyCode} / ${logbook.logbook_currency.symbol}`}
               rightLabelContainerStyle={{
                 flexDirection: "row",
                 maxWidth: "50%",
@@ -268,21 +268,16 @@ const EditLogbookScreen = ({ route, navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Main currency",
+                  title: "Select logbook currency",
                   modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                   props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                     return a.name.localeCompare(b.name);
                   }),
                   selected: (item) => {
-                    const currency = {
-                      name: item.name,
-                      isoCode: item.isoCode,
-                      symbol: item.symbol,
-                    };
-                    setSelectedCurrency(currency);
+                    setSelectedCurrency(item);
                     setLogbook({
                       ...logbook,
-                      logbook_currency: currency,
+                      logbook_currency: item,
                     });
                   },
                   defaultOption: selectedCurrency,
@@ -304,7 +299,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   globalCurrencyRates,
                   targetCurrencyName: logbook.logbook_currency.name,
                 }),
-                currencyIsoCode: logbook.logbook_currency.isoCode,
+                currencyCountryName: logbook.logbook_currency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
