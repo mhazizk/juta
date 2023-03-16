@@ -236,8 +236,8 @@ const ShowOnTrack = ({ activeBudget }) => {
                 }),
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.defaultCurrency.name,
               })}/day`}
               style={{
                 // flex: 1,
@@ -358,8 +358,8 @@ const ShowWarning = ({ activeBudget }) => {
                 }),
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.defaultCurrency.name,
               })}/day`}
               style={{
                 // flex: 1,
@@ -480,8 +480,8 @@ const ShowOverBudget = ({ activeBudget }) => {
                 }),
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.defaultCurrency.name,
               })}/day`}
               style={{
                 // flex: 1,
