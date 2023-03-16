@@ -270,7 +270,8 @@ const ExportScreen = ({ navigation }) => {
 
                     const openingBalance = utils.getFormattedNumber({
                       value: totalBalance - totalBalanceInRange,
-                      currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                      currencyCountryName:
+                        selectedLogbook.logbook_currency.name,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     });
@@ -291,8 +292,8 @@ const ExportScreen = ({ navigation }) => {
                       openingBalance: openingBalance,
                       finalBalance: utils.getFormattedNumber({
                         value: totalBalance,
-                        currencyIsoCode:
-                          selectedLogbook.logbook_currency.isoCode,
+                        currencyCountryName:
+                          selectedLogbook.logbook_currency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       }),
