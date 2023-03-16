@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, Platform, Text, View } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -35,6 +35,7 @@ import Loading from "../../../components/Loading";
 import { TextPrimary } from "../../../components/Text";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import CustomTextInput from "../../../components/CustomTextInput";
 
 const InitialSetupScreen = ({ route, navigation }) => {
   const userId = uuid.v4();
@@ -52,6 +53,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
   const [isLoading, setIsLoading] = useState(false);
+  const [currencySearchQuery, setCurrencySearchQuery] = useState("");
   const [selectedAppSettings, setSelectedAppSettings] = useState({
     ...appSettingsFallback,
     uid: userAccount.uid,
@@ -69,6 +71,8 @@ const InitialSetupScreen = ({ route, navigation }) => {
       defaultCurrency: selectedAppSettings.logbookSettings.defaultCurrency,
     });
   });
+
+  const currencyInputRef = useRef(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -110,6 +114,96 @@ const InitialSetupScreen = ({ route, navigation }) => {
         return medium;
     }
   };
+  const CurrencyItemRenderer = useCallback(
+    ({ item }) => {
+      return (
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => {
+            setSelectedAppSettings({
+              ...selectedAppSettings,
+              logbookSettings: {
+                ...selectedAppSettings.logbookSettings,
+                defaultCurrency: item,
+              },
+            });
+            setTimeout(() => onboardingRef.current.goNext(), 1000);
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 8,
+              borderWidth: 0,
+              minHeight: 100,
+              margin: 8,
+              overflow: "hidden",
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                padding: 0,
+                margin: 0,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  height: 80,
+                  width: 80,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 4,
+                  borderColor:
+                    selectedAppSettings.logbookSettings.defaultCurrency.name ===
+                    item.name
+                      ? globalTheme.colors.primary
+                      : "transparent",
+                  backgroundColor:
+                    selectedAppSettings.logbookSettings.defaultCurrency.name ===
+                    item.name
+                      ? globalTheme.colors.primary
+                      : "transparent",
+
+                  borderRadius: 18,
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                <CountryFlag
+                  isoCode={item.isoCode}
+                  size={44}
+                  style={{
+                    borderRadius: 8,
+                  }}
+                />
+                {/* <Text style={{ fontSize: 24 }}>Rp</Text> */}
+              </View>
+              <TextPrimary
+                label={item.name}
+                style={{
+                  paddingTop:
+                    selectedAppSettings.logbookSettings.defaultCurrency.name ===
+                    item.name
+                      ? 8
+                      : 0,
+                }}
+              />
+              <TextPrimary label={`${item.currencyCode} / ${item.symbol}`} />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [
+      // currencySearchQuery,
+      selectedAppSettings.logbookSettings.defaultCurrency,
+      globalTheme,
+    ]
+  );
 
   const finalizeSetup = () => {
     setIsLoading(true);
@@ -239,17 +333,31 @@ const InitialSetupScreen = ({ route, navigation }) => {
       image: <Image />,
       title: (
         <>
-          <Text
+          <View
             style={{
               position: "absolute",
               top: headerTextPosition,
-              color: globalTheme.colors.primary,
-              // color: selectedColor(selectedAppSettings.theme_id),
-              fontSize: 30,
+              alignItems: "center",
             }}
           >
-            Select Theme
-          </Text>
+            <TextPrimary
+              label="Select Theme"
+              style={{
+                color: globalTheme.colors.primary,
+                fontSize: 30,
+              }}
+            />
+            <TextPrimary
+              label="Select a theme that suits your style"
+              style={{
+                paddingHorizontal: 16,
+                textAlign: "center",
+                color: globalTheme.colors.primary,
+                fontSize: 18,
+              }}
+            />
+          </View>
+
           <View
             style={{ flexDirection: "row", alignItems: "center", width: 200 }}
           >
@@ -444,94 +552,78 @@ const InitialSetupScreen = ({ route, navigation }) => {
       image: <Image />,
       title: (
         <>
-          <Text
+          <View
             style={{
               position: "absolute",
               top: headerTextPosition,
-              color: globalTheme.colors.primary,
-              // color: selectedColor(selectedAppSettings.theme_id),
-              fontSize: 30,
+              alignItems: "center",
             }}
           >
-            Select Default Currency
-          </Text>
+            <TextPrimary
+              label="Select Default Currency"
+              style={{
+                color: globalTheme.colors.primary,
+                fontSize: 30,
+                zIndex: 100,
+              }}
+            />
+            <TextPrimary
+              label="Choose from over 100+ currencies"
+              style={{
+                paddingHorizontal: 16,
+                textAlign: "center",
+                color: globalTheme.colors.primary,
+                fontSize: 18,
+              }}
+            />
+          </View>
           <View
-            style={{ flexDirection: "row", alignItems: "center", width: 200 }}
+            style={{
+              // flex: 1,
+              maxWidth: "100%",
+              paddingTop: 100,
+              paddingHorizontal: 16,
+              // backgroundColor: "red",
+            }}
+          >
+            <CustomTextInput
+              inputRef={currencyInputRef}
+              inputQuery={currencySearchQuery}
+              inputType="search"
+              placeholder="Find your currency..."
+              onChange={(text) => setCurrencySearchQuery(text)}
+              onClearText={() => setCurrencySearchQuery("")}
+            />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "flex-start",
+              width: "100%",
+            }}
           >
             <FlatList
-              data={CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
-                return a.name.localeCompare(b.name);
+              data={CURRENCY_CONSTANTS.OPTIONS.filter((currency) => {
+                return (
+                  currency.name
+                    .toLowerCase()
+                    .includes(currencySearchQuery.toLowerCase()) ||
+                  currency.currencyCode
+                    .toLowerCase()
+                    .includes(currencySearchQuery.toLowerCase())
+                );
+              }).sort((a, b) => {
+                a.name.localeCompare(b.name);
               })}
+              contentContainerStyle={{
+                width: "100%",
+              }}
               keyExtractor={(item) => item.isoCode}
               renderItem={({ item }) => {
                 return (
                   <>
-                    <TouchableOpacity
-                      style={{ flex: 1 }}
-                      onPress={() => {
-                        setSelectedAppSettings({
-                          ...selectedAppSettings,
-                          logbookSettings: {
-                            ...selectedAppSettings.logbookSettings,
-                            defaultCurrency: item,
-                          },
-                        });
-                        setTimeout(() => onboardingRef.current.goNext(), 1000);
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          borderRadius: 8,
-                          borderWidth: 0,
-                          minHeight: 100,
-                          margin: 8,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: "column",
-                            padding: 0,
-                            margin: 0,
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <View
-                            style={{
-                              height: 80,
-                              width: 80,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderWidth: 4,
-                              borderColor:
-                                selectedAppSettings.logbookSettings
-                                  .defaultCurrency.isoCode === item.isoCode
-                                  ? globalTheme.colors.primary
-                                  : "transparent",
-                              borderRadius: 18,
-                              padding: 0,
-                              margin: 0,
-                            }}
-                          >
-                            <CountryFlag isoCode={item.isoCode} size={32} />
-                            {/* <Text style={{ fontSize: 24 }}>Rp</Text> */}
-                          </View>
-                          <TextPrimary
-                            label={`${item.name} / ${item.symbol}`}
-                            style={{
-                              paddingTop:
-                                selectedAppSettings.logbookSettings
-                                  .defaultCurrency.isoCode === item.isoCode
-                                  ? 8
-                                  : 0,
-                            }}
-                          />
-                        </View>
-                      </View>
-                    </TouchableOpacity>
+                    <CurrencyItemRenderer item={item} />
                   </>
                 );
               }}
@@ -649,7 +741,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
       backgroundColor: globalTheme.colors.background,
       image: <Image source={doneSetup} style={{ width: 250, height: 250 }} />,
       title: "Everything is Set !",
-      subtitle: "Finish Setup and start using Juta",
+      subtitle: "Finish setup and start using Juta",
     },
   ];
 
