@@ -300,8 +300,8 @@ const ShowNextPaymentForOneContact = () => {
                       appSettings.logbookSettings.defaultCurrency.name,
                   })
                 ),
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.defaultCurrency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}
@@ -350,8 +350,8 @@ const ShowNextPaymentForOneContact = () => {
                   target: appSettings.logbookSettings.secondaryCurrency.name,
                   globalCurrencyRates: globalCurrencyRates,
                 }),
-                currencyIsoCode:
-                  appSettings.logbookSettings.secondaryCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.secondaryCurrency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}
