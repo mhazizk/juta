@@ -229,11 +229,10 @@ const MyReportsWidget = ({ enteringAnimation = null, cardHeight, onPress }) => {
                         }}
                       />
                       <IncomeExpenseDeviation
+                        useWidgetStyle={true}
                         backgroundColor={
                           globalTheme.widgets.totalExpense.cardTextColor
                         }
-                        showSymbol={true}
-                        showLabel={false}
                         totalExpense={sections[0]?.data.totalExpense}
                         totalIncome={sections[0]?.data.totalIncome}
                         defaultTextColor={
