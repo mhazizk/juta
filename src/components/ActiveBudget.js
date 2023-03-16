@@ -226,8 +226,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: limit,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -285,8 +285,8 @@ export const ActiveBudget = ({
                         value: spent,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -346,8 +346,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: limit - spent,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -418,8 +418,8 @@ export const ActiveBudget = ({
                       }),
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
@@ -462,8 +462,8 @@ export const ActiveBudget = ({
                       }),
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
