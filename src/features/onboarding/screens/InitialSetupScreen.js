@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, Image, Platform, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import CountryFlag from "react-native-country-flag";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -53,7 +60,9 @@ const InitialSetupScreen = ({ route, navigation }) => {
   const { globalTheme, dispatchGlobalTheme } = useGlobalTheme();
   const { userAccount, dispatchUSerAccount } = useGlobalUserAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [currencySearchQuery, setCurrencySearchQuery] = useState("");
+  const [currencySearchQuery, setCurrencySearchQuery] = useState(
+    appSettingsFallback.logbookSettings.defaultCurrency.name
+  );
   const [selectedAppSettings, setSelectedAppSettings] = useState({
     ...appSettingsFallback,
     uid: userAccount.uid,
@@ -156,12 +165,11 @@ const InitialSetupScreen = ({ route, navigation }) => {
                   width: 80,
                   justifyContent: "center",
                   alignItems: "center",
-                  borderWidth: 4,
-                  borderColor:
-                    selectedAppSettings.logbookSettings.defaultCurrency.name ===
-                    item.name
-                      ? globalTheme.colors.primary
-                      : "transparent",
+                  // borderColor:
+                  //   selectedAppSettings.logbookSettings.defaultCurrency.name ===
+                  //   item.name
+                  //     ? globalTheme.colors.primary
+                  //     : "transparent",
                   backgroundColor:
                     selectedAppSettings.logbookSettings.defaultCurrency.name ===
                     item.name
@@ -335,104 +343,126 @@ const InitialSetupScreen = ({ route, navigation }) => {
         <>
           <View
             style={{
-              position: "absolute",
-              top: headerTextPosition,
+              flex: 1,
+              paddingBottom: 120,
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <TextPrimary
-              label="Select Theme"
+            <View
               style={{
-                color: globalTheme.colors.primary,
-                fontSize: 30,
+                // position: "absolute",
+                // top: headerTextPosition,
+                paddingTop: 16,
+                alignItems: "center",
               }}
-            />
-            <TextPrimary
-              label="Select a theme that suits your style"
-              style={{
-                paddingHorizontal: 16,
-                textAlign: "center",
-                color: globalTheme.colors.primary,
-                fontSize: 18,
-              }}
-            />
-          </View>
+            >
+              <TextPrimary
+                label="Select Theme"
+                style={{
+                  color: globalTheme.colors.primary,
+                  fontSize: 30,
+                }}
+              />
+              <TextPrimary
+                label="Select a theme that suits your style"
+                style={{
+                  paddingHorizontal: 16,
+                  textAlign: "center",
+                  color: globalTheme.colors.primary,
+                  fontSize: 18,
+                }}
+              />
+            </View>
 
-          <View
-            style={{ flexDirection: "row", alignItems: "center", width: 200 }}
-          >
-            <FlatList
-              data={THEME_CONSTANTS.OPTIONS}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <>
-                    <TouchableOpacity
-                      style={{ flex: 1 }}
-                      onPress={() => {
-                        setSelectedAppSettings({
-                          ...selectedAppSettings,
-                          theme_id: item.id,
-                        });
-                        setTimeout(() => onboardingRef.current.goNext(), 1000);
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          borderRadius: 8,
-                          borderWidth: 0,
-                          minHeight: 100,
-                          margin: 8,
-                          overflow: "hidden",
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <FlatList
+                data={THEME_CONSTANTS.OPTIONS}
+                contentContainerStyle={{
+                  // flex: 1,
+                  justifyContent: "center",
+                }}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => {
+                  return (
+                    <>
+                      <TouchableOpacity
+                        style={{ flex: 1 }}
+                        onPress={() => {
+                          setSelectedAppSettings({
+                            ...selectedAppSettings,
+                            theme_id: item.id,
+                          });
+                          setTimeout(
+                            () => onboardingRef.current.goNext(),
+                            1000
+                          );
                         }}
                       >
                         <View
                           style={{
                             flex: 1,
-                            flexDirection: "column",
-                            padding: 0,
-                            margin: 0,
-                            alignItems: "center",
-                            justifyContent: "center",
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            minHeight: 100,
+                            margin: 8,
+                            overflow: "hidden",
                           }}
                         >
                           <View
                             style={{
                               flex: 1,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderWidth: 4,
-                              borderColor:
-                                selectedAppSettings.theme_id === item.id
-                                  ? globalTheme.colors.primary
-                                  : "transparent",
-                              borderRadius: 18,
+                              flexDirection: "column",
                               padding: 0,
                               margin: 0,
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
                           >
-                            <Image
-                              source={findThemeIcon(item.id)}
-                              style={{ width: 80, height: 80 }}
+                            <View
+                              style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                borderWidth: 4,
+                                borderColor:
+                                  selectedAppSettings.theme_id === item.id
+                                    ? globalTheme.colors.primary
+                                    : "transparent",
+                                borderRadius: 18,
+                                padding: 0,
+                                margin: 0,
+                              }}
+                            >
+                              <Image
+                                source={findThemeIcon(item.id)}
+                                style={{ width: 80, height: 80 }}
+                              />
+                            </View>
+                            <TextPrimary
+                              label={item.name}
+                              style={{
+                                paddingTop:
+                                  selectedAppSettings.theme_id === item.id
+                                    ? 8
+                                    : 0,
+                              }}
                             />
                           </View>
-                          <TextPrimary
-                            label={item.name}
-                            style={{
-                              paddingTop:
-                                selectedAppSettings.theme_id === item.id
-                                  ? 8
-                                  : 0,
-                            }}
-                          />
                         </View>
-                      </View>
-                    </TouchableOpacity>
-                  </>
-                );
-              }}
-            />
+                      </TouchableOpacity>
+                    </>
+                  );
+                }}
+              />
+            </View>
           </View>
         </>
       ),
@@ -554,8 +584,9 @@ const InitialSetupScreen = ({ route, navigation }) => {
         <>
           <View
             style={{
-              position: "absolute",
-              top: headerTextPosition,
+              // position: "absolute",
+              // top: headerTextPosition,
+              paddingTop: 16,
               alignItems: "center",
             }}
           >
@@ -581,7 +612,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
             style={{
               // flex: 1,
               maxWidth: "100%",
-              paddingTop: 100,
+              paddingTop: 16,
               paddingHorizontal: 16,
               // backgroundColor: "red",
             }}
@@ -605,6 +636,7 @@ const InitialSetupScreen = ({ route, navigation }) => {
           >
             <FlatList
               data={CURRENCY_CONSTANTS.OPTIONS.filter((currency) => {
+                if (!currencySearchQuery) return false;
                 return (
                   currency.name
                     .toLowerCase()
@@ -619,6 +651,17 @@ const InitialSetupScreen = ({ route, navigation }) => {
               contentContainerStyle={{
                 width: "100%",
               }}
+              ListEmptyComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextPrimary label="Start typing to search..." />
+                </View>
+              )}
               keyExtractor={(item) => item.isoCode}
               renderItem={({ item }) => {
                 return (
@@ -644,94 +687,96 @@ const InitialSetupScreen = ({ route, navigation }) => {
         <>
           <View
             style={{
-              position: "absolute",
-              top: headerTextPosition,
+              flex: 1,
+              // justifyContent: "center",
               alignItems: "center",
+              paddingBottom: 120,
             }}
-          >
-            <Text
-              style={{
-                paddingHorizontal: 16,
-                color: globalTheme.colors.primary,
-                fontSize: 30,
-              }}
-            >
-              Create Your First Logbook
-            </Text>
-            <Text
-              style={{
-                paddingHorizontal: 16,
-                textAlign: "center",
-                color: globalTheme.colors.primary,
-                fontSize: 18,
-              }}
-            >
-              Logbook is a book to save your transactions, just like ordinary
-              book
-            </Text>
-          </View>
-          <Text
-            style={{
-              paddingHorizontal: 16,
-              position: "absolute",
-              bottom: "5%",
-              textAlign: "center",
-              color: globalTheme.colors.primary,
-              // color: selectedColor(selectedAppSettings.theme_id),
-              fontSize: 18,
-            }}
-          >
-            Don't worry, you can edit it later
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(screenList.modalScreen, {
-                title: "Create your first logbook",
-                modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
-                placeholder: "Enter new logbook name...",
-                defaultOption: newLogbook.logbook_name || "",
-                selected: (item) =>
-                  setNewLogbook({
-                    ...newLogbook,
-                    logbook_name: item || "My Logbook",
-                  }),
-              })
-            }
-            style={{ padding: 48 }}
           >
             <View
               style={{
-                flexDirection: "column",
+                // position: "absolute",
+                // top: headerTextPosition,
+                paddingTop: 16,
                 alignItems: "center",
-                width: 200,
               }}
             >
-              <IonIcons
-                name="book"
-                size={80}
-                color={globalTheme.colors.foreground}
+              <TextPrimary
+                label="Create First Logbook"
+                style={{
+                  paddingHorizontal: 16,
+                  color: globalTheme.colors.primary,
+                  fontSize: 30,
+                }}
               />
-              <Text
-                style={[
-                  {
-                    ...globalTheme.text.textPrimary,
-                  },
-                  {
-                    paddingVertical: 16,
-                    fontSize: 24,
-                    textAlign: "center",
-                  },
-                ]}
-              >
-                {newLogbook.logbook_name || "Create New Logbook"}
-              </Text>
-              <IonIcons
-                name="add"
-                size={32}
-                color={globalTheme.colors.foreground}
+              <TextPrimary
+                label="Logbook is a book to save your transactions, just like ordinary book"
+                style={{
+                  paddingHorizontal: 16,
+                  textAlign: "center",
+                  color: globalTheme.colors.primary,
+                  fontSize: 18,
+                }}
               />
             </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(screenList.modalScreen, {
+                  title: "Create your first logbook",
+                  modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
+                  placeholder: "Enter new logbook name...",
+                  defaultOption: newLogbook.logbook_name || "",
+                  selected: (item) =>
+                    setNewLogbook({
+                      ...newLogbook,
+                      logbook_name: item || "My Logbook",
+                    }),
+                })
+              }
+              style={{
+                // flex: 1,
+                height: "100%",
+                width: 250,
+                justifyContent: "center",
+                alignItems: "center",
+                width: 250,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IonIcons
+                  name="book"
+                  size={80}
+                  color={globalTheme.colors.foreground}
+                />
+                <Text
+                  style={[
+                    {
+                      ...globalTheme.text.textPrimary,
+                    },
+                    {
+                      paddingVertical: 16,
+                      fontSize: 24,
+                      textAlign: "center",
+                    },
+                  ]}
+                >
+                  {newLogbook.logbook_name || "Create New Logbook"}
+                </Text>
+                <IonIcons
+                  name="add"
+                  size={32}
+                  color={globalTheme.colors.foreground}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </>
       ),
       subtitle: "",
