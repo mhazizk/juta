@@ -22,6 +22,7 @@ import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import LoopingHeroIcon from "../components/LoopingHeroIcon";
 const LoginScreen = ({ route, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -36,6 +37,7 @@ const LoginScreen = ({ route, navigation }) => {
   const inputEmailRef = useRef(null);
   const inputPasswordRef = useRef(null);
   const [user, loading, error] = useAuthState(auth);
+  const [activeIconName, setActiveIconName] = useState("fast-food");
 
   useEffect(() => {
     if (route?.params?.account && route?.params?.password) {
@@ -127,6 +129,7 @@ const LoginScreen = ({ route, navigation }) => {
       >
         {!screenLoading && (
           <>
+            <LoopingHeroIcon activeIconName={activeIconName} />
             {/* <LottieBackground /> */}
             <View
               style={{
@@ -143,7 +146,9 @@ const LoginScreen = ({ route, navigation }) => {
                   fontWeight: "bold",
                 }}
               />
-              <AnimatedLoginText />
+              <AnimatedLoginText
+                onScrollEnd={(iconName) => setActiveIconName(iconName)}
+              />
             </View>
             <View
               style={{
