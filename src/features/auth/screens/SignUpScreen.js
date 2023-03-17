@@ -39,6 +39,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import LoopingHeroIcon from "../components/LoopingHeroIcon";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { expoPushToken, setExpoPushToken } = useExpoPushToken();
@@ -61,6 +62,7 @@ const SignUpScreen = ({ route, navigation }) => {
     passwordConditionsList
   );
   const [user, loading, error] = useAuthState(auth);
+  const [activeIconName, setActiveIconName] = useState("fast-food");
 
   const heightView = useSharedValue(0);
   const animatedHeightStyle = useAnimatedStyle(() => {
@@ -259,7 +261,7 @@ const SignUpScreen = ({ route, navigation }) => {
       >
         {!screenLoading && (
           <>
-            {/* <LottieBackground /> */}
+            <LoopingHeroIcon activeIconName={null} />
             <View
               style={{
                 width: "100%",
@@ -277,7 +279,9 @@ const SignUpScreen = ({ route, navigation }) => {
                   fontWeight: "bold",
                 }}
               />
-              <AnimatedLoginText />
+              <AnimatedLoginText
+                onScrollEnd={(iconName) => setActiveIconName(iconName)}
+              />
             </View>
             {/* // SECTION : Input Section */}
             <Animated.View
