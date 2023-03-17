@@ -1,5 +1,8 @@
+import { useMemo, useState } from "react";
 import CURRENCY_CONSTANTS from "../constants/currencyConstants";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
+
+let currency = null;
 
 /**
  * Formats a number. Supports changing symbol, thousand and decimal separators and more (see props).
@@ -18,10 +21,15 @@ const getFormattedNumber = ({
   absolute = false,
   useAbbreviation = false,
 }) => {
-  const { thousandSeparator, decimalSeparator, significantDigits } =
-    CURRENCY_CONSTANTS?.OPTIONS?.find((currency) => {
+  if (currency?.name !== currencyCountryName) {
+    const newCurrency = CURRENCY_CONSTANTS?.OPTIONS?.find((currency) => {
       return currency.name === currencyCountryName;
     });
+
+    currency = newCurrency;
+  }
+
+  const { thousandSeparator, decimalSeparator, significantDigits } = currency;
 
   const newValue = value;
 
