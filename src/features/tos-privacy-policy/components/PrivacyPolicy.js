@@ -4,10 +4,17 @@ import { useGlobalTheme } from "../../../reducers/GlobalContext";
 
 const PrivacyPolicy = () => {
   const { globalTheme } = useGlobalTheme();
-  // TODO : Fix text color on dark mode
   return (
     <>
       <MarkdownView
+        styles={{
+          paragraph: {
+            color: globalTheme.text.textPrimary.color,
+          },
+          listItemBullet: {
+            color: globalTheme.text.textPrimary.color,
+          },
+        }}
         onLinkPress={(url) => {
           Linking.openURL(url).catch((error) =>
             console.warn("An error occurred: ", error)
