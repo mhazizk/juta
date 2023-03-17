@@ -371,7 +371,6 @@ const useFirestoreSubscriptions = ({
       unsubscribeCategories: unsubscribeCategories(),
       unsubscribeBudgets: unsubscribeBudgets(),
       unsubscribeRepeatedTransactions: unsubscribeRepeatedTransactions(),
-      unsubscribeCurrencyRates: unsubscribeCurrencyRates(),
       unsubscribeLoan: unsubscribeLoan(),
       // unsubscribeFeatures: unsubscribeFeatures(),
     };
