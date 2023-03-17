@@ -16,6 +16,7 @@ import { CustomBarChart } from "../../../components/charts/CustomBarChart";
 import { useIsFocused } from "@react-navigation/native";
 import Loading from "../../../components/Loading";
 import Animated from "react-native-reanimated";
+import NoExpenseSVG from "../../../assets/img/no-expense.svg";
 
 const TotalExpenseWidget = ({
   enteringAnimation = null,
@@ -168,6 +169,7 @@ const TotalExpenseWidget = ({
                   style={{
                     height: "100%",
                     width: "100%",
+                    paddingLeft: 16,
                     alignItems: "center",
                     justifyContent: "center",
                     zIndex: 1,
@@ -179,24 +181,37 @@ const TotalExpenseWidget = ({
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
                       justifyContent: "flex-end",
-                      paddingLeft: 16,
                       fontSize: 20,
                       fontWeight: "bold",
                     }}
-                    label="No expenses"
+                    label="No expense"
                   />
                   <TextPrimary
                     style={{
                       zIndex: 1,
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
-                      paddingLeft: 16,
                       fontSize: 20,
                     }}
                     label="in last 7 days"
                   />
                 </View>
-                <Image
+                <View
+                  style={{
+                    position: "absolute",
+                    width: 200,
+                    height: 200,
+                    right: 0,
+                    margin: 16,
+                  }}
+                >
+                  <NoExpenseSVG
+                    width={200}
+                    height={200}
+                    color={globalTheme.widgets.totalExpense.cardTextColor}
+                  />
+                </View>
+                {/* <Image
                   source={CoinsImg}
                   style={{
                     position: "absolute",
@@ -210,7 +225,7 @@ const TotalExpenseWidget = ({
                     opacity: 0.5,
                     resizeMode: "contain",
                   }}
-                />
+                /> */}
               </>
             )}
 
