@@ -166,12 +166,14 @@ const ShowOnTrack = ({ activeBudget }) => {
           alignItems: "flex-start",
           justifyContent: "flex-start",
           flex: 1,
+          width: "100%",
           padding: 16,
         }}
       >
         <View
           style={{
             alignItems: "flex-start",
+            width: "100%",
           }}
         >
           <RoundProgressBar
@@ -216,6 +218,7 @@ const ShowOnTrack = ({ activeBudget }) => {
             style={{
               alignItems: "flex-start",
               flex: 1,
+              width: "100%",
             }}
             duration={3000}
             loop
@@ -277,11 +280,13 @@ const ShowWarning = ({ activeBudget }) => {
           alignItems: "flex-start",
           justifyContent: "flex-start",
           flex: 1,
+          width: "100%",
           padding: 16,
         }}
       >
         <View
           style={{
+            width: "100%",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "flex-start",
@@ -396,6 +401,7 @@ const ShowOverBudget = ({ activeBudget }) => {
     <>
       <View
         style={{
+          width: "100%",
           alignItems: "flex-start",
           justifyContent: "flex-start",
           flex: 1,
@@ -404,6 +410,7 @@ const ShowOverBudget = ({ activeBudget }) => {
       >
         <View
           style={{
+            width: "100%",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "flex-start",
