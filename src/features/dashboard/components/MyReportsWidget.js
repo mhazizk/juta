@@ -20,6 +20,7 @@ import getReportSectionProps from "../../reports/model/getReportSectionProps";
 import IncomeExpenseDeviation from "../../reports/components/IncomeExpenseDeviation";
 import Animated, { BounceIn, PinwheelIn } from "react-native-reanimated";
 import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
+import ReportBoySVG from "../../../assets/img/report-boy.svg";
 
 const MyReportsWidget = ({ enteringAnimation = null, cardHeight, onPress }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -261,21 +262,39 @@ const MyReportsWidget = ({ enteringAnimation = null, cardHeight, onPress }) => {
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
+              zIndex: -1,
             }}
           >
-            <CustomPieChart
-              useDarkGraphColorShades={globalTheme.identifier.id.includes(
-                "cream"
+            <View
+              style={{
+                position: "absolute",
+                left: 16,
+              }}
+            >
+              {!isIncomeOrExpenseDataAvailable && (
+                <ReportBoySVG
+                  width={180}
+                  height={180}
+                  color={globalTheme.widgets.totalExpense.cardTextColor}
+                />
               )}
-              mode="expense"
-              graphHeightAndWidth={Dimensions.get("window").width * 0.18}
-              enteringAnimation={PinwheelIn.duration(1000)}
-              animateGraph={true}
-              adjustLeft={-82}
-              data={sections[0]?.data.expenseGraph}
-              zIndex={3}
-              iconColor={globalTheme.widgets.totalExpense.cardIconColor}
-            />
+            </View>
+
+            {isIncomeOrExpenseDataAvailable && (
+              <CustomPieChart
+                useDarkGraphColorShades={globalTheme.identifier.id.includes(
+                  "cream"
+                )}
+                mode="expense"
+                graphHeightAndWidth={Dimensions.get("window").width * 0.18}
+                enteringAnimation={PinwheelIn.duration(1000)}
+                animateGraph={true}
+                adjustLeft={-82}
+                data={sections[0]?.data.expenseGraph}
+                zIndex={3}
+                iconColor={globalTheme.widgets.totalExpense.cardIconColor}
+              />
+            )}
           </Animated.View>
         </>
       )}
