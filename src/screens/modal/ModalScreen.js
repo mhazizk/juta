@@ -275,12 +275,7 @@ const ModalScreen = ({ route, navigation }) => {
                         style={{
                           height: 48,
                           width: 48,
-                          borderWidth: 2,
                           borderRadius: 48 / 2,
-                          borderColor:
-                            selectedItem?.name === item.name
-                              ? globalTheme.colors.primary
-                              : "transparent",
                           backgroundColor:
                             selectedItem?.name === item.name
                               ? globalTheme.colors.primary
@@ -775,7 +770,7 @@ const ModalScreen = ({ route, navigation }) => {
             {!showSearchBar && (
               <TextPrimary
                 label={title}
-                style={{ fontSize: 24, paddingRight: 16 }}
+                style={{ fontSize: 24, paddingRight: 0 }}
               />
             )}
             <TopRightComponent ref={searchInputRef} />
