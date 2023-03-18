@@ -247,6 +247,8 @@ const MyAccountScreen = ({ item, navigation }) => {
                   ])
                 }
               />
+            </ListSection>
+            <ListSection>
               {/* // TAG : Delete Account */}
               <ListItem
                 pressable
