@@ -780,8 +780,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                           selectedLoanContact?.contact_name
                         )
                       : transaction.details.category_id.includes("loan")
-                      ? "Add Borrower name"
-                      : "Add Lender name"
+                      ? "Add"
+                      : "Add"
                   }
                   iconPack="IonIcons"
                   iconLeftName="person"
