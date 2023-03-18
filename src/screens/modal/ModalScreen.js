@@ -73,7 +73,6 @@ const ModalScreen = ({ route, navigation }) => {
     // Returns
     selected,
   } = route.params;
-  const isTextInput = modalType === MODAL_TYPE_CONSTANTS.TEXT_INPUT;
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const [selectedItem, setSelectedItem] = useState(defaultOption);
@@ -115,6 +114,7 @@ const ModalScreen = ({ route, navigation }) => {
     return {
       length: data.length,
       offset: Math.round(rowOffset),
+      // offset: 48 * keepOffsetYValue,
       index,
     };
   };
@@ -140,17 +140,19 @@ const ModalScreen = ({ route, navigation }) => {
   const scrollToIndexOnStart = () => {
     setTimeout(() => {
       flatListRef.current?.scrollToOffset({
-        animated: false,
+        animated: true,
         offset: keepOffsetYValue,
       });
-    }, 100);
+    }, 0);
   };
 
   const onFlatListLayoutChange = (event, numColumns) => {
-    flatListRef.current?.scrollToOffset({
-      animated: false,
-      offset: offsetYValue,
-    });
+    setTimeout(() => {
+      flatListRef.current?.scrollToOffset({
+        animated: false,
+        offset: offsetYValue,
+      });
+    }, 0);
   };
 
   const onScrollHandler = (event) => {
@@ -181,9 +183,7 @@ const ModalScreen = ({ route, navigation }) => {
     }
   }, [showSearchBar]);
 
-  useEffect(() => {
-    ShowModalContent();
-  }, [showTemporaryDatePicker]);
+  useEffect(() => {}, [showTemporaryDatePicker]);
 
   const onPressReturn = () => {
     switch (modalType) {
@@ -211,445 +211,21 @@ const ModalScreen = ({ route, navigation }) => {
     }
   };
 
-  const ShowModalContent = () => {
-    const themeVariant = globalTheme.identifier.id.includes("light")
-      ? "light"
-      : "dark";
-    const textColor = globalTheme.text.textPrimary.color;
+  const isNumberPicker = modalType === MODAL_TYPE_CONSTANTS.NUMBER_PICKER;
+  const isDatePicker = modalType === MODAL_TYPE_CONSTANTS.DATE_PICKER;
+  const isDateAndTimePicker =
+    modalType === MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER;
+  const isColorPicker = modalType === MODAL_TYPE_CONSTANTS.COLOR_PICKER;
+  const isCurrencyList = modalType === MODAL_TYPE_CONSTANTS.CURRENCY_LIST;
+  const isTextInput = modalType === MODAL_TYPE_CONSTANTS.TEXT_INPUT;
+  const isList = modalType === MODAL_TYPE_CONSTANTS.LIST;
+  const isIconPicker = modalType === MODAL_TYPE_CONSTANTS.ICON_PICKER;
+  const isAction = modalType === MODAL_TYPE_CONSTANTS.ACTION;
 
-    switch (showTemporaryDatePicker) {
-      case true:
-        return (
-          <RNDateTimePicker
-            mode="date"
-            display="spinner"
-            textColor={textColor}
-            themeVariant={themeVariant}
-            value={new Date(selectedItem)}
-            minimumDate={
-              minimumDateInMillis ? new Date(minimumDateInMillis) : null
-            }
-            onChange={(event, selectedDate) => {
-              const currentDate = selectedDate || new Date(selectedItem);
-              event.type === "set" && setSelectedItem(currentDate.getTime());
-              event.type === "dismissed";
-            }}
-          />
-        );
-      case false:
-        switch (modalType) {
-          case MODAL_TYPE_CONSTANTS.NUMBER_PICKER:
-            return (
-              <FlatList
-                numColumns={7}
-                columnWrapperStyle={{
-                  justifyContent: "space-between",
-                  padding: 8,
-                }}
-                showsHorizontalScrollIndicator={false}
-                data={props}
-                style={
-                  {
-                    // height: "100%",
-                  }
-                }
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                keyExtractor={(item, id) => item?.name}
-                renderItem={({ item }) => (
-                  <>
-                    <TouchableOpacity
-                      // style={{ marginRight: 8 }}
-                      onPress={() => {
-                        setSelectedItem(item);
-                      }}
-                    >
-                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
-
-                      {/* Color Circle */}
-                      <View
-                        style={{
-                          height: 48,
-                          width: 48,
-                          borderRadius: 48 / 2,
-                          backgroundColor:
-                            selectedItem?.name === item.name
-                              ? globalTheme.colors.primary
-                              : "transparent",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <TextPrimary
-                          label={item.name}
-                          style={{
-                            fontWeight:
-                              selectedItem?.name === item.name
-                                ? "bold"
-                                : "normal",
-                            color:
-                              selectedItem?.name === item.name
-                                ? globalTheme.colors.background
-                                : globalTheme.text.textPrimary.color,
-                          }}
-                        />
-                        {/* <IonIcons name='checkmark-sharp' size={24} color={globalTheme.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
-                      </View>
-
-                      {/* </View> */}
-                    </TouchableOpacity>
-                  </>
-                )}
-              />
-            );
-
-          case MODAL_TYPE_CONSTANTS.DATE_PICKER:
-            return (
-              <RNDateTimePicker
-                mode="date"
-                display="spinner"
-                textColor={textColor}
-                themeVariant={themeVariant}
-                value={new Date(selectedItem)}
-                minimumDate={
-                  minimumDateInMillis ? new Date(minimumDateInMillis) : null
-                }
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate || new Date(selectedItem);
-                  event.type === "set" &&
-                    setSelectedItem(currentDate.getTime());
-                  event.type === "dismissed";
-                }}
-              />
-            );
-          case MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER:
-            return (
-              <RNDateTimePicker
-                mode="datetime"
-                display="spinner"
-                textColor={textColor}
-                themeVariant={themeVariant}
-                value={new Date(selectedItem)}
-                minimumDate={
-                  minimumDateInMillis ? new Date(minimumDateInMillis) : null
-                }
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate || new Date(selectedItem);
-                  event.type === "set" &&
-                    setSelectedItem(currentDate.getTime());
-                  event.type === "dismissed";
-                }}
-              />
-            );
-          case MODAL_TYPE_CONSTANTS.LIST:
-            return (
-              <FlatList
-                ref={flatListRef}
-                data={props}
-                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                onMomentumScrollEnd={onScrollHandler}
-                onScrollEndDrag={onScrollHandler}
-                keyExtractor={(item, id) => item?.name + id}
-                renderItem={({ item, index }) => (
-                  <>
-                    <ListItem
-                      pressable
-                      iconLeftName={item?.icon?.name || iconProps?.name}
-                      iconPack={
-                        item?.icon?.pack || iconProps?.pack || "IonIcons"
-                      }
-                      iconLeftColor={
-                        iconProps?.color
-                          ? iconProps?.color
-                          : item?.icon?.color === "default"
-                          ? globalTheme.colors.foreground
-                          : item?.icon?.color
-                      }
-                      iconRightName={
-                        // selectedItem?.id === item?.id ||
-                        selectedItem?.name === item?.name
-                          ? "checkmark-circle"
-                          : null
-                      }
-                      leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
-                      onPress={() => {
-                        onTapItem(item);
-                      }}
-                    />
-                  </>
-                )}
-              />
-            );
-
-          case MODAL_TYPE_CONSTANTS.CURRENCY_LIST:
-            return (
-              <>
-                {!showSearchBar && (
-                  <FlatList
-                    ref={flatListRef}
-                    data={props}
-                    getItemLayout={(data, index) =>
-                      getItemLayout(data, index, 1)
-                    }
-                    onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                    onMomentumScrollEnd={onScrollHandler}
-                    onScrollEndDrag={onScrollHandler}
-                    keyExtractor={(item, id) => item?.name + id}
-                    renderItem={({ item }) => (
-                      <>
-                        <CurrencyListItemRender
-                          item={item}
-                          globalTheme={globalTheme}
-                          selectedItem={selectedItem}
-                          onTapItem={(item) => onTapItem(item)}
-                        />
-                      </>
-                    )}
-                  />
-                )}
-                {!!showSearchBar && (
-                  <FlatList
-                    ref={flatListRef}
-                    data={props.filter(
-                      (item) =>
-                        item.name
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        item.currencyCode
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())
-                    )}
-                    getItemLayout={(data, index) =>
-                      getItemLayout(data, index, 1)
-                    }
-                    onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                    onMomentumScrollEnd={onScrollHandler}
-                    onScrollEndDrag={onScrollHandler}
-                    keyExtractor={(item, id) => item?.name + id}
-                    ListEmptyComponent={() => {
-                      return (
-                        <View style={{ padding: 16 }}>
-                          <TextPrimary label="No results found" />
-                        </View>
-                      );
-                    }}
-                    renderItem={({ item }) => (
-                      <>
-                        <CurrencyListItemRender
-                          item={item}
-                          globalTheme={globalTheme}
-                          selectedItem={selectedItem}
-                          onTapItem={(item) => onTapItem(item)}
-                        />
-                      </>
-                    )}
-                  />
-                )}
-              </>
-            );
-
-          case MODAL_TYPE_CONSTANTS.TEXT_INPUT:
-            return (
-              <View
-                style={{
-                  paddingLeft: 16,
-                  paddingRight: !textInput ? 16 : 0,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <TextInput
-                  keyboardType={keyboardType}
-                  style={{
-                    paddingHorizontal: 16,
-                    fontSize: 16,
-                    borderRadius: 16,
-                    borderWidth: 1,
-                    height: 48,
-                    flex: 1,
-                    borderColor: globalTheme.colors.primary,
-                    color: globalTheme.text.textPrimary.color,
-                  }}
-                  ref={textInputRef}
-                  placeholder={placeholder}
-                  placeholderTextColor={globalTheme.text.textSecondary.color}
-                  defaultValue={defaultOption || ""}
-                  value={textInput}
-                  onChangeText={(input) => setTextInput(input)}
-                  autoFocus={true}
-                  maxLength={maxLength}
-                />
-                {textInput && (
-                  <IonIcons
-                    onPress={() => setTextInput("")}
-                    name="close-circle"
-                    size={20}
-                    style={{ paddingHorizontal: 16 }}
-                    color={globalTheme.colors.foreground}
-                  />
-                )}
-              </View>
-            );
-          case MODAL_TYPE_CONSTANTS.ACTION:
-            return (
-              <>
-                {/* // TAG : Delete Action */}
-                <TouchableNativeFeedback onPress={() => {}}>
-                  <View style={globalTheme.list.listContainer}>
-                    <IonIcons
-                      name="trash"
-                      size={18}
-                      // color={item?.icon?.color}
-                      style={{ paddingRight: 16 }}
-                    />
-                    <View style={globalTheme.list.listItem}>
-                      <TextPrimary label="Delete" />
-                    </View>
-                  </View>
-                </TouchableNativeFeedback>
-              </>
-            );
-          case MODAL_TYPE_CONSTANTS.COLOR_PICKER:
-            return (
-              <FlatList
-                horizontal
-                // numColumns={4}
-                // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
-                data={colors}
-                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                onMomentumScrollEnd={onScrollHandler}
-                onScrollEndDrag={onScrollHandler}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                keyExtractor={(item, id) => item?.name}
-                renderItem={({ item }) => (
-                  <>
-                    <TouchableOpacity
-                      style={{ marginRight: 8 }}
-                      onPress={() => {
-                        onTapItem(item);
-                      }}
-                    >
-                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
-
-                      {/* Color Circle */}
-                      <View
-                        style={{
-                          height: 48,
-                          width: 48,
-                          borderRadius: 48 / 2,
-                          backgroundColor: item.color,
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <IonIcons
-                          name="checkmark-sharp"
-                          size={24}
-                          color={globalTheme.colors.background}
-                          style={{
-                            display:
-                              selectedItem?.color === item?.color
-                                ? "flex"
-                                : "none",
-                          }}
-                        />
-                      </View>
-
-                      {/* </View> */}
-                    </TouchableOpacity>
-                  </>
-                )}
-              />
-            );
-
-          case MODAL_TYPE_CONSTANTS.ICON_PICKER:
-            return (
-              <Animated.FlatList
-                ref={flatListRef}
-                numColumns={6}
-                columnWrapperStyle={{
-                  justifyContent: "space-between",
-                  padding: 8,
-                }}
-                snapToAlignment="center"
-                onLayout={(event) => onFlatListLayoutChange(event, 6)}
-                showsHorizontalScrollIndicator={false}
-                data={props}
-                style={{ height: "100%" }}
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                onMomentumScrollEnd={onScrollHandler}
-                onScrollEndDrag={onScrollHandler}
-                getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                keyExtractor={(item, id) => item?.name}
-                renderItem={({ item, index }) => (
-                  <>
-                    <TouchableOpacity
-                      style={{ marginRight: 8 }}
-                      onPress={() => {
-                        onTapItem(item);
-                      }}
-                    >
-                      {/* <View style={{ flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between' }}> */}
-
-                      {/* Color Circle */}
-                      <View
-                        style={{
-                          height: 48,
-                          width: 48,
-                          borderWidth: 2,
-                          borderRadius: 48 / 2,
-                          borderColor:
-                            selectedItem?.name === item.name
-                              ? globalTheme.colors.primary
-                              : "transparent",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {item.pack === "IonIcons" && (
-                          <IonIcons
-                            name={item.name}
-                            size={24}
-                            color={
-                              item.color === "default"
-                                ? globalTheme.colors.foreground
-                                : item.color
-                            }
-                          />
-                        )}
-                        {/* <IonIcons name='checkmark-sharp' size={24} color={globalTheme.colors.background} style={{ display: selected?.color === item?.color ? 'flex' : 'none' }} /> */}
-                      </View>
-
-                      {/* </View> */}
-                    </TouchableOpacity>
-                  </>
-                )}
-              />
-            );
-
-          default:
-            return;
-        }
-    }
-  };
+  const themeVariant = globalTheme.identifier.id.includes("light")
+    ? "light"
+    : "dark";
+  const textColor = globalTheme.text.textPrimary.color;
 
   const TopRightComponent = ({ ref }) => {
     switch (modalType) {
@@ -681,55 +257,12 @@ const ModalScreen = ({ route, navigation }) => {
     }
   };
 
-  const CurrencyListItemRender = useCallback(
-    ({ item, selectedItem, globalTheme, onTapItem }) => {
-      return (
-        <TouchableNativeFeedback
-          onPress={() => {
-            onTapItem(item);
-          }}
-        >
-          <View style={globalTheme.list.listContainer}>
-            <View
-              style={{
-                borderRadius: 4,
-                overflow: "hidden",
-                alignItems: "center",
-              }}
-            >
-              <CountryFlag isoCode={item?.isoCode} size={20} />
-            </View>
-            <View
-              style={{
-                ...globalTheme.list.listItem,
-                paddingLeft: 16,
-              }}
-            >
-              <View>
-                <TextPrimary
-                  label={`${utils.upperCaseThisFirstLetter(item?.name)}`}
-                />
-                <TextPrimary
-                  label={`${utils.upperCaseThisFirstLetter(
-                    item?.currencyCode
-                  )} / ${item?.symbol}`}
-                />
-              </View>
-              <IonIcons
-                name="checkmark-circle"
-                size={22}
-                style={{
-                  display: selectedItem?.name == item?.name ? "flex" : "none",
-                }}
-                color={globalTheme.colors.foreground}
-              />
-            </View>
-          </View>
-        </TouchableNativeFeedback>
-      );
-    },
-    [selectedItem?.name]
+  const CurrencyListItemMemo = useMemo(
+    () => CurrencyListItemRender,
+    shouldCurrencyItemListRerender
   );
+
+  const keyExtractor = useCallback((item, index) => item?.name + index, []);
 
   return (
     <>
@@ -774,6 +307,7 @@ const ModalScreen = ({ route, navigation }) => {
               />
             )}
             <TopRightComponent ref={searchInputRef} />
+
             {useSearchButton && (
               <View
                 style={{
@@ -843,7 +377,445 @@ const ModalScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        <ShowModalContent />
+        {showTemporaryDatePicker && (
+          <>
+            <RNDateTimePicker
+              mode="date"
+              display="spinner"
+              textColor={textColor}
+              themeVariant={themeVariant}
+              value={new Date(selectedItem)}
+              minimumDate={
+                minimumDateInMillis ? new Date(minimumDateInMillis) : null
+              }
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || new Date(selectedItem);
+                event.type === "set" && setSelectedItem(currentDate.getTime());
+                event.type === "dismissed";
+              }}
+            />
+          </>
+        )}
+
+        {!showTemporaryDatePicker && (
+          <>
+            {/* // TAG : isNumberPicker */}
+            {isNumberPicker && (
+              <>
+                <FlatList
+                  numColumns={7}
+                  columnWrapperStyle={{
+                    justifyContent: "space-between",
+                    padding: 8,
+                  }}
+                  showsHorizontalScrollIndicator={false}
+                  data={props}
+                  style={
+                    {
+                      // height: "100%",
+                    }
+                  }
+                  contentContainerStyle={{
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                  keyExtractor={(item, id) => item?.name}
+                  renderItem={({ item }) => (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedItem(item);
+                        }}
+                      >
+                        {/* Color Circle */}
+                        <View
+                          style={{
+                            height: 48,
+                            width: 48,
+                            borderRadius: 48 / 2,
+                            backgroundColor:
+                              selectedItem?.name === item.name
+                                ? globalTheme.colors.primary
+                                : "transparent",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <TextPrimary
+                            label={item.name}
+                            style={{
+                              fontWeight:
+                                selectedItem?.name === item.name
+                                  ? "bold"
+                                  : "normal",
+                              color:
+                                selectedItem?.name === item.name
+                                  ? globalTheme.colors.background
+                                  : globalTheme.text.textPrimary.color,
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                />
+              </>
+            )}
+
+            {/* // TAG : isDatePicker */}
+            {isDatePicker && (
+              <>
+                <RNDateTimePicker
+                  mode="date"
+                  display="spinner"
+                  textColor={textColor}
+                  themeVariant={themeVariant}
+                  value={new Date(selectedItem)}
+                  minimumDate={
+                    minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                  }
+                  onChange={(event, selectedDate) => {
+                    const currentDate = selectedDate || new Date(selectedItem);
+                    event.type === "set" &&
+                      setSelectedItem(currentDate.getTime());
+                    event.type === "dismissed";
+                  }}
+                />
+              </>
+            )}
+
+            {/* // TAG : isDateAndTimePicker */}
+            {isDateAndTimePicker && (
+              <>
+                <RNDateTimePicker
+                  mode="datetime"
+                  display="spinner"
+                  textColor={textColor}
+                  themeVariant={themeVariant}
+                  value={new Date(selectedItem)}
+                  minimumDate={
+                    minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                  }
+                  onChange={(event, selectedDate) => {
+                    const currentDate = selectedDate || new Date(selectedItem);
+                    event.type === "set" &&
+                      setSelectedItem(currentDate.getTime());
+                    event.type === "dismissed";
+                  }}
+                />
+              </>
+            )}
+
+            {/* // TAG : isList */}
+            {isList && (
+              <>
+                <FlatList
+                  ref={flatListRef}
+                  data={props}
+                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                  onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                  onMomentumScrollEnd={onScrollHandler}
+                  onScrollEndDrag={onScrollHandler}
+                  keyExtractor={(item, id) => item?.name + id}
+                  renderItem={({ item, index }) => (
+                    <>
+                      <ListItem
+                        pressable
+                        iconLeftName={item?.icon?.name || iconProps?.name}
+                        iconPack={
+                          item?.icon?.pack || iconProps?.pack || "IonIcons"
+                        }
+                        iconLeftColor={
+                          iconProps?.color
+                            ? iconProps?.color
+                            : item?.icon?.color === "default"
+                            ? globalTheme.colors.foreground
+                            : item?.icon?.color
+                        }
+                        iconRightName={
+                          // selectedItem?.id === item?.id ||
+                          selectedItem?.name === item?.name
+                            ? "checkmark-circle"
+                            : null
+                        }
+                        leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
+                        onPress={() => {
+                          onTapItem(item);
+                        }}
+                      />
+                    </>
+                  )}
+                />
+              </>
+            )}
+
+            {/* // TAG : isCurrencyList */}
+            {isCurrencyList && (
+              <>
+                {/* // TAG : !showSearchBar */}
+                {!showSearchBar && (
+                  <>
+                    <FlatList
+                      ref={flatListRef}
+                      data={props}
+                      getItemLayout={(data, index) =>
+                        getItemLayout(data, index, 1)
+                      }
+                      maxToRenderPerBatch={props.length}
+                      initialNumToRender={Math.round(props.length / 3)}
+                      onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                      onMomentumScrollEnd={onScrollHandler}
+                      onScrollEndDrag={onScrollHandler}
+                      keyExtractor={keyExtractor}
+                      renderItem={({ item }) => (
+                        <>
+                          <CurrencyListItemMemo
+                            item={item}
+                            globalTheme={globalTheme}
+                            isSelected={item.name === selectedItem?.name}
+                            onTapItem={(item) => onTapItem(item)}
+                          />
+                        </>
+                      )}
+                    />
+                  </>
+                )}
+                {/* // TAG : !!showSearchBar */}
+                {!!showSearchBar && (
+                  <>
+                    <FlatList
+                      ref={flatListRef}
+                      data={props.filter(
+                        (item) =>
+                          item.name
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          item.currencyCode
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase())
+                      )}
+                      getItemLayout={(data, index) =>
+                        getItemLayout(data, index, 1)
+                      }
+                      onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                      onMomentumScrollEnd={onScrollHandler}
+                      onScrollEndDrag={onScrollHandler}
+                      keyExtractor={(item, id) => item?.name + id}
+                      ListEmptyComponent={() => {
+                        return (
+                          <View style={{ padding: 16 }}>
+                            <TextPrimary label="No results found" />
+                          </View>
+                        );
+                      }}
+                      renderItem={({ item }) => (
+                        <>
+                          <CurrencyListItemRender
+                            item={item}
+                            globalTheme={globalTheme}
+                            selectedItem={selectedItem}
+                            onTapItem={(item) => onTapItem(item)}
+                          />
+                        </>
+                      )}
+                    />
+                  </>
+                )}
+              </>
+            )}
+
+            {/* // TAG : isTextInput */}
+            {isTextInput && (
+              <>
+                <View
+                  style={{
+                    paddingLeft: 16,
+                    paddingRight: !textInput ? 16 : 0,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextInput
+                    keyboardType={keyboardType}
+                    style={{
+                      paddingHorizontal: 16,
+                      fontSize: 16,
+                      borderRadius: 16,
+                      borderWidth: 1,
+                      height: 48,
+                      flex: 1,
+                      borderColor: globalTheme.colors.primary,
+                      color: globalTheme.text.textPrimary.color,
+                    }}
+                    ref={textInputRef}
+                    placeholder={placeholder}
+                    placeholderTextColor={globalTheme.text.textSecondary.color}
+                    defaultValue={defaultOption || ""}
+                    value={textInput}
+                    onChangeText={(input) => setTextInput(input)}
+                    autoFocus={true}
+                    maxLength={maxLength}
+                  />
+                  {textInput && (
+                    <IonIcons
+                      onPress={() => setTextInput("")}
+                      name="close-circle"
+                      size={20}
+                      style={{ paddingHorizontal: 16 }}
+                      color={globalTheme.colors.foreground}
+                    />
+                  )}
+                </View>
+              </>
+            )}
+
+            {/* // TAG : isAction */}
+            {isAction && (
+              <>
+                <TouchableNativeFeedback onPress={() => {}}>
+                  <View style={globalTheme.list.listContainer}>
+                    <IonIcons
+                      name="trash"
+                      size={18}
+                      // color={item?.icon?.color}
+                      style={{ paddingRight: 16 }}
+                    />
+                    <View style={globalTheme.list.listItem}>
+                      <TextPrimary label="Delete" />
+                    </View>
+                  </View>
+                </TouchableNativeFeedback>
+              </>
+            )}
+
+            {/* // TAG : isColorPicker */}
+            {isColorPicker && (
+              <>
+                <FlatList
+                  horizontal
+                  // numColumns={4}
+                  // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
+                  data={colors}
+                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                  onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                  onMomentumScrollEnd={onScrollHandler}
+                  onScrollEndDrag={onScrollHandler}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                  keyExtractor={(item, id) => item?.name}
+                  renderItem={({ item }) => (
+                    <>
+                      <TouchableOpacity
+                        style={{ marginRight: 8 }}
+                        onPress={() => {
+                          onTapItem(item);
+                        }}
+                      >
+                        {/* Color Circle */}
+                        <View
+                          style={{
+                            height: 48,
+                            width: 48,
+                            borderRadius: 48 / 2,
+                            backgroundColor: item.color,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <IonIcons
+                            name="checkmark-sharp"
+                            size={24}
+                            color={globalTheme.colors.background}
+                            style={{
+                              display:
+                                selectedItem?.color === item?.color
+                                  ? "flex"
+                                  : "none",
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                />
+              </>
+            )}
+
+            {/* // TAG : isIconPicker */}
+            {isIconPicker && (
+              <>
+                <Animated.FlatList
+                  ref={flatListRef}
+                  numColumns={6}
+                  columnWrapperStyle={{
+                    justifyContent: "space-between",
+                    padding: 8,
+                  }}
+                  snapToAlignment="center"
+                  onLayout={(event) => onFlatListLayoutChange(event, 6)}
+                  showsHorizontalScrollIndicator={false}
+                  data={props}
+                  style={{ height: "100%" }}
+                  contentContainerStyle={{
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                  onMomentumScrollEnd={onScrollHandler}
+                  onScrollEndDrag={onScrollHandler}
+                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
+                  keyExtractor={(item, id) => item?.name}
+                  renderItem={({ item, index }) => (
+                    <>
+                      <TouchableOpacity
+                        style={{ marginRight: 8 }}
+                        onPress={() => {
+                          onTapItem(item);
+                        }}
+                      >
+                        <View
+                          style={{
+                            height: 48,
+                            width: 48,
+                            borderWidth: 2,
+                            borderRadius: 48 / 2,
+                            borderColor:
+                              selectedItem?.name === item.name
+                                ? globalTheme.colors.primary
+                                : "transparent",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {item.pack === "IonIcons" && (
+                            <IonIcons
+                              name={item.name}
+                              size={24}
+                              color={
+                                item.color === "default"
+                                  ? globalTheme.colors.foreground
+                                  : item.color
+                              }
+                            />
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                />
+              </>
+            )}
+          </>
+        )}
 
         {/* // TAG : Action Button */}
         <View
@@ -934,3 +906,62 @@ const ModalScreen = ({ route, navigation }) => {
 };
 
 export default ModalScreen;
+
+const shouldCurrencyItemListRerender = (prevProps, nextProps) => {
+  const { isSelected } = prevProps;
+  const { isSelected: isNextSelected } = nextProps;
+  if (isSelected === isNextSelected) return true;
+  return false;
+};
+
+const CurrencyListItemRender = ({
+  item,
+  selectedItem,
+  isSelected = false,
+  globalTheme,
+  onTapItem,
+}) => {
+  return (
+    <TouchableNativeFeedback
+      onPress={() => {
+        onTapItem(item);
+      }}
+    >
+      <View style={globalTheme.list.listContainer}>
+        <View
+          style={{
+            borderRadius: 4,
+            overflow: "hidden",
+            alignItems: "center",
+          }}
+        >
+          <CountryFlag isoCode={item?.isoCode} size={20} />
+        </View>
+        <View
+          style={{
+            ...globalTheme.list.listItem,
+            paddingLeft: 16,
+          }}
+        >
+          <View>
+            <TextPrimary
+              label={`${utils.upperCaseThisFirstLetter(item?.name)}`}
+            />
+            <TextPrimary
+              label={`${utils.upperCaseThisFirstLetter(item?.currencyCode)} / ${
+                item?.symbol
+              }`}
+            />
+          </View>
+          {isSelected && (
+            <IonIcons
+              name="checkmark-circle"
+              size={22}
+              color={globalTheme.colors.foreground}
+            />
+          )}
+        </View>
+      </View>
+    </TouchableNativeFeedback>
+  );
+};
