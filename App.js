@@ -100,16 +100,9 @@ function App() {
   try {
     return (
       <>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{
-            flex: 1,
-          }}
-        >
-          <GlobalStateProvider>
-            <GlobalStateWrapper />
-          </GlobalStateProvider>
-        </KeyboardAvoidingView>
+        <GlobalStateProvider>
+          <GlobalStateWrapper />
+        </GlobalStateProvider>
       </>
     );
   } catch (error) {
@@ -159,24 +152,40 @@ const GlobalStateWrapper = () => {
   }, []);
 
   return (
-    <NavigationContainer
-      theme={
-        globalTheme?.identifier?.id?.includes("dark") ? DarkTheme : DefaultTheme
-      }
-      onReady={() => {
-        routingInstrumentation.registerNavigationContainer(navigationRef);
-      }}
-    >
-      <StatusBar
-        animated={true}
-        barStyle={
-          globalTheme.identifier.id.includes("dark")
-            ? "light-content"
-            : "dark-content"
-        }
-        backgroundColor={globalTheme.colors.header}
-      />
-      <RootStack />
-    </NavigationContainer>
+    <>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "position"}
+        contentContainerStyle={{
+          backgroundColor: globalTheme.colors.background,
+          flex: 1,
+        }}
+        style={{
+          backgroundColor: globalTheme.colors.background,
+          flex: 1,
+        }}
+      >
+        <NavigationContainer
+          theme={
+            globalTheme?.identifier?.id?.includes("dark")
+              ? DarkTheme
+              : DefaultTheme
+          }
+          onReady={() => {
+            routingInstrumentation.registerNavigationContainer(navigationRef);
+          }}
+        >
+          <StatusBar
+            animated={true}
+            barStyle={
+              globalTheme.identifier.id.includes("dark")
+                ? "light-content"
+                : "dark-content"
+            }
+            backgroundColor={globalTheme.colors.header}
+          />
+          <RootStack />
+        </NavigationContainer>
+      </KeyboardAvoidingView>
+    </>
   );
 };
