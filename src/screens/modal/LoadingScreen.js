@@ -23,8 +23,7 @@ import {
   uploadAndGetAttachmentImageURL,
 } from "../../api/firebase/cloudStorage";
 import uuid from "react-native-uuid";
-import postLogSnagEvent from "../../api/logsnag/postLogSnagEvent";
-import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
+import uploadAttachmentImage from "../../api/firebase/uploadAttachmentImage";
 
 const LoadingScreen = ({ route, navigation }) => {
   const {
@@ -136,10 +135,7 @@ const LoadingScreen = ({ route, navigation }) => {
                 const attachmentURL = [];
                 await newAttachmentURL.reduce(async (prev, curr) => {
                   await prev;
-                  const newURL = await uploadAndGetAttachmentImageURL(
-                    curr.uri,
-                    curr.id
-                  );
+                  const newURL = await uploadAttachmentImage(curr.uri, curr.id);
                   attachmentURL.push(newURL);
                 }, Promise.resolve());
                 // alert("attachment Uploaded");
