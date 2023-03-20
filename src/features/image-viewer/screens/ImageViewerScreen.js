@@ -17,14 +17,16 @@ const ImageViewerScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
 
+  const { uriList, defaultUri } = route?.params;
+
   return (
     <>
       <Carousel
         loop
-        defaultIndex={route?.params?.uriList.indexOf(route?.params?.uri)}
+        defaultIndex={uriList.indexOf(defaultUri)}
         width={Dimensions.get("window").width}
         height={Dimensions.get("window").height}
-        data={route?.params?.uriList}
+        data={uriList}
         key={(index) => index}
         style={{
           flex: 1,
@@ -34,7 +36,7 @@ const ImageViewerScreen = ({ route, navigation }) => {
         }}
         renderItem={({ index }) => (
           <>
-            <ImageZoom uri={route?.params?.uriList[index]} />
+            <ImageZoom uri={uriList[index]} />
           </>
         )}
       />
