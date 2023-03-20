@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
   useGlobalUserAccount,
+  useLocalProfilePictureUri,
 } from "../../../reducers/GlobalContext";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -15,13 +16,14 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   getProfilePictureURL,
   uploadImage,
-  uploadProfilePicture,
 } from "../../../api/firebase/cloudStorage";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import uploadProfilePicture from "../../../api/firebase/uploadProfilePicture";
+import screenList from "../../../navigations/ScreenList";
 
 const MyProfilePictureScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -29,10 +31,14 @@ const MyProfilePictureScreen = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [previousImage, setPreviousImage] = useState(null);
   const [image, setImage] = useState(null);
+  const { localProfilePictureUri, setLocalProfilePictureUri } =
+    useLocalProfilePictureUri();
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    setImage(userAccount?.photoURL);
+    console.log({ localProfilePictureUri });
+    // setImage(userAccount?.photoURL);
+    setImage(localProfilePictureUri);
     setPreviousImage(userAccount?.photoURL);
   }, []);
 
@@ -42,7 +48,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.3,
     });
 
     console.log(result);
@@ -61,36 +67,43 @@ const MyProfilePictureScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          {!image && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                borderColor: globalTheme.colors.primary,
-                height: 200,
-                width: 200,
-                borderRadius: 200 / 2,
-                borderWidth: 3,
-              }}
-            >
-              {/* <Image source={checkmark} style={{ height: 128, width: 128 }} /> */}
+          <TouchableOpacity
+            onPress={() => {
+              if (image)
+                navigation.navigate(screenList.imageViewerScreen, {
+                  uriList: [image],
+                  defaultUri: image,
+                });
+            }}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              borderColor: globalTheme.colors.primary,
+              height: 200,
+              width: 200,
+              borderRadius: 200 / 2,
+              borderWidth: 3,
+            }}
+          >
+            {/* <Image source={checkmark} style={{ height: 128, width: 128 }} /> */}
+            {!image && (
               <IonIcons
                 name="person"
                 size={64}
                 color={globalTheme.colors.primary}
               />
-            </View>
-          )}
-          {image && (
-            <Image
-              source={{ uri: image }}
-              style={{
-                borderRadius: 200 / 2,
-                width: 200,
-                height: 200,
-              }}
-            />
-          )}
+            )}
+            {image && (
+              <Image
+                source={{ uri: image }}
+                style={{
+                  borderRadius: 200 / 2,
+                  width: 200,
+                  height: 200,
+                }}
+              />
+            )}
+          </TouchableOpacity>
         </View>
         {isUploading && <Loading />}
         {!isUploading && (
@@ -141,10 +154,10 @@ const MyProfilePictureScreen = ({ navigation }) => {
                   onPress={async () => {
                     setIsUploading(true);
                     uploadProfilePicture(image, userAccount.uid).then(
-                      async () => {
+                      async (imageURL) => {
                         const patchUserAccount = {
                           ...userAccount,
-                          photoURL: await getProfilePictureURL(userAccount.uid),
+                          photoURL: imageURL,
                           _timestamps: {
                             ...userAccount._timestamps,
                             updated_at: Date.now(),
