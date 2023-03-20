@@ -49,7 +49,11 @@ const UserScreen = ({ navigation }) => {
       <CustomScrollView>
         {userAccount && (
           <>
-            <UserHeaderComponent />
+            <UserHeaderComponent
+              onPress={() =>
+                navigation.navigate(screenList.myProfilePictureScreen)
+              }
+            />
             <ListSection>
               {/* // TAG : My Profile */}
               <ListItem
