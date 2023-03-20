@@ -11,7 +11,6 @@ const globalCurrencyRatesReducer = (state, action) => {
       };
 
     case REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET:
-      console.log("globalCurrencyRatesReducer: FORCE_SET");
       return action.payload;
 
     case REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS:
