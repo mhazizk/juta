@@ -47,6 +47,13 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import transactionDetailsModel from "../models/transactionDetailsModel";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import Animated, {
+  BounceIn,
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+  SlideOutDown,
+} from "react-native-reanimated";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -1162,11 +1169,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
             </ListSection> */}
             {/* // TAG : Attachment Image */}
             {/* // TODO : hold the release of attachments */}
-            {/* <ListSection>
+            <ListSection>
               <ListItem
                 pressable
                 disabled={
-                  !getFeatureLimit({
+                  !!getFeatureLimit({
                     globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription.plan,
                     featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
@@ -1177,13 +1184,14 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 iconPack="IonIcons"
                 rightLabel={
                   transaction?.details?.attachment_URL?.length
-                    ? transaction?.details?.attachment_URL?.length + " image(s)"
-                    : "Add"
+                    ? transaction?.details?.attachment_URL?.length +
+                      " image(s) "
+                    : "Add "
                 }
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                    getFeatureLimit({
+                    !getFeatureLimit({
                       globalFeatureSwitch,
                       subscriptionPlan: userAccount.subscription.plan,
                       featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
@@ -1194,8 +1202,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       mediaTypes: ImagePicker.MediaTypeOptions.Images,
                       // allowsEditing: true,
                       allowsMultipleSelection: true,
-                      quality: 0,
-                      // TODO : try compressing image for firebase storage
+                      quality: 1,
                     });
 
                     const { canceled, assets } = result;
@@ -1235,7 +1242,9 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   }
                 }}
               />
-              <FlatList
+              <Animated.FlatList
+                entering={SlideInDown.duration(500)}
+                exiting={SlideOutDown.duration(500)}
                 horizontal
                 data={transaction?.details?.attachment_URL}
                 contentContainerStyle={{
@@ -1243,6 +1252,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   justifyContent: "center",
                   minWidth: "100%",
                 }}
+                keyExtractor={(item) => item}
                 renderItem={({ item }) => (
                   <>
                     {item && (
@@ -1282,12 +1292,14 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         <TouchableNativeFeedback
                           onPress={() => {
                             navigation.navigate(screenList.imageViewerScreen, {
-                              uri: item,
+                              defaultUri: item,
                               uriList: transaction?.details?.attachment_URL,
                             });
                           }}
                         >
-                          <Image
+                          <Animated.Image
+                            entering={SlideInDown.duration(500)}
+                            exiting={SlideOutDown.duration(500)}
                             source={{ uri: item }}
                             style={{
                               margin: 8,
@@ -1331,7 +1343,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </>
               )}
-            </ListSection> */}
+            </ListSection>
 
             {/* // TAG : Action Button */}
             <ActionButtonWrapper>
