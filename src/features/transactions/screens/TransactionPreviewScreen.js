@@ -423,7 +423,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
           </ListSection>
           {/* // TAG : Attachment */}
           {/* // TODO : hold the release of attachments */}
-          {/* <ListSection>
+          <ListSection>
             <ListItem
               // pressable
               leftLabel="Attachment Images"
@@ -455,6 +455,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                           navigation.navigate(screenList.imageViewerScreen, {
                             uri,
                             uriList: transaction?.details?.attachment_URL,
+                            defaultUri: item,
                           });
                         }}
                       />
@@ -463,7 +464,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 </>
               )}
             />
-          </ListSection> */}
+          </ListSection>
 
           {/* // TAG : Action Button */}
           <ActionButtonWrapper>
