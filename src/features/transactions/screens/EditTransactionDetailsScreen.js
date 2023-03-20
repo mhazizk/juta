@@ -50,6 +50,7 @@ import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
@@ -855,7 +856,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
           </ListSection>
           {/* // TAG : Attachment Image */}
           {/* // TODO : hold the release of attachments */}
-          {/* <ListSection>
+          <ListSection>
             <ListItem
               pressable
               disabled={
@@ -870,8 +871,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               rightLabel={
                 transaction?.details?.attachment_URL?.length
-                  ? transaction?.details?.attachment_URL?.length + " image(s)"
-                  : "Add attachment"
+                  ? transaction?.details?.attachment_URL?.length + " image(s) "
+                  : "Add "
               }
               iconRightName="add"
               onPress={async () => {
@@ -925,7 +926,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 }
               }}
             />
-            <FlatList
+            <Animated.FlatList
+              entering={SlideInDown.duration(500)}
+              exiting={SlideOutDown.duration(500)}
               horizontal
               data={transaction?.details?.attachment_URL}
               contentContainerStyle={{
@@ -933,6 +936,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 minWidth: "100%",
               }}
+              keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <>
                   {item && (
@@ -953,7 +957,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                             details: {
                               ...transaction?.details,
                               attachment_URL: [
-                                ...transaction.details.attachment_URL?.filter(
+                                ...transaction.details.attachment_URL.filter(
                                   (url) => url !== item
                                 ),
                               ],
@@ -972,12 +976,14 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       <TouchableNativeFeedback
                         onPress={() => {
                           navigation.navigate(screenList.imageViewerScreen, {
-                            uri: item,
+                            defaultUri: item,
                             uriList: transaction?.details?.attachment_URL,
                           });
                         }}
                       >
-                        <Image
+                        <Animated.Image
+                          entering={SlideInDown.duration(500)}
+                          exiting={SlideOutDown.duration(500)}
                           source={{ uri: item }}
                           style={{
                             margin: 8,
@@ -1021,7 +1027,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               </>
             )}
-          </ListSection> */}
+          </ListSection>
           <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
