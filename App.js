@@ -71,26 +71,26 @@ function App() {
       if (status === "granted") {
         return true;
       } else {
-        trackingAlert(isGranted);
+        onDenyAlert(isGranted);
       }
     }
   };
 
-  const trackingAlert = (isGranted) => {
+  const onDenyAlert = (isGranted) => {
     return Alert.alert(
       "Tracking Permission",
-      "Please allow tracking permission to continue using this app",
+      `You have denied tracking permission.\nSome features may not work properly.\nYou can enable tracking permission anytime by going to Settings > Juta > Allow Tracking`,
       [
-        {
-          text: "Cancel",
-          onPress: () => {
-            return trackingAlert(isGranted);
-          },
-        },
+        // {
+        //   text: "Cancel",
+        //   onPress: () => {
+        //     return onDenyAlert(isGranted);
+        //   },
+        // },
         {
           text: "OK",
           onPress: () => {
-            return requestiosTrackingPermissionsAsync(isGranted);
+            return setIsGrantedTrack(isGranted);
           },
         },
       ]
