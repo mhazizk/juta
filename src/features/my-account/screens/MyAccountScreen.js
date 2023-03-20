@@ -48,14 +48,18 @@ const MyAccountScreen = ({ item, navigation }) => {
       <CustomScrollView>
         {userAccount && !isLoading && (
           <>
-            <UserHeaderComponent />
+            <UserHeaderComponent
+              onPress={() =>
+                navigation.navigate(screenList.myProfilePictureScreen)
+              }
+            />
             {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
               {/* // TODO : Hold this feature */}
               {/* // TAG : Change Profile */}
-              {/* <ListItem
+              <ListItem
                 pressable
                 leftLabel="Change profile picture"
                 iconLeftName="person"
@@ -63,7 +67,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.myProfilePictureScreen)
                 }
-              /> */}
+              />
 
               {/* // TAG : Change Display Name */}
               <ListItem
