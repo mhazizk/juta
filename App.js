@@ -153,39 +153,27 @@ const GlobalStateWrapper = () => {
 
   return (
     <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "position"}
-        contentContainerStyle={{
-          backgroundColor: globalTheme.colors.background,
-          flex: 1,
-        }}
-        style={{
-          backgroundColor: globalTheme.colors.background,
-          flex: 1,
+      <NavigationContainer
+        theme={
+          globalTheme?.identifier?.id?.includes("dark")
+            ? DarkTheme
+            : DefaultTheme
+        }
+        onReady={() => {
+          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
-        <NavigationContainer
-          theme={
-            globalTheme?.identifier?.id?.includes("dark")
-              ? DarkTheme
-              : DefaultTheme
+        <StatusBar
+          animated={true}
+          barStyle={
+            globalTheme.identifier.id.includes("dark")
+              ? "light-content"
+              : "dark-content"
           }
-          onReady={() => {
-            routingInstrumentation.registerNavigationContainer(navigationRef);
-          }}
-        >
-          <StatusBar
-            animated={true}
-            barStyle={
-              globalTheme.identifier.id.includes("dark")
-                ? "light-content"
-                : "dark-content"
-            }
-            backgroundColor={globalTheme.colors.header}
-          />
-          <RootStack />
-        </NavigationContainer>
-      </KeyboardAvoidingView>
+          backgroundColor={globalTheme.colors.header}
+        />
+        <RootStack />
+      </NavigationContainer>
     </>
   );
 };
