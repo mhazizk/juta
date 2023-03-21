@@ -9,7 +9,8 @@ module.exports = ({ config }) => {
   // Follow apple guidelines for build number e.g. "1.0.0" with no additional characters
   // For eas submit, the Transporter will get the version from eas.version
   // So to make it safe, we will use the same version for build number
-  const iosBuildNumber = appVersion;
+
+  const iosBuildNumber = "0.8.7";
 
   const channelName = channelNameOptions[0];
 
