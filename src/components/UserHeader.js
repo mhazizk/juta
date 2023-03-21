@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import {
   Dimensions,
-  Image,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -12,15 +11,14 @@ import {
   useGlobalAppSettings,
   useGlobalTheme,
   useGlobalUserAccount,
-  useLocalProfilePictureUri,
 } from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
+import { Image } from "expo-image";
 
 const UserHeaderComponent = ({ navigation, onPress }) => {
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
-  const { localProfilePictureUri } = useLocalProfilePictureUri();
   const checkmark = require("../assets/img/checkmark.png");
   // const statHeight = StatusBar.currentHeight;
   return (
@@ -51,7 +49,8 @@ const UserHeaderComponent = ({ navigation, onPress }) => {
           >
             {userAccount.photoURL && (
               <Image
-                source={{ uri: localProfilePictureUri }}
+                source={{ uri: userAccount.photoURL }}
+                cachePolicy="memory-disk"
                 style={{
                   borderRadius: 128 / 2,
                   height: 128,
