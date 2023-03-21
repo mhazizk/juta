@@ -133,7 +133,7 @@ const MyAccountScreen = ({ item, navigation }) => {
             <ListSection>
               {/* // TODO : Commented for app store review */}
               {/* // TAG : Premium Subscription */}
-              {/* <ListItem
+              <ListItem
                 pressable
                 leftLabel="Subscription"
                 rightLabel={
@@ -146,7 +146,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.mySubscriptionScreen)
                 }
-              /> */}
+              />
               {/* // TAG : Export Data */}
               <ListItem
                 pressable
