@@ -51,6 +51,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import ImageViewer from "../../image-viewer/components/ImageViewer";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
@@ -888,7 +889,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
                     allowsEditing: true,
                     allowsMultipleSelection: true,
-                    quality: 1,
+                    quality: 0.3,
                   });
 
                   const { canceled, assets } = result;
@@ -944,12 +945,17 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       <TouchableOpacity
                         style={{
                           zIndex: 1,
-                          padding: 8,
+                          padding: 16,
                           position: "absolute",
-                          top: 0,
-                          right: 0,
+                          top: 8,
+                          right: 8,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderBottomLeftRadius: 16,
+                          backgroundColor: utils.hexToRgb({
+                            hex: globalTheme.colors.secondary,
+                            opacity: 0.3,
+                          }),
                         }}
                         onPress={() =>
                           setTransaction({
@@ -968,32 +974,20 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         <IonIcons
                           name="close-circle"
                           size={20}
-                          style={{ padding: 16 }}
                           color={globalTheme.colors.foreground}
                         />
                       </TouchableOpacity>
 
-                      <TouchableNativeFeedback
-                        onPress={() => {
+                      <ImageViewer
+                        uri={item}
+                        onPress={(uri) => {
                           navigation.navigate(screenList.imageViewerScreen, {
-                            defaultUri: item,
+                            uri,
                             uriList: transaction?.details?.attachment_URL,
+                            defaultUri: item,
                           });
                         }}
-                      >
-                        <Animated.Image
-                          entering={SlideInDown.duration(500)}
-                          exiting={SlideOutDown.duration(500)}
-                          source={{ uri: item }}
-                          style={{
-                            margin: 8,
-                            alignSelf: "center",
-                            borderRadius: 16,
-                            width: 200,
-                            height: 200,
-                          }}
-                        />
-                      </TouchableNativeFeedback>
+                      />
                     </>
                   )}
                 </>
@@ -1006,6 +1000,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
+                    backgroundColor: globalTheme.colors.secondary,
                   }}
                   onPress={() =>
                     setTransaction({
