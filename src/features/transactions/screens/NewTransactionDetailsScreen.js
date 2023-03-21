@@ -7,7 +7,6 @@ import {
   Alert,
   Dimensions,
   FlatList,
-  Image,
   ScrollView,
   Text,
   TextInput,
@@ -54,6 +53,7 @@ import Animated, {
   SlideInDown,
   SlideOutDown,
 } from "react-native-reanimated";
+import ImageViewer from "../../image-viewer/components/ImageViewer";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
@@ -1173,7 +1173,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
               <ListItem
                 pressable
                 disabled={
-                  !!getFeatureLimit({
+                  !getFeatureLimit({
                     globalFeatureSwitch,
                     subscriptionPlan: userAccount.subscription.plan,
                     featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
@@ -1191,7 +1191,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 iconRightName="add"
                 onPress={async () => {
                   if (
-                    !getFeatureLimit({
+                    getFeatureLimit({
                       globalFeatureSwitch,
                       subscriptionPlan: userAccount.subscription.plan,
                       featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
@@ -1202,7 +1202,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       mediaTypes: ImagePicker.MediaTypeOptions.Images,
                       // allowsEditing: true,
                       allowsMultipleSelection: true,
-                      quality: 1,
+                      quality: 0.3,
                     });
 
                     const { canceled, assets } = result;
@@ -1260,12 +1260,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                         <TouchableOpacity
                           style={{
                             zIndex: 1,
-                            padding: 8,
+                            padding: 16,
                             position: "absolute",
-                            top: 0,
-                            right: 0,
+                            top: 8,
+                            right: 8,
                             alignItems: "center",
                             justifyContent: "center",
+                            borderBottomLeftRadius: 16,
+                            backgroundColor: utils.hexToRgb({
+                              hex: globalTheme.colors.secondary,
+                              opacity: 0.3,
+                            }),
                           }}
                           onPress={() =>
                             setTransaction({
@@ -1284,32 +1289,20 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                           <IonIcons
                             name="close-circle"
                             size={20}
-                            style={{ padding: 16 }}
                             color={globalTheme.colors.foreground}
                           />
                         </TouchableOpacity>
 
-                        <TouchableNativeFeedback
-                          onPress={() => {
+                        <ImageViewer
+                          uri={item}
+                          onPress={(uri) => {
                             navigation.navigate(screenList.imageViewerScreen, {
-                              defaultUri: item,
+                              uri,
                               uriList: transaction?.details?.attachment_URL,
+                              defaultUri: item,
                             });
                           }}
-                        >
-                          <Animated.Image
-                            entering={SlideInDown.duration(500)}
-                            exiting={SlideOutDown.duration(500)}
-                            source={{ uri: item }}
-                            style={{
-                              margin: 8,
-                              alignSelf: "center",
-                              borderRadius: 16,
-                              width: 200,
-                              height: 200,
-                            }}
-                          />
-                        </TouchableNativeFeedback>
+                        />
                       </>
                     )}
                   </>
@@ -1322,6 +1315,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
+                      backgroundColor: globalTheme.colors.secondary,
                     }}
                     onPress={() =>
                       setTransaction({
