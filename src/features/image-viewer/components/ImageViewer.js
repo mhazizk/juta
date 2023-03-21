@@ -1,13 +1,9 @@
 import { useState } from "react";
-import {
-  Image,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import Loading from "../../../components/Loading";
 
-const ImageViewer = ({ uri, onPress }) => {
+const ImageViewer = ({ disableCache = false, uri, onPress }) => {
   const [isloading, setIsLoading] = useState(true);
   return (
     <>
@@ -33,6 +29,7 @@ const ImageViewer = ({ uri, onPress }) => {
             }}
           >
             <Image
+              cachePolicy={disableCache ? "none" : "memory-disk"}
               source={{ uri }}
               onLoadStart={() => {
                 setIsLoading(true);
@@ -40,6 +37,7 @@ const ImageViewer = ({ uri, onPress }) => {
               onLoadEnd={() => {
                 setIsLoading(false);
               }}
+              contentFit="cover"
               style={{
                 alignSelf: "center",
                 borderRadius: 8,
