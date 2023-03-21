@@ -1,12 +1,6 @@
-import { signOut } from "firebase/auth/react-native";
-import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../../api/firebase/auth";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
-import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
-import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 import SECRET_KEYS from "../../../constants/secretManager";
 import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
 import userAccountModel from "../../../model/userAccountModel";
@@ -14,7 +8,6 @@ import screenList from "../../../navigations/ScreenList";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import categoriesFallback from "../../../reducers/fallback-state/categoriesFallback";
 import initialCategories from "../../../reducers/initial-state/initialCategories";
-import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRates";
 import initialGlobalLoan from "../../../reducers/initial-state/initialGlobalLoan";
 import initialLogbooks from "../../../reducers/initial-state/initialLogbooks";
 import initialRepeatedTransactions from "../../../reducers/initial-state/initialRepeatedTransactions";
@@ -31,13 +24,10 @@ import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
-import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
 import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
-import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import batchLegacyLogbookCurrencyConversion from "../../../utils/batchLegacyLogbookCurrencyConversion";
 import legacyAppSettingsCurrencyConversion from "../../../utils/legacyAppSettingsCurrencyConversion";
-import getAllCurrenciesFromFirestore from "../../../api/firebase/getAllCurrencies";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -479,13 +469,6 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       //     updated_by: currentUser.uid,
       //   },
       // };
-      console.log(
-        JSON.stringify({
-          isStoredCurrencyRatesAvailable,
-          newCurrencyRateData,
-          lineNumber: 486,
-        })
-      );
       dispatchGlobalCurrencyRates({
         type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
         payload: newCurrencyRateData,
