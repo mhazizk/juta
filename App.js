@@ -27,6 +27,7 @@ import {
   StatusBar,
 } from "react-native";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import Netinfo from "@react-native-community/netinfo";
 
 setNotificationHandler();
 
