@@ -45,8 +45,9 @@ export const CustomBarChart = ({
   const { globalTheme } = useGlobalTheme();
   const checkForAbbreviation = (number) => {
     const { rate } = globalCurrencyRates.data?.find(
-      (rate) =>
-        rate.isoCode === appSettings.logbookSettings.defaultCurrency.isoCode
+      (currency) =>
+        currency.currencyCode ===
+        appSettings.logbookSettings.defaultCurrency.currencyCode
     );
     const useAbbreviation = rate >= 1000;
     let max = Math.floor(number) / 1000;

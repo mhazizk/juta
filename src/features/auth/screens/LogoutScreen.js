@@ -81,9 +81,6 @@ const LogoutScreen = ({ navigation }) => {
       badgeCounter,
       dispatchBadgeCounter,
 
-      globalCurrencyRates,
-      dispatchGlobalCurrencyRates,
-
       globalLoan,
       dispatchGlobalLoan,
     });

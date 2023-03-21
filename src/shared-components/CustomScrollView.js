@@ -1,14 +1,17 @@
 import { ScrollView } from "react-native";
+import Animated from "react-native-reanimated";
 import { useGlobalTheme } from "../reducers/GlobalContext";
 
 const CustomScrollView = ({
+  enteringAnimation = null,
   children,
   nestedScrollEnabled = false,
   contentContainerStyle,
 }) => {
   const { globalTheme } = useGlobalTheme();
   return (
-    <ScrollView
+    <Animated.ScrollView
+      entering={enteringAnimation}
       nestedScrollEnabled={nestedScrollEnabled}
       contentContainerStyle={[
         {
@@ -22,7 +25,7 @@ const CustomScrollView = ({
       ]}
     >
       {children}
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 

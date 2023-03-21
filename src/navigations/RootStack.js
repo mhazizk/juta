@@ -6,13 +6,16 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Alert, AppState, View } from "react-native";
+import { Easing } from "react-native-reanimated";
 import auth from "../api/firebase/auth";
 import firestore from "../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../api/firebase/firestoreCollectionNames";
 import listenSubscriptionStatus from "../api/revenue-cat/listenSubscriptionStatus";
+import MODAL_TYPE_CONSTANTS from "../constants/modalTypeConstants";
 import AboutScreen from "../features/about/screens/AboutScreen";
 import AnalyticsScreen from "../features/analytics/screens/AnalyticsScreen";
 import ChangeAccountPasswordScreen from "../features/auth/screens/ChangeAccountPasswordScreen";
+import DeleteAccountScreen from "../features/auth/screens/DeleteAccountScreen";
 import EmailVerificationScreen from "../features/auth/screens/EmailVerificationScreen";
 import ForgotPasswordScreen from "../features/auth/screens/ForgotPasswordScreen";
 import LoginScreen from "../features/auth/screens/LoginScreen";
@@ -28,6 +31,7 @@ import CategoryPreviewScreen from "../features/categories/screens/CategoryPrevie
 import EditCategoryScreen from "../features/categories/screens/EditCategoryScreen";
 import MyCategoriesScreen from "../features/categories/screens/MyCategoriesScreen";
 import NewCategoryScreen from "../features/categories/screens/NewCategoryScreen";
+import MyCurrenciesScreen from "../features/currencies/screens/MyCurrenciesScreen";
 import DashboardScreen from "../features/dashboard/screens/DashboardScreen";
 import DevicesScreen from "../features/devices/screens/DevicesScreen";
 import ExportScreen from "../features/export/screens/ExportScreen";
@@ -53,6 +57,7 @@ import MyProfilePictureScreen from "../features/profile-picture/screens/MyProfil
 import EditRepeatedTransactionScreen from "../features/repeated-transactions/screens/EditRepeatedTransactionScreen";
 import MyRepeatedTransactionsScreen from "../features/repeated-transactions/screens/MyRepeatedTransactionsScreen";
 import RepeatedTransactionsDetailsScreen from "../features/repeated-transactions/screens/RepeatedTransactionDetailsScreen";
+import MyReportsScreen from "../features/reports/screens/MyReportsScreen";
 import SearchScreen from "../features/search/screens/SearchScreen";
 import SettingsScreen from "../features/settings/screens/SettingsScreen";
 import SplashScreen from "../features/splash-screen/screens/SplashScreen";
@@ -156,9 +161,6 @@ const RootStack = () => {
       badgeCounter: badgeCounterRef,
       dispatchBadgeCounter,
 
-      globalCurrencyRates: globalCurrencyRatesRef,
-      dispatchGlobalCurrencyRates,
-
       globalLoan: globalLoanRef,
       dispatchGlobalLoan,
     });
@@ -171,7 +173,6 @@ const RootStack = () => {
     budgetsRef,
     badgeCounterRef,
     globalThemeRef,
-    globalCurrencyRatesRef,
     globalLoanRef,
   ]);
 
@@ -182,34 +183,34 @@ const RootStack = () => {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        listenSubscriptionStatus({
-          globalFeatureSwitch,
-          appSettings,
-          userAccount,
-          callback: ({ newUserAccount, newAppSettings }) => {
-            dispatchAppSettings({
-              type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
-              payload: newAppSettings,
-            });
-
-            dispatchUserAccount({
-              type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
-              payload: newUserAccount,
-            });
-            setTimeout(async () => {
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.USERS,
-                newUserAccount.uid,
-                newUserAccount
-              );
-              await firestore.setData(
-                FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                newUserAccount.uid,
-                newAppSettings
-              );
-            }, 5000);
-          },
-        });
+        // TODO : commented for testing on iOS simulator
+        // listenSubscriptionStatus({
+        //   globalFeatureSwitch,
+        //   appSettings,
+        //   userAccount,
+        //   callback: ({ newUserAccount, newAppSettings }) => {
+        //     dispatchAppSettings({
+        //       type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+        //       payload: newAppSettings,
+        //     });
+        //     dispatchUserAccount({
+        //       type: REDUCER_ACTIONS.USER_ACCOUNT.SET_MULTI_ACTIONS,
+        //       payload: newUserAccount,
+        //     });
+        //     setTimeout(async () => {
+        //       await firestore.setData(
+        //         FIRESTORE_COLLECTION_NAMES.USERS,
+        //         newUserAccount.uid,
+        //         newUserAccount
+        //       );
+        //       await firestore.setData(
+        //         FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+        //         newUserAccount.uid,
+        //         newAppSettings
+        //       );
+        //     }, 5000);
+        //   },
+        // });
       }
       appState.current = nextAppState;
       console.log(appState.current);
@@ -221,7 +222,7 @@ const RootStack = () => {
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {
-    console.log(JSON.stringify({ globalFeatureSwitch }, null, 2));
+    // console.log(JSON.stringify({ globalFeatureSwitch }, null, 2));
   }, [globalFeatureSwitch]);
 
   useEffect(() => {
@@ -247,7 +248,7 @@ const RootStack = () => {
   // }, [appSettings]);
 
   useEffect(() => {
-    console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
+    // console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
   }, [globalCurrencyRates]);
 
   const noHeader = {
@@ -344,6 +345,20 @@ const RootStack = () => {
       {/* // TAG : Action Screen */}
       <Stack.Screen
         options={{
+          // transitionSpec: {
+          //   open: {
+          //     animation: "spring",
+          //     config: {
+          //       duration: 500,
+          //     },
+          //   },
+          //   close: {
+          //     animation: "spring",
+          //     config: {
+          //       duration: 500,
+          //     },
+          //   },
+          // },
           presentation: "transparentModal",
           headerShown: false,
           cardOverlayEnabled: true,
@@ -439,6 +454,16 @@ const RootStack = () => {
         component={ForgotPasswordScreen}
       />
 
+      {/* // TAG : Delete Account Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Delete Account",
+        }}
+        name={screenList.deleteAccountScreen}
+        component={DeleteAccountScreen}
+      />
+
       {/* // SECTION : TOUR SCREEN */}
       <Stack.Screen
         options={{
@@ -474,10 +499,24 @@ const RootStack = () => {
         component={AnalyticsScreen}
       />
 
+      {/* // SECTION : REPORTS */}
+      {/* // TAG : Reports Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Reports",
+        }}
+        name={screenList.myReportsScreen}
+        component={MyReportsScreen}
+      />
+
       {/* // SECTION : TRANSACTION SECTION : */}
       {/* // TAG : Transaction Preview Screen */}
       <Stack.Screen
-        options={showHeader}
+        options={{
+          ...showHeader,
+          title: "Transaction Preview",
+        }}
         name={screenList.transactionPreviewScreen}
         component={TransactionPreviewScreen}
       />
@@ -503,8 +542,7 @@ const RootStack = () => {
       {/* // TAG : Logbook Screen */}
       <Stack.Screen
         options={{
-          ...showHeader,
-          title: "Logbooks",
+          ...noHeader,
         }}
         name={screenList.logbookScreen}
         component={LogbookScreen}
@@ -540,7 +578,7 @@ const RootStack = () => {
                   if (logbookLimit > logbooks.logbooks?.length) {
                     // console.log(navigation);
                     navigation.navigate(screenList.modalScreen, {
-                      modalType: "textInput",
+                      modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                       title: "Create new logbook",
                       placeholder: "Enter new logbook name...",
                       selected: (item) => {
@@ -685,6 +723,17 @@ const RootStack = () => {
         }}
         name={screenList.searchScreen}
         component={SearchScreen}
+      />
+
+      {/* // SECTION : CURRENCY LIST */}
+      {/* // TAG : My Currencies Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "My Currencies",
+        }}
+        name={screenList.myCurrenciesScreen}
+        component={MyCurrenciesScreen}
       />
 
       {/* // SECTION : MY GROUPS */}
@@ -1009,7 +1058,7 @@ const RootStack = () => {
       {/* // SECTION : IMAGE VIEWER */}
       {/* // TAG : Image Viewer Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Attachment Image" }}
+        options={{ ...showHeader, title: "" }}
         name={screenList.imageViewerScreen}
         component={ImageViewerScreen}
       />

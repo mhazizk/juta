@@ -15,6 +15,9 @@ import {
 import FEATURE_NAME from "../../features/subscription/model/featureName";
 import getFeatureLimit from "../../features/subscription/logic/getFeatureLimit";
 import createNewLogbookAndSyncToFirestore from "../../features/logbook/model/createNewLogbookAndSyncToFirestore";
+import ActionButtonWrapper from "../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../constants/modalTypeConstants";
+import Animated, { SlideInDown } from "react-native-reanimated";
 
 const ActionScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState();
@@ -47,7 +50,8 @@ const ActionScreen = ({ route, navigation }) => {
       </TouchableOpacity>
 
       {/* // TAG : Content card */}
-      <View
+      <Animated.View
+        // entering={SlideInDown.duration(500)}
         style={{
           backgroundColor: globalTheme.colors.background,
           display: "flex",
@@ -99,7 +103,7 @@ const ActionScreen = ({ route, navigation }) => {
                         text: "Create new logbook",
                         onPress: () => {
                           return navigation.navigate(screenList.modalScreen, {
-                            modalType: "textInput",
+                            modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                             title: "Create new logbook",
                             placeholder: "Enter new logbook name...",
                             selected: (item) => {
@@ -191,7 +195,7 @@ const ActionScreen = ({ route, navigation }) => {
                   );
                 } else {
                   navigation.navigate(screenList.modalScreen, {
-                    modalType: "textInput",
+                    modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                     title: "Create new logbook",
                     placeholder: "Enter new logbook name...",
                     selected: (item) => {
@@ -234,14 +238,7 @@ const ActionScreen = ({ route, navigation }) => {
         </View>
 
         {/* // TAG : Action Button */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-          }}
-        >
+        <ActionButtonWrapper>
           {/* // TAG : Cancel Button */}
           <View style={{ paddingRight: 0 }}>
             <ButtonSecondary
@@ -250,8 +247,8 @@ const ActionScreen = ({ route, navigation }) => {
               onPress={() => navigation.goBack()}
             />
           </View>
-        </View>
-      </View>
+        </ActionButtonWrapper>
+      </Animated.View>
     </>
   );
 };

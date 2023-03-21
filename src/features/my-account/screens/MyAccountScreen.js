@@ -13,13 +13,15 @@ import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import screenList from "../../../navigations/ScreenList";
 import {
-  useGlobalAppSettings, useGlobalFeatureSwitch,
+  useGlobalAppSettings,
+  useGlobalFeatureSwitch,
   useGlobalTheme,
-  useGlobalUserAccount
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { getDeviceId } from "../../../utils";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const MyAccountScreen = ({ item, navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
@@ -46,14 +48,18 @@ const MyAccountScreen = ({ item, navigation }) => {
       <CustomScrollView>
         {userAccount && !isLoading && (
           <>
-            <UserHeaderComponent />
+            <UserHeaderComponent
+              onPress={() =>
+                navigation.navigate(screenList.myProfilePictureScreen)
+              }
+            />
             {/* <View style={{ backgroundColor: '#fff', padding: 16 }}>
                     <Text style={{ fontSize: 32, color: '#bbb' }}>Profile</Text>
                 </View> */}
             <ListSection>
               {/* // TODO : Hold this feature */}
               {/* // TAG : Change Profile */}
-              {/* <ListItem
+              <ListItem
                 pressable
                 leftLabel="Change profile picture"
                 iconLeftName="person"
@@ -61,7 +67,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.myProfilePictureScreen)
                 }
-              /> */}
+              />
 
               {/* // TAG : Change Display Name */}
               <ListItem
@@ -73,7 +79,7 @@ const MyAccountScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Change display name",
-                    modalType: "textInput",
+                    modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                     maxLength: 14,
                     defaultOption: userAccount.displayName,
                     selected: (item) => {
@@ -125,6 +131,7 @@ const MyAccountScreen = ({ item, navigation }) => {
               />
             </ListSection>
             <ListSection>
+              {/* // TODO : Commented for app store review */}
               {/* // TAG : Premium Subscription */}
               <ListItem
                 pressable
@@ -243,6 +250,20 @@ const MyAccountScreen = ({ item, navigation }) => {
                     },
                   ])
                 }
+              />
+            </ListSection>
+            <ListSection>
+              {/* // TAG : Delete Account */}
+              <ListItem
+                pressable
+                isDanger
+                leftLabel="Delete account"
+                iconLeftName="trash-outline"
+                iconLeftColor={globalTheme.colors.danger}
+                iconPack="IonIcons"
+                onPress={() => {
+                  navigation.navigate(screenList.deleteAccountScreen);
+                }}
               />
             </ListSection>
           </>

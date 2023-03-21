@@ -1,10 +1,20 @@
 import { MarkdownView } from "react-native-markdown-view";
 import * as Linking from "expo-linking";
+import { useGlobalTheme } from "../../../reducers/GlobalContext";
 
 const TermsOfService = () => {
+  const { globalTheme } = useGlobalTheme();
   return (
     <>
       <MarkdownView
+        styles={{
+          paragraph: {
+            color: globalTheme.text.textPrimary.color,
+          },
+          listItemBullet: {
+            color: globalTheme.text.textPrimary.color,
+          },
+        }}
         onLinkPress={(url) => {
           Linking.openURL(url).catch((error) =>
             console.warn("An error occurred: ", error)

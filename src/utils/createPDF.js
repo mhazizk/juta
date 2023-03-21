@@ -389,7 +389,7 @@ const mapData = ({
                       transaction.details.in_out === "income"
                         ? getFormattedNumber({
                             value: transaction.details.amount,
-                            currencyIsoCode: logbook.logbook_currency.isoCode,
+                            currencyCountryName: logbook.logbook_currency.name,
                             negativeSymbol: negativeCurrencySymbol,
                           })
                         : "-"
@@ -400,7 +400,7 @@ const mapData = ({
                       transaction.details.in_out === "expense"
                         ? getFormattedNumber({
                             value: transaction.details.amount,
-                            currencyIsoCode: logbook.logbook_currency.isoCode,
+                            currencyCountryName: logbook.logbook_currency.name,
                             negativeSymbol: negativeCurrencySymbol,
                           })
                         : "-"
@@ -409,7 +409,7 @@ const mapData = ({
                 ${tdAlignRight}
                 ${getFormattedNumber({
                   value: balance,
-                  currencyIsoCode: logbook.logbook_currency.isoCode,
+                  currencyCountryName: logbook.logbook_currency.name,
                   negativeSymbol: negativeCurrencySymbol,
                 })}
                 </td>
@@ -471,14 +471,14 @@ const tableSummary = ({ logbook, transactionData, negativeCurrencySymbol }) => {
         ${tdAlignRight}
         ${getFormattedNumber({
           value: allIncome.reduce((a, b) => a + b, 0),
-          currencyIsoCode: logbook.logbook_currency.isoCode,
+          currencyCountryName: logbook.logbook_currency.name,
           negativeSymbol: negativeCurrencySymbol,
         })}
         </td>
         ${tdAlignRight}
             ${getFormattedNumber({
               value: allExpense.reduce((a, b) => a + b, 0),
-              currencyIsoCode: logbook.logbook_currency.isoCode,
+              currencyCountryName: logbook.logbook_currency.name,
               negativeSymbol: negativeCurrencySymbol,
             })}
         </td>
@@ -487,7 +487,7 @@ const tableSummary = ({ logbook, transactionData, negativeCurrencySymbol }) => {
               value:
                 allIncome.reduce((a, b) => a + b, 0) -
                 allExpense.reduce((a, b) => a + b, 0),
-              currencyIsoCode: logbook.logbook_currency.isoCode,
+              currencyCountryName: logbook.logbook_currency.name,
               negativeSymbol: negativeCurrencySymbol,
             })}
         </td>

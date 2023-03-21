@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator, FlatList, View
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SearchResultListItem } from "../../../components/List";
 import { TextPrimary, TextSecondary } from "../../../components/Text";
 import {
@@ -176,7 +174,6 @@ const TransactionsSearchResults = ({
           <>
             <CustomScrollView
               contentContainerStyle={{
-                marginTop: -64,
                 justifyContent: "center",
               }}
             >
@@ -210,15 +207,15 @@ const TransactionsSearchResults = ({
                 width: "100%",
               }}
               ListHeaderComponent={() => <></>}
-              // ListFooterComponent={() => (
-              //   <>
-              //     <View
-              //       style={{
-              //         padding: 16,
-              //       }}
-              //     />
-              //   </>
-              // )}
+              ListFooterComponent={() => (
+                <>
+                  <View
+                    style={{
+                      padding: 8,
+                    }}
+                  />
+                </>
+              )}
               renderItem={({ item, index }) => (
                 <>
                   <TransactionListSection

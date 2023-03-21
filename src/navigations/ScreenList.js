@@ -22,6 +22,7 @@ const screenList = {
   updatePasswordScreen: "Update Password Screen",
   updateEmailScreen: "Update Email Screen",
   forgotPasswordScreen: "Forgot Password Screen",
+  deleteAccountScreen: "Delete Account Screen",
 
   // Tour Screen
   dashboardTourScreen: "Dashboard Tour Screen",
@@ -34,6 +35,9 @@ const screenList = {
 
   // Analytics Screen
   analyticsScreen: "Analytics Screen",
+
+  // Reports Screen
+  myReportsScreen: "My Reports Screen",
 
   // Transactions Screen
   transactionDetailsScreen: "Transaction Details Screen",
@@ -95,6 +99,9 @@ const screenList = {
   paywallScreen: "Paywall Screen",
   mySubscriptionScreen: "My Subscription Screen",
   subscriptionHistoryScreen: "Subscription History Screen",
+
+  // Currency Screen
+  myCurrenciesScreen: "My Currency List Screen",
 
   // Export Screen
   exportScreen: "Export Screen",

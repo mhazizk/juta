@@ -33,9 +33,6 @@ const useFirestoreSubscriptions = ({
   badgeCounter,
   dispatchBadgeCounter,
 
-  globalCurrencyRates,
-  dispatchGlobalCurrencyRates,
-
   globalLoan,
   dispatchGlobalLoan,
 
@@ -104,20 +101,20 @@ const useFirestoreSubscriptions = ({
   });
 
   // TAG : Currency rates Subscription //
-  const unsubscribeCurrencyRates = firestore.getAndListenOneDoc({
-    skipFirstRun,
-    collectionName: FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-    documentId: uid,
-    callback: (data) => {
-      if (!!data) {
-        dispatchGlobalCurrencyRates({
-          type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
-          payload: data,
-        });
-      }
-    },
-    errorCallback: (error) => {},
-  });
+  // const unsubscribeCurrencyRates = firestore.getAndListenOneDoc({
+  //   skipFirstRun,
+  //   collectionName: FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+  //   documentId: uid,
+  //   callback: (data) => {
+  //     if (!!data) {
+  //       dispatchGlobalCurrencyRates({
+  //         type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
+  //         payload: data,
+  //       });
+  //     }
+  //   },
+  //   errorCallback: (error) => {},
+  // });
 
   // TAG : Logbooks Subscription //
   const unsubscribeLogbooks = firestore.getAndListenMultipleDocs({
@@ -205,12 +202,21 @@ const useFirestoreSubscriptions = ({
 
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                .PATCH_TRANSACTION,
+                .PATCH_MANY_TRANSACTIONS,
               payload: {
-                patchTransaction: data,
+                patchedTransactions: [data],
                 reducerUpdatedAt: Date.now(),
               },
             });
+
+            // dispatchSortedTransactions({
+            //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
+            //     .PATCH_TRANSACTION,
+            //   payload: {
+            //     patchTransaction: data,
+            //     reducerUpdatedAt: Date.now(),
+            //   },
+            // });
             // }
             break;
 
@@ -365,7 +371,6 @@ const useFirestoreSubscriptions = ({
       unsubscribeCategories: unsubscribeCategories(),
       unsubscribeBudgets: unsubscribeBudgets(),
       unsubscribeRepeatedTransactions: unsubscribeRepeatedTransactions(),
-      unsubscribeCurrencyRates: unsubscribeCurrencyRates(),
       unsubscribeLoan: unsubscribeLoan(),
       // unsubscribeFeatures: unsubscribeFeatures(),
     };

@@ -1,42 +1,86 @@
+import { useMemo, useState } from "react";
 import CURRENCY_CONSTANTS from "../constants/currencyConstants";
 import { useGlobalAppSettings } from "../reducers/GlobalContext";
+
+let currency = null;
 
 /**
  * Formats a number. Supports changing symbol, thousand and decimal separators and more (see props).
  *
  * @param value The value to format
- * @param currencyIsoCode The currency isoCode to use
+ * @param currencyCountryName: The currency country name to use
  * @param negativeSymbol Negative symbol to use
  * @param absolute If true, the number will be converted to absolute value
+ * @param useAbbreviation If true, the number will be abbreviated
  * @returns
  */
 const getFormattedNumber = ({
   value,
-  currencyIsoCode,
+  currencyCountryName,
   negativeSymbol,
   absolute = false,
+  useAbbreviation = false,
 }) => {
-  const { thousandSeparator, decimalSeparator, significantDigits } =
-    CURRENCY_CONSTANTS?.OPTIONS?.find((option) => {
-      return option.isoCode === currencyIsoCode;
+  if (currency?.name !== currencyCountryName) {
+    const newCurrency = CURRENCY_CONSTANTS?.OPTIONS?.find((currency) => {
+      return currency.name === currencyCountryName;
     });
 
-  const showTrailingZeros = significantDigits > 0 ? true : false;
+    currency = newCurrency;
+  }
+
+  const { thousandSeparator, decimalSeparator, significantDigits } = currency;
+
+  const newValue = value;
 
   // Check negative sign
   let isNegative = false;
-  if (String(value).slice(0, 1) === "-") {
+  if (String(newValue).slice(0, 1) === "-") {
     isNegative = true;
   }
+
+  let abbreviatedValue = null;
+  let abbreviationSymbol = "";
+  if (useAbbreviation) {
+    const absoluteValue = Math.abs(newValue);
+    const integerNumberLength = String(Math.round(absoluteValue)).length;
+    switch (true) {
+      case integerNumberLength > 12:
+        abbreviatedValue = Math.round(absoluteValue / 1000000000000);
+        abbreviationSymbol = "T";
+        break;
+      case integerNumberLength > 9:
+        abbreviatedValue = Math.round(absoluteValue / 1000000000);
+        abbreviationSymbol = "B";
+        break;
+      case integerNumberLength > 6:
+        abbreviatedValue = Math.round(absoluteValue / 1000000);
+        abbreviationSymbol = "M";
+        break;
+      case integerNumberLength > 3:
+        abbreviatedValue = Math.round(absoluteValue / 1000);
+        abbreviationSymbol = "K";
+        break;
+
+      default:
+        break;
+    }
+    if (isNegative) abbreviatedValue = abbreviatedValue * -1;
+  }
+
+  const showTrailingZeros = significantDigits > 0 ? true : false;
+
+  const valueToProcess = abbreviatedValue || newValue || Number("0");
 
   const significantDigitsExponent = 10 ** significantDigits;
   const valueWithSignificantDigits = showTrailingZeros
     ? // If significant digits is 2 then this is e.g. 1.00, 1.10, 1.11
-      value.toFixed(significantDigits)
+      valueToProcess.toFixed(significantDigits)
     : // If significant digits is 2 then this is e.g. 1, 1.1, 1.11
       `${
-        Math.round((value + Number.EPSILON) * significantDigitsExponent) /
-        significantDigitsExponent
+        Math.round(
+          (valueToProcess + Number.EPSILON) * significantDigitsExponent
+        ) / significantDigitsExponent
       }`;
 
   // Split the value into the parts before and after the decimal point
@@ -64,19 +108,29 @@ const getFormattedNumber = ({
   //     : formattedValueWithSymbol.replace(" ", "");
   // }
 
-  if (isNegative && !absolute) {
-    const removedSymbol = formattedValue.replace("-", "");
-    switch (negativeSymbol) {
-      case "-":
-        return `-${removedSymbol}`;
-      case "()":
-        return `(${removedSymbol})`;
-      default:
-        break;
-    }
-  } else {
-    const removedSymbol = formattedValue.replace("-", "");
-    return removedSymbol;
+  const valueWithRemovedSymbol = formattedValue.replace("-", "");
+  switch (true) {
+    case isNegative && !absolute:
+      let finalValue;
+      switch (negativeSymbol) {
+        case "-":
+          finalValue = `-${valueWithRemovedSymbol}`;
+          break;
+        case "()":
+          finalValue = `(${valueWithRemovedSymbol})`;
+          break;
+        default:
+          break;
+      }
+
+      if (useAbbreviation) return `${finalValue}${abbreviationSymbol}`;
+      return finalValue;
+
+    default:
+      if (useAbbreviation)
+        return `${valueWithRemovedSymbol}${abbreviationSymbol}`;
+
+      return valueWithRemovedSymbol;
   }
 };
 

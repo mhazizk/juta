@@ -4,13 +4,15 @@ import SECRET_KEYS from "../../constants/secretManager";
 import getSecretFromCloudFunctions from "../firebase/getSecretFromCloudFunctions";
 
 const fetchNewRate = async (currency) => {
-  const { name, isoCode } = currency;
+  const { currencyCode } = currency;
   const options = {
     method: "GET",
     url: env.RAPID_API.URL,
-    params: { have: "USD", want: name, amount: "1" },
+    params: { have: "USD", want: currencyCode, amount: "1" },
     headers: {
-      "X-RapidAPI-Key": await getSecretFromCloudFunctions(SECRET_KEYS.RAPID_API_KEY),
+      "X-RapidAPI-Key": await getSecretFromCloudFunctions(
+        SECRET_KEYS.RAPID_API_KEY
+      ),
       "X-RapidAPI-Host": env.RAPID_API.HOST,
     },
   };
@@ -18,9 +20,11 @@ const fetchNewRate = async (currency) => {
   try {
     const { data } = await axios.request(options);
     const { new_amount } = data;
-    return { name, isoCode, rate: new_amount };
+    if (!new_amount) return currency;
+    return { ...currency, rate: new_amount };
   } catch (error) {
     console.log(error);
+    return currency;
   }
 };
 

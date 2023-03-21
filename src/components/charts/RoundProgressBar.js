@@ -16,6 +16,7 @@ export const RoundProgressBar = ({
   width,
   height,
   radius,
+  showPercentage = true,
   fontSize,
   label,
   strokeWidth,
@@ -82,15 +83,16 @@ export const RoundProgressBar = ({
             textAlignVertical: "center",
           }}
         >
-          <TextPrimary
-            label={`${parseFloat((spent / limit) * 100).toFixed(0)}%`}
-            style={{
-              textAlign: "center",
-              fontSize: fontSize || 34,
-              color:
-                fontColor || globalTheme.text.textPrimary.color,
-            }}
-          />
+          {showPercentage && (
+            <TextPrimary
+              label={`${parseFloat((spent / limit) * 100).toFixed(0)}%`}
+              style={{
+                textAlign: "center",
+                fontSize: fontSize || 34,
+                color: fontColor || globalTheme.text.textPrimary.color,
+              }}
+            />
+          )}
           {label && <TextPrimary label={label} />}
         </View>
       </View>

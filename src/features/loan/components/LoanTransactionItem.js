@@ -258,7 +258,7 @@ const LoanTransactionItem = ({
                       // })}
                       label={utils.getFormattedNumber({
                         value: transactionAmount,
-                        currencyIsoCode: logbookCurrency.isoCode,
+                        currencyCountryName: logbookCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -300,7 +300,7 @@ const LoanTransactionItem = ({
                           target: secondaryCurrency.name,
                           globalCurrencyRates: globalCurrencyRates,
                         }),
-                        currencyIsoCode: secondaryCurrency.isoCode,
+                        currencyCountryName: secondaryCurrency.name,
                       })}
                     />
                   </View>

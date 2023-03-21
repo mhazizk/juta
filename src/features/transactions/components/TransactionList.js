@@ -17,6 +17,12 @@ import Entypo from "react-native-vector-icons/Entypo";
 import * as utils from "../../../utils";
 import ListSection from "../../../components/List/ListSection";
 import TransactionListSection from "../../../components/List/TransactionListSection";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInRight,
+  SlideInDown,
+} from "react-native-reanimated";
 
 const TransactionList = ({
   selectedLogbook,
@@ -253,7 +259,8 @@ const TransactionList = ({
             <>
               {mappedTransactions && (
                 // TAG : Header container
-                <View
+                <Animated.View
+                  entering={FadeIn.duration(500)}
                   style={[
                     {
                       width: Dimensions.get("window").width - 32,
@@ -269,11 +276,7 @@ const TransactionList = ({
                   {/* // TAG : Date Title */}
                   <TextSecondary
                     // label={checkDate(section.title)}
-                    label={utils.relativeDate({
-                      dateToCheck: section.title,
-                      currentDate: date,
-                      locale: appSettings.locale,
-                    })}
+                    label={section.title}
                     style={{
                       paddingLeft: 16,
                       flex: 1,
@@ -309,15 +312,15 @@ const TransactionList = ({
                       <TextPrimary
                         label={utils.getFormattedNumber({
                           value: sumAmount(section.data),
-                          currencyIsoCode:
-                            selectedLogbook.logbook_currency.isoCode,
+                          currencyCountryName:
+                            selectedLogbook.logbook_currency.name,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
                       />
                     </View>
                   </View>
-                </View>
+                </Animated.View>
               )}
             </>
           )}
@@ -325,6 +328,7 @@ const TransactionList = ({
             return (
               <>
                 <TransactionListSection
+                  enteringAnimation={FadeInRight.duration(1000)}
                   isFirstItem={index === 0}
                   isLastItem={index === section.data.length - 1}
                 >

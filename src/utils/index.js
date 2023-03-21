@@ -29,3 +29,10 @@ export { default as checkIfLoanContactWillBePaid } from "./checkIfLoanContactWil
 export { default as findLoanContactByTransactionId } from "./findLoanContactByTransactionId";
 export { default as getNextLoanPayment } from "./getNextLoanPayment";
 export { default as getCustomDate } from "./getCustomDate";
+export { default as getRelativeDate } from "./getRelativeDate";
+export { default as getFirstDateOfTheMonth } from "./getFirstDateOfTheMonth";
+export { default as getLastDateOfTheMonth } from "./getLastDateOfTheMonth";
+export { default as getNextDateInRange } from "./getNextDateInRange";
+export { default as getTopCategoryListInRange } from "./getTopCategoryListInRange";
+export { default as getTotalDaysInMonth } from "./getTotalDaysInMonth";
+export { default as isNewFeatureBadgeExpired } from "./isNewFeatureBadgeExpired";

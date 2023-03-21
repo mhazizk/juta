@@ -51,6 +51,7 @@ const DevicesScreen = ({ navigation }) => {
           {userAccount.devicesLoggedIn.map((device) => (
             <>
               <ListItem
+                key={device.device_id}
                 pressable
                 leftLabel={device.device_name}
                 iconLeftName={renderIcon(device.device_os_name)}

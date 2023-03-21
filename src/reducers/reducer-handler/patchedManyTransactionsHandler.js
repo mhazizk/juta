@@ -1,17 +1,23 @@
+import * as utils from "../../utils";
+
 const patchedManyTransactionsHandler = (state, action) => {
   const newPatchedTransactions = action.payload.patchedTransactions;
   const reducerUpdatedAt = action.payload.reducerUpdatedAt;
-  let customPatchDate = null;
-  let customPrevDate = null;
   let groupSortedHasBeenReplaced = null;
   let foundPrevLogbook = null;
 
-  // STEP : 2. loop patch the new transactions
+  // STEP : 1. loop patch the new transactions
   newPatchedTransactions.forEach((newPatchedTransaction) => {
+    // STEP : 2. create new custom date
+    const customPatchDate = utils.getCustomDate(
+      newPatchedTransaction.details.date
+    );
+    let customPrevDate = null;
+
     if (!groupSortedHasBeenReplaced) {
       groupSortedHasBeenReplaced = state.groupSorted;
     }
-    // STEP : 1. compare previous logbook id with new logbook id
+    // STEP : 3. compare previous logbook id with new logbook id
     // find the previous logbook id
     groupSortedHasBeenReplaced.forEach((logbook) => {
       logbook.transactions.forEach((section) => {
@@ -34,16 +40,6 @@ const patchedManyTransactionsHandler = (state, action) => {
     }
 
     console.log("line 33");
-    // STEP : 3. create new custom date
-    customPatchDate = `${new Date(
-      newPatchedTransaction.details.date
-    ).getFullYear()}/${(
-      "0" +
-      (new Date(newPatchedTransaction.details.date).getMonth() + 1)
-    ).slice(-2)}/${(
-      "0" + new Date(newPatchedTransaction.details.date).getDate()
-    ).slice(-2)}`;
-
     // STEP : 4. get previous transaction
     let prevTransaction = null;
     groupSortedHasBeenReplaced.forEach((logbook) => {
@@ -59,14 +55,8 @@ const patchedManyTransactionsHandler = (state, action) => {
     });
 
     // STEP : 5. create new custom date for previous transaction
-    customPrevDate = `${new Date(
-      prevTransaction.details.date
-    ).getFullYear()}/${(
-      "0" +
-      (new Date(prevTransaction.details.date).getMonth() + 1)
-    ).slice(-2)}/${(
-      "0" + new Date(prevTransaction.details.date).getDate()
-    ).slice(-2)}`;
+    // customPrevDate = utils
+    customPrevDate = utils.getCustomDate(prevTransaction.details.date);
 
     // STEP : 6. if the logbook id is the same, then just patch the transaction
     if (isLogbookIdSame) {
@@ -169,10 +159,11 @@ const patchedManyTransactionsHandler = (state, action) => {
         if (!foundSectionToBePatched) {
           console.log("line 167");
           const newSectionToBePatched = {
-            title: new Date(newPatchedTransaction.details.date).toDateString(),
+            title: utils.getRelativeDate(newPatchedTransaction.details.date),
             customDate: customPatchDate,
             data: [newPatchedTransaction],
           };
+          console.log(JSON.stringify({ newSectionToBePatched }, null, 2));
           const newPatchedLogbook = {
             ...newPreviousLogbook,
             transactions: [
@@ -289,7 +280,7 @@ const patchedManyTransactionsHandler = (state, action) => {
       if (!foundTargetSection) {
         console.log("line 287");
         const newSectionToBePatched = {
-          title: new Date(newPatchedTransaction.details.date).toDateString(),
+          title: utils.getRelativeDate(newPatchedTransaction.details.date),
           customDate: customPatchDate,
           data: [newPatchedTransaction],
         };

@@ -10,6 +10,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { deleteAttachmentImage } from "../../../api/firebase/cloudStorage";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import {
   ButtonSecondary,
   ButtonSecondaryDanger,
@@ -165,6 +166,22 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
     <>
       {transaction && selectedCategory && (
         <CustomScrollView>
+          <IonIcons
+            name={selectedCategory?.icon?.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "5%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Amount Section */}
           <View
             style={{
@@ -208,7 +225,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 <TextPrimary
                   label={utils.getFormattedNumber({
                     value: transaction.details.amount,
-                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    currencyCountryName: selectedLogbook.logbook_currency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
@@ -253,8 +270,8 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                         appSettings.logbookSettings.secondaryCurrency.name,
                       globalCurrencyRates: globalCurrencyRates,
                     }),
-                    currencyIsoCode:
-                      appSettings.logbookSettings.secondaryCurrency.isoCode,
+                    currencyCountryName:
+                      appSettings.logbookSettings.secondaryCurrency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}
@@ -300,9 +317,15 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
-                new Date(transaction?.details?.date).toDateString() +
-                " " +
-                new Date(transaction?.details?.date).toLocaleTimeString()
+                new Date(transaction.details.date).toDateString() +
+                ", " +
+                new Date(transaction?.details?.date).toLocaleTimeString(
+                  "en-US",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )
               }
             />
             {/* // TAG : Logbook */}
@@ -400,7 +423,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
           </ListSection>
           {/* // TAG : Attachment */}
           {/* // TODO : hold the release of attachments */}
-          {/* <ListSection>
+          <ListSection>
             <ListItem
               // pressable
               leftLabel="Attachment Images"
@@ -432,6 +455,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                           navigation.navigate(screenList.imageViewerScreen, {
                             uri,
                             uriList: transaction?.details?.attachment_URL,
+                            defaultUri: item,
                           });
                         }}
                       />
@@ -440,19 +464,10 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 </>
               )}
             />
-          </ListSection> */}
+          </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -507,7 +522,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 }
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

@@ -30,6 +30,8 @@ import LANGUAGE_CONSTANTS from "../../../constants/languageConstants";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import FONT_SIZE_CONSTANTS from "../../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../../constants/logbookSettingsConstants";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
 
 const SettingsScreen = ({ navigation }) => {
   const { globalFeatureSwitch } = useGlobalFeatureSwitch();
@@ -48,26 +50,21 @@ const SettingsScreen = ({ navigation }) => {
   const [logbookSettings, setLogbookSettings] = useState(
     appSettings.logbookSettings
   );
+  const [budgetSettings, setBudgetSettings] = useState(
+    appSettings.budgetSettings
+  );
   const [currencyRates, setCurrencyRates] = useState(globalCurrencyRates);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {}, []);
 
   useEffect(() => {
-    console.log({ currencyRates });
-    // setTimeout(() => {
-    //   dispatchGlobalCurrencyRates({
-    //     type: REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS,
-    //     payload: currencyRates,
-    //   });
-    // }, 1);
-    // setTimeout(async () => {
-    //   await firestore.setData(
-    //     FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-    //     userAccount.uid,
-    //     currencyRates
-    //   );
-    // }, 1000);
+    setTimeout(() => {
+      dispatchGlobalCurrencyRates({
+        type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
+        payload: currencyRates,
+      });
+    }, 1);
   }, [currencyRates]);
 
   const _timestamps = {
@@ -75,6 +72,25 @@ const SettingsScreen = ({ navigation }) => {
     updated_at: Date.now(),
     updated_by: userAccount.uid,
   };
+
+  useEffect(() => {
+    if (!!budgetSettings) {
+      const payload = {
+        budgetSettings: budgetSettings,
+        _timestamps: {
+          ...appSettings._timestamps,
+          updated_at: Date.now(),
+          updated_by: userAccount.uid,
+        },
+      };
+      setTimeout(() => {
+        dispatchAppSettings({
+          type: REDUCER_ACTIONS.APP_SETTINGS.SET_MULTI_ACTIONS,
+          payload: payload,
+        });
+      }, 1);
+    }
+  }, [budgetSettings]);
 
   useEffect(() => {
     if (!!logbookSettings) {
@@ -158,7 +174,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select Theme",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     iconProps: {
                       name: "contrast",
                       pack: "IonIcons",
@@ -213,7 +229,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Font Size",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: FONT_SIZE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option };
                     }),
@@ -240,7 +256,7 @@ const SettingsScreen = ({ navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Language",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: LANGUAGE_CONSTANTS.OPTIONS.map((option) => {
                       return { name: option.name, locale: option.locale };
                     }),
@@ -387,6 +403,154 @@ const SettingsScreen = ({ navigation }) => {
           </>
         )}
 
+        {/* // SECTION : Budget Section */}
+        {budgetSettings && (
+          <>
+            <SettingsHeaderList label="Budget Settings" iconName="pie-chart" />
+            <ListSection>
+              {/* // TAG : First day of the week */}
+              <ListItem
+                pressable
+                leftLabel="First day of the week"
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  budgetSettings.firstDayOfTheWeek
+                )}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first day of the week",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    defaultOption: { name: budgetSettings.firstDayOfTheWeek },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_DAY_OF_THE_WEEK.OPTIONS.map(
+                        (day) => {
+                          return {
+                            name: day,
+                            value: day,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstDayOfTheWeek: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstDayOfTheWeek: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+              {/* // TAG : First date of the month */}
+              <ListItem
+                pressable
+                leftLabel="First date of the month"
+                rightLabel={budgetSettings.firstDateOfTheMonth}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first date of the month",
+                    modalType: MODAL_TYPE_CONSTANTS.NUMBER_PICKER,
+                    defaultOption: { name: budgetSettings.firstDateOfTheMonth },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_DATE_OF_THE_MONTH.OPTIONS().map(
+                        (date) => {
+                          return {
+                            name: date,
+                            value: date,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstDateOfTheMonth: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstDateOfTheMonth: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+              {/* // TAG : First month of the year */}
+              <ListItem
+                pressable
+                leftLabel="First month of the year"
+                rightLabel={utils.upperCaseThisFirstLetter(
+                  budgetSettings.firstMonthOfTheYear
+                )}
+                onPress={() => {
+                  navigation.navigate(screenList.modalScreen, {
+                    title: "Set first month of the year",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
+                    defaultOption: { name: budgetSettings.firstMonthOfTheYear },
+                    props:
+                      BUDGET_SETTINGS_CONSTANTS.FIRST_MONTH_OF_THE_YEAR.OPTIONS.map(
+                        (day) => {
+                          return {
+                            name: day,
+                            value: day,
+                          };
+                        }
+                      ),
+                    selected: (item) => {
+                      const payload = {
+                        ...appSettings,
+                        budgetSettings: {
+                          ...appSettings.budgetSettings,
+                          firstMonthOfTheYear: item.name,
+                        },
+                        _timestamps,
+                      };
+
+                      setBudgetSettings({
+                        ...budgetSettings,
+                        firstMonthOfTheYear: item.name,
+                      });
+
+                      setTimeout(async () => {
+                        await firestore.setData(
+                          FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                          appSettings.uid,
+                          { ...appSettings, ...payload }
+                        );
+                      }, 1000);
+                    },
+                  });
+                }}
+              />
+            </ListSection>
+          </>
+        )}
+
         {/* // SECTION : Logbook Section */}
         {logbookSettings && (
           <>
@@ -403,10 +567,32 @@ const SettingsScreen = ({ navigation }) => {
             <ListSection>
               {/* // TAG : Main currency */}
               <ListItem
+                pressable
+                iconLeftName="usd"
+                leftLabel="Set default currency"
+                thirdLabel="This currency also be used for all features in the app"
+                rightLabel={
+                  logbookSettings.defaultCurrency.currencyCode +
+                  " / " +
+                  logbookSettings.defaultCurrency.symbol
+                }
+                useRightLabelContainer={true}
+                useFlagIcon
+                flagIsoCode={logbookSettings.defaultCurrency.isoCode}
+                flagIconSize={18}
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set default currency",
-                    modalType: "currencyList",
+                    modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
@@ -471,23 +657,35 @@ const SettingsScreen = ({ navigation }) => {
                     defaultOption: logbookSettings.defaultCurrency,
                   });
                 }}
-                pressable
-                iconLeftName="usd"
-                leftLabel="Set default currency"
-                thirdLabel="This currency also be used for all features in the app"
-                rightLabel={
-                  logbookSettings.defaultCurrency.name +
-                  " / " +
-                  logbookSettings.defaultCurrency.symbol
-                }
               />
 
               {/* // TAG : Secondary Currency */}
               <ListItem
+                pressable
+                iconLeftName="usd"
+                leftLabel="Set secondary currency"
+                useRightLabelContainer={true}
+                useFlagIcon
+                flagIsoCode={logbookSettings.secondaryCurrency.isoCode}
+                flagIconSize={18}
+                rightLabelContainerStyle={{
+                  flexDirection: "row",
+                  maxWidth: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: globalTheme.colors.secondary,
+                }}
+                rightLabel={
+                  logbookSettings.secondaryCurrency.currencyCode +
+                  " / " +
+                  logbookSettings.secondaryCurrency.symbol
+                }
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set secondary currency",
-                    modalType: "currencyList",
+                    modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                     props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                       return a.name > b.name ? 1 : -1;
                     }),
@@ -517,14 +715,6 @@ const SettingsScreen = ({ navigation }) => {
                     defaultOption: logbookSettings.secondaryCurrency,
                   });
                 }}
-                pressable
-                iconLeftName="usd"
-                leftLabel="Set secondary currency"
-                rightLabel={
-                  logbookSettings.secondaryCurrency.name +
-                  " / " +
-                  logbookSettings.secondaryCurrency.symbol
-                }
               />
               {/* // TAG : Show secondary currency */}
               <CheckList
@@ -601,30 +791,29 @@ const SettingsScreen = ({ navigation }) => {
                   isLoading
                     ? "Updating... "
                     : "Last update: " +
-                      new Date(currencyRates._timestamps.updated_at).getDate() +
+                      new Date(currencyRates._timestamps.updatedAt).getDate() +
                       "/" +
                       (new Date(
-                        currencyRates._timestamps.updated_at
+                        currencyRates._timestamps.updatedAt
                       ).getMonth() +
                         1) +
                       "/" +
                       new Date(
-                        currencyRates._timestamps.updated_at
+                        currencyRates._timestamps.updatedAt
                       ).getFullYear()
                 }
                 isLoading={isLoading}
                 onPress={() => {
                   setIsLoading(true);
-                  getCurrencyRate(globalCurrencyRates.data).then((data) => {
-                    setCurrencyRates({
-                      ...globalCurrencyRates,
-                      data: data,
-                      _timestamps: {
-                        ...globalCurrencyRates._timestamps,
-                        updated_at: Date.now(),
-                        updated_by: userAccount.uid,
-                      },
-                    });
+                  // getCurrencyRate(globalCurrencyRates.data).then((data) => {
+                  Promise.all([
+                    firestore.getOneDoc(
+                      FIRESTORE_COLLECTION_NAMES.GLOBAL_CURRENCY_RATES,
+                      "allCurrencyRates"
+                    ),
+                  ]).then((data) => {
+                    const newCurrencies = data[0];
+                    setCurrencyRates(newCurrencies);
                     setIsLoading(false);
                   });
                 }}
@@ -639,14 +828,14 @@ const SettingsScreen = ({ navigation }) => {
                 leftLabel="Negative currency symbol"
                 rightLabel={utils.getFormattedNumber({
                   value: -123,
-                  currencyIsoCode: logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName: logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Set negative currency symbol",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     props: NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS,
                     defaultOption:
                       NEGATIVE_CURRENCY_SYMBOL_CONSTANTS.OPTIONS.find(

@@ -6,6 +6,7 @@ import auth from "../../../api/firebase/auth";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import UserHeaderComponent from "../../../components/UserHeader";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -69,7 +70,7 @@ const MyGroupsScreen = ({ item, navigation }) => {
                 onPress={() =>
                   navigation.navigate(screenList.modalScreen, {
                     title: "Change Display Name",
-                    modalType: "textInput",
+                    modalType: MODAL_TYPE_CONSTANTS.TEXT_INPUT,
                     maxLength: 14,
                     defaultOption: userAccount.displayName,
                     selected: (item) => {

@@ -25,6 +25,7 @@ import CustomScrollView from "../../../shared-components/CustomScrollView";
 import ListSection from "../../../components/List/ListSection";
 import { ListItem } from "../../../components/List";
 import { useIsFocused } from "@react-navigation/native";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 
 const LogbookPreviewScren = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -186,6 +187,22 @@ const LogbookPreviewScren = ({ route, navigation }) => {
     <>
       {logbook && (
         <CustomScrollView>
+          <IonIcons
+            name="book"
+            size={400}
+            style={{
+              position: "absolute",
+              top: "10%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Logbook Name Section */}
           <View
             style={{
@@ -226,16 +243,17 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           </View>
 
           <ListSection>
-            {/* // TAG : Main currency */}
+            {/* // TAG : Logbook currency */}
             <ListItem
               iconLeftName="coins"
+              rightIconPack="IonIcons"
               iconPack="FontAwesome5"
-              leftLabel="Main currency"
+              leftLabel="Currency"
               useRightLabelContainer
               useFlagIcon
               flagIsoCode={logbook.logbook_currency.isoCode}
               flagIconSize={18}
-              rightLabel={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
+              rightLabel={`${logbook.logbook_currency.currencyCode} / ${logbook.logbook_currency.symbol}`}
               rightLabelContainerStyle={{
                 flexDirection: "row",
                 maxWidth: "50%",
@@ -262,7 +280,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                   globalCurrencyRates,
                   targetCurrencyName: logbook.logbook_currency.name,
                 }),
-                currencyIsoCode: logbook.logbook_currency.isoCode,
+                currencyCountryName: logbook.logbook_currency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
@@ -278,16 +296,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Edit Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -317,7 +326,7 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 />
               )}
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

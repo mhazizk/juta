@@ -2,6 +2,7 @@
 import FindById from "./FindById";
 import convertCurrency from "./convertCurrency";
 import getTotalDaysInMonth from "./getTotalDaysInMonth";
+import getCustomDate from "./getCustomDate";
 
 const findTransactionsToPlot = ({
   groupSorted,
@@ -30,6 +31,11 @@ const findTransactionsToPlot = ({
   let month = new Date(today).getMonth() + 1;
   let year = new Date(today).getFullYear();
   let day = new Date(today).getDate();
+
+  let budgetStartDateInMillis;
+  let budgetCustomStartDate;
+  let budgetFinishDateInMillis;
+  let budgetCustomFinishDate;
 
   if (groupSorted?.length) {
     if (groupSorted.some((logbook) => logbook.transactions.length)) {
@@ -224,9 +230,7 @@ const findTransactionsToPlot = ({
               epochDate: date.getTime(),
             });
             unsortedMainGraph = unsortedMainGraph.sort((a, b) => {
-              if (a.i < b.i) return -1;
-              if (a.i > b.i) return 1;
-              return 0;
+              return a.epochDate - b.epochDate;
             });
           }
         }
@@ -237,6 +241,8 @@ const findTransactionsToPlot = ({
             const range = budget.finish_date - budget.start_date;
             const rangeDay = range / (1000 * 60 * 60 * 24);
             dailyLimit = +parseFloat(budget.limit / rangeDay).toFixed(2);
+            budgetCustomStartDate = getCustomDate(budget.start_date);
+            budgetCustomFinishDate = getCustomDate(budget.finish_date);
           }
         });
       }
@@ -259,6 +265,31 @@ const findTransactionsToPlot = ({
             }
           }
         });
+        const firstEpochDate = unsortedMainGraph[0].epochDate;
+        const lastEpochDate =
+          unsortedMainGraph[unsortedMainGraph.length - 1].epochDate;
+        const unsortedGraphFirstCustomDate = getCustomDate(firstEpochDate);
+        const unsortedGraphLastCustomDate = getCustomDate(lastEpochDate);
+        const todayCustomDate = getCustomDate(today);
+
+        const isGraphWithinBudgetDateRange =
+          budgetCustomStartDate <= unsortedGraphFirstCustomDate &&
+          budgetCustomFinishDate >= unsortedGraphLastCustomDate;
+
+        console.log(
+          JSON.stringify(
+            {
+              budgetCustomStartDate,
+              budgetCustomFinishDate,
+              unsortedGraphFirstCustomDate,
+              unsortedGraphLastCustomDate,
+              isGraphWithinBudgetDateRange,
+            },
+            null,
+            2
+          )
+        );
+
         unsortedMainGraph.forEach((data) => {
           mainGraph.push({
             x: data.x,
@@ -276,14 +307,18 @@ const findTransactionsToPlot = ({
             monthName: data.monthName,
             year: data.year,
           });
-          if (dailyLimit && dailyLimit < shadowLimit) {
-            limitLine.push({
-              x: data.x,
-              y: dailyLimit,
-              epochDate: data.epochDate,
-              monthName: data.monthName,
-              year: data.year,
-            });
+          if (isGraphWithinBudgetDateRange) {
+            if (dailyLimit && dailyLimit < shadowLimit) {
+              if (graph.rangeDay !== 365) {
+                limitLine.push({
+                  x: data.x,
+                  y: dailyLimit,
+                  epochDate: data.epochDate,
+                  monthName: data.monthName,
+                  year: data.year,
+                });
+              }
+            }
           }
         });
       }
