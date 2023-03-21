@@ -119,10 +119,6 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Insert One Transaction Method
           case transaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
-            // postLogSnagEvent(
-            //   userAccount.displayName,
-            //   LOGSNAG_EVENT_TYPES.TRANSACTION_NEW
-            // );
             if (transaction.details.attachment_URL.length > 0) {
               const newAttachmentURL = transaction.details.attachment_URL.map(
                 (uri) => {
@@ -217,10 +213,7 @@ const LoadingScreen = ({ route, navigation }) => {
               const attachmentURL = [];
               await uriWithUUID.reduce(async (prev, curr) => {
                 await prev;
-                const newURL = await uploadAndGetAttachmentImageURL(
-                  curr.uri,
-                  curr.id
-                );
+                const newURL = await uploadAttachmentImage(curr.uri, curr.id);
                 attachmentURL.push(newURL);
               }, Promise.resolve());
               return attachmentURL;
@@ -269,17 +262,6 @@ const LoadingScreen = ({ route, navigation }) => {
                     reducerUpdatedAt,
                   },
                 });
-
-                // dispatchSortedTransactions({
-                //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                //     .PATCH_TRANSACTION,
-                //   payload: {
-                //     prevTransaction,
-                //     patchTransaction: finalTransaction,
-                //     logbookToOpen,
-                //     reducerUpdatedAt,
-                //   },
-                // });
               });
             } else {
               const finalTransaction = {
@@ -314,28 +296,12 @@ const LoadingScreen = ({ route, navigation }) => {
                   reducerUpdatedAt,
                 },
               });
-
-              // dispatchSortedTransactions({
-              //   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-              //     .PATCH_TRANSACTION,
-              //   payload: {
-              //     prevTransaction,
-              //     patchTransaction: finalTransaction,
-              //     logbookToOpen,
-              //     reducerUpdatedAt,
-              //   },
-              // });
             }
             break;
 
           // TAG : Delete One Transaction Method
           case deleteTransaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
-            // postLogSnagEvent(
-            //   userAccount.displayName,
-            //   LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
-            // );
-
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                 .DELETE_ONE_TRANSACTION,
