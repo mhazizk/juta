@@ -13,6 +13,7 @@ const ListSection = ({
   marginBottom = 16,
   children,
   backgroundColor = null,
+  backgroundOpacity = 0.07,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
@@ -27,10 +28,12 @@ const ListSection = ({
           overflow: "hidden",
           borderRadius: 16,
           marginHorizontal: 16,
-          backgroundColor: utils.hexToRgb({
-            hex: backgroundColor || globalTheme.colors.listSection,
-            opacity: 0.07,
-          }),
+          backgroundColor: backgroundOpacity
+            ? utils.hexToRgb({
+                hex: backgroundColor || globalTheme.colors.listSection,
+                opacity: backgroundOpacity,
+              })
+            : backgroundColor,
         }}
       >
         {children}
