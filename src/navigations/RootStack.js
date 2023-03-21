@@ -222,7 +222,7 @@ const RootStack = () => {
   }, []);
   // Save Sorted Transactions to storage
   useEffect(() => {
-    console.log(JSON.stringify({ globalFeatureSwitch }, null, 2));
+    // console.log(JSON.stringify({ globalFeatureSwitch }, null, 2));
   }, [globalFeatureSwitch]);
 
   useEffect(() => {
@@ -248,7 +248,7 @@ const RootStack = () => {
   // }, [appSettings]);
 
   useEffect(() => {
-    console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
+    // console.log(JSON.stringify({ globalCurrencyRates }, null, 2));
   }, [globalCurrencyRates]);
 
   const noHeader = {
@@ -1058,7 +1058,7 @@ const RootStack = () => {
       {/* // SECTION : IMAGE VIEWER */}
       {/* // TAG : Image Viewer Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Attachment Image" }}
+        options={{ ...showHeader, title: "" }}
         name={screenList.imageViewerScreen}
         component={ImageViewerScreen}
       />
