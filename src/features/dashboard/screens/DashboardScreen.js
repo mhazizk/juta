@@ -82,7 +82,9 @@ const DashboardScreen = ({ navigation }) => {
                 backgroundColor: globalTheme.colors.header,
               }}
             />
-            <DashboardHeader />
+            <DashboardHeader
+              onPress={() => navigation.navigate(screenList.myAccountScreen)}
+            />
 
             {/* // TAG : Carousel */}
             <Carousel
