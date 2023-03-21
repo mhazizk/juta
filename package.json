@@ -40,6 +40,7 @@
     "expo-updates": "~0.15.6",
     "firebase": "^9.17.1",
     "lottie-react-native": "5.1.4",
+    "papaparse": "^5.4.0",
     "react": "18.1.0",
     "react-firebase-hooks": "^5.1.1",
     "react-native": "0.70.5",
@@ -61,7 +62,9 @@
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.2.0",
     "sentry-expo": "~6.0.0",
-    "victory-native": "^36.6.8"
+    "victory-native": "^36.6.8",
+    "expo-document-picker": "~11.0.1",
+    "@react-native-community/netinfo": "9.3.5"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
