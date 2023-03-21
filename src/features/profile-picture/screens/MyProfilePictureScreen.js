@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
   useGlobalUserAccount,
-  useLocalProfilePictureUri,
 } from "../../../reducers/GlobalContext";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -24,6 +23,7 @@ import Loading from "../../../components/Loading";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import uploadProfilePicture from "../../../api/firebase/uploadProfilePicture";
 import screenList from "../../../navigations/ScreenList";
+import { Image } from "expo-image";
 
 const MyProfilePictureScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -31,16 +31,14 @@ const MyProfilePictureScreen = ({ navigation }) => {
   const { userAccount, dispatchUserAccount } = useGlobalUserAccount();
   const [previousImage, setPreviousImage] = useState(null);
   const [image, setImage] = useState(null);
-  const { localProfilePictureUri, setLocalProfilePictureUri } =
-    useLocalProfilePictureUri();
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    console.log({ localProfilePictureUri });
-    // setImage(userAccount?.photoURL);
-    setImage(localProfilePictureUri);
+    setImage(userAccount?.photoURL);
     setPreviousImage(userAccount?.photoURL);
   }, []);
+
+  const showSaveButton = previousImage !== image || (!image && previousImage);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -96,6 +94,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
             {image && (
               <Image
                 source={{ uri: image }}
+                cachePolicy="memory-disk"
                 style={{
                   borderRadius: 200 / 2,
                   width: 200,
@@ -128,10 +127,7 @@ const MyProfilePictureScreen = ({ navigation }) => {
               >
                 {!image && <ButtonDisabled label="Remove" />}
                 {image && (
-                  <ButtonPrimary
-                    label="Remove"
-                    onPress={() => setImage(null)}
-                  />
+                  <ButtonPrimary label="Remove" onPress={() => setImage("")} />
                 )}
               </View>
               <View
@@ -148,37 +144,54 @@ const MyProfilePictureScreen = ({ navigation }) => {
                 paddingHorizontal: 16,
               }}
             >
-              {image && previousImage !== image && (
+              {showSaveButton && (
                 <ButtonPrimary
                   label="Save"
                   onPress={async () => {
                     setIsUploading(true);
-                    uploadProfilePicture(image, userAccount.uid).then(
-                      async (imageURL) => {
-                        const patchUserAccount = {
-                          ...userAccount,
-                          photoURL: imageURL,
-                          _timestamps: {
-                            ...userAccount._timestamps,
-                            updated_at: Date.now(),
-                            updated_by: userAccount.uid,
-                          },
-                        };
-                        await firestore.setData(
-                          FIRESTORE_COLLECTION_NAMES.USERS,
-                          patchUserAccount.uid,
-                          patchUserAccount
-                        );
+                    let patchUserAccount;
+                    if (image) {
+                      uploadProfilePicture(image, userAccount.uid).then(
+                        async (imageURL) => {
+                          patchUserAccount = {
+                            ...userAccount,
+                            photoURL: imageURL,
+                            _timestamps: {
+                              ...userAccount._timestamps,
+                              updated_at: Date.now(),
+                              updated_by: userAccount.uid,
+                            },
+                          };
+                          await firestore.setData(
+                            FIRESTORE_COLLECTION_NAMES.USERS,
+                            patchUserAccount.uid,
+                            patchUserAccount
+                          );
+                        }
+                      );
+                    }
+                    if (!image) {
+                      patchUserAccount = {
+                        ...userAccount,
+                        photoURL: null,
+                        _timestamps: {
+                          ...userAccount._timestamps,
+                          updated_at: Date.now(),
+                          updated_by: userAccount.uid,
+                        },
+                      };
+                      await firestore.setData(
+                        FIRESTORE_COLLECTION_NAMES.USERS,
+                        patchUserAccount.uid,
+                        patchUserAccount
+                      );
+                    }
 
-                        navigation.goBack();
-                      }
-                    );
+                    navigation.goBack();
                   }}
                 />
               )}
-              {(!image || previousImage === image) && (
-                <ButtonDisabled label="Save" />
-              )}
+              {!showSaveButton && <ButtonDisabled label="Save" />}
             </View>
           </View>
         )}
