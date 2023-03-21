@@ -27,6 +27,7 @@ import {
   ButtonSecondary,
 } from "../../components/Button";
 import CustomTextInput from "../../components/CustomTextInput";
+import KeyboardViewWrapper from "../../components/KeyboardWrapper";
 import { ListItem } from "../../components/List";
 import { TextPrimary } from "../../components/Text";
 import MODAL_TYPE_CONSTANTS from "../../constants/modalTypeConstants";
@@ -275,632 +276,645 @@ const ModalScreen = ({ route, navigation }) => {
       </TouchableOpacity>
 
       {/* // TAG : Content card */}
-      <View
-        style={[
-          {
-            backgroundColor: globalTheme.colors.background,
-          },
-          {
-            display: "flex",
-            justifyContent: "flex-start",
-            maxHeight: cardHeight,
-            height: useSearchButton ? cardHeight : null,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            // flex:1
-          },
-        ]}
-      >
-        {/* // TAG : Header */}
-        <View style={{ flex: 0, padding: 16 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            {!showSearchBar && (
-              <TextPrimary
-                label={title}
-                style={{ fontSize: 24, paddingRight: 0 }}
-              />
-            )}
-            <TopRightComponent ref={searchInputRef} />
+      <KeyboardViewWrapper isTextInput={isTextInput}>
+        <View
+          style={[
+            {
+              backgroundColor: globalTheme.colors.background,
+            },
+            {
+              display: "flex",
+              justifyContent: "flex-start",
+              maxHeight: cardHeight,
+              height: useSearchButton ? cardHeight : null,
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              // flex:1
+            },
+          ]}
+        >
+          {/* // TAG : Header */}
+          <View style={{ flex: 0, padding: 16 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              {!showSearchBar && (
+                <TextPrimary
+                  label={title}
+                  style={{ fontSize: 24, paddingRight: 0 }}
+                />
+              )}
+              <TopRightComponent ref={searchInputRef} />
 
-            {useSearchButton && (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                  // padding: 4,
-                  borderRadius: 8,
-                  // backgroundColor: globalTheme.colors.secondary,
-                }}
-              >
-                {/* // TAG : Top Right Search Bar */}
-                {!showSearchBar && (
-                  <IonIcons
-                    name="search"
-                    size={24}
-                    color={globalTheme.colors.foreground}
-                    style={{
-                      padding: 8,
-                      paddingLeft: 64,
-                    }}
-                    onPress={() => {
-                      setShowSearchBar(true);
-                    }}
-                  />
-                )}
-                {showSearchBar && (
-                  <View
-                    style={{
-                      // flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View
-                      style={{
-                        // maxWidth: "80%",
-                        flex: 1,
-                      }}
-                    >
-                      <CustomTextInput
-                        inputRef={searchInputRef}
-                        inputQuery={searchQuery}
-                        noMargin={true}
-                        inputType="search"
-                        placeholder="Search"
-                        onClearText={() => setSelectedItem(null)}
-                        onChange={(text) => setSearchQuery(text)}
-                      />
-                    </View>
+              {useSearchButton && (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "flex-end",
+                    justifyContent: "center",
+                    // padding: 4,
+                    borderRadius: 8,
+                    // backgroundColor: globalTheme.colors.secondary,
+                  }}
+                >
+                  {/* // TAG : Top Right Search Bar */}
+                  {!showSearchBar && (
                     <IonIcons
-                      name="close"
+                      name="search"
                       size={24}
                       color={globalTheme.colors.foreground}
                       style={{
-                        padding: 16,
+                        padding: 8,
+                        paddingLeft: 64,
                       }}
                       onPress={() => {
-                        setShowSearchBar(false);
+                        setShowSearchBar(true);
                       }}
                     />
-                  </View>
-                )}
-              </View>
-            )}
-          </View>
-        </View>
-
-        {showTemporaryDatePicker && (
-          <>
-            <RNDateTimePicker
-              mode="date"
-              display="spinner"
-              textColor={textColor}
-              themeVariant={themeVariant}
-              value={new Date(selectedItem)}
-              minimumDate={
-                minimumDateInMillis ? new Date(minimumDateInMillis) : null
-              }
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || new Date(selectedItem);
-                event.type === "set" && setSelectedItem(currentDate.getTime());
-                event.type === "dismissed";
-              }}
-            />
-          </>
-        )}
-
-        {!showTemporaryDatePicker && (
-          <>
-            {/* // TAG : isNumberPicker */}
-            {isNumberPicker && (
-              <>
-                <FlatList
-                  numColumns={7}
-                  columnWrapperStyle={{
-                    justifyContent: "space-between",
-                    padding: 8,
-                  }}
-                  showsHorizontalScrollIndicator={false}
-                  data={props}
-                  style={
-                    {
-                      // height: "100%",
-                    }
-                  }
-                  contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                  keyExtractor={(item, id) => item?.name}
-                  renderItem={({ item }) => (
-                    <>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedItem(item);
+                  )}
+                  {showSearchBar && (
+                    <View
+                      style={{
+                        // flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View
+                        style={{
+                          // maxWidth: "80%",
+                          flex: 1,
                         }}
                       >
-                        {/* Color Circle */}
-                        <View
-                          style={{
-                            height: 48,
-                            width: 48,
-                            borderRadius: 48 / 2,
-                            backgroundColor:
-                              selectedItem?.name === item.name
-                                ? globalTheme.colors.primary
-                                : "transparent",
-                            alignItems: "center",
-                            justifyContent: "center",
+                        <CustomTextInput
+                          inputRef={searchInputRef}
+                          inputQuery={searchQuery}
+                          noMargin={true}
+                          inputType="search"
+                          placeholder="Search"
+                          onClearText={() => setSelectedItem(null)}
+                          onChange={(text) => setSearchQuery(text)}
+                        />
+                      </View>
+                      <IonIcons
+                        name="close"
+                        size={24}
+                        color={globalTheme.colors.foreground}
+                        style={{
+                          padding: 16,
+                        }}
+                        onPress={() => {
+                          setShowSearchBar(false);
+                        }}
+                      />
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+          </View>
+
+          {showTemporaryDatePicker && (
+            <>
+              <RNDateTimePicker
+                mode="date"
+                display="spinner"
+                textColor={textColor}
+                themeVariant={themeVariant}
+                value={new Date(selectedItem)}
+                minimumDate={
+                  minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                }
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || new Date(selectedItem);
+                  event.type === "set" &&
+                    setSelectedItem(currentDate.getTime());
+                  event.type === "dismissed";
+                }}
+              />
+            </>
+          )}
+
+          {!showTemporaryDatePicker && (
+            <>
+              {/* // TAG : isNumberPicker */}
+              {isNumberPicker && (
+                <>
+                  <FlatList
+                    numColumns={7}
+                    columnWrapperStyle={{
+                      justifyContent: "space-between",
+                      padding: 8,
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                    data={props}
+                    style={
+                      {
+                        // height: "100%",
+                      }
+                    }
+                    contentContainerStyle={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                    keyExtractor={(item, id) => item?.name}
+                    renderItem={({ item }) => (
+                      <>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedItem(item);
                           }}
                         >
-                          <TextPrimary
-                            label={item.name}
+                          {/* Color Circle */}
+                          <View
                             style={{
-                              fontWeight:
+                              height: 48,
+                              width: 48,
+                              borderRadius: 48 / 2,
+                              backgroundColor:
                                 selectedItem?.name === item.name
-                                  ? "bold"
-                                  : "normal",
-                              color:
-                                selectedItem?.name === item.name
-                                  ? globalTheme.colors.background
-                                  : globalTheme.text.textPrimary.color,
+                                  ? globalTheme.colors.primary
+                                  : "transparent",
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                />
-              </>
-            )}
+                          >
+                            <TextPrimary
+                              label={item.name}
+                              style={{
+                                fontWeight:
+                                  selectedItem?.name === item.name
+                                    ? "bold"
+                                    : "normal",
+                                color:
+                                  selectedItem?.name === item.name
+                                    ? globalTheme.colors.background
+                                    : globalTheme.text.textPrimary.color,
+                              }}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  />
+                </>
+              )}
 
-            {/* // TAG : isDatePicker */}
-            {isDatePicker && (
-              <>
-                <RNDateTimePicker
-                  mode="date"
-                  display="spinner"
-                  textColor={textColor}
-                  themeVariant={themeVariant}
-                  value={new Date(selectedItem)}
-                  minimumDate={
-                    minimumDateInMillis ? new Date(minimumDateInMillis) : null
-                  }
-                  onChange={(event, selectedDate) => {
-                    const currentDate = selectedDate || new Date(selectedItem);
-                    event.type === "set" &&
-                      setSelectedItem(currentDate.getTime());
-                    event.type === "dismissed";
-                  }}
-                />
-              </>
-            )}
+              {/* // TAG : isDatePicker */}
+              {isDatePicker && (
+                <>
+                  <RNDateTimePicker
+                    mode="date"
+                    display="spinner"
+                    textColor={textColor}
+                    themeVariant={themeVariant}
+                    value={new Date(selectedItem)}
+                    minimumDate={
+                      minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                    }
+                    onChange={(event, selectedDate) => {
+                      const currentDate =
+                        selectedDate || new Date(selectedItem);
+                      event.type === "set" &&
+                        setSelectedItem(currentDate.getTime());
+                      event.type === "dismissed";
+                    }}
+                  />
+                </>
+              )}
 
-            {/* // TAG : isDateAndTimePicker */}
-            {isDateAndTimePicker && (
-              <>
-                <RNDateTimePicker
-                  mode="datetime"
-                  display="spinner"
-                  textColor={textColor}
-                  themeVariant={themeVariant}
-                  value={new Date(selectedItem)}
-                  minimumDate={
-                    minimumDateInMillis ? new Date(minimumDateInMillis) : null
-                  }
-                  onChange={(event, selectedDate) => {
-                    const currentDate = selectedDate || new Date(selectedItem);
-                    event.type === "set" &&
-                      setSelectedItem(currentDate.getTime());
-                    event.type === "dismissed";
-                  }}
-                />
-              </>
-            )}
+              {/* // TAG : isDateAndTimePicker */}
+              {isDateAndTimePicker && (
+                <>
+                  <RNDateTimePicker
+                    mode="datetime"
+                    display="spinner"
+                    textColor={textColor}
+                    themeVariant={themeVariant}
+                    value={new Date(selectedItem)}
+                    minimumDate={
+                      minimumDateInMillis ? new Date(minimumDateInMillis) : null
+                    }
+                    onChange={(event, selectedDate) => {
+                      const currentDate =
+                        selectedDate || new Date(selectedItem);
+                      event.type === "set" &&
+                        setSelectedItem(currentDate.getTime());
+                      event.type === "dismissed";
+                    }}
+                  />
+                </>
+              )}
 
-            {/* // TAG : isList */}
-            {isList && (
-              <>
-                <FlatList
-                  ref={flatListRef}
-                  data={props}
-                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                  onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                  onMomentumScrollEnd={onScrollHandler}
-                  onScrollEndDrag={onScrollHandler}
-                  keyExtractor={(item, id) => item?.name + id}
-                  renderItem={({ item, index }) => (
+              {/* // TAG : isList */}
+              {isList && (
+                <>
+                  <FlatList
+                    ref={flatListRef}
+                    data={props}
+                    getItemLayout={(data, index) =>
+                      getItemLayout(data, index, 1)
+                    }
+                    onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                    onMomentumScrollEnd={onScrollHandler}
+                    onScrollEndDrag={onScrollHandler}
+                    keyExtractor={(item, id) => item?.name + id}
+                    renderItem={({ item, index }) => (
+                      <>
+                        <ListItem
+                          pressable
+                          iconLeftName={item?.icon?.name || iconProps?.name}
+                          iconPack={
+                            item?.icon?.pack || iconProps?.pack || "IonIcons"
+                          }
+                          iconLeftColor={
+                            iconProps?.color
+                              ? iconProps?.color
+                              : item?.icon?.color === "default"
+                              ? globalTheme.colors.foreground
+                              : item?.icon?.color
+                          }
+                          iconRightName={
+                            // selectedItem?.id === item?.id ||
+                            selectedItem?.name === item?.name
+                              ? "checkmark-circle"
+                              : null
+                          }
+                          leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
+                          onPress={() => {
+                            onTapItem(item);
+                          }}
+                        />
+                      </>
+                    )}
+                  />
+                </>
+              )}
+
+              {/* // TAG : isCurrencyList */}
+              {isCurrencyList && (
+                <>
+                  {/* // TAG : !showSearchBar */}
+                  {!showSearchBar && (
                     <>
-                      <ListItem
-                        pressable
-                        iconLeftName={item?.icon?.name || iconProps?.name}
-                        iconPack={
-                          item?.icon?.pack || iconProps?.pack || "IonIcons"
+                      <FlatList
+                        ref={flatListRef}
+                        data={props}
+                        getItemLayout={(data, index) =>
+                          getItemLayout(data, index, 1)
                         }
-                        iconLeftColor={
-                          iconProps?.color
-                            ? iconProps?.color
-                            : item?.icon?.color === "default"
-                            ? globalTheme.colors.foreground
-                            : item?.icon?.color
-                        }
-                        iconRightName={
-                          // selectedItem?.id === item?.id ||
-                          selectedItem?.name === item?.name
-                            ? "checkmark-circle"
-                            : null
-                        }
-                        leftLabel={utils.upperCaseThisFirstLetter(item?.name)}
-                        onPress={() => {
-                          onTapItem(item);
-                        }}
+                        // maxToRenderPerBatch={props.length}
+                        initialNumToRender={Math.round(props.length / 4)}
+                        onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                        onMomentumScrollEnd={onScrollHandler}
+                        onScrollEndDrag={onScrollHandler}
+                        keyExtractor={keyExtractor}
+                        renderItem={({ item }) => (
+                          <>
+                            <CurrencyListItemMemo
+                              item={item}
+                              globalTheme={globalTheme}
+                              isSelected={item.name === selectedItem?.name}
+                              onTapItem={(item) => onTapItem(item)}
+                            />
+                          </>
+                        )}
                       />
                     </>
                   )}
-                />
-              </>
-            )}
-
-            {/* // TAG : isCurrencyList */}
-            {isCurrencyList && (
-              <>
-                {/* // TAG : !showSearchBar */}
-                {!showSearchBar && (
-                  <>
-                    <FlatList
-                      ref={flatListRef}
-                      data={props}
-                      getItemLayout={(data, index) =>
-                        getItemLayout(data, index, 1)
-                      }
-                      maxToRenderPerBatch={props.length}
-                      initialNumToRender={Math.round(props.length / 3)}
-                      onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                      onMomentumScrollEnd={onScrollHandler}
-                      onScrollEndDrag={onScrollHandler}
-                      keyExtractor={keyExtractor}
-                      renderItem={({ item }) => (
-                        <>
-                          <CurrencyListItemMemo
-                            item={item}
-                            globalTheme={globalTheme}
-                            isSelected={item.name === selectedItem?.name}
-                            onTapItem={(item) => onTapItem(item)}
-                          />
-                        </>
-                      )}
-                    />
-                  </>
-                )}
-                {/* // TAG : !!showSearchBar */}
-                {!!showSearchBar && (
-                  <>
-                    <FlatList
-                      ref={flatListRef}
-                      data={props.filter(
-                        (item) =>
-                          item.name
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase()) ||
-                          item.currencyCode
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase())
-                      )}
-                      getItemLayout={(data, index) =>
-                        getItemLayout(data, index, 1)
-                      }
-                      onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                      onMomentumScrollEnd={onScrollHandler}
-                      onScrollEndDrag={onScrollHandler}
-                      keyExtractor={(item, id) => item?.name + id}
-                      ListEmptyComponent={() => {
-                        return (
-                          <View style={{ padding: 16 }}>
-                            <TextPrimary label="No results found" />
-                          </View>
-                        );
-                      }}
-                      renderItem={({ item }) => (
-                        <>
-                          <CurrencyListItemRender
-                            item={item}
-                            globalTheme={globalTheme}
-                            selectedItem={selectedItem}
-                            onTapItem={(item) => onTapItem(item)}
-                          />
-                        </>
-                      )}
-                    />
-                  </>
-                )}
-              </>
-            )}
-
-            {/* // TAG : isTextInput */}
-            {isTextInput && (
-              <>
-                <View
-                  style={{
-                    paddingLeft: 16,
-                    paddingRight: !textInput ? 16 : 0,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextInput
-                    keyboardType={keyboardType}
-                    style={{
-                      paddingHorizontal: 16,
-                      fontSize: 16,
-                      borderRadius: 16,
-                      borderWidth: 1,
-                      height: 48,
-                      flex: 1,
-                      borderColor: globalTheme.colors.primary,
-                      color: globalTheme.text.textPrimary.color,
-                    }}
-                    ref={textInputRef}
-                    placeholder={placeholder}
-                    placeholderTextColor={globalTheme.text.textSecondary.color}
-                    defaultValue={defaultOption || ""}
-                    value={textInput}
-                    onChangeText={(input) => setTextInput(input)}
-                    autoFocus={true}
-                    maxLength={maxLength}
-                  />
-                  {textInput && (
-                    <IonIcons
-                      onPress={() => setTextInput("")}
-                      name="close-circle"
-                      size={20}
-                      style={{ paddingHorizontal: 16 }}
-                      color={globalTheme.colors.foreground}
-                    />
-                  )}
-                </View>
-              </>
-            )}
-
-            {/* // TAG : isAction */}
-            {isAction && (
-              <>
-                <TouchableNativeFeedback onPress={() => {}}>
-                  <View style={globalTheme.list.listContainer}>
-                    <IonIcons
-                      name="trash"
-                      size={18}
-                      // color={item?.icon?.color}
-                      style={{ paddingRight: 16 }}
-                    />
-                    <View style={globalTheme.list.listItem}>
-                      <TextPrimary label="Delete" />
-                    </View>
-                  </View>
-                </TouchableNativeFeedback>
-              </>
-            )}
-
-            {/* // TAG : isColorPicker */}
-            {isColorPicker && (
-              <>
-                <FlatList
-                  horizontal
-                  // numColumns={4}
-                  // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
-                  data={colors}
-                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                  onLayout={(event) => onFlatListLayoutChange(event, 1)}
-                  onMomentumScrollEnd={onScrollHandler}
-                  onScrollEndDrag={onScrollHandler}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                  keyExtractor={(item, id) => item?.name}
-                  renderItem={({ item }) => (
+                  {/* // TAG : !!showSearchBar */}
+                  {!!showSearchBar && (
                     <>
-                      <TouchableOpacity
-                        style={{ marginRight: 8 }}
-                        onPress={() => {
-                          onTapItem(item);
+                      <FlatList
+                        ref={flatListRef}
+                        data={props.filter(
+                          (item) =>
+                            item.name
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
+                            item.currencyCode
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase())
+                        )}
+                        getItemLayout={(data, index) =>
+                          getItemLayout(data, index, 1)
+                        }
+                        onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                        onMomentumScrollEnd={onScrollHandler}
+                        onScrollEndDrag={onScrollHandler}
+                        keyExtractor={(item, id) => item?.name + id}
+                        ListEmptyComponent={() => {
+                          return (
+                            <View style={{ padding: 16 }}>
+                              <TextPrimary label="No results found" />
+                            </View>
+                          );
                         }}
-                      >
-                        {/* Color Circle */}
-                        <View
-                          style={{
-                            height: 48,
-                            width: 48,
-                            borderRadius: 48 / 2,
-                            backgroundColor: item.color,
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <IonIcons
-                            name="checkmark-sharp"
-                            size={24}
-                            color={globalTheme.colors.background}
-                            style={{
-                              display:
-                                selectedItem?.color === item?.color
-                                  ? "flex"
-                                  : "none",
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                />
-              </>
-            )}
-
-            {/* // TAG : isIconPicker */}
-            {isIconPicker && (
-              <>
-                <Animated.FlatList
-                  ref={flatListRef}
-                  numColumns={6}
-                  columnWrapperStyle={{
-                    justifyContent: "space-between",
-                    padding: 8,
-                  }}
-                  snapToAlignment="center"
-                  onLayout={(event) => onFlatListLayoutChange(event, 6)}
-                  showsHorizontalScrollIndicator={false}
-                  data={props}
-                  style={{ height: "100%" }}
-                  contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                  onMomentumScrollEnd={onScrollHandler}
-                  onScrollEndDrag={onScrollHandler}
-                  getItemLayout={(data, index) => getItemLayout(data, index, 1)}
-                  keyExtractor={(item, id) => item?.name}
-                  renderItem={({ item, index }) => (
-                    <>
-                      <TouchableOpacity
-                        style={{ marginRight: 8 }}
-                        onPress={() => {
-                          onTapItem(item);
-                        }}
-                      >
-                        <View
-                          style={{
-                            height: 48,
-                            width: 48,
-                            borderWidth: 2,
-                            borderRadius: 48 / 2,
-                            borderColor:
-                              selectedItem?.name === item.name
-                                ? globalTheme.colors.primary
-                                : "transparent",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {item.pack === "IonIcons" && (
-                            <IonIcons
-                              name={item.name}
-                              size={24}
-                              color={
-                                item.color === "default"
-                                  ? globalTheme.colors.foreground
-                                  : item.color
-                              }
+                        renderItem={({ item }) => (
+                          <>
+                            <CurrencyListItemRender
+                              item={item}
+                              globalTheme={globalTheme}
+                              selectedItem={selectedItem}
+                              onTapItem={(item) => onTapItem(item)}
                             />
-                          )}
-                        </View>
-                      </TouchableOpacity>
+                          </>
+                        )}
+                      />
                     </>
                   )}
+                </>
+              )}
+
+              {/* // TAG : isTextInput */}
+              {isTextInput && (
+                <>
+                  <View
+                    style={{
+                      paddingLeft: 16,
+                      paddingRight: !textInput ? 16 : 0,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextInput
+                      keyboardType={keyboardType}
+                      style={{
+                        paddingHorizontal: 16,
+                        fontSize: 16,
+                        borderRadius: 16,
+                        borderWidth: 1,
+                        height: 48,
+                        flex: 1,
+                        borderColor: globalTheme.colors.primary,
+                        color: globalTheme.text.textPrimary.color,
+                      }}
+                      ref={textInputRef}
+                      placeholder={placeholder}
+                      placeholderTextColor={
+                        globalTheme.text.textSecondary.color
+                      }
+                      defaultValue={defaultOption || ""}
+                      value={textInput}
+                      onChangeText={(input) => setTextInput(input)}
+                      autoFocus={true}
+                      maxLength={maxLength}
+                    />
+                    {textInput && (
+                      <IonIcons
+                        onPress={() => setTextInput("")}
+                        name="close-circle"
+                        size={20}
+                        style={{ paddingHorizontal: 16 }}
+                        color={globalTheme.colors.foreground}
+                      />
+                    )}
+                  </View>
+                </>
+              )}
+
+              {/* // TAG : isAction */}
+              {isAction && (
+                <>
+                  <TouchableNativeFeedback onPress={() => {}}>
+                    <View style={globalTheme.list.listContainer}>
+                      <IonIcons
+                        name="trash"
+                        size={18}
+                        // color={item?.icon?.color}
+                        style={{ paddingRight: 16 }}
+                      />
+                      <View style={globalTheme.list.listItem}>
+                        <TextPrimary label="Delete" />
+                      </View>
+                    </View>
+                  </TouchableNativeFeedback>
+                </>
+              )}
+
+              {/* // TAG : isColorPicker */}
+              {isColorPicker && (
+                <>
+                  <FlatList
+                    horizontal
+                    // numColumns={4}
+                    // columnWrapperStyle={{ justifyContent: 'space-between', padding: 8 }}
+                    data={colors}
+                    getItemLayout={(data, index) =>
+                      getItemLayout(data, index, 1)
+                    }
+                    onLayout={(event) => onFlatListLayoutChange(event, 1)}
+                    onMomentumScrollEnd={onScrollHandler}
+                    onScrollEndDrag={onScrollHandler}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                    keyExtractor={(item, id) => item?.name}
+                    renderItem={({ item }) => (
+                      <>
+                        <TouchableOpacity
+                          style={{ marginRight: 8 }}
+                          onPress={() => {
+                            onTapItem(item);
+                          }}
+                        >
+                          {/* Color Circle */}
+                          <View
+                            style={{
+                              height: 48,
+                              width: 48,
+                              borderRadius: 48 / 2,
+                              backgroundColor: item.color,
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <IonIcons
+                              name="checkmark-sharp"
+                              size={24}
+                              color={globalTheme.colors.background}
+                              style={{
+                                display:
+                                  selectedItem?.color === item?.color
+                                    ? "flex"
+                                    : "none",
+                              }}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  />
+                </>
+              )}
+
+              {/* // TAG : isIconPicker */}
+              {isIconPicker && (
+                <>
+                  <Animated.FlatList
+                    ref={flatListRef}
+                    numColumns={6}
+                    columnWrapperStyle={{
+                      justifyContent: "space-between",
+                      padding: 8,
+                    }}
+                    snapToAlignment="center"
+                    onLayout={(event) => onFlatListLayoutChange(event, 6)}
+                    showsHorizontalScrollIndicator={false}
+                    data={props}
+                    style={{ height: "100%" }}
+                    contentContainerStyle={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                    onMomentumScrollEnd={onScrollHandler}
+                    onScrollEndDrag={onScrollHandler}
+                    getItemLayout={(data, index) =>
+                      getItemLayout(data, index, 1)
+                    }
+                    keyExtractor={(item, id) => item?.name}
+                    renderItem={({ item, index }) => (
+                      <>
+                        <TouchableOpacity
+                          style={{ marginRight: 8 }}
+                          onPress={() => {
+                            onTapItem(item);
+                          }}
+                        >
+                          <View
+                            style={{
+                              height: 48,
+                              width: 48,
+                              borderWidth: 2,
+                              borderRadius: 48 / 2,
+                              borderColor:
+                                selectedItem?.name === item.name
+                                  ? globalTheme.colors.primary
+                                  : "transparent",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            {item.pack === "IonIcons" && (
+                              <IonIcons
+                                name={item.name}
+                                size={24}
+                                color={
+                                  item.color === "default"
+                                    ? globalTheme.colors.foreground
+                                    : item.color
+                                }
+                              />
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  />
+                </>
+              )}
+            </>
+          )}
+
+          {/* // TAG : Action Button */}
+          <View
+            style={{
+              height: 16,
+            }}
+          />
+          <ActionButtonWrapper paddingHorizontal={64}>
+            {/* // TAG : Cancel Button */}
+            <View style={{ flex: 1, paddingRight: 8 }}>
+              <ButtonSecondary
+                label="Cancel"
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+            {/* // TAG : Save Button */}
+            <View style={{ flex: 2, paddingLeft: 8 }}>
+              {!showButton && (
+                <>
+                  <ButtonDisabled label={mainButtonLabel} />
+                </>
+              )}
+              {mainButtonLabel?.toLowerCase() !== "delete" && showButton && (
+                <ButtonPrimary
+                  label={mainButtonLabel}
+                  onPress={() => {
+                    if (isTextInput && !textInput) {
+                      Alert.alert(
+                        "Error",
+                        "Please enter a value",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => console.log("OK Pressed"),
+                          },
+                        ],
+                        { cancelable: false }
+                      );
+                    }
+
+                    if (isTextInput && textInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+
+                    if (!isTextInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+                  }}
                 />
-              </>
-            )}
-          </>
-        )}
+              )}
+              {mainButtonLabel?.toLowerCase() === "delete" && showButton && (
+                <ButtonPrimaryDanger
+                  label={mainButtonLabel}
+                  onPress={() => {
+                    if (isTextInput && !textInput) {
+                      Alert.alert(
+                        "Error",
+                        "Please enter a value",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => console.log("OK Pressed"),
+                          },
+                        ],
+                        { cancelable: false }
+                      );
+                    }
 
-        {/* // TAG : Action Button */}
-        <View
-          style={{
-            height: 16,
-          }}
-        />
-        <ActionButtonWrapper paddingHorizontal={64}>
-          {/* // TAG : Cancel Button */}
-          <View style={{ flex: 1, paddingRight: 8 }}>
-            <ButtonSecondary
-              label="Cancel"
-              onPress={() => navigation.goBack()}
-            />
-          </View>
-          {/* // TAG : Save Button */}
-          <View style={{ flex: 2, paddingLeft: 8 }}>
-            {!showButton && (
-              <>
-                <ButtonDisabled label={mainButtonLabel} />
-              </>
-            )}
-            {mainButtonLabel?.toLowerCase() !== "delete" && showButton && (
-              <ButtonPrimary
-                label={mainButtonLabel}
-                onPress={() => {
-                  if (isTextInput && !textInput) {
-                    Alert.alert(
-                      "Error",
-                      "Please enter a value",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("OK Pressed"),
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
+                    if (isTextInput && textInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
 
-                  if (isTextInput && textInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-
-                  if (!isTextInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-                }}
-              />
-            )}
-            {mainButtonLabel?.toLowerCase() === "delete" && showButton && (
-              <ButtonPrimaryDanger
-                label={mainButtonLabel}
-                onPress={() => {
-                  if (isTextInput && !textInput) {
-                    Alert.alert(
-                      "Error",
-                      "Please enter a value",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("OK Pressed"),
-                        },
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-
-                  if (isTextInput && textInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-
-                  if (!isTextInput) {
-                    onPressReturn();
-                    navigation.goBack();
-                  }
-                }}
-              />
-            )}
-          </View>
-        </ActionButtonWrapper>
-      </View>
+                    if (!isTextInput) {
+                      onPressReturn();
+                      navigation.goBack();
+                    }
+                  }}
+                />
+              )}
+            </View>
+          </ActionButtonWrapper>
+        </View>
+      </KeyboardViewWrapper>
     </>
   );
 };
