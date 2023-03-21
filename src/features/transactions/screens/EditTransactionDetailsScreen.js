@@ -893,7 +893,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   });
 
                   const { canceled, assets } = result;
-                  const uri = assets.map((asset) => asset.uri);
+                  const uri = assets?.map((asset) => asset.uri);
                   if (!result.canceled) {
                     setTransaction({
                       ...transaction,
