@@ -33,7 +33,7 @@ import CURRENCY_CONSTANTS from "../constants/currencyConstants";
  */
 const batchLegacyLogbookCurrencyConversion = (legacyLogbookList) => {
   const newLogbooksDataWithCurrencyCode = legacyLogbookList.map((logbook) => {
-    if (!logbook.logbook_currency.currencyCode) {
+    if (!logbook.logbook_currency?.hasOwnProperty("currencyCode")) {
       let newLogbookCurrency;
       switch (logbook.logbook_currency.name) {
         case "USD":
