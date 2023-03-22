@@ -41,20 +41,20 @@ const IncomeExpenseDeviation = ({
   const [useAbbreviation, setUseAbbreviation] = useState(false);
 
   useEffect(() => {
-    console.log(
-      JSON.stringify(
-        {
-          incomeViewWidth,
-          incomeTextWidth,
-          expenseViewWidth,
-          expenseTextWidth,
-          deviationViewWidth,
-          deviationTextWidth,
-        },
-        null,
-        2
-      )
-    );
+    // console.log(
+    //   JSON.stringify(
+    //     {
+    //       incomeViewWidth,
+    //       incomeTextWidth,
+    //       expenseViewWidth,
+    //       expenseTextWidth,
+    //       deviationViewWidth,
+    //       deviationTextWidth,
+    //     },
+    //     null,
+    //     2
+    //   )
+    // );
   }, [
     incomeViewWidth,
     expenseViewWidth,
