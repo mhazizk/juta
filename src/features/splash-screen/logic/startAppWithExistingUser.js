@@ -205,7 +205,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         deviceOSName: deviceOSNameData,
       });
 
-      const loggedInUserAccount = {
+      const userAccountWithRecentDevice = {
         ...userAccountData,
         devicesLoggedIn: [
           ...filteredDevicesLoggedIn,
@@ -218,7 +218,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       // TODO : commented for testing on iOS simulator
       // let updatedUserAccount;
       // TODO : temporary assign this variable to userAccountData
-      let updatedUserAccount = userAccountData;
+      let updatedUserAccount = userAccountWithRecentDevice;
       let updatedAppSettings = appSettingsData;
 
       // TAG : check if appSettings has budgetSettings property
@@ -237,8 +237,8 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       updateSubscriptionStatus({
         globalFeatureSwitch: subsData,
         rcCustomerInfo: rcCustomerInfoData,
-        appSettings: appSettingsData,
-        userAccount: loggedInUserAccount,
+        appSettings: updatedAppSettings,
+        userAccount: updatedUserAccount,
         callback: ({ newUserAccount, newAppSettings }) => {
           updatedUserAccount = newUserAccount;
           updatedAppSettings = newAppSettings;
@@ -295,8 +295,8 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       dispatchGlobalTheme({
         type: REDUCER_ACTIONS.THEME.SET,
-        payload: appSettingsData.theme_id
-          ? appSettingsData.theme_id
+        payload: updatedAppSettings.theme_id
+          ? updatedAppSettings.theme_id
           : appSettingsFallback.theme_id,
       });
 
@@ -338,7 +338,9 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       const newLogbook = getLogbookModel({
         logbookName: "My Logbook",
         uid: currentUser.uid,
-        defaultCurrency: appSettingsData.logbookSettings.defaultCurrency,
+        defaultCurrency:
+          updatedAppSettings.logbookSettings.defaultCurrency ||
+          newAppSettings.logbookSettings.defaultCurrency,
       });
       if (logbooksData.length < 1) {
         newLogbooksData = [newLogbook];
@@ -537,7 +539,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       setTimeout(() => {
         useFirestoreSubscriptions({
-          uid: userAccountData?.uid,
+          uid: updatedUserAccount.uid,
           skipFirstRun: true,
 
           appSettings: appSettings,
@@ -585,7 +587,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         )
       );
       // TODO: handle error on iOS
-      return screenList.loginScreen;
+      return screenList.bottomTabNavigator;
       // return screenList.bottomTabNavigator;
     });
 };

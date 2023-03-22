@@ -3,8 +3,8 @@ module.exports = ({ config }) => {
   const expoProjectID = "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3";
   const channelNameOptions = ["production", "staging", "development"];
 
-  const appVersion = "0.9.1";
-  const androidVersionCode = 30;
+  const appVersion = "0.9.2";
+  const androidVersionCode = 31;
 
   // Follow apple guidelines for build number e.g. "1.0.0" with no additional characters
   // For eas submit, the Transporter will get the version from eas.version
