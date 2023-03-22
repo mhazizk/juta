@@ -37,7 +37,7 @@ const legacyAppSettingsCurrencyConversion = (legacyAppSettings) => {
   let newDefaultCurrency = defaultCurrency;
   let newSecondaryCurrency = secondaryCurrency;
 
-  if (!defaultCurrency.currencyCode) {
+  if (!defaultCurrency?.hasOwnProperty("currencyCode")) {
     switch (defaultCurrency.name) {
       case "USD":
         const USDCurrency = CURRENCY_CONSTANTS.OPTIONS.find(
@@ -60,7 +60,7 @@ const legacyAppSettingsCurrencyConversion = (legacyAppSettings) => {
         break;
     }
   }
-  if (!secondaryCurrency.currencyCode) {
+  if (!secondaryCurrency?.hasOwnProperty("currencyCode")) {
     switch (secondaryCurrency.name) {
       case "USD":
         const USDCurrency = CURRENCY_CONSTANTS.OPTIONS.find(
