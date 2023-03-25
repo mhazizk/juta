@@ -12,6 +12,7 @@ import * as utils from "../../../utils";
 import ReportSection from "../components/ReportSection";
 import Loading from "../../../components/Loading";
 import getReportSectionProps from "../model/getReportSectionProps";
+import screenList from "../../../navigations/ScreenList";
 
 const MyReportsScreen = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -107,7 +108,26 @@ const MyReportsScreen = ({ route, navigation }) => {
         justifyContent: isLoading ? "center" : "flex-start",
       }}
     >
-      {!isLoading && <ReportSection sections={sections} />}
+      {!isLoading && (
+        <ReportSection
+          sections={sections}
+          onPress={({ category, startDateInMillis, endDateInMillis }) => {
+            console.log(
+              JSON.stringify(
+                { category, startDateInMillis, endDateInMillis },
+                null,
+                2
+              )
+            );
+
+            navigation.navigate(screenList.transactionListByCategoryScreen, {
+              category,
+              startDateInMillis,
+              endDateInMillis,
+            });
+          }}
+        />
+      )}
       {isLoading && <Loading />}
     </CustomScrollView>
   );
