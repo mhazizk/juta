@@ -267,6 +267,29 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       },
     });
 
+    // check if initial balance is set for this logbook
+    const isCategoryIdSetToInitialBalance =
+      transaction.details.category_id.includes("initial_balance")
+        ? true
+        : false;
+    if (isCategoryIdSetToInitialBalance) {
+      const foundLogbookToModify = logbooks.logbooks.find(
+        (logbook) => logbook.logbook_id === transaction.logbook_id
+      );
+      const logbookToModify = {
+        ...foundLogbookToModify,
+        logbook_initial_balance_transaction_id: transaction.transaction_id,
+      };
+
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+          logbookToModify.logbook_id,
+          logbookToModify
+        );
+      }, 5000);
+    }
+
     return navigation.navigate(screenList.loadingScreen, {
       isPaid,
       label: "Saving...",
@@ -301,6 +324,32 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       // });
     }
   };
+
+  // Below expression is to give a condition to filter out initial balance category
+  const isLogbookAlreadyHasInitialBalance =
+    selectedLogbook?.logbook_initial_balance_transaction_id ? true : false;
+  const isTransactionIdSameAsLogbookInitialBalanceId =
+    transaction?.transaction_id ===
+    selectedLogbook?.logbook_initial_balance_transaction_id;
+  const showInitialBalanceCategory =
+    !isLogbookAlreadyHasInitialBalance ||
+    isTransactionIdSameAsLogbookInitialBalanceId;
+  const isExpense = transaction?.details.in_out === "expense" ? true : false;
+  const isIncome = transaction?.details.in_out === "income" ? true : false;
+  const filteredExpenseCategory = !showInitialBalanceCategory
+    ? categories.categories.expense.filter(
+        (a) => !a.id.includes("initial_balance")
+      )
+    : categories.categories.expense;
+  const filteredIncomeCategory = !showInitialBalanceCategory
+    ? categories.categories.income.filter(
+        (a) => !a.id.includes("initial_balance")
+      )
+    : categories.categories.income;
+
+  const categoryProps = isExpense
+    ? filteredExpenseCategory
+    : filteredIncomeCategory;
 
   return (
     <>
@@ -704,14 +753,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select category",
                     modalType: MODAL_TYPE_CONSTANTS.LIST,
-                    props:
-                      transaction.details.in_out === "expense"
-                        ? categories.categories.expense.sort((a, b) => {
-                            return a.name.localeCompare(b.name);
-                          })
-                        : categories.categories.income.sort((a, b) => {
-                            return a.name.localeCompare(b.name);
-                          }),
+                    props: categoryProps,
                     selected: (item) => {
                       setSelectedCategory(item);
                       setSelectedLoanContact(null);
