@@ -1,3 +1,10 @@
+/**
+ *
+ * @param transactionIds - array of transaction ids
+ * @param groupSorted - state of groupSorted from `sortedTransactions` reducer
+ * @param callback - callback function
+ * @returns array of transactions
+ */
 const findTransactionsByIds = ({ transactionIds, groupSorted, callback }) => {
   if (!transactionIds?.length || !groupSorted) {
     return callback([]);
