@@ -261,7 +261,8 @@ const ReportSection = ({ sections, onPress }) => {
                             });
                           }}
                           style={{
-                            display: prevIndex < 0 ? "none" : "flex",
+                            // display: prevIndex < 0 ? "none" : "flex",
+                            display: "flex",
                             minWidth: "25%",
                             paddingVertical: 16,
                             paddingRight: 16,
@@ -272,11 +273,13 @@ const ReportSection = ({ sections, onPress }) => {
                           <Animated.View style={animatedSideTitleStyle}>
                             <TextPrimary
                               label={
-                                sections[
-                                  carouselIndex - 1 < 0
-                                    ? sections.length - 1
-                                    : carouselIndex - 1 || prevIndex
-                                ]?.title
+                                prevIndex < 0
+                                  ? " "
+                                  : sections[
+                                      carouselIndex - 1 < 0
+                                        ? sections.length - 1
+                                        : carouselIndex - 1 || prevIndex
+                                    ]?.title
                               }
                             />
                           </Animated.View>
