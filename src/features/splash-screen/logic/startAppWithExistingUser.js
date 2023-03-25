@@ -26,11 +26,12 @@ import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
 import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
-import batchLegacyLogbookCurrencyConversion from "../../../utils/batchLegacyLogbookCurrencyConversion";
+import legacyLogbookConversion from "../../../utils/legacyLogbookConversion";
 import legacyAppSettingsCurrencyConversion from "../../../utils/legacyAppSettingsCurrencyConversion";
 import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
 import { Platform } from "react-native";
+import legacyCategoryConversion from "../../../utils/legacyCategoryConversion";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -307,14 +308,19 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         uid: currentUser.uid,
       });
 
-      const categories = {
+      // convert legacy categories data to new format
+      const convertedCategories = legacyCategoryConversion(categoriesData);
+
+      // console.log(JSON.stringify({ convertedCategories }, null, 2));
+
+      const categoriesForGlobalState = {
         ...initialCategories,
-        categories: categoriesData || { ...newCategoriesData },
+        categories: convertedCategories || { ...newCategoriesData },
       };
 
       dispatchCategories({
         type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-        payload: categories,
+        payload: categoriesForGlobalState,
       });
 
       if (!categoriesData) {
@@ -327,14 +333,23 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }, 1);
       }
 
+      if (!!convertedCategories) {
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+            currentUser.uid,
+            convertedCategories
+          );
+        }, 1);
+      }
+
       // TAG : Logbooks
 
       // Check if logbooks data includes currencyCode
       // If not, add it
-      const newLogbooksDataWithNewCurrencyCode =
-        batchLegacyLogbookCurrencyConversion(logbooksData);
+      const convertedLogbookData = legacyLogbookConversion(logbooksData);
 
-      let newLogbooksData = newLogbooksDataWithNewCurrencyCode;
+      let newLogbooksData = convertedLogbookData;
 
       const newLogbook = getLogbookModel({
         logbookName: "My Logbook",
@@ -352,6 +367,17 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
             newLogbook
           );
         }, 1);
+      }
+      if (!!convertedLogbookData.length) {
+        convertedLogbookData.forEach(async (convertedLogbook) => {
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+              convertedLogbook.logbook_id,
+              convertedLogbook
+            );
+          }, 1);
+        });
       }
 
       if (!logbooksData[0].logbook_currency.currencyCode) {
@@ -555,7 +581,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           sortedTransactions: sortedTransactions,
           dispatchSortedTransactions: dispatchSortedTransactions,
 
-          categories: categories,
+          categories: categoriesForGlobalState,
           dispatchCategories: dispatchCategories,
 
           budgets: budgets,
