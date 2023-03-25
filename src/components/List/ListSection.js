@@ -11,8 +11,11 @@ const ListSection = ({
   noMargin,
   marginTop,
   marginBottom = 16,
+  borderOnly = false,
+  borderColor = null,
   children,
   backgroundColor = null,
+  noBackgroundColor = false,
   backgroundOpacity = 0.07,
 }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -26,9 +29,18 @@ const ListSection = ({
           marginTop: marginTop ? marginTop : 0,
           marginBottom: noMargin ? 0 : marginBottom,
           overflow: "hidden",
+          borderWidth: borderOnly ? 3 : 0,
+          borderColor: borderColor
+            ? borderColor
+            : utils.hexToRgb({
+                hex: borderColor || globalTheme.colors.listSection,
+                opacity: backgroundOpacity,
+              }),
           borderRadius: 16,
           marginHorizontal: 16,
-          backgroundColor: backgroundOpacity
+          backgroundColor: noBackgroundColor
+            ? "transparent"
+            : backgroundOpacity
             ? utils.hexToRgb({
                 hex: backgroundColor || globalTheme.colors.listSection,
                 opacity: backgroundOpacity,
