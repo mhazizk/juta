@@ -305,6 +305,43 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 });
               }}
             />
+            {/* // TAG : Initial balance */}
+            <ListItem
+              pressable
+              iconLeftName="duplicate"
+              iconPack="IonIcons"
+              leftLabel="Initial balance"
+              iconRightName="chevron-forward"
+              rightLabel={
+                !logbook.logbook_initial_balance_transaction_id
+                  ? "Not set"
+                  : utils.findTransactionsByIds({
+                      transactionIds: [
+                        logbook.logbook_initial_balance_transaction_id,
+                      ],
+                      groupSorted: sortedTransactions.groupSorted,
+                      callback: (transactionList) => {
+                        const transaction = transactionList[0];
+                        return `${
+                          logbook.logbook_currency.symbol
+                        } ${utils.getFormattedNumber({
+                          value: utils.convertCurrency({
+                            amount: transaction.details.amount,
+                            from: logbook.logbook_currency.name,
+                            target: logbook.logbook_currency.name,
+                            globalCurrencyRates,
+                          }),
+                          currencyCountryName: logbook.logbook_currency.name,
+                          negativeSymbol:
+                            appSettings.logbookSettings.negativeCurrencySymbol,
+                        })}`;
+                      },
+                    })
+              }
+              onPress={() => {
+                // TODO : continue here
+              }}
+            />
 
             {/* // TAG : Total balance */}
             <ListItem
