@@ -71,6 +71,7 @@ import PrivacyPolicyScreen from "../features/tos-privacy-policy/screens/PrivacyP
 import TermsOfServiceScreen from "../features/tos-privacy-policy/screens/TermsOfServiceScreen";
 import EditTransactionDetailsScreen from "../features/transactions/screens/EditTransactionDetailsScreen";
 import NewTransactionDetailsScreen from "../features/transactions/screens/NewTransactionDetailsScreen";
+import TransactionListByCategoryScreen from "../features/transactions/screens/TransactionListByCategoryScreen";
 import TransactionPreviewScreen from "../features/transactions/screens/TransactionPreviewScreen";
 import DeveloperScreen from "../features/user/screens/DeveloperScreen";
 import UserScreen from "../features/user/screens/UserScreen";
@@ -521,10 +522,10 @@ const RootStack = () => {
         component={TransactionPreviewScreen}
       />
 
-      {/* // TAG : Transaction Details Screen */}
+      {/* // TAG : Edit Transaction Details Screen */}
       <Stack.Screen
         options={showHeader}
-        name={screenList.transactionDetailsScreen}
+        name={screenList.editTransactionDetailsScreen}
         component={EditTransactionDetailsScreen}
       />
 
@@ -536,6 +537,16 @@ const RootStack = () => {
         }}
         name={screenList.newTransactionDetailsScreen}
         component={NewTransactionDetailsScreen}
+      />
+
+      {/* // TAG : Transaction List By Category Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Transaction List",
+        }}
+        name={screenList.transactionListByCategoryScreen}
+        component={TransactionListByCategoryScreen}
       />
 
       {/* // SECTION : LOGBOOKS */}
@@ -868,7 +879,52 @@ const RootStack = () => {
       />
       {/* // TAG : Loan Contact Selector Screen */}
       <Stack.Screen
-        options={{ ...showHeader, title: "Select Loan Contact" }}
+        options={{
+          ...showHeader,
+          title: "Select Loan Contact",
+
+          headerRight: () => {
+            return (
+              <HeaderButtonRight
+                textLabel="Add"
+                iconName="add"
+                onPress={() => {
+                  // get repeat limit from subscription plan
+                  const loanContactsLimit = getFeatureLimit({
+                    globalFeatureSwitch,
+                    subscriptionPlan: userAccount.subscription?.plan,
+                    featureName: FEATURE_NAME.LOAN,
+                  });
+
+                  const currentLoanContacts = globalLoan.contacts.length;
+
+                  // check if user has reached the limit
+                  if (currentLoanContacts >= loanContactsLimit) {
+                    // show alert
+                    Alert.alert(
+                      "Upgrade Subscription",
+                      `Upgrade your subscription to add new loan contacts.`,
+                      [
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
+                    );
+                  } else {
+                    navigation.navigate(screenList.newLoanContactScreen, {
+                      fromScreen: screenList.loanContactSelectorScreen,
+                      targetScreen: screenList.newTransactionDetailsScreen,
+                    });
+                  }
+                }}
+              />
+            );
+          },
+        }}
         name={screenList.loanContactSelectorScreen}
         component={LoanContactSelectorScreen}
       />
