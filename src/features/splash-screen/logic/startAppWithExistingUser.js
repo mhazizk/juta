@@ -30,6 +30,7 @@ import batchLegacyLogbookCurrencyConversion from "../../../utils/batchLegacyLogb
 import legacyAppSettingsCurrencyConversion from "../../../utils/legacyAppSettingsCurrencyConversion";
 import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
+import { Platform } from "react-native";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -123,7 +124,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
   const loadSubs = firestore.getOneDoc(collectionName, docId);
 
   // TODO : commented for testing on iOS simulator
-  const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
+  // const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
 
   // const loadGlobalCurrenyRatesFromFirestore = getAllCurrenciesFromFirestore();
   const loadGlobalCurrenyRatesFromFirestore = firestore.getOneDoc(
@@ -146,7 +147,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     loadGlobalCurrenyRatesFromFirestore,
     loadLoanContactsFromFirestore,
     loadSubs,
-    loadRCCustomerInfo,
+    // loadRCCustomerInfo,
   ])
     .then((data) => {
       const deviceIdData = data[0];
@@ -163,8 +164,8 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       const loanContactsData = data[11];
       const subsData = data[12];
 
-      const rcCustomerInfoData = data[13];
       // TODO : commented for testing on iOS simulator
+      // const rcCustomerInfoData = data[13];
 
       const filteredDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
         (device) => device.device_id !== deviceIdData
@@ -234,16 +235,16 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         legacyAppSettingsCurrencyConversion(updatedAppSettings);
 
       // TODO : commented for testing on iOS simulator
-      updateSubscriptionStatus({
-        globalFeatureSwitch: subsData,
-        rcCustomerInfo: rcCustomerInfoData,
-        appSettings: updatedAppSettings,
-        userAccount: updatedUserAccount,
-        callback: ({ newUserAccount, newAppSettings }) => {
-          updatedUserAccount = newUserAccount;
-          updatedAppSettings = newAppSettings;
-        },
-      });
+      // updateSubscriptionStatus({
+      //   globalFeatureSwitch: subsData,
+      //   rcCustomerInfo: rcCustomerInfoData,
+      //   appSettings: updatedAppSettings,
+      //   userAccount: updatedUserAccount,
+      //   callback: ({ newUserAccount, newAppSettings }) => {
+      //     updatedUserAccount = newUserAccount;
+      //     updatedAppSettings = newAppSettings;
+      //   },
+      // });
 
       dispatchGlobalFeatureSwitch({
         type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
