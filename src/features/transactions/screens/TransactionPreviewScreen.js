@@ -474,7 +474,7 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
                 label="Edit"
                 // width={150}
                 onPress={() =>
-                  navigation.navigate(screenList.transactionDetailsScreen, {
+                  navigation.navigate(screenList.editTransactionDetailsScreen, {
                     transaction: transaction,
                     selectedLogbook: route?.params?.selectedLogbook,
                     selectedCategory: selectedCategory,
