@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import CheckList from "../../../components/CheckList";
-import { ListItem } from "../../../components/List";
+import { ListItem, TransactionListItem } from "../../../components/List";
 import RadioButtonList from "../../../components/List/RadioButtonList";
-import { TextPrimary } from "../../../components/Text";
+import { TextPrimary, TextSecondary } from "../../../components/Text";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -32,6 +32,7 @@ import FONT_SIZE_CONSTANTS from "../../../constants/fontSizeConstants";
 import LOGBOOK_SETTINGS_CONSTANTS from "../../../constants/logbookSettingsConstants";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import BUDGET_SETTINGS_CONSTANTS from "../../../constants/budgetSettingsConstants";
+import DailySummaryExample from "../components/DailySummaryExample";
 
 const SettingsScreen = ({ navigation }) => {
   const { globalFeatureSwitch } = useGlobalFeatureSwitch();
@@ -555,6 +556,7 @@ const SettingsScreen = ({ navigation }) => {
         {logbookSettings && (
           <>
             <SettingsHeaderList label="Logbook Settings" iconName="book" />
+
             {/* // TAG : Default Currency */}
             <TextPrimary
               label="Currency"
@@ -716,72 +718,6 @@ const SettingsScreen = ({ navigation }) => {
                   });
                 }}
               />
-              {/* // TAG : Show secondary currency */}
-              <CheckList
-                pressable={getFeatureLimit({
-                  globalFeatureSwitch,
-                  subscriptionPlan: userAccount.subscription.plan,
-                  featureName: FEATURE_NAME.SECONDARY_CURRENCY,
-                })}
-                disabled={
-                  !getFeatureLimit({
-                    globalFeatureSwitch,
-                    subscriptionPlan: userAccount.subscription.plan,
-                    featureName: FEATURE_NAME.SECONDARY_CURRENCY,
-                  })
-                }
-                primaryLabel="Show secondary currency"
-                secondaryLabel="This will show secondary currency in all features in app"
-                item={true}
-                selected={logbookSettings.showSecondaryCurrency}
-                onPress={() => {
-                  if (
-                    getFeatureLimit({
-                      globalFeatureSwitch,
-                      subscriptionPlan: userAccount.subscription.plan,
-                      featureName: FEATURE_NAME.SECONDARY_CURRENCY,
-                    })
-                  ) {
-                    const payload = {
-                      ...appSettings,
-                      logbookSettings: {
-                        ...appSettings.logbookSettings,
-                        showSecondaryCurrency:
-                          !logbookSettings.showSecondaryCurrency,
-                      },
-                      _timestamps,
-                    };
-
-                    setLogbookSettings({
-                      ...logbookSettings,
-                      showSecondaryCurrency:
-                        !logbookSettings.showSecondaryCurrency,
-                    });
-
-                    setTimeout(async () => {
-                      await firestore.setData(
-                        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
-                        appSettings.uid,
-                        { ...appSettings, ...payload }
-                      );
-                    }, 1000);
-                  } else {
-                    Alert.alert(
-                      "Upgrade your subscription",
-                      "This feature is only available for premium users. Please upgrade your subscription to unlock this feature.",
-                      [
-                        { text: "Cancel", onPress: () => {}, style: "cancel" },
-                        {
-                          text: "Upgrade",
-                          onPress: () => {
-                            navigation.navigate(screenList.paywallScreen);
-                          },
-                        },
-                      ]
-                    );
-                  }
-                }}
-              />
 
               {/* // TAG : Update Currency Rates */}
               <ListItem
@@ -881,6 +817,15 @@ const SettingsScreen = ({ navigation }) => {
                 paddingBottom: 16,
               }}
             />
+
+            <ListSection
+              borderOnly={true}
+              borderColor={globalTheme.colors.primary}
+              noBackgroundColor={true}
+            >
+              <DailySummaryExample />
+            </ListSection>
+
             <ListSection>
               <RadioButtonList
                 items={LOGBOOK_SETTINGS_CONSTANTS.DAILY_SUMMARY.OPTIONS.map(
@@ -919,6 +864,73 @@ const SettingsScreen = ({ navigation }) => {
             </ListSection>
             {/* // TAG : Other */}
             <ListSection>
+              {/* // TAG : Show secondary currency */}
+              <CheckList
+                pressable={getFeatureLimit({
+                  globalFeatureSwitch,
+                  subscriptionPlan: userAccount.subscription.plan,
+                  featureName: FEATURE_NAME.SECONDARY_CURRENCY,
+                })}
+                disabled={
+                  !getFeatureLimit({
+                    globalFeatureSwitch,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    featureName: FEATURE_NAME.SECONDARY_CURRENCY,
+                  })
+                }
+                primaryLabel="Show secondary currency"
+                secondaryLabel="This will show secondary currency in all features in app"
+                item={true}
+                selected={logbookSettings.showSecondaryCurrency}
+                onPress={() => {
+                  if (
+                    getFeatureLimit({
+                      globalFeatureSwitch,
+                      subscriptionPlan: userAccount.subscription.plan,
+                      featureName: FEATURE_NAME.SECONDARY_CURRENCY,
+                    })
+                  ) {
+                    const payload = {
+                      ...appSettings,
+                      logbookSettings: {
+                        ...appSettings.logbookSettings,
+                        showSecondaryCurrency:
+                          !logbookSettings.showSecondaryCurrency,
+                      },
+                      _timestamps,
+                    };
+
+                    setLogbookSettings({
+                      ...logbookSettings,
+                      showSecondaryCurrency:
+                        !logbookSettings.showSecondaryCurrency,
+                    });
+
+                    setTimeout(async () => {
+                      await firestore.setData(
+                        FIRESTORE_COLLECTION_NAMES.APP_SETTINGS,
+                        appSettings.uid,
+                        { ...appSettings, ...payload }
+                      );
+                    }, 1000);
+                  } else {
+                    Alert.alert(
+                      "Upgrade your subscription",
+                      "This feature is only available for premium users. Please upgrade your subscription to unlock this feature.",
+                      [
+                        { text: "Cancel", onPress: () => {}, style: "cancel" },
+                        {
+                          text: "Upgrade",
+                          onPress: () => {
+                            navigation.navigate(screenList.paywallScreen);
+                          },
+                        },
+                      ]
+                    );
+                  }
+                }}
+              />
+
               {/* // TAG : Show Transaction Time */}
               <CheckList
                 pressable
