@@ -40,9 +40,10 @@ const screenList = {
   myReportsScreen: "My Reports Screen",
 
   // Transactions Screen
-  transactionDetailsScreen: "Transaction Details Screen",
+  editTransactionDetailsScreen: "Edit Transaction Details Screen",
   newTransactionDetailsScreen: "New Transaction Details Screen",
   transactionPreviewScreen: "Transaction Preview Screen",
+  transactionListByCategoryScreen: "Transaction List By Category Screen",
 
   // Category Screen
   newCategoryScreen: "New Category Screen",
