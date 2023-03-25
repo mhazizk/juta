@@ -37,7 +37,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Loading from "../../../components/Loading";
 
-const ReportSection = ({ sections }) => {
+const ReportSection = ({ sections, onPress }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
@@ -439,10 +439,21 @@ const ReportSection = ({ sections }) => {
                                 isFirstItem={isFirstItem}
                                 isLastItem={isLastItem}
                               >
-                                {!!sections[carouselIndex]?.data
-                                  ?.expenseCategoryList.length && (
+                                {!!thisSection?.data?.expenseCategoryList
+                                  .length && (
                                   <TransactionListItem
-                                    onPress={() => {}}
+                                    onPress={() =>
+                                      onPress({
+                                        category:
+                                          thisSection?.data.incomeCategoryList[
+                                            flatListIndex
+                                          ].category,
+                                        startDateInMillis:
+                                          thisSection?.startDateInMillis,
+                                        endDateInMillis:
+                                          thisSection?.endDateInMillis,
+                                      })
+                                    }
                                     categoryName={utils.upperCaseThisFirstLetter(
                                       category.name
                                     )}
@@ -534,10 +545,21 @@ const ReportSection = ({ sections }) => {
                                 isFirstItem={isFirstItem}
                                 isLastItem={isLastItem}
                               >
-                                {!!sections[carouselIndex]?.data
-                                  ?.expenseCategoryList.length && (
+                                {!!thisSection?.data?.expenseCategoryList
+                                  .length && (
                                   <TransactionListItem
-                                    onPress={() => {}}
+                                    onPress={() =>
+                                      onPress({
+                                        category:
+                                          thisSection?.data.expenseCategoryList[
+                                            flatListIndex
+                                          ].category,
+                                        startDateInMillis:
+                                          thisSection?.startDateInMillis,
+                                        endDateInMillis:
+                                          thisSection?.endDateInMillis,
+                                      })
+                                    }
                                     categoryName={utils.upperCaseThisFirstLetter(
                                       category.name
                                     )}
