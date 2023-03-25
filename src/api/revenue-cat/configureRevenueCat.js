@@ -11,6 +11,7 @@ const configureRevenueCat = async (uid) => {
           SECRET_KEYS.REVENUE_CAT_GOOGLE_API_KEY
         )
       : env.REVENUE_CAT.appleApiKey;
+      // TODO : register to Apple Developer Program and connect to RevenueCat to get the API Key for iOS
   return Promise.all([Purchases.setDebugLogsEnabled(true)])
     .then(() => {
       Purchases.configure({ apiKey: apiKey, appUserID: uid });

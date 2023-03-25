@@ -191,7 +191,11 @@ const setData = async (collectionName, documentId = null, data) => {
       // console.log("Document written with ID: ", docRef.id);
       // return docRef;
     } catch (error) {
-      Alert.alert("Error", error.message);
+      if (error.message.includes("Unsupported field value: undefined")) {
+        console.log("Error", error.message);
+      } else {
+        Alert.alert("Error", error.message);
+      }
       return Promise.reject(error);
     }
   }

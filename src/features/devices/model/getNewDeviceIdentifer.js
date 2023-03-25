@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { getDeviceId, getDeviceName, getDeviceOSName } from "../../../utils";
 
 /**
@@ -26,10 +27,10 @@ const getNewDeviceIdentifier = ({
       deviceOSName = values[2];
 
       const newDevice = {
-        device_id: deviceId,
-        device_name: deviceName,
-        device_os_name: deviceOSName,
-        expo_push_token: expoPushToken,
+        device_id: deviceId || Platform.OS,
+        device_name: deviceName || Platform.OS,
+        device_os_name: deviceOSName || Platform.OS,
+        expo_push_token: expoPushToken || "",
         last_login: Date.now(),
       };
 
@@ -37,12 +38,13 @@ const getNewDeviceIdentifier = ({
     });
   } else {
     const newDevice = {
-      device_id: deviceId,
-      device_name: deviceName,
-      device_os_name: deviceOSName,
-      expo_push_token: expoPushToken,
+      device_id: deviceId || Platform.OS,
+      device_name: deviceName || Platform.OS,
+      device_os_name: deviceOSName || Platform.OS,
+      expo_push_token: expoPushToken || "",
       last_login: Date.now(),
     };
+
     return newDevice;
   }
 };

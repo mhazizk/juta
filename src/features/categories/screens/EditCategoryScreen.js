@@ -1,12 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  TextInput,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import ionIcons from "../../../assets/iconPacks/ionIcons";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import { ButtonPrimary, ButtonSecondary } from "../../../components/Button";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import { TextPrimary } from "../../../components/Text";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
@@ -16,6 +25,7 @@ import {
   useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import * as utils from "../../../utils";
 
 const EditCategoryScreen = ({ route, navigation }) => {
   const { userAccount } = useGlobalUserAccount();
@@ -60,10 +70,29 @@ const EditCategoryScreen = ({ route, navigation }) => {
     <>
       {category && (
         <CustomScrollView>
+          <IonIcons
+            name={category.category.icon.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "10%",
+              bottom: 0,
+              right: "-30%",
+              // left: 0,
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Category Name Section */}
-          <View
+          <TouchableOpacity
+            onPress={() => inputRef.current.focus()}
             style={{
               flex: 1,
+              width: "100%",
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
@@ -74,7 +103,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Pick icon",
-                  modalType: "iconPicker",
+                  modalType: MODAL_TYPE_CONSTANTS.ICON_PICKER,
                   mainButtonLabel: "Select",
                   props: ionIcons,
                   defaultOption: category.category.icon,
@@ -94,16 +123,26 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 })
               }
             >
-              <IonIcons
-                name={category.category.icon.name}
-                size={48}
-                style={{ padding: 16 }}
-                color={
-                  category.category.icon.color === "default"
-                    ? globalTheme.colors.foreground
-                    : category.category.icon.color
-                }
-              />
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "visible",
+                }}
+              >
+                <IonIcons
+                  name={category.category.icon.name}
+                  size={48}
+                  style={{
+                    padding: 16,
+                  }}
+                  color={
+                    category.category.icon.color === "default"
+                      ? globalTheme.colors.foreground
+                      : category.category.icon.color
+                  }
+                />
+              </View>
             </TouchableNativeFeedback>
             <TextInput
               ref={inputRef}
@@ -120,7 +159,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                   minHeight: 24,
                   fontSize: 24,
                 },
-                {},
+                { width: "100%" },
               ]}
               onChangeText={(string) => {
                 setCategory({
@@ -131,7 +170,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                   },
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={category.category.name}
               value={category.category.name}
             />
@@ -150,7 +189,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 color={globalTheme.colors.foreground}
               />
             )}
-          </View>
+          </TouchableOpacity>
 
           {/* // TAG : Category Details */}
           <View
@@ -173,6 +212,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               iconRightName="chevron-forward"
               leftLabel="Type"
               useRightLabelContainer
+              rightIconPack="IonIcons"
               rightLabel={
                 category.targetCategoryType[0].toUpperCase() +
                 category.targetCategoryType.substring(1)
@@ -190,7 +230,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Category Type",
                   props: [{ name: "expense" }, { name: "income" }],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setCategory({
                       ...category,
@@ -209,6 +249,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
               iconRightName="chevron-forward"
               leftLabel="Icon color"
               useRightLabelContainer
+              rightIconPack="IonIcons"
               rightLabel=" "
               rightLabelContainerStyle={{
                 flexDirection: "row",
@@ -226,8 +267,8 @@ const EditCategoryScreen = ({ route, navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Pick Icon Color",
-                  modalType: "colorPicker",
+                  title: "Pick icon color",
+                  modalType: MODAL_TYPE_CONSTANTS.COLOR_PICKER,
                   selected: (item) => {
                     setCategory({
                       ...category,
@@ -260,16 +301,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -317,7 +349,7 @@ const EditCategoryScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

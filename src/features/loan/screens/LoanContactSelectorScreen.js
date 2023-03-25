@@ -95,6 +95,7 @@ const LoanContactSelectorScreen = ({ route, navigation }) => {
                             iconLeftName="person"
                             iconPack="IonIcons"
                             iconRightName="checkmark-circle"
+                            rightIconPack="IonIcons"
                             iconRightColor={
                               defaultOption === item.contact_uid
                                 ? globalTheme.colors.foreground

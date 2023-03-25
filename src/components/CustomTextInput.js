@@ -10,12 +10,14 @@ import { TextPrimary } from "./Text";
 const CustomTextInput = ({
   title,
   editable = true,
-  inputType,
+  inputType = "default",
   inputQuery,
   inputRef,
+  noMargin = false,
   //   secureTextEntry = false,
   maxLength = null,
   onChange,
+  onClearText,
   onEndEditing,
   placeholder,
   returnKeyType,
@@ -23,6 +25,32 @@ const CustomTextInput = ({
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  let keyboardInputType;
+  let textContentType;
+
+  switch (inputType) {
+    case "email":
+      keyboardInputType = "email-address";
+      textContentType = "emailAddress";
+      break;
+    case "password":
+      keyboardInputType = "default";
+      textContentType = "oneTimeCode";
+      break;
+    case "displayName":
+      keyboardInputType = "default";
+      textContentType = "name";
+      break;
+    case "search":
+      keyboardInputType = "default";
+      textContentType = "none";
+      break;
+    default:
+      keyboardInputType = "default";
+      textContentType = "none";
+      break;
+  }
 
   const rightButton = () => {
     switch (true) {
@@ -56,6 +84,7 @@ const CustomTextInput = ({
           <IonIcons
             onPress={() => {
               onChange("");
+              onClearText();
             }}
             name="close-circle"
             size={20}
@@ -113,14 +142,15 @@ const CustomTextInput = ({
             borderRadius: 16,
             borderWidth: 1,
             backgroundColor: globalTheme.colors.background,
-            marginVertical: 8,
+            marginVertical: noMargin ? 0 : 8,
           }}
         >
           {leftIcon(inputType)}
           <TextInput
             editable={editable}
             ref={inputRef}
-            keyboardType={inputType === "password" ? "default" : "default"}
+            textContentType={textContentType}
+            keyboardType={keyboardInputType}
             returnKeyType={returnKeyType || "default"}
             placeholder={placeholder || "Type something here ..."}
             placeholderTextColor={globalTheme.text.textSecondary.color}
@@ -134,7 +164,7 @@ const CustomTextInput = ({
             secureTextEntry={inputType === "password" && secureTextEntry}
             onChangeText={(searchText) => onChange(searchText)}
             onEndEditing={onEndEditing}
-            clearButtonMode="while-editing"
+            clearButtonMode="never"
             value={inputQuery}
           />
           {rightButton()}

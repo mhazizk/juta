@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
 // import utils.FormatCurrency from "../../../assets/utils.FormatCurrency";
 // import "intl/locale-data/jsonp/en";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -23,6 +23,8 @@ import ListSection from "../../../components/List/ListSection";
 import CURRENCY_CONSTANTS from "../../../constants/currencyConstants";
 import CheckList from "../../../components/CheckList";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -44,6 +46,8 @@ const EditLogbookScreen = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [isConvertCurrency, setIsConvertCurrency] = useState(false);
+
+  const inputRef = useRef(null);
 
   // TAG : UseEffect Section //
 
@@ -175,9 +179,27 @@ const EditLogbookScreen = ({ route, navigation }) => {
     <>
       {logbook && selectedCurrency && (
         <CustomScrollView>
-          {/* // TAG : Logbook Name Section */}
-          <View
+          <IonIcons
+            name="book"
+            size={400}
             style={{
+              position: "absolute",
+              top: "0%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
+          {/* // TAG : Logbook Name Section */}
+          <TouchableOpacity
+            onPress={() => inputRef.current.focus()}
+            style={{
+              width: "100%",
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
@@ -192,6 +214,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               color={globalTheme.colors.foreground}
             />
             <TextInput
+              ref={inputRef}
               maxLength={30}
               textAlign="center"
               returnKeyType="done"
@@ -213,7 +236,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   logbook_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={logbook.logbook_name}
               value={logbook.logbook_name}
             />
@@ -226,7 +249,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 color={globalTheme.colors.foreground}
               />
             )}
-          </View>
+          </TouchableOpacity>
           {/* </ScrollView> */}
 
           {/* // TAG : Logbook Details */}
@@ -242,18 +265,19 @@ const EditLogbookScreen = ({ route, navigation }) => {
           </View>
 
           <ListSection>
-            {/* // TAG : Main currency */}
+            {/* // TAG : Logbook currency */}
             <ListItem
               pressable
               iconLeftName="coins"
               iconPack="FontAwesome5"
-              leftLabel="Main currency"
+              leftLabel="Currency"
+              rightIconPack="IonIcons"
               iconRightName="chevron-forward"
               useRightLabelContainer
               useFlagIcon
               flagIsoCode={logbook.logbook_currency.isoCode}
               flagIconSize={18}
-              rightLabel={`${logbook.logbook_currency.name} / ${logbook.logbook_currency.symbol}`}
+              rightLabel={`${logbook.logbook_currency.currencyCode} / ${logbook.logbook_currency.symbol}`}
               rightLabelContainerStyle={{
                 flexDirection: "row",
                 maxWidth: "50%",
@@ -265,21 +289,16 @@ const EditLogbookScreen = ({ route, navigation }) => {
               }}
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
-                  title: "Main Currency",
-                  modalType: "currencyList",
+                  title: "Select logbook currency",
+                  modalType: MODAL_TYPE_CONSTANTS.CURRENCY_LIST,
                   props: CURRENCY_CONSTANTS.OPTIONS.sort((a, b) => {
                     return a.name.localeCompare(b.name);
                   }),
                   selected: (item) => {
-                    const currency = {
-                      name: item.name,
-                      isoCode: item.isoCode,
-                      symbol: item.symbol,
-                    };
-                    setSelectedCurrency(currency);
+                    setSelectedCurrency(item);
                     setLogbook({
                       ...logbook,
-                      logbook_currency: currency,
+                      logbook_currency: item,
                     });
                   },
                   defaultOption: selectedCurrency,
@@ -301,7 +320,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                   globalCurrencyRates,
                   targetCurrencyName: logbook.logbook_currency.name,
                 }),
-                currencyIsoCode: logbook.logbook_currency.isoCode,
+                currencyCountryName: logbook.logbook_currency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}`}
@@ -330,16 +349,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -357,7 +367,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

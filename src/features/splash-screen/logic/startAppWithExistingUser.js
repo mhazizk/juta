@@ -1,12 +1,6 @@
-import { signOut } from "firebase/auth/react-native";
-import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import auth from "../../../api/firebase/auth";
 import firestore from "../../../api/firebase/firestore";
 import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
-import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
-import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 import SECRET_KEYS from "../../../constants/secretManager";
 import useFirestoreSubscriptions from "../../../hooks/useFirestoreSubscriptions";
 import userAccountModel from "../../../model/userAccountModel";
@@ -14,7 +8,6 @@ import screenList from "../../../navigations/ScreenList";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import categoriesFallback from "../../../reducers/fallback-state/categoriesFallback";
 import initialCategories from "../../../reducers/initial-state/initialCategories";
-import initialGlobalCurrencyRates from "../../../reducers/initial-state/initialGlobalCurrencyRates";
 import initialGlobalLoan from "../../../reducers/initial-state/initialGlobalLoan";
 import initialLogbooks from "../../../reducers/initial-state/initialLogbooks";
 import initialRepeatedTransactions from "../../../reducers/initial-state/initialRepeatedTransactions";
@@ -31,8 +24,13 @@ import getFeatureLimit from "../../subscription/logic/getFeatureLimit";
 import FEATURE_NAME from "../../subscription/model/featureName";
 import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
-import getCurrencyRate from "../../../api/rapidapi/getCurrencyRate";
 import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
+import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
+import batchLegacyLogbookCurrencyConversion from "../../../utils/batchLegacyLogbookCurrencyConversion";
+import legacyAppSettingsCurrencyConversion from "../../../utils/legacyAppSettingsCurrencyConversion";
+import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
+import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
+import { Platform } from "react-native";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -124,9 +122,15 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
   );
   const loadSubs = firestore.getOneDoc(collectionName, docId);
-  const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
 
-  const fetchNewCurrencyData = await getCurrencyRate(globalCurrencyRates.data);
+  // TODO : commented for testing on iOS simulator
+  // const loadRCCustomerInfo = getCustomerInfo(currentUser.uid);
+
+  // const loadGlobalCurrenyRatesFromFirestore = getAllCurrenciesFromFirestore();
+  const loadGlobalCurrenyRatesFromFirestore = firestore.getOneDoc(
+    FIRESTORE_COLLECTION_NAMES.GLOBAL_CURRENCY_RATES,
+    "allCurrencyRates"
+  );
 
   return Promise.all([
     deviceId,
@@ -139,10 +143,11 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
     loadCategoriesFromFirestore,
     loadBudgetsFromFirestore,
     loadRepeatedTransactionsFromFirestore,
-    loadCurrencyRatesFromFirestore,
+    // loadCurrencyRatesFromFirestore,
+    loadGlobalCurrenyRatesFromFirestore,
     loadLoanContactsFromFirestore,
     loadSubs,
-    loadRCCustomerInfo,
+    // loadRCCustomerInfo,
   ])
     .then((data) => {
       const deviceIdData = data[0];
@@ -158,7 +163,9 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       const currencyRatesData = data[10];
       const loanContactsData = data[11];
       const subsData = data[12];
-      const rcCustomerInfoData = data[13];
+
+      // TODO : commented for testing on iOS simulator
+      // const rcCustomerInfoData = data[13];
 
       const filteredDevicesLoggedIn = userAccountData?.devicesLoggedIn.filter(
         (device) => device.device_id !== deviceIdData
@@ -199,7 +206,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         deviceOSName: deviceOSNameData,
       });
 
-      const loggedInUserAccount = {
+      const userAccountWithRecentDevice = {
         ...userAccountData,
         devicesLoggedIn: [
           ...filteredDevicesLoggedIn,
@@ -209,28 +216,44 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         ],
       };
 
-      let updatedUserAccount;
+      // TODO : commented for testing on iOS simulator
+      // let updatedUserAccount;
+      // TODO : temporary assign this variable to userAccountData
+      let updatedUserAccount = userAccountWithRecentDevice;
       let updatedAppSettings = appSettingsData;
 
-      updateSubscriptionStatus({
-        globalFeatureSwitch: subsData,
-        rcCustomerInfo: rcCustomerInfoData,
-        appSettings: appSettingsData,
-        userAccount: loggedInUserAccount,
-        callback: ({ newUserAccount, newAppSettings }) => {
-          updatedUserAccount = newUserAccount;
-          updatedAppSettings = newAppSettings;
-        },
-      });
+      // TAG : check if appSettings has budgetSettings property
+      if (!updatedAppSettings?.hasOwnProperty("budgetSettings")) {
+        updatedAppSettings = {
+          ...updatedAppSettings,
+          budgetSettings: appSettingsFallback.budgetSettings,
+        };
+      }
+
+      // TAG : check if appSettings has legacy currency property
+      updatedAppSettings =
+        legacyAppSettingsCurrencyConversion(updatedAppSettings);
+
+      // TODO : commented for testing on iOS simulator
+      // updateSubscriptionStatus({
+      //   globalFeatureSwitch: subsData,
+      //   rcCustomerInfo: rcCustomerInfoData,
+      //   appSettings: updatedAppSettings,
+      //   userAccount: updatedUserAccount,
+      //   callback: ({ newUserAccount, newAppSettings }) => {
+      //     updatedUserAccount = newUserAccount;
+      //     updatedAppSettings = newAppSettings;
+      //   },
+      // });
 
       dispatchGlobalFeatureSwitch({
         type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
         payload: subsData,
       });
 
-      setTimeout(async () => {
-        await firestore.setData(collectionName, docId, subsData);
-      }, 1);
+      // setTimeout(async () => {
+      //   await firestore.setData(collectionName, docId, subsData);
+      // }, 1);
 
       dispatchUserAccount({
         type: REDUCER_ACTIONS.USER_ACCOUNT.FORCE_SET,
@@ -273,8 +296,8 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       dispatchGlobalTheme({
         type: REDUCER_ACTIONS.THEME.SET,
-        payload: appSettingsData.theme_id
-          ? appSettingsData.theme_id
+        payload: updatedAppSettings.theme_id
+          ? updatedAppSettings.theme_id
           : appSettingsFallback.theme_id,
       });
 
@@ -306,11 +329,19 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // TAG : Logbooks
 
-      let newLogbooksData = logbooksData;
+      // Check if logbooks data includes currencyCode
+      // If not, add it
+      const newLogbooksDataWithNewCurrencyCode =
+        batchLegacyLogbookCurrencyConversion(logbooksData);
+
+      let newLogbooksData = newLogbooksDataWithNewCurrencyCode;
+
       const newLogbook = getLogbookModel({
         logbookName: "My Logbook",
         uid: currentUser.uid,
-        defaultCurrency: appSettingsData.logbookSettings.defaultCurrency,
+        defaultCurrency:
+          updatedAppSettings.logbookSettings.defaultCurrency ||
+          newAppSettings.logbookSettings.defaultCurrency,
       });
       if (logbooksData.length < 1) {
         newLogbooksData = [newLogbook];
@@ -320,6 +351,18 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
             newLogbook.logbook_id,
             newLogbook
           );
+        }, 1);
+      }
+
+      if (!logbooksData[0].logbook_currency.currencyCode) {
+        newLogbooksData.forEach(async (logbookWithNewCurrency) => {
+          setTimeout(async () => {
+            await firestore.setData(
+              FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+              logbookWithNewCurrency.logbook_id,
+              logbookWithNewCurrency
+            );
+          });
         }, 1);
       }
 
@@ -360,11 +403,26 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // Check budget if it is expired
       // const budget = budgetsData[0];
+      const budgets = budgetsData;
+      const addedBudgetType = budgetsData.map((budget) => {
+        if (!budget.hasOwnProperty("budget_type")) {
+          return {
+            ...budget,
+            budget_type:
+              BUDGET_TYPE_CONSTANTS.OPTIONS[
+                BUDGET_TYPE_CONSTANTS.OPTIONS.length - 1
+              ].id,
+          };
+        } else {
+          return budget;
+        }
+      });
+
       let newBudget;
-      if (budgetsData.length > 1) {
-        console.log(budgetsData);
+      if (addedBudgetType.length > 1) {
+        console.log(addedBudgetType);
         const today = Date.now();
-        const budget = budgetsData[0];
+        const budget = addedBudgetType[0];
         // const foundBudget = budget.find((budget) => {
         //   today > budget.finish_date;
         // });
@@ -379,7 +437,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }
         dispatchBudgets({
           type: REDUCER_ACTIONS.BUDGETS.SET,
-          payload: newBudget || budgetsData[0],
+          payload: newBudget || addedBudgetType[0],
         });
       }
 
@@ -389,46 +447,45 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       const nullish = [null, undefined, "error"];
 
-      const isNewFetchNullish =
-        fetchNewCurrencyData.includes(nullish) ||
-        fetchNewCurrencyData.length < 1;
+      // const isNewFetchNullish =
+      // fetchNewCurrencyData.includes(nullish) ||
+      // fetchNewCurrencyData.length < 1;
 
-      const isStoredCurrencyRatesAvailable = currencyRatesData?.length > 0;
+      const isStoredCurrencyRatesAvailable = Boolean(currencyRatesData);
 
       if (isStoredCurrencyRatesAvailable) {
         newCurrencyRateData = currencyRatesData;
       }
 
-      if (!isNewFetchNullish) {
-        newCurrencyRateData = fetchNewCurrencyData;
-      }
+      // if (!isNewFetchNullish) {
+      //   newCurrencyRateData = fetchNewCurrencyData;
+      // }
 
-      const newCurrencyRates = {
-        ...initialGlobalCurrencyRates,
-        uid: currentUser.uid,
-        data: newCurrencyRateData,
-        _timestamps: {
-          created_at: Date.now(),
-          created_by: currentUser.uid,
-          updated_at: Date.now(),
-          updated_by: currentUser.uid,
-        },
-      };
-
+      // const newCurrencyRates = {
+      //   ...initialGlobalCurrencyRates,
+      //   uid: currentUser.uid,
+      //   data: newCurrencyRateData,
+      //   _timestamps: {
+      //     created_at: Date.now(),
+      //     created_by: currentUser.uid,
+      //     updated_at: Date.now(),
+      //     updated_by: currentUser.uid,
+      //   },
+      // };
       dispatchGlobalCurrencyRates({
         type: REDUCER_ACTIONS.CURRENCY_RATES.FORCE_SET,
-        payload: newCurrencyRates,
+        payload: newCurrencyRateData,
       });
 
-      if (!isNewFetchNullish) {
-        setTimeout(async () => {
-          await firestore.setData(
-            FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
-            currentUser.uid,
-            newCurrencyRates
-          );
-        }, 1);
-      }
+      // if (!isNewFetchNullish) {
+      //   setTimeout(async () => {
+      //     await firestore.setData(
+      //       FIRESTORE_COLLECTION_NAMES.CURRENCY_RATES,
+      //       currentUser.uid,
+      //       newCurrencyRates
+      //     );
+      //   }, 1);
+      // }
 
       // TAG : Repeated transactions
 
@@ -483,7 +540,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       setTimeout(() => {
         useFirestoreSubscriptions({
-          uid: userAccountData?.uid,
+          uid: updatedUserAccount.uid,
           skipFirstRun: true,
 
           appSettings: appSettings,
@@ -510,9 +567,6 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           badgeCounter: badgeCounter,
           dispatchBadgeCounter: dispatchBadgeCounter,
 
-          globalCurrencyRates,
-          dispatchGlobalCurrencyRates,
-
           globalLoan,
           dispatchGlobalLoan,
 
@@ -526,9 +580,16 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       return screenList.bottomTabNavigator;
     })
     .catch((err) => {
-      console.log(err);
+      console.log(
+        JSON.stringify(
+          { error: "error on startAppWithExistingUser", err },
+          null,
+          2
+        )
+      );
       // TODO: handle error on iOS
-      return screenList.loginScreen;
+      return screenList.bottomTabNavigator;
+      // return screenList.bottomTabNavigator;
     });
 };
 

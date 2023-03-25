@@ -18,6 +18,8 @@ import {
 } from "../../../reducers/GlobalContext";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const NewLoanContactScreen = ({ route, navigation }) => {
   const { fromScreen, targetScreen } = route.params;
@@ -114,7 +116,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
                   contact_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={contact.contact_name}
               value={contact.contact_name}
             />
@@ -181,7 +183,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
                     { name: "non-profit" },
                     { name: "government" },
                   ],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setContact({
                       ...contact,
@@ -195,16 +197,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -222,7 +215,7 @@ const NewLoanContactScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

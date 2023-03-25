@@ -2,16 +2,14 @@ import { View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { TextPrimary } from "../../../components/Text";
 
-const AnimatedLoginText = () => {
+const AnimatedLoginText = ({ onScrollEnd }) => {
   const textData = [
-    { name: "food", emoji: "🍜" },
-    { name: "travel", emoji: "🚗" },
-    { name: "shopping", emoji: "🛍" },
-    { name: "salary", emoji: "💰" },
-    { name: "bills", emoji: "📝" },
-    { name: "games", emoji: "🎮" },
-    { name: "gifts", emoji: "🎁" },
-    { name: "loan", emoji: "💸" },
+    { name: "food", emoji: "🍜", iconName: "fast-food" },
+    { name: "travel", emoji: "🚗", iconName: "car" },
+    { name: "shopping", emoji: "🛒", iconName: "cart" },
+    { name: "games", emoji: "🎮", iconName: "game-controller" },
+    { name: "gifts", emoji: "🎁", iconName: "gift" },
+    { name: "medicine", emoji: "⚕️", iconName: "medical" },
   ];
   return (
     <>
@@ -21,12 +19,12 @@ const AnimatedLoginText = () => {
           alignItems: "center",
           justifyContent: "center",
           height: 64,
+          // paddingBottom: 16,
         }}
       >
         <TextPrimary
           label="Your"
           style={{
-            paddingBottom: 16,
             fontSize: 48,
             fontWeight: "bold",
           }}
@@ -46,6 +44,8 @@ const AnimatedLoginText = () => {
             scrollAnimationDuration={1000}
             //   width={100}
             // height={72}
+            onSnapToItem={(index) => onScrollEnd(textData[index].iconName)}
+            onScrollEnd={(index) => onScrollEnd(textData[index].iconName)}
             height={64}
             data={textData}
             key={(index) => index}
@@ -53,9 +53,7 @@ const AnimatedLoginText = () => {
               <>
                 <View
                   style={{
-                    // flex: 1,
-                    // width: 200,
-                    // height: 64,
+                    flex: 1,
                     flexDirection: "row",
                     paddingLeft: 10,
                     justifyContent: "flex-start",

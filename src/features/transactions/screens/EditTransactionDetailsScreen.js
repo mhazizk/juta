@@ -1,4 +1,6 @@
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import RNDateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 // import Intl from "intl";
 // import { getLocales } from 'expo-localization';
 // import "intl/locale-data/jsonp/en";
@@ -8,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Platform,
   ScrollView,
   TextInput,
   TouchableNativeFeedback,
@@ -45,6 +48,10 @@ import {
 } from "../../../api/firebase/cloudStorage";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import ImageViewer from "../../image-viewer/components/ImageViewer";
 
 const EditTransactionDetailsScreen = ({ route, navigation }) => {
   // TAG : useContext Section //
@@ -241,6 +248,22 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     <>
       {transaction && selectedCategory && selectedLogbook && (
         <CustomScrollView>
+          <IonIcons
+            name={selectedCategory?.icon?.name}
+            size={400}
+            style={{
+              position: "absolute",
+              top: "0%",
+              bottom: 0,
+              right: "-30%",
+              zIndex: -1,
+            }}
+            color={utils.hexToRgb({
+              hex: globalTheme.colors.secondary,
+              opacity: 0.3,
+            })}
+          />
+
           {/* // TAG : Amount Section */}
           <TouchableOpacity
             onPress={() => inputAmount.current.focus()}
@@ -279,8 +302,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 keyboardType="number-pad"
                 placeholder={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode:
-                    appSettings.logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName:
+                    appSettings.logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -316,16 +339,16 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     },
                   });
                 }}
-                clearButtonMode="while-editing"
+                clearButtonMode="never"
                 defaultValue={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: transaction.details.amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -347,7 +370,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
             )}
           </TouchableOpacity>
           {/* </ScrollView> */}
-
           {/* // TAG : Details Section */}
           <View
             style={[
@@ -368,7 +390,6 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-
           <ListSection>
             {/* // TAG : Transaction */}
             <ListItem
@@ -404,7 +425,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Transaction",
                   props: [{ name: "expense" }, { name: "income" }],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setTransaction({
                       ...transaction,
@@ -433,15 +454,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               }, ${
                 !transaction?.details?.date
                   ? "Pick date"
-                  : new Date(transaction.details.date)
-                      .getHours()
-                      .toString()
-                      .padStart(2, "0") +
-                    ":" +
-                    new Date(transaction.details.date)
-                      .getMinutes()
-                      .toString()
-                      .padStart(2, "0")
+                  : new Date(transaction?.details?.date).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )
               }`}
               iconPack="IonIcons"
               iconLeftName="calendar"
@@ -466,21 +485,43 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     ? globalTheme.list.incomeContainer.color
                     : globalTheme.text.textPrimary.color,
               }}
-              onPress={() =>
-                utils.datePicker({
-                  initialDateInMillis: transaction?.details?.date,
-                  pickerStyle: "dateAndTime",
-                  callback: (dateInMillis) => {
-                    setTransaction({
-                      ...transaction,
-                      details: {
-                        ...transaction.details,
-                        date: dateInMillis,
+              onPress={() => {
+                switch (Platform.OS) {
+                  case "android":
+                    return utils.datePicker({
+                      initialDateInMillis: transaction?.details?.date,
+                      pickerStyle: "dateAndTime",
+                      callback: (dateInMillis) => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            date: dateInMillis,
+                          },
+                        });
                       },
                     });
-                  },
-                })
-              }
+
+                  case "ios":
+                    return navigation.navigate(screenList.modalScreen, {
+                      title: "Select date",
+                      modalType: MODAL_TYPE_CONSTANTS.DATE_AND_TIME_PICKER,
+                      defaultOption: transaction?.details?.date,
+                      selected: (dateInMillis) => {
+                        setTransaction({
+                          ...transaction,
+                          details: {
+                            ...transaction.details,
+                            date: dateInMillis,
+                          },
+                        });
+                      },
+                    });
+
+                  default:
+                    return;
+                }
+              }}
             />
             {/* // TAG : From Logbook */}
             <ListItem
@@ -517,7 +558,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Logbooks",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   props: loadedLogbooks,
                   iconProps: {
                     name: "book",
@@ -581,7 +622,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Select category",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   props:
                     transaction.details.in_out === "expense"
                       ? categories.categories.expense.sort((a, b) => {
@@ -664,8 +705,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         selectedLoanContact?.contact_name
                       )
                     : transaction.details.category_id.includes("loan")
-                    ? "Add Borrower name"
-                    : "Add Lender name"
+                    ? "Add"
+                    : "Add"
                 }
                 iconPack="IonIcons"
                 iconLeftName="person"
@@ -786,7 +827,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         },
                       });
                     }}
-                    clearButtonMode="while-editing"
+                    clearButtonMode="never"
                     defaultValue={transaction.details.notes}
                     value={transaction.details.notes}
                   />
@@ -814,17 +855,16 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               </View>
             </TouchableNativeFeedback>
           </ListSection>
-
           {/* // TAG : Attachment Image */}
           {/* // TODO : hold the release of attachments */}
-          {/* <ListSection>
+          <ListSection>
             <ListItem
               pressable
               disabled={
                 !getFeatureLimit({
-                globalFeatureSwitch,
-                subscriptionPlan: userAccount.subscription.plan,
-                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                  globalFeatureSwitch,
+                  subscriptionPlan: userAccount.subscription.plan,
+                  featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
                 })
               }
               leftLabel="Attachment Images"
@@ -832,28 +872,28 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               rightLabel={
                 transaction?.details?.attachment_URL?.length
-                  ? transaction?.details?.attachment_URL?.length + " image(s)"
-                  : "Add attachment"
+                  ? transaction?.details?.attachment_URL?.length + " image(s) "
+                  : "Add "
               }
               iconRightName="add"
               onPress={async () => {
                 if (
-                getFeatureLimit({
-                globalFeatureSwitch,
-                subscriptionPlan: userAccount.subscription.plan,
-                featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
-                })
+                  getFeatureLimit({
+                    globalFeatureSwitch,
+                    subscriptionPlan: userAccount.subscription.plan,
+                    featureName: FEATURE_NAME.ATTACHMENT_IMAGES,
+                  })
                 ) {
                   // No permissions request is necessary for launching the image library
                   let result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
                     allowsEditing: true,
                     allowsMultipleSelection: true,
-                    quality: 1,
+                    quality: 0.3,
                   });
 
                   const { canceled, assets } = result;
-                  const uri = assets.map((asset) => asset.uri);
+                  const uri = assets?.map((asset) => asset.uri);
                   if (!result.canceled) {
                     setTransaction({
                       ...transaction,
@@ -887,7 +927,9 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 }
               }}
             />
-            <FlatList
+            <Animated.FlatList
+              entering={SlideInDown.duration(500)}
+              exiting={SlideOutDown.duration(500)}
               horizontal
               data={transaction?.details?.attachment_URL}
               contentContainerStyle={{
@@ -895,6 +937,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 justifyContent: "center",
                 minWidth: "100%",
               }}
+              keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <>
                   {item && (
@@ -902,12 +945,17 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                       <TouchableOpacity
                         style={{
                           zIndex: 1,
-                          padding: 8,
+                          padding: 16,
                           position: "absolute",
-                          top: 0,
-                          right: 0,
+                          top: 8,
+                          right: 8,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderBottomLeftRadius: 16,
+                          backgroundColor: utils.hexToRgb({
+                            hex: globalTheme.colors.secondary,
+                            opacity: 0.3,
+                          }),
                         }}
                         onPress={() =>
                           setTransaction({
@@ -915,7 +963,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                             details: {
                               ...transaction?.details,
                               attachment_URL: [
-                                ...transaction.details.attachment_URL?.filter(
+                                ...transaction.details.attachment_URL.filter(
                                   (url) => url !== item
                                 ),
                               ],
@@ -926,30 +974,20 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                         <IonIcons
                           name="close-circle"
                           size={20}
-                          style={{ padding: 16 }}
                           color={globalTheme.colors.foreground}
                         />
                       </TouchableOpacity>
 
-                      <TouchableNativeFeedback
-                        onPress={() => {
+                      <ImageViewer
+                        uri={item}
+                        onPress={(uri) => {
                           navigation.navigate(screenList.imageViewerScreen, {
-                            uri: item,
+                            uri,
                             uriList: transaction?.details?.attachment_URL,
+                            defaultUri: item,
                           });
                         }}
-                      >
-                        <Image
-                          source={{ uri: item }}
-                          style={{
-                            margin: 8,
-                            alignSelf: "center",
-                            borderRadius: 16,
-                            width: 200,
-                            height: 200,
-                          }}
-                        />
-                      </TouchableNativeFeedback>
+                      />
                     </>
                   )}
                 </>
@@ -962,6 +1000,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
+                    backgroundColor: globalTheme.colors.secondary,
                   }}
                   onPress={() =>
                     setTransaction({
@@ -976,26 +1015,15 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                   <IonIcons
                     name="close-circle"
                     size={20}
-                    style={{ padding: 16 }}
+                    style={{ paddingVertical: 16, paddingRight: 8 }}
                     color={globalTheme.colors.foreground}
                   />
                   <TextPrimary label="Clear all" />
                 </TouchableOpacity>
               </>
             )}
-          </ListSection> */}
-
-          {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          </ListSection>
+          <ActionButtonWrapper>
             {/* // TAG : Cancel Button */}
             <View style={{ flex: 1, paddingRight: 8 }}>
               <ButtonSecondary
@@ -1020,7 +1048,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

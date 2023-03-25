@@ -1,37 +1,16 @@
+import CURRENCY_CONSTANTS from "../../constants/currencyConstants";
+
 const initialGlobalCurrencyRates = {
-  uid: null,
-  data: [
-    {
-      name: "USD",
-      isoCode: "us",
-      rate: 1,
-    },
-    {
-      name: "IDR",
-      isoCode: "id",
-      rate: 15000,
-    },
-    {
-      name: "EUR",
-      isoCode: "eu",
-      rate: 0.93,
-    },
-    {
-      name: "GBP",
-      isoCode: "gb",
-      rate: 0.83,
-    },
-    {
-      name: "JPY",
-      isoCode: "jp",
-      rate: 132,
-    },
-  ],
+  // uid: null,
+  data: CURRENCY_CONSTANTS.OPTIONS.map((currency) => ({
+    ...currency,
+    rate: 1,
+  })),
   _timestamps: {
-    created_at: Date.now(),
-    created_by: null,
-    updated_at: Date.now(),
-    updated_by: null,
+    createdAt: Date.now(),
+    createdBy: null,
+    updatedAt: Date.now(),
+    updatedBy: null,
   },
 };
 export default initialGlobalCurrencyRates;

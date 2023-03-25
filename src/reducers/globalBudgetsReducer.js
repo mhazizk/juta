@@ -62,8 +62,8 @@ const globalBudgetsReducer = (state, action) => {
 
     case REDUCER_ACTIONS.BUDGETS.DELETE_ONE:
       if (reducerUpdatedAt > state.reducerUpdatedAt) {
-        let foundOtherBudget = state.budgets.filter(
-          (budget) => budget.budget_id !== deleteBudget.budget_id
+        let foundOtherBudget = state.budgets?.filter(
+          (budget) => budget?.budget_id !== deleteBudget.budget_id
         );
 
         if (!foundOtherBudget.length) {
@@ -74,14 +74,8 @@ const globalBudgetsReducer = (state, action) => {
           };
         }
 
-        let sortOtherBudgets = foundOtherBudget.sort((a, b) => {
-          if (a.budget_name < b.budget_name) {
-            return -1;
-          }
-          if (a.budget_name > b.budget_name) {
-            return 1;
-          }
-          return 0;
+        let sortOtherBudgets = foundOtherBudget?.sort((a, b) => {
+          return a.budget_name.localCompare(b.budget_name);
         });
 
         return {

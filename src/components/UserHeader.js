@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import {
   Dimensions,
-  Image,
   SafeAreaView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -13,8 +13,9 @@ import {
   useGlobalUserAccount,
 } from "../reducers/GlobalContext";
 import { TextPrimary, TextSecondary } from "./Text";
+import { Image } from "expo-image";
 
-const UserHeaderComponent = ({ navigation }) => {
+const UserHeaderComponent = ({ navigation, onPress }) => {
   const { userAccount } = useGlobalUserAccount();
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
@@ -34,7 +35,8 @@ const UserHeaderComponent = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <View
+          <TouchableOpacity
+            onPress={() => onPress()}
             style={{
               alignItems: "center",
               justifyContent: "center",
@@ -48,6 +50,7 @@ const UserHeaderComponent = ({ navigation }) => {
             {userAccount.photoURL && (
               <Image
                 source={{ uri: userAccount.photoURL }}
+                cachePolicy="memory-disk"
                 style={{
                   borderRadius: 128 / 2,
                   height: 128,
@@ -63,7 +66,7 @@ const UserHeaderComponent = ({ navigation }) => {
                 display: !userAccount.photoURL ? "flex" : "none",
               }}
             />
-          </View>
+          </TouchableOpacity>
           <View
             style={{
               flexDirection: "row",

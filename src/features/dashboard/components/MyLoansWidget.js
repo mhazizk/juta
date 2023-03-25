@@ -15,6 +15,7 @@ import screenList from "../../../navigations/ScreenList";
 import Loading from "../../../components/Loading";
 import TextTicker from "react-native-text-ticker";
 import * as utils from "../../../utils";
+import Animated from "react-native-reanimated";
 
 const customDate = utils.getCustomDate(Date.now());
 
@@ -24,6 +25,7 @@ const MyLoansWidget = ({
   marginHorizontal = 0,
   marginVertical = 0,
   width = Dimensions.get("window").width / 2 - 24,
+  enteringAnimation = null,
   onPress,
 }) => {
   const { globalTheme } = useGlobalTheme();
@@ -96,7 +98,8 @@ const MyLoansWidget = ({
   return (
     <>
       {isLoading && (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             // flex: 1,
             height: height,
@@ -112,12 +115,13 @@ const MyLoansWidget = ({
           }}
         >
           <Loading />
-        </View>
+        </Animated.View>
       )}
       {!isLoading && (
         <>
           <TouchableOpacity onPress={() => onPress()}>
-            <View
+            <Animated.View
+              entering={enteringAnimation}
               style={{
                 height: height,
                 width: width,
@@ -156,7 +160,7 @@ const MyLoansWidget = ({
                 name="cash"
                 color={utils.hexToRgb({
                   hex: globalTheme.widgets.myLoans.cardTextColor,
-                  opacity: 0.3,
+                  opacity: 0.2,
                 })}
                 size={100}
                 style={{
@@ -166,7 +170,7 @@ const MyLoansWidget = ({
                   right: -0,
                 }}
               />
-            </View>
+            </Animated.View>
           </TouchableOpacity>
         </>
       )}
@@ -296,8 +300,8 @@ const ShowNextPaymentForOneContact = () => {
                       appSettings.logbookSettings.defaultCurrency.name,
                   })
                 ),
-                currencyIsoCode:
-                  appSettings.logbookSettings.defaultCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.defaultCurrency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}
@@ -346,8 +350,8 @@ const ShowNextPaymentForOneContact = () => {
                   target: appSettings.logbookSettings.secondaryCurrency.name,
                   globalCurrencyRates: globalCurrencyRates,
                 }),
-                currencyIsoCode:
-                  appSettings.logbookSettings.secondaryCurrency.isoCode,
+                currencyCountryName:
+                  appSettings.logbookSettings.secondaryCurrency.name,
                 negativeSymbol:
                   appSettings.logbookSettings.negativeCurrencySymbol,
               })}

@@ -1,3 +1,5 @@
+import * as utils from "../../utils";
+
 /*
  * Insert many transactions into existing state
  * @param message {Object} - the message object
@@ -11,14 +13,9 @@ const insertedManyTransactionsHandler = (state, action) => {
   newInsertedTransactions.forEach((newInsertedTransaction) => {
     // console.log(newInsertedTransaction);
     // STEP : 2. create new custom date
-    const customInsertDate = `${new Date(
+    const customInsertDate = utils.getCustomDate(
       newInsertedTransaction.details.date
-    ).getFullYear()}/${(
-      "0" +
-      (new Date(newInsertedTransaction.details.date).getMonth() + 1)
-    ).slice(-2)}/${(
-      "0" + new Date(newInsertedTransaction.details.date).getDate()
-    ).slice(-2)}`;
+    );
 
     // STEP : 3. get previous transaction
     // let existingTransaction = null;
@@ -51,7 +48,7 @@ const insertedManyTransactionsHandler = (state, action) => {
     let newSection;
     if (!foundSection) {
       newSection = {
-        title: new Date(newInsertedTransaction.details.date).toDateString(),
+        title: utils.getRelativeDate(newInsertedTransaction.details.date),
         customDate: customInsertDate,
         data: [newInsertedTransaction],
       };

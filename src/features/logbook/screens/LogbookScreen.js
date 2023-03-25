@@ -20,6 +20,8 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import TransactionList from "../../../features/transactions/components/TransactionList";
 import * as utils from "../../../utils";
 import TextTicker from "react-native-text-ticker";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import { LogbookButton } from "../../../components/Button";
 const { width, height } = Dimensions.get("screen");
 
 const LogbookScreen = ({ route, navigation }) => {
@@ -153,7 +155,7 @@ const LogbookScreen = ({ route, navigation }) => {
         return logbook.logbook_id === selectedLogbook.logbook_id;
       });
       // console.log(filtered)
-      setFilteredTransactions(filtered.transactions.map((section) => section));
+      setFilteredTransactions(filtered.transactions?.map((section) => section));
     }
 
     // if (selectedLogbook && sortedTransactions) {
@@ -234,78 +236,57 @@ const LogbookScreen = ({ route, navigation }) => {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: 16,
+                  zIndex: 1,
                 },
               ]}
             >
-              <TouchableOpacity
-                style={{ flexShrink: 1, flexGrow: 1, maxWidth: "70%" }}
-                onPress={() =>
-                  navigation.navigate(screenList.modalScreen, {
-                    title: "Logbooks",
-                    mainButtonLabel: "Select",
-                    iconProps: {
-                      name: "book",
-                      pack: "IonIcons",
-                    },
-                    props: logbooks.logbooks
-                      .sort((a, b) => {
-                        return a.logbook_name.localeCompare(b.logbook_name);
-                      })
-                      .map((logbook) => {
-                        return {
-                          ...logbook,
-                          name: logbook.logbook_name,
-                          key: logbook.logbook_id,
-                        };
-                      }),
-                    modalType: "list",
-                    selected: (item) => {
-                      setTargetLogbook(item);
-                    },
-                    defaultOption: {
-                      ...selectedLogbook,
-                      name: selectedLogbook?.name,
-                    },
-                  })
-                }
+              <View
+                style={{
+                  flex: 1.5,
+                }}
               >
-                <View
-                  style={[
-                    {
-                      height: 48,
-                      paddingLeft: 16,
-                      flexDirection: "row",
-                      borderRadius: 16,
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    },
-                    {
-                      backgroundColor: globalTheme.headerButton.backgroundColor,
-                    },
-                  ]}
-                >
-                  <TextPrimary
-                    label={
-                      selectedLogbook?.name[0].toUpperCase() +
-                      selectedLogbook?.name.substring(1)
-                    }
-                    style={{
-                      flex: 1,
-                      color: globalTheme.headerButton.color,
-                    }}
-                    numberOfLines={1}
-                  />
-                  <IonIcons
-                    name="chevron-down"
-                    size={18}
-                    color={globalTheme.headerButton.color}
-                    style={{ flexShrink: 0, paddingHorizontal: 16 }}
-                  />
-                </View>
-              </TouchableOpacity>
+                <LogbookButton
+                  width="100%"
+                  selectedLogbookName={selectedLogbook?.name}
+                  onPress={() => {
+                    navigation.navigate(screenList.modalScreen, {
+                      title: "Logbooks",
+                      mainButtonLabel: "Select",
+                      iconProps: {
+                        name: "book",
+                        pack: "IonIcons",
+                      },
+                      props: logbooks.logbooks
+                        .sort((a, b) => {
+                          return a.logbook_name.localeCompare(b.logbook_name);
+                        })
+                        .map((logbook) => {
+                          return {
+                            ...logbook,
+                            name: logbook.logbook_name,
+                            key: logbook.logbook_id,
+                          };
+                        }),
+                      modalType: MODAL_TYPE_CONSTANTS.LIST,
+                      selected: (item) => {
+                        setTargetLogbook(item);
+                      },
+                      defaultOption: {
+                        ...selectedLogbook,
+                        name: selectedLogbook?.name,
+                      },
+                    });
+                  }}
+                />
+              </View>
 
               {/* Number of Transactions */}
-              <View style={{ flex: 1, alignItems: "flex-end" }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "flex-end",
+                }}
+              >
                 <TextPrimary
                   label={
                     (countTransactions(selectedLogbook) || "No") +
@@ -330,7 +311,7 @@ const LogbookScreen = ({ route, navigation }) => {
                     selectedLogbook?.logbook_currency?.symbol
                   } ${utils.getFormattedNumber({
                     value: totalBalance(selectedLogbook),
-                    currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                    currencyCountryName: selectedLogbook.logbook_currency.name,
                     negativeSymbol:
                       appSettings.logbookSettings.negativeCurrencySymbol,
                   })}`}
@@ -357,8 +338,8 @@ const LogbookScreen = ({ route, navigation }) => {
                           appSettings.logbookSettings.secondaryCurrency.name,
                         globalCurrencyRates: globalCurrencyRates,
                       }),
-                      currencyIsoCode:
-                        appSettings.logbookSettings.secondaryCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.secondaryCurrency.name,
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
                     })}`}

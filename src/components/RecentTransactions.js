@@ -12,8 +12,10 @@ import { ListItem, SearchResultListItem, TransactionListItem } from "./List";
 import { TextPrimary, TextSecondary } from "./Text";
 import * as utils from "../utils";
 import ListSection from "./List/ListSection";
+import Animated, { BounceIn } from "react-native-reanimated";
 
 const RecentTransactions = ({
+  enteringAnimation = null,
   route,
   navigation,
   expenseOnly,
@@ -165,28 +167,37 @@ const RecentTransactions = ({
 
   return (
     <>
-      <TextPrimary
-        label={title || "Recent Transactions"}
+      <Animated.View
+        entering={enteringAnimation}
         style={{
-          paddingHorizontal: 16,
-          alignSelf: "flex-start",
-          fontSize: 18,
-          fontWeight: "bold",
+          width: "100%",
+          alignItems: "flex-start",
+          paddingBottom: 16,
         }}
-      />
-      {!showList && (
-        <TextSecondary
-          label={`No ${title || "Recent Transactions"}`}
+      >
+        <TextPrimary
+          label={title || "Recent Transactions"}
           style={{
             paddingHorizontal: 16,
             alignSelf: "flex-start",
-            paddingVertical: 8,
+            fontSize: 18,
+            fontWeight: "bold",
           }}
         />
-      )}
-      <ListSection marginTop={8}>
+        {!showList && (
+          <TextSecondary
+            label={`No ${title || "Recent Transactions"}`}
+            style={{
+              paddingHorizontal: 16,
+              alignSelf: "flex-start",
+            }}
+          />
+        )}
+      </Animated.View>
+      <ListSection enteringAnimation={enteringAnimation}>
         {!isLoading && (
-          <FlatList
+          <Animated.FlatList
+            entering={enteringAnimation}
             nestedScrollEnabled
             data={recentTransactions}
             keyExtractor={(item) => item.transaction.transaction_id}

@@ -18,7 +18,10 @@
     "ios": {
       "buildNumber": "1",
       "bundleIdentifier": "app.juta",
-      "supportsTablet": true,
+      "supportsTablet": false,
+      "entitlements": {
+        "com.apple.developer.networking.wifi-info": true
+      },
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
@@ -50,6 +53,12 @@
     "plugins": [
       "sentry-expo",
       [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Allow this app to collect app-related data that related to you or your device to provide and improve our service."
+        }
+      ],
+      [
         "expo-media-library",
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
@@ -64,6 +73,12 @@
         }
       ],
       [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./src/assets/icons/notification-icon.png",
@@ -72,9 +87,6 @@
       ]
     ],
     "extra": {
-      "eas": {
-        "projectId": "4c20a6fe-d8c0-40a2-9324-2f39af56f8a3"
-      }
     },
     "runtimeVersion": {
       "policy": "appVersion"

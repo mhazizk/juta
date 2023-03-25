@@ -23,8 +23,7 @@ import {
   uploadAndGetAttachmentImageURL,
 } from "../../api/firebase/cloudStorage";
 import uuid from "react-native-uuid";
-import postLogSnagEvent from "../../api/logsnag/postLogSnagEvent";
-import LOGSNAG_EVENT_TYPES from "../../api/logsnag/logSnagEventTypes";
+import uploadAttachmentImage from "../../api/firebase/uploadAttachmentImage";
 
 const LoadingScreen = ({ route, navigation }) => {
   const {
@@ -105,7 +104,7 @@ const LoadingScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // console.log({ onLoad: route.params.initialRawTransactionsLength })
-    console.log("loadingScreenParams :" + JSON.stringify(route?.params));
+    console.log(JSON.stringify(route?.params, null, 2));
 
     // TAG : Transaction Timeout
     setTimeout(
@@ -120,10 +119,6 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Insert One Transaction Method
           case transaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.INSERT_ONE:
-            // postLogSnagEvent(
-            //   userAccount.displayName,
-            //   LOGSNAG_EVENT_TYPES.TRANSACTION_NEW
-            // );
             if (transaction.details.attachment_URL.length > 0) {
               const newAttachmentURL = transaction.details.attachment_URL.map(
                 (uri) => {
@@ -131,14 +126,12 @@ const LoadingScreen = ({ route, navigation }) => {
                 }
               );
 
+              // TODO : fix upload image to firebase cloud storage
               const getNewURL = async () => {
                 const attachmentURL = [];
                 await newAttachmentURL.reduce(async (prev, curr) => {
                   await prev;
-                  const newURL = await uploadAndGetAttachmentImageURL(
-                    curr.uri,
-                    curr.id
-                  );
+                  const newURL = await uploadAttachmentImage(curr.uri, curr.id);
                   attachmentURL.push(newURL);
                 }, Promise.resolve());
                 // alert("attachment Uploaded");
@@ -153,6 +146,7 @@ const LoadingScreen = ({ route, navigation }) => {
                     attachment_URL: attachmentURL,
                   },
                 };
+                console.log(JSON.stringify({ finalTransaction }, null, 2));
                 // TODO : commented out for testing
                 setTimeout(async () => {
                   await firestore.setData(
@@ -219,10 +213,7 @@ const LoadingScreen = ({ route, navigation }) => {
               const attachmentURL = [];
               await uriWithUUID.reduce(async (prev, curr) => {
                 await prev;
-                const newURL = await uploadAndGetAttachmentImageURL(
-                  curr.uri,
-                  curr.id
-                );
+                const newURL = await uploadAttachmentImage(curr.uri, curr.id);
                 attachmentURL.push(newURL);
               }, Promise.resolve());
               return attachmentURL;
@@ -265,11 +256,9 @@ const LoadingScreen = ({ route, navigation }) => {
 
                 dispatchSortedTransactions({
                   type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                    .PATCH_TRANSACTION,
+                    .PATCH_MANY_TRANSACTIONS,
                   payload: {
-                    prevTransaction,
-                    patchTransaction: finalTransaction,
-                    logbookToOpen,
+                    patchedTransactions: [finalTransaction],
                     reducerUpdatedAt,
                   },
                 });
@@ -301,11 +290,9 @@ const LoadingScreen = ({ route, navigation }) => {
 
               dispatchSortedTransactions({
                 type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
-                  .PATCH_TRANSACTION,
+                  .PATCH_MANY_TRANSACTIONS,
                 payload: {
-                  prevTransaction,
-                  patchTransaction: finalTransaction,
-                  logbookToOpen,
+                  patchedTransactions: [finalTransaction],
                   reducerUpdatedAt,
                 },
               });
@@ -315,11 +302,6 @@ const LoadingScreen = ({ route, navigation }) => {
           // TAG : Delete One Transaction Method
           case deleteTransaction &&
             loadingType === LOADING_TYPES.TRANSACTIONS.DELETE_ONE:
-            // postLogSnagEvent(
-            //   userAccount.displayName,
-            //   LOGSNAG_EVENT_TYPES.TRANSACTION_DELETE
-            // );
-
             dispatchSortedTransactions({
               type: REDUCER_ACTIONS.SORTED_TRANSACTIONS.GROUP_SORTED
                 .DELETE_ONE_TRANSACTION,

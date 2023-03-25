@@ -1,4 +1,5 @@
 import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
+import Animated, { Transition } from "react-native-reanimated";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
@@ -42,7 +43,7 @@ const CheckList = ({
           >
             {/* // TAG : Checkbox */}
             {checkboxPlacement === "left" && (
-              <View
+              <Animated.View
                 style={{
                   borderColor:
                     selected === item
@@ -68,7 +69,7 @@ const CheckList = ({
                     color={globalTheme.colors.background}
                   />
                 )}
-              </View>
+              </Animated.View>
             )}
 
             <View

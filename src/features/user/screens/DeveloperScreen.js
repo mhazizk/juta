@@ -4,6 +4,7 @@ import {
   useGlobalBadgeCounter,
   useGlobalBudgets,
   useGlobalCategories,
+  useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalRepeatedTransactions,
   useGlobalSortedTransactions,
@@ -14,6 +15,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../../api/firebase/auth";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import { TextSecondary } from "../../../components/Text";
+import { ListItem } from "../../../components/List";
+import ListSection from "../../../components/List/ListSection";
+import firestore from "../../../api/firebase/firestore";
+import FIRESTORE_COLLECTION_NAMES from "../../../api/firebase/firestoreCollectionNames";
+import REDUCER_ACTIONS from "../../../reducers/reducer.action";
+import screenList from "../../../navigations/ScreenList";
 
 const DeveloperScreen = ({ item, navigation }) => {
   const { appSettings, dispatchAppSettings } = useGlobalAppSettings();
@@ -26,6 +33,8 @@ const DeveloperScreen = ({ item, navigation }) => {
   const { categories, dispatchCategories } = useGlobalCategories();
   const { repeatedTransactions, dispatchRepeatedTransactions } =
     useGlobalRepeatedTransactions();
+  const { globalCurrencyRates, dispatchGlobalCurrencyRates } =
+    useGlobalCurrencyRates();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
   const [firebaseUserAccount, setFirebaseUserAccount] = useState(null);
   const [user, loading, error] = useAuthState(auth);
@@ -40,9 +49,7 @@ const DeveloperScreen = ({ item, navigation }) => {
             justifyContent: "center",
           }}
         >
-          <TextSecondary
-          label='Nothing to see here'
-          />
+          <TextSecondary label="Nothing to see here" />
         </CustomScrollView>
       )}
     </>

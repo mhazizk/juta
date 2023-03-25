@@ -1,6 +1,7 @@
 import { Dimensions, TouchableNativeFeedback, View } from "react-native";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import Foundation from "react-native-vector-icons/Foundation";
 import {
   useGlobalAppSettings,
   useGlobalCurrencyRates,
@@ -13,6 +14,7 @@ import ListSection from "./List/ListSection";
 import CountryFlag from "react-native-country-flag";
 import TextTicker from "react-native-text-ticker";
 import { getCalendars } from "expo-localization";
+import Animated, { BounceIn } from "react-native-reanimated";
 
 const is24hours = getCalendars()[0]?.uses24hourClock;
 
@@ -42,11 +44,15 @@ export const ListItem = ({
   iconLeftColor,
   iconRightName,
   iconRightSize,
+  rightIconPack = null,
   iconRightColor,
   onPress,
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+
+  const useRightIconPack = rightIconPack ? rightIconPack : iconPack;
+
   return (
     <>
       <TouchableNativeFeedback onPress={pressable ? onPress : null}>
@@ -95,6 +101,7 @@ export const ListItem = ({
             <View
               style={{
                 flex: 1,
+                justifyContent: "space-between",
               }}
             >
               {leftLabel && !disabled && (
@@ -132,7 +139,10 @@ export const ListItem = ({
             {rightLabel && useRightLabelContainer && (
               <>
                 <View
-                  style={[{ ...rightLabelContainerStyle }, { maxWidth: "70%" }]}
+                  style={[
+                    { ...rightLabelContainerStyle },
+                    { maxWidth: "85%", marginHorizontal: 0 },
+                  ]}
                 >
                   {useFlagIcon && (
                     <CountryFlag
@@ -140,6 +150,7 @@ export const ListItem = ({
                       size={flagIconSize}
                       style={{
                         marginRight: 8,
+                        borderRadius: 4,
                       }}
                     />
                   )}
@@ -166,9 +177,8 @@ export const ListItem = ({
               </>
             )}
           </View>
-          {/* {iconPack === "IonIcons" && ( */}
 
-          {iconRightName && !isLoading && (
+          {useRightIconPack === "IonIcons" && !isLoading && (
             <IonIcons
               name={iconRightName}
               size={
@@ -182,11 +192,35 @@ export const ListItem = ({
                   ? iconRightColor
                   : globalTheme.colors.foreground
               }
-              style={{ paddingLeft: 16 }}
+              style={{
+                paddingLeft:
+                  iconRightName === "chevron-forward" ||
+                  iconRightName === "checkmark-circle"
+                    ? 16
+                    : 0,
+              }}
             />
           )}
+          {useRightIconPack === "Foundation" && !isLoading && (
+            <Animated.View entering={BounceIn.duration(1000)}>
+              <Foundation
+                name={iconRightName}
+                size={
+                  iconRightSize ||
+                  (iconRightName === "checkmark-circle" ? 22 : 18)
+                }
+                color={
+                  disabled
+                    ? globalTheme.colors.secondary
+                    : iconRightColor
+                    ? iconRightColor
+                    : globalTheme.colors.foreground
+                }
+                // style={{ paddingLeft: 16 }}
+              />
+            </Animated.View>
+          )}
           {isLoading && <Loading size={18} />}
-          {/* )} */}
         </View>
       </TouchableNativeFeedback>
     </>
@@ -548,7 +582,7 @@ export const TransactionListItem = ({
                       // })}
                       label={utils.getFormattedNumber({
                         value: transactionAmount,
-                        currencyIsoCode: logbookCurrency.isoCode,
+                        currencyCountryName: logbookCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -590,7 +624,7 @@ export const TransactionListItem = ({
                           target: secondaryCurrency.name,
                           globalCurrencyRates: globalCurrencyRates,
                         }),
-                        currencyIsoCode: secondaryCurrency.isoCode,
+                        currencyCountryName: secondaryCurrency.name,
                       })}
                     />
                   </View>
@@ -806,7 +840,7 @@ export const SearchResultListItem = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: transactionAmount,
-                          currencyIsoCode: logbookCurrency.isoCode,
+                          currencyCountryName: logbookCurrency.name,
                         })}
                       />
                     </View>
@@ -845,7 +879,7 @@ export const SearchResultListItem = ({
                             target: secondaryCurrency.name,
                             globalCurrencyRates: globalCurrencyRates,
                           }),
-                          currencyIsoCode: secondaryCurrency.isoCode,
+                          currencyCountryName: secondaryCurrency.name,
                         })}
                       />
                     </View>
@@ -962,8 +996,8 @@ export const CardList = ({
                   <TextPrimary
                     label={utils.getFormattedNumber({
                       value: spent,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}
                   />
                 </View>

@@ -30,6 +30,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import uuid from "react-native-uuid";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditRepeatedTransactionScreen = ({ route, navigation }) => {
   // TAG : useRef State //
@@ -206,8 +207,8 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 // }
                 placeholder={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode:
-                    appSettings.logbookSettings.defaultCurrency.isoCode,
+                  currencyCountryName:
+                    appSettings.logbookSettings.defaultCurrency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -245,13 +246,13 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 clearButtonMode="while-editing"
                 defaultValue={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
                 value={utils.getFormattedNumber({
                   value: localRepeatedTransaction.repeat_amount,
-                  currencyIsoCode: selectedLogbook.logbook_currency.isoCode,
+                  currencyCountryName: selectedLogbook.logbook_currency.name,
                   negativeSymbol:
                     appSettings.logbookSettings.negativeCurrencySymbol,
                 })}
@@ -325,7 +326,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Status",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   mainButtonLabel: "Select",
                   props: [
                     {
@@ -402,7 +403,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Logbooks",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   mainButtonLabel: "Select",
                   props: logbooks.logbooks.map((logbook) => {
                     return {
@@ -476,7 +477,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               onPress={() =>
                 navigation.navigate(screenList.modalScreen, {
                   title: "Category",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   mainButtonLabel: "Select",
                   props:
                     localRepeatedTransaction?.repeat_in_out === "expense"
@@ -635,7 +636,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
               onPress={() => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Repeat Transaction",
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   mainButtonLabel: "Select",
                   iconProps: {
                     name: "repeat",
@@ -753,7 +754,7 @@ const EditRepeatedTransactionScreen = ({ route, navigation }) => {
                 onPress={() => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Delete Repeated Transaction",
-                    modalType: "list",
+                    modalType: MODAL_TYPE_CONSTANTS.LIST,
                     mainButtonLabel: "Delete",
                     iconProps: {
                       name: "trash",

@@ -90,10 +90,7 @@ export const ActiveBudget = ({
                 }}
               >
                 {title && (
-                  <TextPrimary
-                    label={title}
-                    style={{ fontWeight: "bold", paddingRight: 8 }}
-                  />
+                  <TextPrimary label={title} style={{ fontWeight: "bold" }} />
                 )}
                 {repeat && (
                   <IonIcons
@@ -183,7 +180,7 @@ export const ActiveBudget = ({
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "flex-start",
                 justifyContent: "center",
                 paddingVertical: 16,
               }}
@@ -209,10 +206,7 @@ export const ActiveBudget = ({
                     }),
                   }}
                 />
-                <TextPrimary
-                  label="Budget Limit"
-                  style={{ fontWeight: "bold" }}
-                />
+                <TextPrimary label="Limit" style={{ fontWeight: "bold" }} />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
                     label={appSettings.logbookSettings.defaultCurrency.symbol}
@@ -232,8 +226,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: limit,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -269,10 +263,7 @@ export const ActiveBudget = ({
                     }),
                   }}
                 />
-                <TextPrimary
-                  label="Budget Spent"
-                  style={{ fontWeight: "bold" }}
-                />
+                <TextPrimary label="Spent" style={{ fontWeight: "bold" }} />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
                     label={appSettings.logbookSettings.defaultCurrency.symbol}
@@ -294,8 +285,8 @@ export const ActiveBudget = ({
                         value: spent,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                       })}
                     />
                   </TextTicker>
@@ -330,8 +321,11 @@ export const ActiveBudget = ({
                   }}
                 />
                 <TextPrimary
-                  label={spent / limit > 1 ? "Overbudget" : "Budget Remaining"}
-                  style={{ fontWeight: "bold" }}
+                  label={spent / limit > 1 ? "Overbudget" : "Remaining"}
+                  style={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
                 />
                 <View style={{ flexDirection: "row" }}>
                   <TextSecondary
@@ -352,8 +346,8 @@ export const ActiveBudget = ({
                     <TextPrimary
                       label={utils.getFormattedNumber({
                         value: limit - spent,
-                        currencyIsoCode:
-                          appSettings.logbookSettings.defaultCurrency.isoCode,
+                        currencyCountryName:
+                          appSettings.logbookSettings.defaultCurrency.name,
                         negativeSymbol:
                           appSettings.logbookSettings.negativeCurrencySymbol,
                       })}
@@ -424,8 +418,8 @@ export const ActiveBudget = ({
                       }),
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />
@@ -468,8 +462,8 @@ export const ActiveBudget = ({
                       }),
                       negativeSymbol:
                         appSettings.logbookSettings.negativeCurrencySymbol,
-                      currencyIsoCode:
-                        appSettings.logbookSettings.defaultCurrency.isoCode,
+                      currencyCountryName:
+                        appSettings.logbookSettings.defaultCurrency.name,
                     })}/day`}
                     // style={{ flex: 1 }}
                   />

@@ -3,6 +3,7 @@ import env from "../config/env";
 
 const sentryInit = () => {
   return Sentry.init({
+    environment: __DEV__ ? "development" : "production",
     dsn: env.SENTRY_CONFIG.SENTRY_DSN,
     debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
     enableInExpoDevelopment: true,

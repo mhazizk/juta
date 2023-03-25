@@ -24,6 +24,7 @@ const SubscriptionStatus = ({ onPress }) => {
   return (
     <>
       <ListSection
+        backgroundOpacity={0}
         backgroundColor={
           subscription.plan === "premium"
             ? globalTheme.colors.success
@@ -52,7 +53,10 @@ const SubscriptionStatus = ({ onPress }) => {
         </View>
       </ListSection>
       {subscription.plan !== "premium" && (
-        <ListSection backgroundColor={globalTheme.colors.success}>
+        <ListSection
+          backgroundOpacity={0}
+          backgroundColor={globalTheme.colors.success}
+        >
           <TouchableNativeFeedback
             onPress={() => {
               onPress(screenList.paywallScreen);

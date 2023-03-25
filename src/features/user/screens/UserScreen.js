@@ -3,16 +3,23 @@ import { useEffect } from "react";
 import { ListItem } from "../../../components/List";
 import ListSection from "../../../components/List/ListSection";
 import UserHeaderComponent from "../../../components/UserHeader";
+import NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS from "../../../constants/newFeatureBadgeShowDurationConstantsInMillis";
+import NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS from "../../../constants/newFeatureBadgeStartDateConstantsInMillis";
 import screenList from "../../../navigations/ScreenList";
 import {
   useGlobalAppSettings,
   useGlobalBadgeCounter,
   useGlobalBudgets,
-  useGlobalCategories, useGlobalFeatureSwitch, useGlobalLogbooks,
-  useGlobalRepeatedTransactions, useGlobalUserAccount
+  useGlobalCategories,
+  useGlobalFeatureSwitch,
+  useGlobalLogbooks,
+  useGlobalRepeatedTransactions,
+  useGlobalTheme,
+  useGlobalUserAccount,
 } from "../../../reducers/GlobalContext";
 import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import CustomScrollView from "../../../shared-components/CustomScrollView";
+import * as utils from "../../../utils";
 
 const UserScreen = ({ navigation }) => {
   const { appSettings } = useGlobalAppSettings();
@@ -23,6 +30,7 @@ const UserScreen = ({ navigation }) => {
   const { budgets } = useGlobalBudgets();
   const { repeatedTransactions } = useGlobalRepeatedTransactions();
   const { badgeCounter, dispatchBadgeCounter } = useGlobalBadgeCounter();
+  const { globalTheme } = useGlobalTheme();
   const isFocus = useIsFocused();
 
   useEffect(() => {
@@ -41,7 +49,11 @@ const UserScreen = ({ navigation }) => {
       <CustomScrollView>
         {userAccount && (
           <>
-            <UserHeaderComponent />
+            <UserHeaderComponent
+              onPress={() =>
+                navigation.navigate(screenList.myProfilePictureScreen)
+              }
+            />
             <ListSection>
               {/* // TAG : My Profile */}
               <ListItem
@@ -59,6 +71,8 @@ const UserScreen = ({ navigation }) => {
             iconPack="IonIcons"
             onPress={() => navigation.navigate(screenList.myGroupsScreen)}
           /> */}
+            </ListSection>
+            <ListSection>
               {/* // TAG : My Logbooks */}
               <ListItem
                 pressable
@@ -103,6 +117,60 @@ const UserScreen = ({ navigation }) => {
                 iconPack="IonIcons"
                 onPress={() => navigation.navigate(screenList.myLoansScreen)}
               />
+              {/* // TAG : My Reports */}
+              <ListItem
+                pressable
+                leftLabel="My Reports"
+                iconLeftName="analytics"
+                iconPack="IonIcons"
+                iconRightName={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "burst-new"
+                }
+                iconRightSize={28}
+                iconRightColor={globalTheme.colors.success}
+                rightIconPack={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "Foundation"
+                }
+                onPress={() => navigation.navigate(screenList.myReportsScreen)}
+              />
+              {/* // TAG : My Currencies */}
+              {/* <ListItem
+                pressable
+                leftLabel="My Currencies"
+                iconLeftName="cash-outline"
+                iconPack="IonIcons"
+                iconRightName={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "burst-new"
+                }
+                iconRightSize={28}
+                iconRightColor={globalTheme.colors.success}
+                rightIconPack={
+                  utils.isNewFeatureBadgeExpired(
+                    NEW_FEATURE_BADGE_START_DATE_CONSTANTS_IN_MILLIS.MY_REPORTS,
+                    NEW_FEATURE_BADGE_SHOW_DURATION_CONSTANTS_IN_MILLIS
+                  )
+                    ? null
+                    : "Foundation"
+                }
+                onPress={() =>
+                  navigation.navigate(screenList.myCurrenciesScreen)
+                }
+              /> */}
               {/* // TAG : My Repeated Transactions */}
               {/* <ListItem
                 pressable

@@ -15,6 +15,7 @@ import {
   useGlobalSortedTransactions,
   useGlobalTheme,
 } from "../../../reducers/GlobalContext";
+import CustomScrollView from "../../../shared-components/CustomScrollView";
 import * as utils from "../../../utils";
 
 const MyBudgetsScreen = ({ route, navigation }) => {
@@ -109,12 +110,9 @@ const MyBudgetsScreen = ({ route, navigation }) => {
 
   return (
     <>
-      <View
-        style={{
-          height: "100%",
-          alignItems: "center",
-          paddingHorizontal: 16,
-          backgroundColor: globalTheme.colors.background,
+      <CustomScrollView
+        contentContainerStyle={{
+          minHeight: "100%",
         }}
       >
         {/* Active Budget */}
@@ -231,7 +229,7 @@ const MyBudgetsScreen = ({ route, navigation }) => {
             </View>
           </TouchableOpacity>
         )}
-      </View>
+      </CustomScrollView>
     </>
   );
 };

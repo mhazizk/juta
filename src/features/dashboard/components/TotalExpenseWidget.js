@@ -15,11 +15,11 @@ import CoinsImg from "../../../assets/img/coins.png";
 import { CustomBarChart } from "../../../components/charts/CustomBarChart";
 import { useIsFocused } from "@react-navigation/native";
 import Loading from "../../../components/Loading";
+import Animated from "react-native-reanimated";
+import NoExpenseSVG from "../../../assets/img/no-expense.svg";
 
 const TotalExpenseWidget = ({
-  // graph,
-  // showGraph,
-  // activeBudget,
+  enteringAnimation = null,
   cardHeight,
   onPress,
 }) => {
@@ -117,7 +117,8 @@ const TotalExpenseWidget = ({
   return (
     <>
       {widgetLoading && (
-        <View
+        <Animated.View
+          entering={enteringAnimation}
           style={{
             // flex: 1,
             height: cardHeight,
@@ -130,7 +131,7 @@ const TotalExpenseWidget = ({
           }}
         >
           <Loading />
-        </View>
+        </Animated.View>
       )}
       {!widgetLoading && (
         <TouchableOpacity
@@ -148,7 +149,8 @@ const TotalExpenseWidget = ({
             width: "100%",
           }}
         >
-          <View
+          <Animated.View
+            entering={enteringAnimation}
             style={{
               backgroundColor:
                 globalTheme.widgets.totalExpense.cardBackgroundColor,
@@ -167,6 +169,7 @@ const TotalExpenseWidget = ({
                   style={{
                     height: "100%",
                     width: "100%",
+                    paddingLeft: 16,
                     alignItems: "center",
                     justifyContent: "center",
                     zIndex: 1,
@@ -178,24 +181,37 @@ const TotalExpenseWidget = ({
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
                       justifyContent: "flex-end",
-                      paddingLeft: 16,
                       fontSize: 20,
                       fontWeight: "bold",
                     }}
-                    label="No expenses"
+                    label="No expense"
                   />
                   <TextPrimary
                     style={{
                       zIndex: 1,
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       alignSelf: "flex-start",
-                      paddingLeft: 16,
                       fontSize: 20,
                     }}
                     label="in last 7 days"
                   />
                 </View>
-                <Image
+                <View
+                  style={{
+                    position: "absolute",
+                    width: 200,
+                    height: 200,
+                    right: 0,
+                    margin: 16,
+                  }}
+                >
+                  <NoExpenseSVG
+                    width={200}
+                    height={200}
+                    color={globalTheme.widgets.totalExpense.cardTextColor}
+                  />
+                </View>
+                {/* <Image
                   source={CoinsImg}
                   style={{
                     position: "absolute",
@@ -209,7 +225,7 @@ const TotalExpenseWidget = ({
                     opacity: 0.5,
                     resizeMode: "contain",
                   }}
-                />
+                /> */}
               </>
             )}
 
@@ -228,7 +244,7 @@ const TotalExpenseWidget = ({
                   <TextPrimary
                     style={{
                       fontSize: 20,
-                      fontStyle: "bold",
+                      fontWeight: "bold",
                       color: globalTheme.widgets.totalExpense.cardTextColor,
                       paddingBottom: 4,
                     }}
@@ -261,8 +277,8 @@ const TotalExpenseWidget = ({
                         }}
                         label={utils.getFormattedNumber({
                           value: activeBudget.spent,
-                          currencyIsoCode:
-                            appSettings.logbookSettings.defaultCurrency.isoCode,
+                          currencyCountryName:
+                            appSettings.logbookSettings.defaultCurrency.name,
                           negativeSymbol:
                             appSettings.logbookSettings.negativeCurrencySymbol,
                         })}
@@ -308,9 +324,9 @@ const TotalExpenseWidget = ({
                                   .name,
                               globalCurrencyRates: globalCurrencyRates,
                             }),
-                            currencyIsoCode:
+                            currencyCountryName:
                               appSettings.logbookSettings.secondaryCurrency
-                                .isoCode,
+                                .name,
                             negativeSymbol:
                               appSettings.logbookSettings
                                 .negativeCurrencySymbol,
@@ -375,7 +391,7 @@ const TotalExpenseWidget = ({
                 </View>
               </>
             )}
-          </View>
+          </Animated.View>
         </TouchableOpacity>
       )}
     </>

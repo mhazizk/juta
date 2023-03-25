@@ -1,5 +1,3 @@
-// TODO : Create a login screen
-
 import { View, Dimensions, TouchableOpacity } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
@@ -32,6 +30,16 @@ import REDUCER_ACTIONS from "../../../reducers/reducer.action";
 import appSettingsFallback from "../../../reducers/fallback-state/appSettingsFallback";
 import getSecretFromCloudFunctions from "../../../api/firebase/getSecretFromCloudFunctions";
 import SECRET_KEYS from "../../../constants/secretManager";
+import Animated, {
+  FadeIn,
+  FadeInLeft,
+  FadeOutLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
+import LoopingHeroIcon from "../components/LoopingHeroIcon";
 
 const SignUpScreen = ({ route, navigation }) => {
   const { expoPushToken, setExpoPushToken } = useExpoPushToken();
@@ -54,6 +62,14 @@ const SignUpScreen = ({ route, navigation }) => {
     passwordConditionsList
   );
   const [user, loading, error] = useAuthState(auth);
+  const [activeIconName, setActiveIconName] = useState("fast-food");
+
+  const heightView = useSharedValue(0);
+  const animatedHeightStyle = useAnimatedStyle(() => {
+    return {
+      height: withTiming(heightView.value, 500),
+    };
+  });
 
   useEffect(() => {}, []);
 
@@ -245,7 +261,7 @@ const SignUpScreen = ({ route, navigation }) => {
       >
         {!screenLoading && (
           <>
-            <LottieBackground />
+            <LoopingHeroIcon activeIconName={null} />
             <View
               style={{
                 width: "100%",
@@ -263,15 +279,24 @@ const SignUpScreen = ({ route, navigation }) => {
                   fontWeight: "bold",
                 }}
               />
-              <AnimatedLoginText />
+              <AnimatedLoginText
+                onScrollEnd={(iconName) => setActiveIconName(iconName)}
+              />
             </View>
             {/* // SECTION : Input Section */}
-            <View
-              style={{
-                // paddingHorizontal: 16,
-                flex: showPasswordConditionsChecklist ? 1 : 0,
-                justifyContent: "center",
+            <Animated.View
+              onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                heightView.value = height;
               }}
+              style={[
+                {
+                  // paddingHorizontal: 16,
+                  // flex: showPasswordConditionsChecklist ? 0 : 0,
+                  justifyContent: "center",
+                },
+                // animatedHeightStyle,
+              ]}
             >
               <View
                 style={{
@@ -344,14 +369,17 @@ const SignUpScreen = ({ route, navigation }) => {
               {showPasswordConditionsChecklist && (
                 <PasswordConditionsChecklist conditions={passwordConditions} />
               )}
-            </View>
+            </Animated.View>
             {/* //SECTION : Terms of Service and Privacy Policy */}
             <View
               style={{
                 flexDirection: "row",
+                paddingVertical: 16,
                 alignItems: "center",
-                justifyContent: "flex-start",
+                justifyContent: "center",
+                overflow: "hidden",
                 width: "100%",
+                // flexWrap: "wrap",
               }}
             >
               <CheckList
@@ -360,42 +388,55 @@ const SignUpScreen = ({ route, navigation }) => {
                 singleChecklist
                 marginRight={0}
                 item={true}
-                // primaryLabel="I accept all Terms of Services and Privacy Policy"
                 selected={agreeTerms}
                 onPress={() => {
                   setAgreeTerms(!agreeTerms);
                 }}
               />
-              <TextPrimary label="I accept all" />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(screenList.termsOfServiceScreen);
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  paddingVertical: 0,
+                  marginVertical: 0,
+                  width: "100%",
+                  flex: 1,
                 }}
               >
-                <TextPrimary
-                  label="Terms of Service"
-                  style={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 4,
-                    fontWeight: "bold",
+                <TextPrimary label="I accept " />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(screenList.termsOfServiceScreen);
                   }}
-                />
-              </TouchableOpacity>
-              <TextPrimary label="and" />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(screenList.privacyPolicyScreen);
-                }}
-              >
-                <TextPrimary
-                  label="Privacy Policy"
-                  style={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 4,
-                    fontWeight: "bold",
+                >
+                  <TextPrimary
+                    label="Terms of Service"
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  />
+                </TouchableOpacity>
+                <TextPrimary label=" and " />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(screenList.privacyPolicyScreen);
                   }}
-                />
-              </TouchableOpacity>
+                  style={{
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                  }}
+                >
+                  <TextPrimary
+                    label="Privacy Policy"
+                    style={{
+                      paddingTop: 4,
+                      fontWeight: "bold",
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
             {/* // TAG : Button Active */}
             {showButton && (

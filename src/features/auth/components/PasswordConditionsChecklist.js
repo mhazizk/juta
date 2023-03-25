@@ -1,4 +1,11 @@
 import { View } from "react-native";
+import Animated, {
+  BounceIn,
+  BounceOut,
+  FadeIn,
+  FadeOut,
+  SlideInLeft,
+} from "react-native-reanimated";
 import CheckList from "../../../components/CheckList";
 import { TextPrimary } from "../../../components/Text";
 
@@ -6,7 +13,9 @@ const PasswordConditionsChecklist = ({ conditions }) => {
   return (
     <>
       {conditions && (
-        <View
+        <Animated.View
+          entering={FadeIn.duration(500)}
+          exiting={FadeOut.duration(500)}
           style={{
             alignItems: "flex-start",
             width: "100%",
@@ -27,7 +36,7 @@ const PasswordConditionsChecklist = ({ conditions }) => {
               />
             );
           })}
-        </View>
+        </Animated.View>
       )}
     </>
   );

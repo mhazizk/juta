@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, TextInput, TouchableNativeFeedback, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  TextInput,
+  TouchableNativeFeedback,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import uuid from "react-native-uuid";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -23,6 +29,8 @@ import {
 import CustomScrollView from "../../../shared-components/CustomScrollView";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import * as utils from "../../../utils";
+import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
+import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
 
 const EditLoanContactScreen = ({ route, navigation }) => {
   const { fromScreen, targetScreen, loanContactTransactionDetails } =
@@ -124,7 +132,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                   contact_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={contact.contact_name}
               value={contact.contact_name}
             />
@@ -191,7 +199,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                     { name: "non-profit" },
                     { name: "government" },
                   ],
-                  modalType: "list",
+                  modalType: MODAL_TYPE_CONSTANTS.LIST,
                   selected: (item) => {
                     setContact({
                       ...contact,
@@ -229,36 +237,63 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                 color: globalTheme.text.textPrimary.color,
               }}
               onPress={() => {
-                utils.datePicker({
-                  minimumDateInMillis:
-                    getLatestTransactionDate(loanContactTransactionDetails) ||
-                    Date.now() + 1 * 24 * 60 * 60 * 1000,
-                  initialDateInMillis:
-                    getLatestTransactionDate(loanContactTransactionDetails) ||
-                    Date.now() + 7 * 24 * 60 * 60 * 1000,
-                  pickerStyle: "dateOnly",
-                  callback: (dateInMillis) => {
-                    setContact({
-                      ...contact,
-                      payment_due_date: dateInMillis,
+                const initialDateInMillis =
+                  getLatestTransactionDate(loanContactTransactionDetails) ||
+                  new Date().setHours(0, 0, 0, 0).getTime() +
+                    7 * 24 * 60 * 60 * 1000;
+
+                const minimumDateInMillis =
+                  getLatestTransactionDate(loanContactTransactionDetails) ||
+                  new Date().setHours(0, 0, 0, 0).getTime() +
+                    1 * 24 * 60 * 60 * 1000;
+
+                switch (Platform.OS) {
+                  case "android":
+                    return utils.datePicker({
+                      minimumDateInMillis: minimumDateInMillis,
+                      initialDateInMillis: initialDateInMillis,
+                      pickerStyle: "dateOnly",
+                      callback: (dateInMillis) => {
+                        const dateInMidnight = new Date(dateInMillis).setHours(
+                          23,
+                          59,
+                          59,
+                          999
+                        );
+                        setContact({
+                          ...contact,
+                          payment_due_date: new Date(dateInMidnight).getTime(),
+                        });
+                      },
                     });
-                  },
-                });
+
+                  case "ios":
+                    return navigation.navigate(screenList.modalScreen, {
+                      title: "Select date",
+                      modalType: MODAL_TYPE_CONSTANTS.DATE_PICKER,
+                      defaultOption: initialDateInMillis,
+                      minimumDateInMillis: minimumDateInMillis,
+                      selected: (dateInMillis) => {
+                        const dateInMidnight = new Date(dateInMillis).setHours(
+                          23,
+                          59,
+                          59,
+                          999
+                        );
+
+                        setContact({
+                          ...contact,
+                          payment_due_date: new Date(dateInMidnight).getTime(),
+                        });
+                      },
+                    });
+                }
               }}
             />
           </ListSection>
 
           {/* // TAG : Action Button */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 8,
-              paddingBottom: 24,
-              paddingHorizontal: 48,
-            }}
-          >
+          <ActionButtonWrapper>
             {/* // TAG : Delete Button */}
             <View style={{ flex: 1, paddingHorizontal: 8 }}>
               <ButtonSecondaryDanger
@@ -307,7 +342,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </View>
+          </ActionButtonWrapper>
         </CustomScrollView>
       )}
     </>

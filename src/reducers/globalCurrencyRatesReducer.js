@@ -1,9 +1,9 @@
 import REDUCER_ACTIONS from "./reducer.action";
 
 const globalCurrencyRatesReducer = (state, action) => {
-  const { updated_at: stateUpdatedAt } = state._timestamps;
+  const { updatedAt: stateUpdatedAt } = state._timestamps;
 
-  switch (action.payload) {
+  switch (action.type) {
     case REDUCER_ACTIONS.CURRENCY_RATES.SET:
       return {
         ...state,
@@ -14,7 +14,7 @@ const globalCurrencyRatesReducer = (state, action) => {
       return action.payload;
 
     case REDUCER_ACTIONS.CURRENCY_RATES.SET_MULTI_ACTIONS:
-      const { updated_at: payloadUpdatedAt } = action.payload._timestamps;
+      const { updatedAt: payloadUpdatedAt } = action.payload._timestamps;
       // check if timestamp is newer
       if (payloadUpdatedAt > stateUpdatedAt) {
         return { ...state, ...action.payload };

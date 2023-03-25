@@ -28,38 +28,46 @@ export const uploadAttachmentImage = async (imageUri, attachmentId) => {
   return await uploadBytes(imagePath, blob);
 };
 
-export const uploadAndGetAttachmentImageURL = async (
-  imageUri,
-  attachmentId
-) => {
-  const imageExtension = imageUri.match(/[^.]+$/)[0];
-  const response = await fetch(imageUri);
-  const blob = await response.blob();
+// export const uploadAndGetAttachmentImageURL = async (
+//   imageUri,
+//   attachmentId
+// ) => {
+//   const imageExtension = imageUri.match(/[^.]+$/)[0];
+//   const response = await fetch(imageUri);
+//   const blob = await response.blob();
 
-  console.log("blob :" + blob.size);
+//   const storage = getStorage(app);
 
-  const storage = getStorage(app);
+//   const imagePath = ref(
+//     storage,
+//     `attachments/${attachmentId}.${imageExtension}`
+//   );
 
-  const imagePath = ref(
-    storage,
-    `attachments/${attachmentId}.${imageExtension}`
-  );
+//   console.log(
+//     JSON.stringify(
+//       {
+//         blobSize: blob.size,
+//         imagePath,
+//       },
+//       null,
+//       2
+//     )
+//   );
+//   // const snapshot = await uploadBytes(imagePath, blob);
+//   const snapshot = await uploadBytes(imagePath, blob).catch((error) => {
+//     console.log(JSON.stringify(error, null, 2));
+//   });
+//   if (snapshot) {
+//     // alert("line 50");
+//     console.log(JSON.stringify({ snapshot }, null, 2));
+//   }
+//   const url = await getDownloadURL(snapshot.ref);
 
-  console.log(imagePath);
-  // const snapshot = await uploadBytes(imagePath, blob);
-  const snapshot = await uploadBytes(imagePath, blob).catch((error) => {
-    console.log(JSON.stringify(error));
-  });
-  if (snapshot) {
-    // alert("line 50");
-  }
-  const url = await getDownloadURL(snapshot.ref);
-
-  if (url) {
-    // alert("line 54");
-  }
-  return url;
-};
+//   if (url) {
+//     // alert("line 54");
+//   }
+//   return url;
+// };
 
 export const getProfilePictureURL = async (uid) => {
   const pp = ref(storage, `profile-pictures/${uid}`);
