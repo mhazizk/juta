@@ -54,6 +54,7 @@ import Animated, {
   SlideOutDown,
 } from "react-native-reanimated";
 import ImageViewer from "../../image-viewer/components/ImageViewer";
+import KeyboardViewWrapper from "../../../components/KeyboardWrapper";
 
 const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const repeatId = uuid.v4();
