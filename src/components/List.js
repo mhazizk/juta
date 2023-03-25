@@ -193,7 +193,11 @@ export const ListItem = ({
                   : globalTheme.colors.foreground
               }
               style={{
-                paddingLeft: iconRightName === "chevron-forward" ? 16 : 0,
+                paddingLeft:
+                  iconRightName === "chevron-forward" ||
+                  iconRightName === "checkmark-circle"
+                    ? 16
+                    : 0,
               }}
             />
           )}
