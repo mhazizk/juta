@@ -132,7 +132,7 @@ const EditLoanContactScreen = ({ route, navigation }) => {
                   contact_name: string,
                 });
               }}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               defaultValue={contact.contact_name}
               value={contact.contact_name}
             />
