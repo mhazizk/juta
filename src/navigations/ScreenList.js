@@ -45,6 +45,11 @@ const screenList = {
   transactionPreviewScreen: "Transaction Preview Screen",
   transactionListByCategoryScreen: "Transaction List By Category Screen",
 
+  // Initial Balance Screen
+  newInitialBalanceScreen: "New Initial Balance Screen",
+  editInitialBalanceScreen: "Edit Initial Balance Screen",
+  initialBalancePreviewScreen: "Initial Balance Preview Screen",
+
   // Category Screen
   newCategoryScreen: "New Category Screen",
   myCategoriesScreen: "My Categories Screen",
