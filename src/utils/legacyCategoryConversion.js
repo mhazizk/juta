@@ -1,3 +1,5 @@
+import categoriesFallback from "../reducers/fallback-state/categoriesFallback";
+
 /**
  * This function is used to convert the legacy category data to the new format
  *
@@ -8,24 +10,22 @@ const legacyCategoryConversion = (legacyCategory) => {
   const { expense, income, uid } = legacyCategory;
 
   // Check if existing categories have `is_shown` property
-  const newExpense = expense.map((category) => {
-    if (!category.hasOwnProperty("is_shown")) {
-      return {
-        ...category,
-        is_shown: true,
-      };
-    }
-    return category;
-  });
-  const newIncome = income.map((category) => {
-    if (!category.hasOwnProperty("is_shown")) {
-      return {
-        ...category,
-        is_shown: true,
-      };
-    }
-    return category;
-  });
+  const newExpense = expense[0].hasOwnProperty("is_shown")
+    ? expense.map((category) => {
+        return {
+          ...category,
+          is_shown: true,
+        };
+      })
+    : expense;
+  const newIncome = income[0].hasOwnProperty("is_shown")
+    ? income.map((category) => {
+        return {
+          ...category,
+          is_shown: true,
+        };
+      })
+    : income;
 
   // Check if the existing categories have the initial balance category
 
@@ -37,19 +37,12 @@ const legacyCategoryConversion = (legacyCategory) => {
   });
 
   if (!isInitialBalanceIncomeCategoryAvailable) {
-    newIncome.push({
-      name: "initial balance",
-      id: "initial_balance_income",
-      icon: { name: "duplicate", color: "default", pack: "IonIcons" },
-      is_deletable: false,
-      is_shown: true,
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: uid,
-        updated_at: Date.now(),
-        updated_by: uid,
-      },
-    });
+    const initialBalanceIncomeCategory = categoriesFallback({
+      uid,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+    }).income.find((category) => category.id === "initial_balance_income");
+    newIncome.push(initialBalanceIncomeCategory);
   }
 
   let isInitialBalanceExpenseCategoryAvailable = false;
@@ -60,19 +53,13 @@ const legacyCategoryConversion = (legacyCategory) => {
   });
 
   if (!isInitialBalanceExpenseCategoryAvailable) {
-    newExpense.push({
-      name: "initial balance",
-      id: "initial_balance_expense",
-      icon: { name: "duplicate", color: "default", pack: "IonIcons" },
-      is_deletable: false,
-      is_shown: true,
-      _timestamps: {
-        created_at: Date.now(),
-        created_by: uid,
-        updated_at: Date.now(),
-        updated_by: uid,
-      },
-    });
+    const initialBalanceExpenseCategory = categoriesFallback({
+      uid,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+    }).expense.find((category) => category.id === "initial_balance_expense");
+
+    newExpense.push(initialBalanceExpenseCategory);
   }
 
   const convertedCategory = {
