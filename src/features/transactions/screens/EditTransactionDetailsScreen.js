@@ -224,6 +224,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       },
     });
 
+    // chek if previous category id is logbook
+
     return navigation.navigate(screenList.loadingScreen, {
       label: "Saving Transaction...",
       loadingType: LOADING_TYPES.TRANSACTIONS.PATCH_ONE,
@@ -245,20 +247,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
   };
 
   // Below expression is to give a condition to filter out initial balance category
-  const isLogbookAlreadyHasInitialBalance =
-    selectedLogbook?.logbook_initial_balance_transaction_id ? true : false;
   const isExpense = transaction?.details.in_out === "expense" ? true : false;
-  const isIncome = transaction?.details.in_out === "income" ? true : false;
-  const filteredExpenseCategory = isLogbookAlreadyHasInitialBalance
-    ? categories.categories.expense.filter(
-        (a) => !a.id.includes("initial_balance")
-      )
-    : categories.categories.expense;
-  const filteredIncomeCategory = isLogbookAlreadyHasInitialBalance
-    ? categories.categories.income.filter(
-        (a) => !a.id.includes("initial_balance")
-      )
-    : categories.categories.income;
+  const filteredExpenseCategory = categories.categories.expense.filter(
+    (a) => a.is_shown
+  );
+  const filteredIncomeCategory = categories.categories.income.filter(
+    (a) => a.is_shown
+  );
 
   const categoryProps = isExpense
     ? filteredExpenseCategory
