@@ -143,6 +143,28 @@ const TransactionPreviewScreen = ({ route, navigation }) => {
       transaction.details.category_id.toLowerCase().includes("debt") ||
       transaction.details.category_id.toLowerCase().includes("loan");
 
+    // check if initial balance is set for this logbook
+    const isTransactionIdSameAsLogbookInitialId =
+      transaction.details.category_id ===
+      selectedLogbook.logbook_initial_balance_transaction_id;
+    if (isTransactionIdSameAsLogbookInitialId) {
+      const foundLogbookToModify = logbooks.logbooks.find(
+        (logbook) => logbook.logbook_id === transaction.logbook_id
+      );
+      const logbookToModify = {
+        ...foundLogbookToModify,
+        logbook_initial_balance_transaction_id: null,
+      };
+
+      setTimeout(async () => {
+        await firestore.setData(
+          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+          logbookToModify.logbook_id,
+          logbookToModify
+        );
+      }, 5000);
+    }
+
     navigation.navigate(screenList.loadingScreen, {
       isPaid,
       label: "Deleting Transaction...",
