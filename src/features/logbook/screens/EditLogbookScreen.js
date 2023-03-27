@@ -5,6 +5,7 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
+  useGlobalCategories,
   useGlobalCurrencyRates,
   useGlobalLogbooks,
   useGlobalSortedTransactions,
@@ -25,6 +26,7 @@ import CheckList from "../../../components/CheckList";
 import LOADING_TYPES from "../../../screens/modal/loading.type";
 import ActionButtonWrapper from "../../../components/ActionButtonWrapper";
 import MODAL_TYPE_CONSTANTS from "../../../constants/modalTypeConstants";
+import transactionDetailsModel from "../../transactions/models/transactionDetailsModel";
 
 const EditLogbookScreen = ({ route, navigation }) => {
   // TAG : Global State Section //
@@ -36,6 +38,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
   const { globalTheme } = useGlobalTheme();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
+  const { categories } = useGlobalCategories();
 
   // TAG : useState Section //
 
@@ -46,6 +49,8 @@ const EditLogbookScreen = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [isConvertCurrency, setIsConvertCurrency] = useState(false);
+  const [initialBalanceTransaction, setInitialBalanceTransaction] =
+    useState(null);
 
   const inputRef = useRef(null);
 
@@ -73,7 +78,9 @@ const EditLogbookScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // refresh
-  }, [selectedCategory]);
+    console.log(JSON.stringify(initialBalanceTransaction, null, 2));
+    console.log(route?.params?.logbook.logbook_initial_balance_transaction_id);
+  }, [initialBalanceTransaction]);
 
   useEffect(() => {
     // refresh
@@ -91,6 +98,12 @@ const EditLogbookScreen = ({ route, navigation }) => {
         section.data.forEach((transaction) => {
           if (transaction.logbook_id === route?.params?.logbook.logbook_id) {
             array.push(transaction);
+          }
+          if (
+            transaction.transaction_id ===
+            route?.params?.logbook.logbook_initial_balance_transaction_id
+          ) {
+            setInitialBalanceTransaction(transaction);
           }
         });
       });
@@ -312,34 +325,69 @@ const EditLogbookScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               leftLabel="Initial balance"
               iconRightName="chevron-forward"
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={
-                !logbook.logbook_initial_balance_transaction_id
-                  ? "Not set"
-                  : utils.findTransactionsByIds({
-                      transactionIds: [
-                        logbook.logbook_initial_balance_transaction_id,
-                      ],
-                      groupSorted: sortedTransactions.groupSorted,
-                      callback: (transactionList) => {
-                        const transaction = transactionList[0];
-                        return `${
-                          logbook.logbook_currency.symbol
-                        } ${utils.getFormattedNumber({
-                          value: utils.convertCurrency({
-                            amount: transaction.details.amount,
-                            from: logbook.logbook_currency.name,
-                            target: logbook.logbook_currency.name,
-                            globalCurrencyRates,
-                          }),
-                          currencyCountryName: logbook.logbook_currency.name,
-                          negativeSymbol:
-                            appSettings.logbookSettings.negativeCurrencySymbol,
-                        })}`;
-                      },
-                    })
+                initialBalanceTransaction
+                  ? `${
+                      logbook.logbook_currency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: utils.convertCurrency({
+                        amount: initialBalanceTransaction?.details.amount,
+                        from: logbook.logbook_currency.name,
+                        target: logbook.logbook_currency.name,
+                        globalCurrencyRates,
+                      }),
+                      currencyCountryName: logbook.logbook_currency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    })}`
+                  : "Not set"
               }
               onPress={() => {
-                // TODO : continue here
+                // TODO : TODO : fix this button. Not working after initial balance is set
+
+                const transactionModel = transactionDetailsModel({
+                  userAccountUid: userAccount.uid,
+                  logbookId: logbook.logbook_id,
+                });
+
+                const newTransaction = {
+                  ...transactionModel,
+                  details: {
+                    ...transactionModel.details,
+                    in_out: "income",
+                    category_id: "initial_balance_income",
+                  },
+                };
+
+                switch (
+                  Boolean(logbook.logbook_initial_balance_transaction_id)
+                ) {
+                  case false:
+                    return navigation.navigate(
+                      screenList.newInitialBalanceScreen,
+                      {
+                        selectedCategory: utils.FindById.findCategoryById({
+                          id: "initial_balance_income",
+                          categories: categories.categories,
+                        }),
+                        selectedLogbook: logbook,
+                        newTransaction,
+                      }
+                    );
+                  case true:
+                    return navigation.navigate(
+                      screenList.editInitialBalanceScreen,
+                      {
+                        selectedCategory: utils.FindById.findCategoryById({
+                          id: initialBalanceTransaction.details.category_id,
+                          categories: categories.categories,
+                        }),
+                        selectedLogbook: logbook,
+                        initialTransaction: initialBalanceTransaction,
+                      }
+                    );
+                }
               }}
             />
 
@@ -348,6 +396,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               iconLeftName="cash"
               iconPack="IonIcons"
               leftLabel="Total balance"
+              rightLabelColor={globalTheme.colors.foreground}
               rightLabel={`${
                 logbook.logbook_currency.symbol
               } ${utils.getFormattedNumber({
@@ -368,6 +417,7 @@ const EditLogbookScreen = ({ route, navigation }) => {
               iconPack="IonIcons"
               leftLabel="Total transactions"
               rightLabel={(countTransactions() || "No") + " Transactions"}
+              rightLabelColor={globalTheme.colors.foreground}
             />
           </ListSection>
 
