@@ -369,7 +369,12 @@ const TransactionList = ({
                         appSettings.logbookSettings.showSecondaryCurrency
                       }
                       transactionAmount={item.details.amount}
-                      onPress={() => onPress(item)}
+                      onPress={() => {
+                        if (
+                          !item.details.category_id.includes("initial_balance")
+                        )
+                          onPress(item);
+                      }}
                     />
                   )}
                 </TransactionListSection>
