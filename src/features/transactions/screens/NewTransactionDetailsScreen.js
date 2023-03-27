@@ -267,29 +267,6 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
       },
     });
 
-    // check if initial balance is set for this logbook
-    const isCategoryIdSetToInitialBalance =
-      transaction.details.category_id.includes("initial_balance")
-        ? true
-        : false;
-    if (isCategoryIdSetToInitialBalance) {
-      const foundLogbookToModify = logbooks.logbooks.find(
-        (logbook) => logbook.logbook_id === transaction.logbook_id
-      );
-      const logbookToModify = {
-        ...foundLogbookToModify,
-        logbook_initial_balance_transaction_id: transaction.transaction_id,
-      };
-
-      setTimeout(async () => {
-        await firestore.setData(
-          FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-          logbookToModify.logbook_id,
-          logbookToModify
-        );
-      }, 5000);
-    }
-
     return navigation.navigate(screenList.loadingScreen, {
       isPaid,
       label: "Saving...",
@@ -317,35 +294,16 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         logbook_id: logbooks.logbooks[0].logbook_id,
         logbook_currency: logbooks.logbooks[0].logbook_currency,
       });
-
-      // setTransaction({
-      //   ...transaction,
-      //   logbook_id: logbooks.logbooks[0].logbook_id,
-      // });
     }
   };
 
-  // Below expression is to give a condition to filter out initial balance category
-  const isLogbookAlreadyHasInitialBalance =
-    selectedLogbook?.logbook_initial_balance_transaction_id ? true : false;
-  const isTransactionIdSameAsLogbookInitialBalanceId =
-    transaction?.transaction_id ===
-    selectedLogbook?.logbook_initial_balance_transaction_id;
-  const showInitialBalanceCategory =
-    !isLogbookAlreadyHasInitialBalance ||
-    isTransactionIdSameAsLogbookInitialBalanceId;
   const isExpense = transaction?.details.in_out === "expense" ? true : false;
-  const isIncome = transaction?.details.in_out === "income" ? true : false;
-  const filteredExpenseCategory = !showInitialBalanceCategory
-    ? categories.categories.expense.filter(
-        (a) => !a.id.includes("initial_balance")
-      )
-    : categories.categories.expense;
-  const filteredIncomeCategory = !showInitialBalanceCategory
-    ? categories.categories.income.filter(
-        (a) => !a.id.includes("initial_balance")
-      )
-    : categories.categories.income;
+  const filteredExpenseCategory = categories.categories.expense.filter(
+    (a) => a.is_shown
+  );
+  const filteredIncomeCategory = categories.categories.income.filter(
+    (a) => a.is_shown
+  );
 
   const categoryProps = isExpense
     ? filteredExpenseCategory
