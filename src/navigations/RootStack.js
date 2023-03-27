@@ -527,7 +527,10 @@ const RootStack = () => {
 
       {/* // TAG : Edit Transaction Details Screen */}
       <Stack.Screen
-        options={showHeader}
+        options={{
+          ...showHeader,
+          title: "Edit Transaction",
+        }}
         name={screenList.editTransactionDetailsScreen}
         component={EditTransactionDetailsScreen}
       />
