@@ -224,6 +224,8 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       },
     });
 
+    // chek if previous category id is logbook
+
     return navigation.navigate(screenList.loadingScreen, {
       label: "Saving Transaction...",
       loadingType: LOADING_TYPES.TRANSACTIONS.PATCH_ONE,
@@ -243,6 +245,19 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
       },
     });
   };
+
+  // Below expression is to give a condition to filter out initial balance category
+  const isExpense = transaction?.details.in_out === "expense" ? true : false;
+  const filteredExpenseCategory = categories.categories.expense.filter(
+    (a) => a.is_shown
+  );
+  const filteredIncomeCategory = categories.categories.income.filter(
+    (a) => a.is_shown
+  );
+
+  const categoryProps = isExpense
+    ? filteredExpenseCategory
+    : filteredIncomeCategory;
 
   return (
     <>
@@ -623,14 +638,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                 navigation.navigate(screenList.modalScreen, {
                   title: "Select category",
                   modalType: MODAL_TYPE_CONSTANTS.LIST,
-                  props:
-                    transaction.details.in_out === "expense"
-                      ? categories.categories.expense.sort((a, b) => {
-                          return a.name.localeCompare(b.name);
-                        })
-                      : categories.categories.income.sort((a, b) => {
-                          return a.name.localeCompare(b.name);
-                        }),
+                  props: categoryProps,
                   selected: (item) => {
                     setSelectedCategory(item);
                     setSelectedLoanContact(null);

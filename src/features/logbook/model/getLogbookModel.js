@@ -19,6 +19,7 @@ const getLogbookModel = ({ logbookName, uid, defaultCurrency }) => {
     logbook_currency: defaultCurrency,
     logbook_type: "basic",
     logbook_id: uuid.v4(),
+    logbook_initial_balance_transaction_id: null,
     logbook_name: logbookName || "New Logbook",
     logbook_records: [],
     logbook_categories: [],

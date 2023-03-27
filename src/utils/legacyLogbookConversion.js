@@ -1,9 +1,9 @@
 import CURRENCY_CONSTANTS from "../constants/currencyConstants";
 
 /**
- * Batch legacy logbook currency conversion
+ * Batch legacy logbook conversion
  *
- * This function is used to convert legacy currency data to new currency data
+ * This function is used to convert legacy logbook format to the new format
  *
  * @param legacyLogbookList - List of logbooks with legacy currency data
  * @returns new logbooks data with new currency data
@@ -11,7 +11,7 @@ import CURRENCY_CONSTANTS from "../constants/currencyConstants";
  * @example
  * const {logbook_currency} = logbook;
  *
- * const legacyCurrencyFormat = {
+ * const legacyLogbookCurrencyFormat = {
  * name: "USD",
  * symbol: "$",
  * isoCode: "USD",
@@ -20,7 +20,7 @@ import CURRENCY_CONSTANTS from "../constants/currencyConstants";
  * significantDigits: 2,
  * }
  *
- * const newCurrencyFormat = {
+ * const newLogbookCurrencyFormat = {
  * name: "United States of America",
  * currencyCode: "USD",
  * symbol: "$",
@@ -31,11 +31,24 @@ import CURRENCY_CONSTANTS from "../constants/currencyConstants";
  * }
  *
  */
-const batchLegacyLogbookCurrencyConversion = (legacyLogbookList) => {
-  const newLogbooksDataWithCurrencyCode = legacyLogbookList.map((logbook) => {
-    if (!logbook.logbook_currency?.hasOwnProperty("currencyCode")) {
-      let newLogbookCurrency;
-      switch (logbook.logbook_currency.name) {
+const legacyLogbookConversion = (legacyLogbookList) => {
+  const convertedLogbookData = legacyLogbookList.map((logbook) => {
+    let convertedLogbook = logbook;
+
+    // add new `logbook_initial_balance_transaction_id` field
+    if (
+      !convertedLogbook.hasOwnProperty("logbook_initial_balance_transaction_id")
+    ) {
+      convertedLogbook = {
+        ...convertedLogbook,
+        logbook_initial_balance_transaction_id: null,
+      };
+    }
+
+    //  convert legacy currency format
+    let newLogbookCurrency;
+    if (!convertedLogbook.logbook_currency?.hasOwnProperty("currencyCode")) {
+      switch (convertedLogbook.logbook_currency.name) {
         case "USD":
           const USDCurrency = CURRENCY_CONSTANTS.OPTIONS.find(
             (currency) => currency.name === "United States of America"
@@ -57,15 +70,15 @@ const batchLegacyLogbookCurrencyConversion = (legacyLogbookList) => {
           newLogbookCurrency = otherCurrency;
           break;
       }
-      return {
-        ...logbook,
+      convertedLogbook = {
+        ...convertedLogbook,
         logbook_currency: newLogbookCurrency,
       };
     }
-    return logbook;
+    return convertedLogbook;
   });
 
-  return newLogbooksDataWithCurrencyCode;
+  return convertedLogbookData;
 };
 
-export default batchLegacyLogbookCurrencyConversion;
+export default legacyLogbookConversion;

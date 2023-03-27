@@ -40,6 +40,9 @@ import GroupPreviewScreen from "../features/groups/screens/GroupPreviewScreen";
 import MyGroupsScreen from "../features/groups/screens/MyGroupsScreen";
 import NewGroupScreen from "../features/groups/screens/NewGroupScreen";
 import ImageViewerScreen from "../features/image-viewer/screens/ImageViewerScreen";
+import EditInitialBalanceScreen from "../features/initial-balance/screens/EditInitialBalanceScreen";
+import InitialBalancePreviewScreen from "../features/initial-balance/screens/InitialBalancePreviewScreen";
+import NewInitialBalanceScreen from "../features/initial-balance/screens/NewInitialBalanceScreen";
 import EditLoanContactScreen from "../features/loan/screens/EditLoanContactScreen";
 import LoanContactPreviewScreen from "../features/loan/screens/LoanContactPreviewScreen";
 import LoanContactSelectorScreen from "../features/loan/screens/LoanContactSelectorScreen";
@@ -524,7 +527,10 @@ const RootStack = () => {
 
       {/* // TAG : Edit Transaction Details Screen */}
       <Stack.Screen
-        options={showHeader}
+        options={{
+          ...showHeader,
+          title: "Edit Transaction",
+        }}
         name={screenList.editTransactionDetailsScreen}
         component={EditTransactionDetailsScreen}
       />
@@ -547,6 +553,35 @@ const RootStack = () => {
         }}
         name={screenList.transactionListByCategoryScreen}
         component={TransactionListByCategoryScreen}
+      />
+
+      {/* // SECTION : INITIAL BALANCE */}
+      {/* // TAG : New Initial Balance Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Add Initial Balance",
+        }}
+        name={screenList.newInitialBalanceScreen}
+        component={NewInitialBalanceScreen}
+      />
+      {/* // TAG : Edit Initial Balance Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Edit Initial Balance",
+        }}
+        name={screenList.editInitialBalanceScreen}
+        component={EditInitialBalanceScreen}
+      />
+      {/* // TAG : Initial Balance Preview Screen */}
+      <Stack.Screen
+        options={{
+          ...showHeader,
+          title: "Initial Balance",
+        }}
+        name={screenList.initialBalancePreviewScreen}
+        component={InitialBalancePreviewScreen}
       />
 
       {/* // SECTION : LOGBOOKS */}

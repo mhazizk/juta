@@ -35,24 +35,17 @@ const LogbookPreviewScren = ({ route, navigation }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalCurrencyRates } = useGlobalCurrencyRates();
   const { logbooks, dispatchLogbooks } = useGlobalLogbooks();
-  const [transactions, setTransactions] = useState([]);
 
   const isFocused = useIsFocused();
 
   // TAG : useState Section //
 
-  // Transaction State
+  const [transactions, setTransactions] = useState([]);
   const [logbook, setLogbook] = useState(null);
-
-  // Selected Logbook State
   const [selectedLogbook, setSelectedLogbook] = useState(null);
-
   const [logbookToOpen, setLogbookToOpen] = useState(null);
-
-  // logbook_id : null
-  // logbook_name: null
-
-  // Selected Category State
+  const [initialBalanceTransaction, setInitialBalanceTransaction] =
+    useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   // TAG : UseEffect Section //
@@ -64,6 +57,15 @@ const LogbookPreviewScren = ({ route, navigation }) => {
         utils.getTransactionsByLogbookId({
           groupSorted: sortedTransactions.groupSorted,
           logbookId: route?.params?.logbook.logbook_id,
+        })
+      );
+      setInitialBalanceTransaction(() =>
+        utils.findTransactionsByIds({
+          transactionIds: [
+            route?.params?.logbook.logbook_initial_balance_transaction_id,
+          ],
+          groupSorted: sortedTransactions.groupSorted,
+          callback: (transaction) => transaction[0],
         })
       );
     }
@@ -263,6 +265,31 @@ const LogbookPreviewScren = ({ route, navigation }) => {
                 borderRadius: 8,
                 backgroundColor: globalTheme.colors.secondary,
               }}
+            />
+
+            {/* // TAG : Initial balance */}
+            <ListItem
+              iconLeftName="duplicate"
+              iconPack="IonIcons"
+              leftLabel="Initial balance"
+              rightLabelColor={globalTheme.colors.foreground}
+              rightLabel={
+                initialBalanceTransaction
+                  ? `${
+                      logbook.logbook_currency.symbol
+                    } ${utils.getFormattedNumber({
+                      value: utils.convertCurrency({
+                        amount: initialBalanceTransaction?.details.amount,
+                        from: logbook.logbook_currency.name,
+                        target: logbook.logbook_currency.name,
+                        globalCurrencyRates,
+                      }),
+                      currencyCountryName: logbook.logbook_currency.name,
+                      negativeSymbol:
+                        appSettings.logbookSettings.negativeCurrencySymbol,
+                    })}`
+                  : "Not set"
+              }
             />
 
             {/* // TAG : Total balance */}

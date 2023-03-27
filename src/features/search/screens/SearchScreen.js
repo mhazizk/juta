@@ -77,7 +77,7 @@ const SearchScreen = ({ navigation }) => {
             <TextInput
               ref={inputRef}
               returnKeyType="search"
-              placeholder="I am looking for ..."
+              placeholder="I am looking for..."
               placeholderTextColor={globalTheme.text.textSecondary.color}
               style={{
                 ...globalTheme.text.textPrimary,
@@ -86,7 +86,7 @@ const SearchScreen = ({ navigation }) => {
                 height: 48,
               }}
               onChangeText={(searchText) => setSearchQuery(searchText)}
-              clearButtonMode="while-editing"
+              clearButtonMode="never"
               value={searchQuery}
             />
             {searchQuery && (

@@ -294,13 +294,20 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
         logbook_id: logbooks.logbooks[0].logbook_id,
         logbook_currency: logbooks.logbooks[0].logbook_currency,
       });
-
-      // setTransaction({
-      //   ...transaction,
-      //   logbook_id: logbooks.logbooks[0].logbook_id,
-      // });
     }
   };
+
+  const isExpense = transaction?.details.in_out === "expense" ? true : false;
+  const filteredExpenseCategory = categories.categories.expense.filter(
+    (a) => a.is_shown
+  );
+  const filteredIncomeCategory = categories.categories.income.filter(
+    (a) => a.is_shown
+  );
+
+  const categoryProps = isExpense
+    ? filteredExpenseCategory
+    : filteredIncomeCategory;
 
   return (
     <>
@@ -704,14 +711,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                   navigation.navigate(screenList.modalScreen, {
                     title: "Select category",
                     modalType: MODAL_TYPE_CONSTANTS.LIST,
-                    props:
-                      transaction.details.in_out === "expense"
-                        ? categories.categories.expense.sort((a, b) => {
-                            return a.name.localeCompare(b.name);
-                          })
-                        : categories.categories.income.sort((a, b) => {
-                            return a.name.localeCompare(b.name);
-                          }),
+                    props: categoryProps,
                     selected: (item) => {
                       setSelectedCategory(item);
                       setSelectedLoanContact(null);

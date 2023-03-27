@@ -26,11 +26,12 @@ import * as Sentry from "@sentry/react-native";
 import getLogbookModel from "../../logbook/model/getLogbookModel";
 import getNewDeviceIdentifier from "../../devices/model/getNewDeviceIdentifer";
 import BUDGET_TYPE_CONSTANTS from "../../../constants/budgetTypeConstants";
-import batchLegacyLogbookCurrencyConversion from "../../../utils/batchLegacyLogbookCurrencyConversion";
+import legacyLogbookConversion from "../../../utils/legacyLogbookConversion";
 import legacyAppSettingsCurrencyConversion from "../../../utils/legacyAppSettingsCurrencyConversion";
 import updateSubscriptionStatus from "../../../api/revenue-cat/updateSubscriptionStatus";
 import getCustomerInfo from "../../../api/revenue-cat/getCustomerInfo";
 import { Platform } from "react-native";
+import legacyCategoryConversion from "../../../utils/legacyCategoryConversion";
 
 const newReducerUpdatedAt = Date.now();
 
@@ -307,14 +308,26 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         uid: currentUser.uid,
       });
 
-      const categories = {
+      const isCategoryHasIsShownProperties = Boolean(
+        categoriesData.expense[0].hasOwnProperty("is_shown")
+      );
+
+      let convertedCategories;
+
+      // convert legacy categories data to new format
+      if (!isCategoryHasIsShownProperties)
+        convertedCategories = legacyCategoryConversion(categoriesData);
+
+      // console.log(JSON.stringify({ convertedCategories }, null, 2));
+
+      const categoriesForGlobalState = {
         ...initialCategories,
-        categories: categoriesData || { ...newCategoriesData },
+        categories: convertedCategories || { ...newCategoriesData },
       };
 
       dispatchCategories({
         type: REDUCER_ACTIONS.CATEGORIES.FORCE_SET,
-        payload: categories,
+        payload: categoriesForGlobalState,
       });
 
       if (!categoriesData) {
@@ -327,14 +340,24 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }, 1);
       }
 
+      if (!isCategoryHasIsShownProperties) {
+        setTimeout(async () => {
+          await firestore.setData(
+            FIRESTORE_COLLECTION_NAMES.CATEGORIES,
+            currentUser.uid,
+            convertedCategories
+          );
+        }, 1);
+      }
+
       // TAG : Logbooks
 
       // Check if logbooks data includes currencyCode
       // If not, add it
-      const newLogbooksDataWithNewCurrencyCode =
-        batchLegacyLogbookCurrencyConversion(logbooksData);
 
-      let newLogbooksData = newLogbooksDataWithNewCurrencyCode;
+      const convertedLogbookData = legacyLogbookConversion(logbooksData);
+
+      let newLogbooksData = convertedLogbookData;
 
       const newLogbook = getLogbookModel({
         logbookName: "My Logbook",
@@ -353,24 +376,35 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           );
         }, 1);
       }
-
-      if (!logbooksData[0].logbook_currency.currencyCode) {
-        newLogbooksData.forEach(async (logbookWithNewCurrency) => {
+      if (!!convertedLogbookData.length) {
+        convertedLogbookData.forEach(async (convertedLogbook) => {
           setTimeout(async () => {
             await firestore.setData(
               FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-              logbookWithNewCurrency.logbook_id,
-              logbookWithNewCurrency
+              convertedLogbook.logbook_id,
+              convertedLogbook
             );
-          });
-        }, 1);
+          }, 1);
+        });
       }
+
+      // if (!logbooksData[0].logbook_currency.currencyCode) {
+      //   newLogbooksData.forEach(async (logbookWithNewCurrency) => {
+      //     setTimeout(async () => {
+      //       await firestore.setData(
+      //         FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      //         logbookWithNewCurrency.logbook_id,
+      //         logbookWithNewCurrency
+      //       );
+      //     });
+      //   }, 1);
+      // }
 
       dispatchLogbooks({
         type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
         payload: {
           ...initialLogbooks,
-          logbooks: newLogbooksData,
+          logbooks: newLogbooksData || [newLogbook],
         },
       });
 
@@ -385,7 +419,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       // Merge transactions into sorted transactions
       const groupSorted = mergeTransactionsIntoSortedTransactions(
         checkedTransactionsAndRepeatedTransactions.getAllTransactions,
-        newLogbooksData
+        newLogbooksData || [newLogbook]
       );
 
       const initialSortedTransactionsToDispatch = {
@@ -555,7 +589,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
           sortedTransactions: sortedTransactions,
           dispatchSortedTransactions: dispatchSortedTransactions,
 
-          categories: categories,
+          categories: categoriesForGlobalState,
           dispatchCategories: dispatchCategories,
 
           budgets: budgets,

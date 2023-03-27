@@ -61,6 +61,7 @@ const MyCategoriesScreen = ({ navigation }) => {
         />
         <ListSection>
           {categories.categories?.expense
+            ?.filter((item) => item.is_shown)
             ?.sort((a, b) => {
               return a.name.localeCompare(b.name);
             })
@@ -101,6 +102,7 @@ const MyCategoriesScreen = ({ navigation }) => {
         />
         <ListSection>
           {categories.categories?.income
+            ?.filter((item) => item.is_shown)
             ?.sort((a, b) => {
               return a.name.localeCompare(b.name);
             })
