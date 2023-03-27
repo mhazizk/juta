@@ -113,15 +113,18 @@ const TransactionListByCategoryScreen = ({ route, navigation }) => {
                         appSettings.logbookSettings.showSecondaryCurrency
                       }
                       transactionAmount={item.details.amount}
-                      onPress={() =>
-                        navigation.navigate(
-                          screenList.transactionPreviewScreen,
-                          {
-                            transaction: item,
-                            selectedLogbook: logbook,
-                          }
+                      onPress={() => {
+                        if (
+                          !item.details.category_id.includes("initial_balance")
                         )
-                      }
+                          navigation.navigate(
+                            screenList.transactionPreviewScreen,
+                            {
+                              transaction: item,
+                              selectedLogbook: logbook,
+                            }
+                          );
+                      }}
                     />
                   </TransactionListSection>
                 </>
