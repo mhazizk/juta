@@ -206,22 +206,24 @@ const RecentTransactions = ({
                 {showList && (
                   <SearchResultListItem
                     pressable
-                    // transactionType={findCategoryTypeById(
-                    //   item.category.categoryId
-                    // )}
                     repeatId={item.transaction.repeat_id}
                     transactionType={item.transaction.details.in_out}
                     transaction={item.transaction}
                     logbook={item.logbook}
                     onPress={() => {
-                      onPress({
-                        transaction: item.transaction,
-                        selectedLogbook: {
-                          name: item.logbook.logbookName,
-                          logbook_id: item.logbook.logbookId,
-                          logbook_currency: item.logbook.logbookCurrency,
-                        },
-                      });
+                      if (
+                        !item.transaction.details.category_id.includes(
+                          "initial_balance"
+                        )
+                      )
+                        onPress({
+                          transaction: item.transaction,
+                          selectedLogbook: {
+                            name: item.logbook.logbookName,
+                            logbook_id: item.logbook.logbookId,
+                            logbook_currency: item.logbook.logbookCurrency,
+                          },
+                        });
                     }}
                     //   Left
                     iconLeftName={item.category.icon.iconName}
