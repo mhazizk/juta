@@ -11,7 +11,7 @@ const categoriesFallback = ({
         id: "initial_balance_expense",
         icon: { name: "duplicate", color: "default", pack: "IonIcons" },
         is_deletable: false,
-        is_shown: true,
+        is_shown: false,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || uid,
@@ -302,7 +302,7 @@ const categoriesFallback = ({
         id: "initial_balance_income",
         icon: { name: "duplicate", color: "default", pack: "IonIcons" },
         is_deletable: false,
-        is_shown: true,
+        is_shown: false,
         _timestamps: {
           created_at: Date.now() || created_at,
           created_by: null || uid,
