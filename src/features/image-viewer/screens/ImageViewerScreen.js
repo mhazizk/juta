@@ -31,7 +31,7 @@ const ImageViewerScreen = ({ route, navigation }) => {
         key={(index) => index}
         style={{
           flex: 1,
-          backgroundColor: "black",
+          backgroundColor: globalTheme.colors.background,
           alignItems: "center",
           justifyContent: "center",
         }}
