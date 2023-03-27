@@ -308,8 +308,15 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         uid: currentUser.uid,
       });
 
+      const isCategoryHasIsShownProperties = Boolean(
+        categoriesData.expense[0].hasOwnProperty("is_shown")
+      );
+
+      let convertedCategories;
+
       // convert legacy categories data to new format
-      const convertedCategories = legacyCategoryConversion(categoriesData);
+      if (!isCategoryHasIsShownProperties)
+        convertedCategories = legacyCategoryConversion(categoriesData);
 
       // console.log(JSON.stringify({ convertedCategories }, null, 2));
 
@@ -333,7 +340,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         }, 1);
       }
 
-      if (!!convertedCategories) {
+      if (!isCategoryHasIsShownProperties) {
         setTimeout(async () => {
           await firestore.setData(
             FIRESTORE_COLLECTION_NAMES.CATEGORIES,
@@ -347,6 +354,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
 
       // Check if logbooks data includes currencyCode
       // If not, add it
+
       const convertedLogbookData = legacyLogbookConversion(logbooksData);
 
       let newLogbooksData = convertedLogbookData;
@@ -380,23 +388,23 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
         });
       }
 
-      if (!logbooksData[0].logbook_currency.currencyCode) {
-        newLogbooksData.forEach(async (logbookWithNewCurrency) => {
-          setTimeout(async () => {
-            await firestore.setData(
-              FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
-              logbookWithNewCurrency.logbook_id,
-              logbookWithNewCurrency
-            );
-          });
-        }, 1);
-      }
+      // if (!logbooksData[0].logbook_currency.currencyCode) {
+      //   newLogbooksData.forEach(async (logbookWithNewCurrency) => {
+      //     setTimeout(async () => {
+      //       await firestore.setData(
+      //         FIRESTORE_COLLECTION_NAMES.LOGBOOKS,
+      //         logbookWithNewCurrency.logbook_id,
+      //         logbookWithNewCurrency
+      //       );
+      //     });
+      //   }, 1);
+      // }
 
       dispatchLogbooks({
         type: REDUCER_ACTIONS.LOGBOOKS.FORCE_SET,
         payload: {
           ...initialLogbooks,
-          logbooks: newLogbooksData,
+          logbooks: newLogbooksData || [newLogbook],
         },
       });
 
@@ -411,7 +419,7 @@ const startAppWithExistingUser = async ({ currentUser, globalContext }) => {
       // Merge transactions into sorted transactions
       const groupSorted = mergeTransactionsIntoSortedTransactions(
         checkedTransactionsAndRepeatedTransactions.getAllTransactions,
-        newLogbooksData
+        newLogbooksData || [newLogbook]
       );
 
       const initialSortedTransactionsToDispatch = {
