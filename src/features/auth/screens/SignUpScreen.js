@@ -211,7 +211,7 @@ const SignUpScreen = ({ route, navigation }) => {
     if (email?.includes("@") && showButton) {
       Alert.alert(
         "Sign up",
-        `Are you sure you want to register with this email?\n${email}`,
+        `Are you sure you want to sign up with this email?\n${email}`,
         [
           {
             text: "Cancel",
