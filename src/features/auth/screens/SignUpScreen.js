@@ -134,6 +134,7 @@ const SignUpScreen = ({ route, navigation }) => {
 
     const newAppSettings = {
       ...appSettingsFallback,
+      uid: account.uid,
       _timestamps: {
         ...appSettingsFallback._timestamps,
         created_by: account.uid,
