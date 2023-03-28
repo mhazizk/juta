@@ -4,7 +4,7 @@ module.exports = ({ config }) => {
   const channelNameOptions = ["production", "staging", "development"];
 
   const appVersion = "0.10.0";
-  const androidVersionCode = 32;
+  const androidVersionCode = 34;
 
   // Follow apple guidelines for build number e.g. "1.0.0" with no additional characters
   // For eas submit, the Transporter will get the version from eas.version
