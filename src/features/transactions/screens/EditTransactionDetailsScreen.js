@@ -137,11 +137,11 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
 
   // Insert 'name' variable into User Logbooks
   const insertNameInUserLogBook = () => {
-    const inserted = logbooks.logbooks.map((logbook) => ({
+    const logbooksWithName = logbooks.logbooks.map((logbook) => ({
       ...logbook,
       name: logbook.logbook_name,
     }));
-    setLoadedLogbooks(inserted);
+    setLoadedLogbooks(logbooksWithName);
   };
 
   // Check Initial Transaction from Preview Screen
@@ -149,7 +149,13 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
     setPrevTransaction(route?.params?.transaction);
     setTransaction(route?.params?.transaction);
     setSelectedCategory(route?.params?.selectedCategory);
-    setSelectedLogbook(route?.params?.selectedLogbook);
+    setSelectedLogbook(() => {
+      const logbookFromRoute = route?.params?.selectedLogbook;
+      return {
+        ...logbookFromRoute,
+        name: logbookFromRoute.logbook_name,
+      };
+    });
     setSelectedLoanContact(route?.params?.selectedLoanContact);
     setPrevLoanContact(route?.params?.selectedLoanContact);
   };
@@ -565,11 +571,7 @@ const EditTransactionDetailsScreen = ({ route, navigation }) => {
                     pack: "IonIcons",
                   },
                   selected: (item) => {
-                    setSelectedLogbook({
-                      name: item.name,
-                      logbook_id: item.logbook_id,
-                      logbook_currency: item.logbook_currency,
-                    });
+                    setSelectedLogbook(item);
                     setTransaction({
                       ...transaction,
                       logbook_id: item.logbook_id,

@@ -1,4 +1,4 @@
-import { View, Dimensions, TouchableOpacity } from "react-native";
+import { View, Dimensions, TouchableOpacity, Alert } from "react-native";
 import { TextPrimary } from "../../../components/Text";
 import {
   useExpoPushToken,
@@ -209,45 +209,61 @@ const SignUpScreen = ({ route, navigation }) => {
     }
 
     if (email?.includes("@") && showButton) {
-      setScreenLoading(true);
-      setTimeout(() => {
-        handleUserSignUp({ email, password, displayName })
-          .then((user) => {
-            const collection = getSecretFromCloudFunctions(
-              SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
-            );
-            const doc = getSecretFromCloudFunctions(
-              SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
-            );
-            Promise.all([collection, doc]).then((values) => {
-              const collectionName = values[0];
-              const documentId = values[1];
-              firestore
-                .getOneDoc(collectionName, documentId)
-                .then((data) => {
-                  dispatchGlobalFeatureSwitch({
-                    type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
-                    payload: data,
+      Alert.alert(
+        "Sign up",
+        `Are you sure you want to sign up with this email?\n${email}`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: () => {
+              setScreenLoading(true);
+              setTimeout(() => {
+                handleUserSignUp({ email, password, displayName })
+                  .then((user) => {
+                    const collection = getSecretFromCloudFunctions(
+                      SECRET_KEYS.FEATURE_SWITCH_COLLECTION_NAME
+                    );
+                    const doc = getSecretFromCloudFunctions(
+                      SECRET_KEYS.FEATURE_SWITCH_DOCUMENT_ID
+                    );
+                    Promise.all([collection, doc]).then((values) => {
+                      const collectionName = values[0];
+                      const documentId = values[1];
+                      firestore
+                        .getOneDoc(collectionName, documentId)
+                        .then((data) => {
+                          dispatchGlobalFeatureSwitch({
+                            type: REDUCER_ACTIONS.FEATURE_SWITCH.FORCE_SET,
+                            payload: data,
+                          });
+                        })
+                        .catch((error) => {});
+                    });
+                    handleNewAccount(user);
+                  })
+                  .catch((error) => {
+                    // alert(error);
+                    switch (error.code) {
+                      case "auth/email-already-in-use":
+                        // if (user.email === email) {
+                        //   handleNewAccount(user);
+                        // }
+                        break;
+                      default:
+                        break;
+                    }
+                    setScreenLoading(false);
                   });
-                })
-                .catch((error) => {});
-            });
-            handleNewAccount(user);
-          })
-          .catch((error) => {
-            // alert(error);
-            switch (error.code) {
-              case "auth/email-already-in-use":
-                // if (user.email === email) {
-                //   handleNewAccount(user);
-                // }
-                break;
-              default:
-                break;
-            }
-            setScreenLoading(false);
-          });
-      }, 1);
+              }, 1);
+            },
+          },
+        ]
+      );
+
       return;
     }
   };

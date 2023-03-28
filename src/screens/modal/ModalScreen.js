@@ -619,10 +619,10 @@ const ModalScreen = ({ route, navigation }) => {
                         }}
                         renderItem={({ item }) => (
                           <>
-                            <CurrencyListItemRender
+                            <CurrencyListItemMemo
                               item={item}
                               globalTheme={globalTheme}
-                              selectedItem={selectedItem}
+                              isSelected={item.name === selectedItem?.name}
                               onTapItem={(item) => onTapItem(item)}
                             />
                           </>

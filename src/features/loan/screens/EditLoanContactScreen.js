@@ -239,13 +239,11 @@ const EditLoanContactScreen = ({ route, navigation }) => {
               onPress={() => {
                 const initialDateInMillis =
                   getLatestTransactionDate(loanContactTransactionDetails) ||
-                  new Date().setHours(0, 0, 0, 0).getTime() +
-                    7 * 24 * 60 * 60 * 1000;
+                  new Date().setHours(0, 0, 0, 0) + 7 * 24 * 60 * 60 * 1000;
 
                 const minimumDateInMillis =
                   getLatestTransactionDate(loanContactTransactionDetails) ||
-                  new Date().setHours(0, 0, 0, 0).getTime() +
-                    1 * 24 * 60 * 60 * 1000;
+                  new Date().setHours(0, 0, 0, 0) + 1 * 24 * 60 * 60 * 1000;
 
                 switch (Platform.OS) {
                   case "android":

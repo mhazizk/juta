@@ -191,11 +191,11 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   // Insert 'name' variable into User Logbooks
   const insertNameInUserLogBook = () => {
-    const inserted = logbooks.logbooks.map((logbook) => ({
+    const logbooksWithName = logbooks.logbooks.map((logbook) => ({
       ...logbook,
       name: logbook.logbook_name,
     }));
-    setLoadedLogbooks(inserted);
+    setLoadedLogbooks(logbooksWithName);
   };
 
   const checkFinalTransaction = () => {
@@ -288,11 +288,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
   const getFirstLogbook = () => {
     if (logbooks.logbooks.length > 0) {
-      setSelectedLogbook({
-        name: logbooks.logbooks[0].logbook_name,
-        logbook_id: logbooks.logbooks[0].logbook_id,
-        logbook_currency: logbooks.logbooks[0].logbook_currency,
-      });
+      const firstLogbook = logbooks.logbooks[0];
+      const firstLogbookWithName = {
+        ...firstLogbook,
+        name: firstLogbook.logbook_name,
+      };
+      setSelectedLogbook(firstLogbookWithName);
 
       // setTransaction({
       //   ...transaction,
@@ -645,11 +646,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                       pack: "IonIcons",
                     },
                     selected: (item) => {
-                      setSelectedLogbook({
-                        name: item.name,
-                        logbook_id: item.logbook_id,
-                        logbook_currency: item.logbook_currency,
-                      });
+                      setSelectedLogbook(item);
                       setTransaction({
                         ...transaction,
                         logbook_id: item.logbook_id,
