@@ -29,6 +29,7 @@ import {
   useGlobalFeatureSwitch,
   useGlobalTheme,
   useGlobalUserAccount,
+  useKeyboardTranslation,
 } from "../../../reducers/GlobalContext";
 import * as utils from "../../../utils";
 import uuid from "react-native-uuid";
@@ -52,6 +53,9 @@ import Animated, {
   FadeOut,
   SlideInDown,
   SlideOutDown,
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+  withSpring,
 } from "react-native-reanimated";
 import ImageViewer from "../../image-viewer/components/ImageViewer";
 import KeyboardViewWrapper from "../../../components/KeyboardWrapper";
@@ -85,6 +89,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   );
   const [loadedLogbooks, setLoadedLogbooks] = useState(null);
   const [loanDetails, setLoanDetails] = useState(null);
+  const [inputBottomPosition, setInputBottomPosition] = useState(0);
   const [localRepeatedTransactions, setLocalRepeatedTransactions] = useState({
     uid: null,
     repeat_id: null,
@@ -184,7 +189,8 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   // }, [rawTransactions.transactions])
 
   // TAG : useRef State //
-  const inputNotes = useRef(null);
+  const inputNotesRef = useRef(null);
+  const inputViewRef = useRef(null);
   const inputLenderName = useRef(null);
   const inputAmount = useRef(null);
 
@@ -308,6 +314,23 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
   const categoryProps = isExpense
     ? filteredExpenseCategory
     : filteredIncomeCategory;
+
+  const keyboard = useAnimatedKeyboard();
+  const keyboardTranslation = useAnimatedStyle(() => {
+    const keyboardHeight = keyboard?.height?.value || 0;
+    const translation =
+      keyboardHeight <= 0 ? 0 : -keyboardHeight + 2 * inputBottomPosition;
+    console.log({ keyboardHeight });
+    console.log({ inputBottomPosition });
+
+    return {
+      transform: [
+        {
+          translateY: withSpring(translation) || 0,
+        },
+      ],
+    };
+  });
 
   return (
     <>
@@ -920,12 +943,17 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                 /> */}
               </ListSection>
             )}
-            <ListSection>
+            <ListSection keyboardTranslation={keyboardTranslation}>
               {/* // TAG : Notes Section */}
               <TouchableNativeFeedback
-                onPress={() => inputNotes.current.focus()}
+                onPress={() => inputNotesRef.current.focus()}
               >
-                <View style={globalTheme.list.listContainer}>
+                <Animated.View
+                  ref={inputViewRef}
+                  style={{
+                    ...globalTheme.list.listContainer,
+                  }}
+                >
                   <IonIcons
                     name="document-text"
                     size={18}
@@ -933,6 +961,12 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
                     color={globalTheme.colors.foreground}
                   />
                   <View
+                    onLayout={(event) => {
+                      event.persist();
+                      const { height } = event.nativeEvent.layout;
+                      console.log(event.nativeEvent.layout);
+                      setInputBottomPosition(height);
+                    }}
                     style={{
                       ...globalTheme.list.listItem,
                       flexDirection: "row",
@@ -943,7 +977,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
                     {/* // TAG : Notes Input */}
                     <TextInput
-                      ref={inputNotes}
+                      ref={inputNotesRef}
                       textAlign="right"
                       returnKeyType="done"
                       keyboardType="default"
@@ -992,7 +1026,7 @@ const NewTransactionDetailsScreen = ({ route, navigation }) => {
 
                   {/* </View> */}
                   {/* <IonIcons name='pencil' size={18} style={{ paddingLeft: 16 }} /> */}
-                </View>
+                </Animated.View>
               </TouchableNativeFeedback>
             </ListSection>
             {/* // TAG : Repeat */}
