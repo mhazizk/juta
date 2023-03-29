@@ -123,7 +123,7 @@ const GlobalStateWrapper = () => {
     new Sentry.Native.ReactNavigationInstrumentation();
   const navigationRef = useRef();
   useEffect(() => {
-    console.log({ globalTheme });
+    // console.log({ globalTheme });
   }, [globalTheme]);
 
   useEffect(() => {
