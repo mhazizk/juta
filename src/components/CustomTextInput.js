@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { TextInput, View } from "react-native";
+import Animated from "react-native-reanimated";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import {
   useGlobalAppSettings,
   useGlobalTheme,
+  useKeyboardTranslation,
 } from "../reducers/GlobalContext";
 import { TextPrimary } from "./Text";
 
@@ -24,6 +26,7 @@ const CustomTextInput = ({
 }) => {
   const { appSettings } = useGlobalAppSettings();
   const { globalTheme } = useGlobalTheme();
+  const { keyboardTranslation } = useKeyboardTranslation();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   let keyboardInputType;
@@ -129,7 +132,7 @@ const CustomTextInput = ({
 
   return (
     <>
-      <View>
+      <Animated.View style={keyboardTranslation}>
         <View
           style={{
             // flex: 1,
@@ -152,7 +155,7 @@ const CustomTextInput = ({
             textContentType={textContentType}
             keyboardType={keyboardInputType}
             returnKeyType={returnKeyType || "default"}
-            placeholder={placeholder || "Type something here ..."}
+            placeholder={placeholder || "Type something here..."}
             placeholderTextColor={globalTheme.text.textSecondary.color}
             style={{
               ...globalTheme.text.textPrimary,
@@ -182,7 +185,7 @@ const CustomTextInput = ({
             }}
           />
         )}
-      </View>
+      </Animated.View>
     </>
   );
 };
