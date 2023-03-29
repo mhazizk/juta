@@ -1,6 +1,9 @@
 import { ScrollView } from "react-native";
 import Animated from "react-native-reanimated";
-import { useGlobalTheme } from "../reducers/GlobalContext";
+import {
+  useGlobalTheme,
+  useKeyboardTranslation,
+} from "../reducers/GlobalContext";
 
 const CustomScrollView = ({
   enteringAnimation = null,
