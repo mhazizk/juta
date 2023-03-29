@@ -12,6 +12,7 @@ web-build/
 *.env
 *.easignore
 google-services.json
+eas.json
 
 # macOS
 .DS_Store
