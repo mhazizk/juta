@@ -25,6 +25,7 @@ import initialLogbooks from "./initial-state/initialLogbooks";
 import initialRepeatedTransactions from "./initial-state/initialRepeatedTransactions";
 import initialSortedTransactions from "./initial-state/initialSortedTransactions";
 import initialUserAccount from "./initial-state/initialUserAccount";
+import { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 
 // TAG : Create Context //
 const globalTransactionsContext = createContext();
@@ -117,7 +118,6 @@ export const useExpoPushToken = () => {
 // TAG : Context Provider //
 export const GlobalStateProvider = ({ children }) => {
   const [expoPushToken, setExpoPushToken] = useState("");
-
   const [userAccount, dispatchUserAccount] = useReducer(
     globalUserAccountReducer,
     initialUserAccount
